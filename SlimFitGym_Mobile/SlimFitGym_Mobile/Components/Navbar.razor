@@ -1,0 +1,31 @@
+﻿@inject NavigationManager NavigationManager
+
+<nav class="navbar">
+    <div class="container d-flex justify-content-evenly align-bottom">
+        <NavLink class="nav-item text-center custom-navlink" href="/" active-class="active" Match="NavLinkMatch.All">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAw0lEQVR4nO3SMWoCURSF4Q9tXICthW7AImnFyoAuws5pYx0LGzdhoStIGRAsBa0EOxfhKkS4gsgwjr4q4A8HHude/hkej3IMIslUMcNfZBbdS9SxwhSVyDS6y2we6ZSRfeKAfs6sH7Nj/HH2SDbCDs2CnWbsrIuENSywjPMjarH7m7ffwAbfnmeILVrXoosTxl5nHI6LSxs/ZS63gCwc7dsiVZgVFsHk5r1dM0kR7vFxl32q8J638L/e4VcspqSX86F0znQdRAJFA/uNAAAAAElFTkSuQmCC" alt="home--v1">
+            <div>Főoldal</div>
+        </NavLink>
+
+        <NavLink class="nav-item text-center custom-navlink" href="/machines" active-class="active">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAoUlEQVR4nO2UvQnDMBCFv0YTpHehAdx4gRSZwJXKGycbhIxiMpyD4Yogzo4gOUHIPTgeHHr64PQDodA/aQCyerfsDKwvNXfKIlVYPLIZuAF39ewAzgbDXPhtsFj7BVh2pjAB1zc1eYxaqp5VrVkJ8HowmpOe4VFta+I5yd7lKlWzOPxcxWCQgDNwUU8O4GQwmsOfgJs1AgvwUB87ZUOhH9YTfOH1k0wFlaoAAAAASUVORK5CYII=" alt="dumbbell">
+            <div>Gépek</div>
+        </NavLink>
+
+        <NavLink class="nav-item text-center custom-navlink" href="/trainings" active-class="active">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAABMElEQVR4nO3UP0rDUBwH8M+g6KIgaAcFK4JudVGhJ9DBA3gE0ROIF/ASeghHbQe16GJR/De76WJFtIuCKIEUQkgFSdIg9Atvye/xPnl5Lz/6+Ycpo442apjuFVzHd2Qc9Qp+j8FvvYJrRe24HGLBzg+zOuMSmrEddcZHXpephNsuaG6fthRB77CKLVwlwMFvlFmaETR4iSATeEmAj8P6QBZwAxcRNMh+AvqFKmZwj4qMUw2ROLwX1g+6nH8jLXySsGgL42F9BTcJc07Twu2ERTcU0J1aGMwTnMIwZvEYw7fzQkdwHbbBIczjKQJ/YjkLaAxLWMcOzhNu7wKeI88v06Jnv7TEB8xF5i7iNVJPlUYXNGgikwnzd7OC/5rNouC1ouBKUfBoUXDnQqbuxf3IKz++5ZGyiZfNnQAAAABJRU5ErkJggg==" alt="running--v1">
+            <div>Edzések</div>
+        </NavLink>
+
+        <NavLink class="nav-item text-center custom-navlink" href="/plans" active-class="active">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAABR0lEQVR4nOWWsUvDQBSHP1u1OCiOOrjFUnArtEVxrIO7Xdwd7FB1EGfBP6GT0M0qUm2Xrv0fHBxcRByEujmIUEQqgRPCcTbXd2cE/eBt7+5LfpeXBP4rC8ABcAQcAitJiS+BYaSegEwS4iow0OTbJMg00NcuwEfdALNx8pMfEA+BXJx4CXj3LO3ZRt7xKP0A8rbiDY/ihq00ZAK48yB9U0c3FvsexMcImAdeHaTPwBxCTh3EOziQF0pvgbSLeFcYsfX4mFgEXtRmD2rEyjG1DszgSCNyF5skyH3kBV8W1BowJRF3PcxxXSLOAo+/IUb9haw6RD2JkGVgD6hYzmVa9YZrAqm0pF7yX7FdWaxpax+IokR8YTiz8Ny/I2fob0rE54aNRsWXNfSfScRFLeqWxZprLeoCQgKgBmwBKYv+lOqtuTxc/Ek+AWaIKWCyiCEAAAAAAElFTkSuQmCC" alt="shopping-cart">
+            <div>Belépők</div>
+        </NavLink>
+
+        <NavLink class="nav-item text-center custom-navlink" href="/QRcheckin" active-class="active">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAABmUlEQVR4nO1WMUvDQBT+/kBJB5fsXQvFRQfBTC5d4tK5+AucOkoHMUNB+hO6ugXdXLq6tWuHQLeuVRBxihx8B49HeskdcdF+8Mi9l/fdl1xe7h1wxH9EDCB1WMS8IQ2MuThxE2GTWDpswLw9DYy5OKmP8ArAXFhRIfwF4EYIF4qzChGeA0gATDlxXiFs/K0QzjmekjsPFZ5yPFbCdwC+K944Z25JbrDwgBP1lPCWY/2Nc+aOGQsSLjiRtZ0QvgLwWSG8U5wiRLisqeoLWmtVHXGiGUkz+taeAayVbZi7PMCN4IFbks1VYu14s7yG68SQ3+4RQJfXvdilOoy/07rCRjXcRsIZ/Yz+SIlI4Y7iBgkfgv2dqswsv0TQUkeqmKwtOdmmorieFHfC+MSnuNKGv5OLazYO/MYGYqHbX8acF/oP5J6hpS3TwrUy3t84bdAkpPCHaoWvjL8BuAwVThxt0QqbhiEhu5MX0oYHAS3cY949l/gcwDVj/barWgon9BfivldVxw0Pe/YhTYs0OKF/Ku73fQ57R/wt/AAjS/kqMxH5qAAAAABJRU5ErkJggg==" alt="qr-code">
+            <div>QR Belépés</div>
+        </NavLink>
+    </div>
+</nav>
+
