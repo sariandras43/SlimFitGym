@@ -31,7 +31,7 @@ namespace SlimFitGym.EFData.Repositories
             if (result!=null)
                 return result;
 
-            throw new Exception("Nincs ilyen gép");
+            return null;
         }
 
         public Machine? NewMachine(Machine newMachine)
@@ -59,7 +59,7 @@ namespace SlimFitGym.EFData.Repositories
             if (id != machine.Id)
                 throw new Exception("Érvénytelen azonosító.");
             if (!this.context.Set<Machine>().Any(m => m.Id == id))
-                throw new Exception("Nem létezik a gép.");
+                return null;
             if (machine == null)
                 throw new Exception("Hibás kérés.");
             if (machine.Name == null || machine.Name.Length == 0)
@@ -81,7 +81,7 @@ namespace SlimFitGym.EFData.Repositories
         {
             var machineToDelete = this.context.Set<Machine>().SingleOrDefault(m => m.Id == id);
             if (machineToDelete == null)
-                throw new Exception("Nem létezik a gép.");
+                return null;
 
             this.context.Set<Machine>().Remove(machineToDelete);
             this.context.SaveChanges();

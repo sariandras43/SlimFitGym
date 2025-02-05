@@ -31,12 +31,19 @@ namespace SlimFitGymBackend.Controllers
 
         // GET api/<MachinesController>/5
         [HttpGet("{id}")]
-        public IActionResult Get([FromRoute]int id)
+        public IActionResult Get([FromRoute]string id)
         {
             return this.Execute(() =>
             {
-                //TODO: is id really an int?
-                return Ok(machinesRepository.GetMachineById(id));        
+                int idNum;
+                if (int.TryParse(id,out idNum))
+                {
+                    var res = machinesRepository.GetMachineById(idNum);
+                    if (res!=null)
+                        return Ok(res);        
+                    return NotFound(new {message="Nem található a gép" });
+                    
+                }throw new Exception("Nem érvényes azonosító.");
             });
         }
 
@@ -53,22 +60,38 @@ namespace SlimFitGymBackend.Controllers
 
         // PUT api/<MachinesController>/5
         [HttpPut("{id}")]
-        public IActionResult Put([FromRoute]int id, [FromBody] dynamic value)
+        public IActionResult Put([FromRoute]string id, [FromBody] dynamic value)
         {
             return this.Execute(() =>
             {
-                Machine machine = Newtonsoft.Json.JsonConvert.DeserializeObject<Machine>(value.ToString());
-                return Ok(machinesRepository.UpdateMachine(id,machine));
+                int idNum;
+                if (int.TryParse(id,out idNum))
+                {
+                    Machine machine = Newtonsoft.Json.JsonConvert.DeserializeObject<Machine>(value.ToString());
+                    var res = machinesRepository.UpdateMachine(idNum, machine);
+                    if (res!=null) return Ok(res);
+                    return NotFound("Nem található a gép");
+                    
+                }throw new Exception("Nem érvényes azonosító.");
             });
         }
 
         // DELETE api/<MachinesController>/5
         [HttpDelete("{id}")]
-        public IActionResult Delete([FromRoute] int id)
+        public IActionResult Delete([FromRoute] string id)
         {
             return this.Execute(() =>
             {
-                return Ok(machinesRepository.DeleteMachine(id));
+                int idNum;
+                if (int.TryParse(id, out idNum))
+                {
+                    var res = machinesRepository.DeleteMachine(idNum);
+                    if (res != null)
+                        return Ok(res);
+                    return NotFound(new { message = "Nem található a gép" });
+
+                }
+                throw new Exception("Nem érvényes azonosító.");
             });
         }
     }

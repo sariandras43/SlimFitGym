@@ -18,6 +18,7 @@ namespace SlimFitGymBackend.Controllers
         {
             this.roomsAndMachinesRepository = roomsAndMachinesRepository;
         }
+
         // GET: api/<RoomsAndMachinesController>
         [HttpGet]
         public IActionResult Get()
@@ -30,11 +31,18 @@ namespace SlimFitGymBackend.Controllers
 
         // GET api/<RoomsAndMachinesController>/5
         [HttpGet("{id}")]
-        public IActionResult Get([FromRoute] int id)
+        public IActionResult Get([FromRoute] string id)
         {
             return this.Execute(() =>
             {
-                return Ok(roomsAndMachinesRepository.GetRoomAndMachineConnectionById(id));
+                int idNum;
+                if (int.TryParse(id,out idNum))
+                {
+                    var res = roomsAndMachinesRepository.GetRoomAndMachineConnectionById(idNum);
+                    if (res!=null)
+                        return Ok(res);
+                    return NotFound(new { message = "Nem található terem-gép kapcsolat." });
+                }throw new Exception("Nem érvényes azonosító.");
             });
         }
 
@@ -50,21 +58,37 @@ namespace SlimFitGymBackend.Controllers
 
         // PUT api/<RoomsAndMachinesController>/5
         [HttpPut("{id}")]
-        public IActionResult Put([FromRoute]int id, [FromBody] RoomAndMachine value)
+        public IActionResult Put([FromRoute]string id, [FromBody] RoomAndMachine value)
         {
             return this.Execute(() =>
             {
-                return Ok(roomsAndMachinesRepository.UpdateRoomAndMachineConnection(id,value));
+                int idNum;
+                if (int.TryParse(id, out idNum))
+                {
+                    var res = roomsAndMachinesRepository.UpdateRoomAndMachineConnection(idNum,value);
+                    if (res != null)
+                        return Ok(res);
+                    return NotFound(new { message = "Nem található terem-gép kapcsolat." });
+                }
+                throw new Exception("Nem érvényes azonosító.");
             });
         }
 
         // DELETE api/<RoomsAndMachinesController>/5
         [HttpDelete("{id}")]
-        public IActionResult Delete([FromRoute] int id)
+        public IActionResult Delete([FromRoute] string id)
         {
             return this.Execute(() =>
             {
-                return Ok(roomsAndMachinesRepository.DeleteConnection(id));
+                int idNum;
+                if (int.TryParse(id, out idNum))
+                {
+                    var res = roomsAndMachinesRepository.DeleteConnection(idNum);
+                    if (res != null)
+                        return Ok(res);
+                    return NotFound(new { message = "Nem található terem-gép kapcsolat." });
+                }
+                throw new Exception("Nem érvényes azonosító.");
             });
         }
     }

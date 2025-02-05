@@ -29,11 +29,22 @@ namespace SlimFitGymBackend.Controllers
 
         // GET api/<RoomsController>/5
         [HttpGet("{id}")]
-        public IActionResult Get([FromRoute] int id)
+        public IActionResult Get([FromRoute] string id)
         {
             return this.Execute(() =>
             {
-                return Ok(roomsAndMachinesRepository.GetRoomWithMachinesById(id));
+                int idNum;
+                if (int.TryParse(id,out idNum))
+                {
+                    var res = roomsAndMachinesRepository.GetRoomWithMachinesById(idNum);
+                    if (res!=null)
+                    {
+                        return Ok(res);
+                    }
+                    return NotFound(new {message = "Szoba nem található"});
+                    
+                }
+                throw new Exception("Nem érvényes azonosító.");
             });
         }
 
@@ -50,24 +61,40 @@ namespace SlimFitGymBackend.Controllers
 
         // PUT api/<RoomsController>/5
         [HttpPut("{id}")]
-        public IActionResult Put([FromRoute] int id, [FromBody] dynamic value)
+        public IActionResult Put([FromRoute] string id, [FromBody] dynamic value)
         {
             return this.Execute(() =>
             {
-                //TODO: JSON parse error!!!
-                Room room = Newtonsoft.Json.JsonConvert.DeserializeObject<Room>(value.ToString());
-                return Ok(roomsRepository.UpdateRoom(id, room));
+                int idNum;
+                if (int.TryParse(id,out idNum))
+                {
+                    //TODO: JSON parse error!!!
+                    Room room = Newtonsoft.Json.JsonConvert.DeserializeObject<Room>(value.ToString());
+                    var res = roomsRepository.UpdateRoom(idNum, room);
+                    if (res!=null)
+                        return Ok(res);
+                    return NotFound(new { message = "Szoba nem található" });
+                }
+                throw new Exception("Nem érvényes azonosító.");
 
             });
         }
 
         // DELETE api/<RoomsController>/5
         [HttpDelete("{id}")]
-        public IActionResult Delete([FromRoute] int id)
+        public IActionResult Delete([FromRoute] string id)
         {
             return this.Execute(() =>
             {
-                return Ok(roomsRepository.DeleteRoom(id));
+                int idNum;
+                if (int.TryParse(id, out idNum))
+                {
+                    var res = roomsRepository.DeleteRoom(idNum);
+                    if (res!=null)
+                        return Ok(res);
+                    return NotFound(new { message = "Szoba nem található" });
+                }
+                throw new Exception("Nem érvényes azonosító.");
             });
         }
     }

@@ -1,6 +1,8 @@
-﻿using SlimFitGym.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using SlimFitGym.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Text;
@@ -26,7 +28,7 @@ namespace SlimFitGym.EFData.Repositories
         {
             Room? result = context.Set<Room>().ToList().SingleOrDefault(r => r.Id == id);
             if (result == null)
-                throw new Exception("Nem létezik ilyen szoba");
+                return null;
             
             return result;
         }
@@ -49,10 +51,11 @@ namespace SlimFitGym.EFData.Repositories
             if (context.Set<Room>().Any(r => r.Name == newRoom.Name))
                 throw new Exception("Ilyen terem már létezik.");
 
-            Room savedRoom = this.context.Set<Room>().Add(newRoom).Entity;
 
+            Room savedRoom = this.context.Set<Room>().Add(newRoom).Entity;
             this.context.SaveChanges();
             return savedRoom;
+
         }
 
         public Room? UpdateRoom(int id,Room room)
@@ -61,8 +64,7 @@ namespace SlimFitGym.EFData.Repositories
             if (id != room.Id)
                 throw new Exception("Érvénytelen azonosító.");
             if (!this.context.Set<Room>().Any(r => r.Id == id))
-                throw new Exception("Nem létezik a gép.");
-
+                return null;
             if (room == null)
                 throw new Exception("Hibás kérés.");
             if (room.Name == null || room.Name.Length == 0)
@@ -88,7 +90,7 @@ namespace SlimFitGym.EFData.Repositories
         {
             var roomToDelete = this.context.Set<Room>().SingleOrDefault(r => r.Id == id);
             if (roomToDelete == null)
-                throw new Exception("Nem létezik a terem.");
+                return null;
 
             this.context.Set<Room>().Remove(roomToDelete);
             this.context.SaveChanges();

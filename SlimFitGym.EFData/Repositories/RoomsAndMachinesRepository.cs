@@ -52,7 +52,7 @@ namespace SlimFitGym.EFData.Repositories
             return result;
         }
 
-        public RoomWithMachines GetRoomWithMachinesById(int id)
+        public RoomWithMachines? GetRoomWithMachinesById(int id)
         {
             var result = context.RoomsAndMachines
                 .Join(context.Rooms,
@@ -88,9 +88,9 @@ namespace SlimFitGym.EFData.Repositories
         public RoomAndMachine? GetRoomAndMachineConnectionById(int id)
         {
             RoomAndMachine? roomAndMachine = context.Set<RoomAndMachine>().SingleOrDefault(rm => rm.Id == id);
-            if (roomAndMachine == null)
-                throw new Exception("Nincs ilyen gép-terem összeköttetés");
-            return roomAndMachine;
+            if (roomAndMachine != null)
+                return roomAndMachine;
+            return null;
 
         }
 
@@ -119,7 +119,7 @@ namespace SlimFitGym.EFData.Repositories
             if (id != rm.Id)
                 throw new Exception("Érvénytelen azonosító.");
             if (!context.Set<RoomAndMachine>().Any(r => r.Id == rm.Id))
-                throw new Exception("Ez a gép-terem kapcsolat nem létezik");
+                return null;
             if (context.Set<RoomAndMachine>().Any(x => x.MachineId == rm.MachineId && x.RoomId == rm.RoomId))
                 throw new Exception("Ehhez a teremhez már hozzá van rendelve ez a gép.");
             if (!context.Set<Machine>().Any(m => m.Id == rm.Id))
@@ -136,7 +136,7 @@ namespace SlimFitGym.EFData.Repositories
         {
             RoomAndMachine roomAndMachineToDelete = context.Set<RoomAndMachine>().SingleOrDefault(rm=>rm.Id==id);
             if (roomAndMachineToDelete == null)
-                throw new Exception("Nem létezik ez a gép-terem kapcsolat");
+                return null;
 
             this.context.Set<RoomAndMachine>().Remove(roomAndMachineToDelete);
             this.context.SaveChanges();
