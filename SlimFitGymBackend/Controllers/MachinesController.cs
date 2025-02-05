@@ -64,7 +64,7 @@ namespace SlimFitGymBackend.Controllers
 
         // DELETE api/<MachinesController>/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete([FromRoute] int id)
         {
             return this.Execute(() =>
             {

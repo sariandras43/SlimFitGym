@@ -10,10 +10,12 @@ namespace SlimFitGymBackend.Controllers
     public class RoomsController : ControllerBase
     {
         readonly RoomsRepository roomsRepository;
+        readonly RoomsAndMachinesRepository roomsAndMachinesRepository;
 
-        public RoomsController(RoomsRepository roomsRepository)
+        public RoomsController(RoomsRepository roomsRepository, RoomsAndMachinesRepository roomsAndMachinesRepository)
         {
             this.roomsRepository = roomsRepository;
+            this.roomsAndMachinesRepository = roomsAndMachinesRepository;
         }
         // GET: api/<RoomsController>
         [HttpGet]
@@ -21,7 +23,7 @@ namespace SlimFitGymBackend.Controllers
         {
             return this.Execute(() =>
             {
-                return Ok(roomsRepository.GetAllRooms());
+                return Ok(roomsAndMachinesRepository.GetRoomsWithMachines());
             });
         }
 
@@ -31,7 +33,7 @@ namespace SlimFitGymBackend.Controllers
         {
             return this.Execute(() =>
             {
-                return Ok(roomsRepository.GetRoomById(id));
+                return Ok(roomsAndMachinesRepository.GetRoomWithMachinesById(id));
             });
         }
 
@@ -61,7 +63,7 @@ namespace SlimFitGymBackend.Controllers
 
         // DELETE api/<RoomsController>/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete([FromRoute] int id)
         {
             return this.Execute(() =>
             {

@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using SlimFitGym.EFData.Repositories;
+using SlimFitGym.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace SlimFitGymBackend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/roomsandmachines")]
     [ApiController]
     public class RoomsAndMachinesController : ControllerBase
     {
@@ -22,36 +24,48 @@ namespace SlimFitGymBackend.Controllers
         {
             return this.Execute(() =>
             {
-                return Ok(roomsAndMachinesRepository.GetRoomsWithMachines());
+                return Ok(roomsAndMachinesRepository.GetRoomAndMachineConnections());
             });
         }
 
         // GET api/<RoomsAndMachinesController>/5
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public IActionResult Get([FromRoute] int id)
         {
             return this.Execute(() =>
             {
-                return Ok(roomsAndMachinesRepository.GetRoomWithMachinesById(id));
+                return Ok(roomsAndMachinesRepository.GetRoomAndMachineConnectionById(id));
             });
         }
 
         // POST api/<RoomsAndMachinesController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Post([FromBody] RoomAndMachine value)
         {
+            return this.Execute(() =>
+            {
+                return Ok(roomsAndMachinesRepository.ConnectRoomAndMachine(value));
+            });
         }
 
         // PUT api/<RoomsAndMachinesController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public IActionResult Put([FromRoute]int id, [FromBody] RoomAndMachine value)
         {
+            return this.Execute(() =>
+            {
+                return Ok(roomsAndMachinesRepository.UpdateRoomAndMachineConnection(id,value));
+            });
         }
 
         // DELETE api/<RoomsAndMachinesController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete([FromRoute] int id)
         {
+            return this.Execute(() =>
+            {
+                return Ok(roomsAndMachinesRepository.DeleteConnection(id));
+            });
         }
     }
 }

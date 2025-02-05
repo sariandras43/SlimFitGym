@@ -65,5 +65,18 @@ namespace SlimFitGym.EFData
 
 
         }
+
+        public override int SaveChanges()
+        {
+            try
+            {
+                return base.SaveChanges();
+
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("Típushiba");
+            }
+        }
     }
 }
