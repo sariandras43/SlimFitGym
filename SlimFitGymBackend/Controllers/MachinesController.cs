@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models;
 
@@ -30,22 +31,23 @@ namespace SlimFitGymBackend.Controllers
 
         // GET api/<MachinesController>/5
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public IActionResult Get([FromRoute]int id)
         {
             return this.Execute(() =>
             {
-                return Ok(machinesRepository.GetMachineById(id));
+                //TODO: is id really an int?
+                return Ok(machinesRepository.GetMachineById(id));        
             });
         }
 
         // POST api/<MachinesController>
         [HttpPost]
-        public IActionResult Post([FromBody] Machine value)
+        public IActionResult Post([FromBody] dynamic value)
         {
             return this.Execute(() =>
             {
-                //Machine newMachine = Newtonsoft.Json.JsonConvert.DeserializeObject<Machine>(value.ToString());
-                return Ok(machinesRepository.NewMachine(value));
+                Machine newMachine = Newtonsoft.Json.JsonConvert.DeserializeObject<Machine>(value.ToString());
+                return Ok(machinesRepository.NewMachine(newMachine));
             });
         }
 
@@ -55,10 +57,8 @@ namespace SlimFitGymBackend.Controllers
         {
             return this.Execute(() =>
             {
-                //TODO: JSON parse error!!!
                 Machine machine = Newtonsoft.Json.JsonConvert.DeserializeObject<Machine>(value.ToString());
                 return Ok(machinesRepository.UpdateMachine(id,machine));
-
             });
         }
 

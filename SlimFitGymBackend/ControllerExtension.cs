@@ -13,13 +13,22 @@ namespace SlimFitGymBackend
             catch (Exception ex)
             {
 #if DEBUG
+
+                if (ex.Message.Contains("parsing"))
+                {
+                    return controller.BadRequest(new { message = "Nem JSON formátumú a body." });
+                }
                 return controller.BadRequest(new
                 {
-                    message = ex.Message
-                    //stackTrace = ex.StackTrace
+                    message = ex.Message,
+                    stackTrace = ex.StackTrace
                 });
 #else
-                return controller.BadRequest(new { message = "Váratlan hiba" });
+                if (ex.Message.Contains("parsing"))
+                {
+                    return controller.BadRequest(new { message = "Nem JSON formátumú a body." });
+                }
+                return controller.BadRequest(new { message = ex.Message });
 #endif
             }
         }

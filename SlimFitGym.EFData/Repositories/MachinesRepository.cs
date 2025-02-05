@@ -29,10 +29,8 @@ namespace SlimFitGym.EFData.Repositories
         {
             var result = context.Set<Machine>().SingleOrDefault(m => m.Id == id);
             if (result!=null)
-            {
                 return result;
-                
-            }
+
             throw new Exception("Nincs ilyen gép");
         }
 
