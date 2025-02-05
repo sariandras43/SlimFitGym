@@ -1,7 +1,47 @@
-﻿@page "/login"
+﻿@inject NavigationManager NavigationManager
+@page "/login"
 
-<h3>Login</h3>
+<div class="border rounded-3 d-inline-block mt-3">
+    <NavLink href="/" class="d-block p-1">
+        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAeUlEQVR4nO3XQQrCMBCF4e8MWkrvErLw/oeRWlxXChHEVRd1hHT+C/zJ42WY0BEjrtHSigfukfKKBStmXCKkpd10kz5xS+mRZLw/pWR7u4t3+JAubSzqWvy3qN+kfM3YBVKy7c72zuvXejtEy+d2gO1HEcqIKVq6mxcYKlU4XwQ2VAAAAABJRU5ErkJggg==" alt="back">
+    </NavLink>
+</div>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Bejelentkezés</h2>
+                    <form>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="Email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Jelszó</label>
+                            <input type="password" class="form-control" id="password" placeholder="Jelszó" required>
+                        </div>
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary" @onclick="login">Bejelentkezés</button>
+                        </div>
+                        <div class="text-center mb-3">
+                            <NavLink href="/newPassword" class="text-decoration-none">Elfelejtett jelszó</NavLink>
+                        </div>
+                        <div class="text-center">
+                            <NavLink href="/registration" class="text-decoration-none">Regisztráció</NavLink>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
-
+    private void login()
+    {
+        // login logic
+        // loggedIn = true
+        NavigationManager.NavigateTo("/");
+    }
 }
