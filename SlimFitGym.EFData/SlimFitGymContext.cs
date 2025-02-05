@@ -13,6 +13,8 @@ namespace SlimFitGym.EFData
     {
         //public DbSet<Account> Accounts { get; set; } = null!;
         public DbSet<Machine> Machines { get; set; } = null!;
+        public DbSet<RoomAndMachine> RoomsAndMachines { get; set; } = null!;
+        public DbSet<Room> Rooms { get; set; } = null!;
         public string DbPath { get; }
 
         public SlimFitGymContext()
@@ -42,17 +44,26 @@ namespace SlimFitGym.EFData
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
-            //modelBuilder.Entity<Account>().HasData
-            //(
-            //    new Account() { Id = 1, Name = "Zöldség leves",Email="asd@asd.com",Role="admin",Phone="+36123456789" },
-            //    new Account() { Id = 2, Name = "Sült krumpli", Email = "asd2@asd.com", Role = "user", Phone = "+36123456799" }
-            //);
 
             modelBuilder.Entity<Machine>().HasData
             (
-                new Machine() { Id = 1, Name = "Toló", Description = null },
-                new Machine() { Id = 2, Name = "Húzó", Description = null }
+                new Machine() { Id = 1, Name = "Bicikli", Description = null },
+                new Machine() { Id = 2, Name = "Futópad", Description = null }
             );
+
+            modelBuilder.Entity<Room>().HasData
+            (
+                new Room() { Id = 1, Name = "Futós szoba", Description = "", RecommendedPeople = 15 },
+                new Room() { Id = 2, Name = "Biciklizős Szoba", Description = "", RecommendedPeople = 10 }
+            );
+
+            modelBuilder.Entity<RoomAndMachine>().HasData
+            (
+                new RoomAndMachine() { Id = 1, MachineId = 1, RoomId = 2 },
+                new RoomAndMachine() { Id = 2, MachineId = 2, RoomId = 1 }
+            );
+
+
         }
     }
 }

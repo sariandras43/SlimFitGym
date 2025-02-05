@@ -15,8 +15,8 @@ namespace SlimFitGymBackend
 #if DEBUG
                 return controller.BadRequest(new
                 {
-                    message = ex.Message,
-                    stackTrace = ex.StackTrace
+                    message = ex.Message
+                    //stackTrace = ex.StackTrace
                 });
 #else
                 return controller.BadRequest(new { message = "Váratlan hiba" });

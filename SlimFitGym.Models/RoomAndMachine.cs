@@ -18,6 +18,6 @@ namespace SlimFitGym.Models
         public int RoomId { get; set; }
 
         [ForeignKey("Machines")]
-        public int MachineID { get; set; }
+        public int MachineId { get; set; }
     }
 }
