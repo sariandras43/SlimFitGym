@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore.Internal;
-using SlimFitGym.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +6,7 @@ using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Machine = SlimFitGym.Models.Machine;
+using Machine = SlimFitGym.Models.Models.Machine;
 
 namespace SlimFitGym.EFData.Repositories
 {

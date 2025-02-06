@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SlimFitGym.Models;
+using SlimFitGym.Models.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;

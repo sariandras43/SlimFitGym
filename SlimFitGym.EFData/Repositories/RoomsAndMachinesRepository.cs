@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SlimFitGym.Models;
+using SlimFitGym.Models.Models;
+using SlimFitGym.Models.Requests;
+using SlimFitGym.Models.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +9,7 @@ using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 using static SlimFitGym.EFData.Repositories.MachinesRepository;
-using Machine = SlimFitGym.Models.Machine;
+using Machine = SlimFitGym.Models.Models.Machine;
 
 namespace SlimFitGym.EFData.Repositories
 {
@@ -23,11 +25,11 @@ namespace SlimFitGym.EFData.Repositories
         public List<RoomWithMachines>? GetRoomsWithMachines()
         {
             var result = context.RoomsAndMachines
-                .Join(context.Rooms,
-                      roomAndMachine => roomAndMachine.RoomId, 
-                      room => room.Id,                         
-                      (roomAndMachine, room) => new { roomAndMachine, room }) 
-                .Join(context.Machines,
+                .Join(context.Set<Room>(),
+                      roomAndMachine => roomAndMachine.RoomId,
+                      room => room.Id,
+                      (roomAndMachine, room) => new { roomAndMachine, room })
+                .Join(context.Set<Machine>(),
                       roomAndMachine => roomAndMachine.roomAndMachine.MachineId,
                       machine => machine.Id,
                       (roomAndMachineAndRoom, machine) => new
@@ -36,73 +38,77 @@ namespace SlimFitGym.EFData.Repositories
                           roomAndMachineAndRoom.room,
                           machine
                       })
-                .GroupBy(x => x.room) 
+                .GroupBy(x => x.room)
                 .Select(group => new RoomWithMachines
                 {
-                    Id = group.Key.Id, 
-                    Name = group.Key.Name, 
+                    Id = group.Key.Id,
+                    Name = group.Key.Name,
                     Machines = group.Select(x => new MachineDetails
                     {
-                        Id = x.machine.Id,  
-                        Name = x.machine.Name 
-                    }).ToList()  
+                        Id = x.machine.Id,
+                        Name = x.machine.Name,
+                        MachineCount = x.roomAndMachine.MachineCount
+                    }).ToList()
                 })
                 .ToList();
-
             return result;
         }
 
         public RoomWithMachines? GetRoomWithMachinesById(int id)
         {
-            var result = context.RoomsAndMachines
-                .Join(context.Rooms,
-                      roomAndMachine => roomAndMachine.RoomId, 
-                      room => room.Id,                         
-                      (roomAndMachine, room) => new { roomAndMachine, room })  
-                .Join(context.Machines,
-                      roomAndMachine => roomAndMachine.roomAndMachine.MachineId, 
-                      machine => machine.Id,  
+            var result = context.Set<RoomAndMachine>()
+                .Join(context.Set<Room>(),
+                      roomAndMachine => roomAndMachine.RoomId,
+                      room => room.Id,
+                      (roomAndMachine, room) => new { roomAndMachine, room })
+                .Join(context.Set<Machine>(),
+                      roomAndMachine => roomAndMachine.roomAndMachine.MachineId,
+                      machine => machine.Id,
                       (roomAndMachineAndRoom, machine) => new
                       {
                           roomAndMachineAndRoom.roomAndMachine,
                           roomAndMachineAndRoom.room,
                           machine
                       })
-                .Where(r=>r.roomAndMachine.RoomId == id)
-                .GroupBy(x => x.room)  
+                .Where(r => r.roomAndMachine.RoomId == id)
+                .GroupBy(x => x.room)
                 .Select(group => new RoomWithMachines
                 {
-                    Id = group.Key.Id, 
+                    Id = group.Key.Id,
                     Name = group.Key.Name,
                     Machines = group.Select(x => new MachineDetails
                     {
-                        Id = x.machine.Id,  
-                        Name = x.machine.Name  
-                    }).ToList()  
+                        Id = x.machine.Id,
+                        Name = x.machine.Name,
+                        MachineCount = x.roomAndMachine.MachineCount
+
+                    }).ToList()
                 })
                 .FirstOrDefault();
 
             return result;
         }
 
-        public RoomAndMachine? GetRoomAndMachineConnectionById(int id)
+        public RoomAndMachineResponse? GetRoomAndMachineConnectionById(int id)
         {
             RoomAndMachine? roomAndMachine = context.Set<RoomAndMachine>().SingleOrDefault(rm => rm.Id == id);
             if (roomAndMachine != null)
-                return roomAndMachine;
+                return new RoomAndMachineResponse(roomAndMachine);
             return null;
 
         }
 
-        public List<RoomAndMachine>? GetRoomAndMachineConnections()
+        public List<RoomAndMachineResponse>? GetRoomAndMachineConnections()
         {
-            return context.Set<RoomAndMachine>().ToList();
+            return context.Set<RoomAndMachine>().Select(rm=>new RoomAndMachineResponse(rm)).ToList();
         }
 
-        public RoomAndMachine? ConnectRoomAndMachine(RoomAndMachine roomAndMachine)
+        public RoomAndMachineResponse? ConnectRoomAndMachine(RoomAndMachine roomAndMachine)
         {
             if (!context.Set<Machine>().Any(m=>m.Id == roomAndMachine.MachineId))
                 throw new Exception("Ez a gép nem létezik.");
+            if (roomAndMachine.MachineCount < 1)
+                throw new Exception("Érvénytelen gépszám.");
             if (!context.Set<Room>().Any(r => r.Id == roomAndMachine.RoomId))
                 throw new Exception("Ez a terem nem létezik.");
             if (context.Set<RoomAndMachine>().Any(rm=>rm.MachineId==roomAndMachine.MachineId &&rm.RoomId==roomAndMachine.RoomId))
@@ -111,13 +117,15 @@ namespace SlimFitGym.EFData.Repositories
             RoomAndMachine savedRoomAndMachine = this.context.Set<RoomAndMachine>().Add(roomAndMachine).Entity;
 
             this.context.SaveChanges();
-            return savedRoomAndMachine;
+            return new RoomAndMachineResponse(savedRoomAndMachine);
         }
 
-        public RoomAndMachine? UpdateRoomAndMachineConnection(int id, RoomAndMachine rm)
+        public RoomAndMachineResponse? UpdateRoomAndMachineConnection(int id, RoomAndMachineRequest rm)
         {
             if (id != rm.Id)
                 throw new Exception("Érvénytelen azonosító.");
+            if (rm.MachineCount < 1)
+                throw new Exception("Érvénytelen gépszám.");
             if (!context.Set<RoomAndMachine>().Any(r => r.Id == rm.Id))
                 return null;
             if (context.Set<RoomAndMachine>().Any(x => x.MachineId == rm.MachineId && x.RoomId == rm.RoomId))
@@ -129,10 +137,10 @@ namespace SlimFitGym.EFData.Repositories
 
             this.context.Entry(rm).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             this.context.SaveChanges();
-            return rm;
+            return new RoomAndMachineResponse(rm);
         }
 
-        public RoomAndMachine? DeleteConnection(int id)
+        public RoomAndMachineResponse? DeleteConnection(int id)
         {
             RoomAndMachine roomAndMachineToDelete = context.Set<RoomAndMachine>().SingleOrDefault(rm=>rm.Id==id);
             if (roomAndMachineToDelete == null)
@@ -140,7 +148,7 @@ namespace SlimFitGym.EFData.Repositories
 
             this.context.Set<RoomAndMachine>().Remove(roomAndMachineToDelete);
             this.context.SaveChanges();
-            return roomAndMachineToDelete;
+            return new RoomAndMachineResponse(roomAndMachineToDelete);
         }
 
 
@@ -155,6 +163,8 @@ namespace SlimFitGym.EFData.Repositories
         {
             public int Id { get; set; }
             public string Name { get; set; }
+            public int MachineCount { get; set; }
         }
+
     }
 }

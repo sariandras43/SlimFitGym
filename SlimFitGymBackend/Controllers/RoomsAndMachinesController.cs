@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SlimFitGym.EFData.Repositories;
-using SlimFitGym.Models;
+using SlimFitGym.Models.Models;
+using SlimFitGym.Models.Requests;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -48,17 +50,18 @@ namespace SlimFitGymBackend.Controllers
 
         // POST api/<RoomsAndMachinesController>
         [HttpPost]
-        public IActionResult Post([FromBody] RoomAndMachine value)
+        public IActionResult Post([FromBody] RoomAndMachineRequest value)
         {
             return this.Execute(() =>
             {
-                return Ok(roomsAndMachinesRepository.ConnectRoomAndMachine(value));
+                var roomAndMachine = new RoomAndMachine() { Id=value.Id,MachineId=value.MachineId,RoomId=value.RoomId,MachineCount=value.MachineCount};
+                return Ok(roomsAndMachinesRepository.ConnectRoomAndMachine(roomAndMachine));
             });
         }
 
         // PUT api/<RoomsAndMachinesController>/5
         [HttpPut("{id}")]
-        public IActionResult Put([FromRoute]string id, [FromBody] RoomAndMachine value)
+        public IActionResult Put([FromRoute]string id, [FromBody] RoomAndMachineRequest value)
         {
             return this.Execute(() =>
             {

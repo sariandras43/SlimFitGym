@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SlimFitGym.EFData.Repositories;
-using SlimFitGym.Models;
+using SlimFitGym.Models.Models;
 
 namespace SlimFitGymBackend.Controllers
 {

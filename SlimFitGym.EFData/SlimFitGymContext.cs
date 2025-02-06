@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using SlimFitGym.Models;
+using SlimFitGym.Models.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +11,7 @@ namespace SlimFitGym.EFData
 {
     public class SlimFitGymContext : DbContext
     {
-        //public DbSet<Account> Accounts { get; set; } = null!;
-        public DbSet<Machine> Machines { get; set; } = null!;
         public DbSet<RoomAndMachine> RoomsAndMachines { get; set; } = null!;
-        public DbSet<Room> Rooms { get; set; } = null!;
         public string DbPath { get; }
 
         public SlimFitGymContext()
@@ -43,7 +40,7 @@ namespace SlimFitGym.EFData
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
+            //add-migration XYZ -Project SlimFitGym.EFData -StartupProject SlimFitGym.EFData
 
             modelBuilder.Entity<Machine>().HasData
             (
@@ -56,12 +53,12 @@ namespace SlimFitGym.EFData
                 new Room() { Id = 1, Name = "Futós szoba", Description = "", RecommendedPeople = 15 },
                 new Room() { Id = 2, Name = "Biciklizős Szoba", Description = "", RecommendedPeople = 10 }
             );
-
             modelBuilder.Entity<RoomAndMachine>().HasData
             (
-                new RoomAndMachine() { Id = 1, MachineId = 1, RoomId = 2 },
-                new RoomAndMachine() { Id = 2, MachineId = 2, RoomId = 1 }
+                new { Id = 1, MachineId = 1, RoomId = 2, MachineCount=1 },
+                new { Id = 2, MachineId = 2, RoomId = 1, MachineCount = 4 }
             );
+
 
 
         }
