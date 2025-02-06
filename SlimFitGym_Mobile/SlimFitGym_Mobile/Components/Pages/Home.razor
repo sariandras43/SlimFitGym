@@ -3,4 +3,129 @@
 
 <Header/>
 
+<div class="d-flex justify-content-center">
+    <NavLink id="qrWidget" href="/QRcheckin" class="m-3 d-flex justify-content-center align-items-center">
+        <img src="data:image/png;base64,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" alt="qr-code--v2">
+    </NavLink>
+</div>
+
+
+<div class="container mt-4 carousel-container">
+    <!-- Érvényes bérleteid -->
+    <h3 class="section-title">Érvényes bérleteid</h3>
+
+    @if (validPlans.Any())
+    {
+        <div id="plansCarousel" class="carousel slide" >
+            <div class="carousel-indicators">
+                @for (int i = 0; i < validPlans.Count; i++)
+                {
+                    <button type="button" data-bs-target="#plansCarousel" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")"></button>
+                }
+            </div>
+            <div class="carousel-inner">
+                @for (int i = 0; i < validPlans.Count; i++)
+                {
+                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                        <div class="card home-card">
+                            <div class="card-body">
+                                <h5 class="card-title">@validPlans[i].Name</h5>
+                                <p class="card-text">🎟 Hátralévő belépések: <b>@validPlans[i].RemainingEntries</b></p>
+                                <p class="card-text">📅 Érvényes eddig: <b>@validPlans[i].ValidTo.ToString("yyyy.MM.dd")</b></p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#plansCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#plansCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    }
+    else
+    {
+        <p class="text-muted">Nincsenek érvényes bérleteid.</p>
+    }
+
+    <hr class="my-4" />
+
+    <!-- Edzéseid -->
+    <h3 class="section-title">Edzéseid</h3>
+
+    @if (trainings.Any())
+    {
+        <div id="trainingsCarousel" class="carousel slide" >
+            <div class="carousel-indicators">
+                @for (int i = 0; i < trainings.Count; i++)
+                {
+                    <button type="button" data-bs-target="#trainingsCarousel" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")"></button>
+                }
+            </div>
+            <div class="carousel-inner">
+                @for (int i = 0; i < trainings.Count; i++)
+                {
+                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                        <div class="card home-card">
+                            <div class="card-body">
+                                <h5 class="card-title">@trainings[i].Name</h5>
+                                <p class="card-text">📅 Dátum: <b>@trainings[i].Date.ToString("yyyy.MM.dd HH:mm")</b></p>
+                                <p class="card-text">🏋️ Edző: <b>@trainings[i].Coach</b></p>
+                                <p class="card-text">📍 Helyszín: <b>@trainings[i].RoomId</b></p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#trainingsCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#trainingsCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    }
+    else
+    {
+        <p class="text-muted">Nincsenek tervezett edzéseid.</p>
+    }
+</div>
+
 <Navbar/>
+
+@code {
+// Dummy data
+    private List<Plan> validPlans = new List<Plan>
+    {
+        new Plan { Name = "Havi Bérlet", RemainingEntries = 10, ValidTo = DateTime.Now.AddDays(30) },
+        new Plan { Name = "Heti Bérlet", RemainingEntries = 5, ValidTo = DateTime.Now.AddDays(7) }
+    };
+
+    private List<Training> trainings = new List<Training>
+    {
+        new Training { Name = "CrossFit", Date = DateTime.Now.AddDays(2).AddHours(18), Coach="Józsi", RoomId = 1 },
+        new Training { Name = "Súlyemelés", Date = DateTime.Now.AddDays(5).AddHours(17),Coach = "Béla", RoomId = 1 }
+    };
+
+    private class Plan
+    {
+        public string Name { get; set; }
+        public int RemainingEntries { get; set; }
+        public DateTime ValidTo { get; set; }
+    }
+    private class Training
+    {
+        public string Name { get; set; }
+        public DateTime Date { get; set; }
+        public string Coach { get; set; }
+        public int RoomId { get; set; }
+    }
+}
+
+

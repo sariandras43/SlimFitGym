@@ -122,3 +122,26 @@ h1:focus {
     box-shadow: none;
     border: none;
 }
+
+/*Home*/
+#qrWidget {
+    width: 15vh;
+    height: 15vh;
+}
+
+.carousel-container {
+    margin: 0 auto;
+}
+
+.section-title {
+    text-align: left;
+    margin-top: 1rem;
+    margin-left: 0.5rem;
+    font-weight: bold;
+}
+
+.home-card {
+    max-width: 90%;
+    border-radius: 15px;
+    margin: 0 auto;
+}
