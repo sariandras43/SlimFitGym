@@ -1,11 +1,69 @@
-﻿@page "/machines"
+﻿@inject NavigationManager NavigationManager
+@page "/machines"
 
 <Header />
-<h3>Machines</h3>
 
+<div class="container mt-4 d-flex flex-column">
+    <div class="sticky-top bg-white py-3">
+        <h2 class="text-center fw-bold">Gépeink</h2>
 
-<Navbar />
+        <div class="mb-3">
+            <input type="text" class="form-control border-secondary" placeholder="Keresés" @bind="searchText" @bind:event="oninput" />
+        </div>
+    </div>
+    @if (!filteredMachines.Any())
+    {
+        <p class="text-muted text-center">Nincs találat.</p>
+    }
+    else
+    {
+    <div id="machinesList" class="overflow-auto flex-grow-1">
+        <div class="row row-cols-2 g-4">
+            @foreach (var machine in filteredMachines)
+            {
+                var machineUrl = $"/machineDetails/{machine.Id}";
+
+                <div class="col d-flex justify-content-center">
+                        <NavLink href="@machineUrl" class="card border rounded shadow-sm text-decoration-none w-100">
+                        <img src="@machine.ImageUrl" class="card-img-top p-2" alt="@machine.Name">
+                        <div class="card-body text-center p-2">
+                            <p class="fw-bold text-dark mb-0">@machine.Name</p>
+                        </div>
+                    </NavLink>
+                </div>
+            }
+        </div>
+    </div>
+    }
+</div>
+
+<Navbar/>
 
 @code {
+    private string searchText = string.Empty;
 
+    private List<Machine> filteredMachines => machinesList
+        .Where(m => m.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+        .ToList();
+
+
+    // mock data
+    private List<Machine> machinesList = new()
+    {
+        new Machine { Id = 1, Name = "Treadmill", ImageUrl = "https://example.com/treadmill.jpg" },
+        new Machine { Id = 2, Name = "Elliptical", ImageUrl = "https://example.com/elliptical.jpg" },
+        new Machine { Id = 3, Name = "Stationary Bike", ImageUrl = "https://example.com/bike.jpg" },
+        new Machine { Id = 4, Name = "Rowing Machine", ImageUrl = "https://example.com/rowing.jpg" },
+        new Machine { Id = 5, Name = "Rowing Machine", ImageUrl = "https://example.com/rowing.jpg" },
+        new Machine { Id = 6, Name = "Rowing Machine", ImageUrl = "https://example.com/rowing.jpg" },
+        new Machine { Id = 7, Name = "Rowing Machine", ImageUrl = "https://example.com/rowing.jpg" },
+        new Machine { Id = 8, Name = "Rowing Machine", ImageUrl = "https://example.com/rowing.jpg" },
+        new Machine { Id = 9, Name = "Rowing Machine", ImageUrl = "https://example.com/rowing.jpg" },
+    };
+    private class Machine
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string ImageUrl { get; set; }
+    }
 }

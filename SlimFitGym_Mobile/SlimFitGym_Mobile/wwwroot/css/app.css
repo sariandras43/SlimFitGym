@@ -116,6 +116,11 @@ h1:focus {
     font-weight: bold;
 }
 
+#navbar {
+    z-index: 999;
+    background-color: white;
+}
+
 /*Header:*/
 #logoutDropdown:focus, #logoutDropdown:active {
     outline: none;
@@ -144,4 +149,11 @@ h1:focus {
     max-width: 90%;
     border-radius: 15px;
     margin: 0 auto;
+}
+
+/*Machines*/
+
+#machinesList img {
+    height: 150px;
+    object-fit: cover;
 }
