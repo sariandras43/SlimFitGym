@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SlimFitGym.EFData;
 
@@ -10,9 +11,11 @@ using SlimFitGym.EFData;
 namespace SlimFitGym.EFData.Migrations
 {
     [DbContext(typeof(SlimFitGymContext))]
-    partial class SlimFitGymContextModelSnapshot : ModelSnapshot
+    [Migration("20250206152037_New_tables_Accounts_Reservations_Trainings")]
+    partial class New_tables_Accounts_Reservations_Trainings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.1");
@@ -240,11 +243,6 @@ namespace SlimFitGym.EFData.Migrations
                     b.Property<int>("MaxPeople")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("RoomId")
                         .HasColumnType("INTEGER");
 
@@ -267,7 +265,6 @@ namespace SlimFitGym.EFData.Migrations
                             Id = 1,
                             IsActive = true,
                             MaxPeople = 1,
-                            Name = "TRX edzés",
                             RoomId = 1,
                             TrainerId = 2,
                             TrainingEnd = new DateTime(2025, 2, 6, 18, 0, 0, 0, DateTimeKind.Unspecified),

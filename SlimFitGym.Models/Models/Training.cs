@@ -20,6 +20,9 @@ namespace SlimFitGym.Models.Models
         [Required, ForeignKey("Rooms")]
         public int RoomId { get; set; }
 
+        [Required, StringLength(100)]
+        public string Name{ get; set; }
+
         [Required]
         public DateTime TrainingStart { get; set; }
 
@@ -30,6 +33,6 @@ namespace SlimFitGym.Models.Models
         public int MaxPeople { get; set; }
 
         [Required, DefaultValue(true)]
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 }

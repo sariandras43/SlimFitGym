@@ -12,12 +12,14 @@ namespace SlimFitGym.EFData
     public class SlimFitGymContext : DbContext
     {
         public DbSet<RoomAndMachine> RoomsAndMachines { get; set; } = null!;
+        public DbSet<Reservation> Reservations { get; set; } = null!;
         public string DbPath { get; }
 
         public SlimFitGymContext()
         {
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
+            //TODO: write it into a config file
             DbPath = System.IO.Path.Join(path, "slimfitgym.db");
         }
 
@@ -33,7 +35,6 @@ namespace SlimFitGym.EFData
         {
             if (!options.IsConfigured)
             {
-
                 options.UseSqlite($"Data Source={DbPath}");
             }
         }
@@ -59,6 +60,22 @@ namespace SlimFitGym.EFData
                 new { Id = 2, MachineId = 2, RoomId = 1, MachineCount = 4 }
             );
 
+            modelBuilder.Entity<Account>().HasData
+            (
+                new Account() { Id=1,Name="admin",Password="admin",Email="admin@gmail.com",Phone="+36123456789",Role="admin"},
+                new Account() { Id = 2, Name = "kazmer", Password = "kazmer", Email = "kazmer@gmail.com", Phone = "+36123456799", Role = "trainer" },
+                new Account() { Id = 3, Name = "pista", Password = "pista", Email = "pista@gmail.com", Phone = "+36123456788", Role = "user" }
+            );
+
+            modelBuilder.Entity<Training>().HasData
+            (
+                new Training() { Id=1, Name="TRX edzés",RoomId=1,TrainerId=2,MaxPeople=1,TrainingStart=new DateTime(2025,2,6,17,0,0),TrainingEnd= new DateTime(2025, 2, 6, 18, 0, 0) }
+            );
+
+            modelBuilder.Entity<Reservation>().HasData
+            (
+                new Reservation() { Id=1,TrainingId=1,AccountId=3}
+            );
 
 
         }

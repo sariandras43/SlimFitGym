@@ -17,6 +17,7 @@ namespace SlimFitGym.Data.Repository
             service.AddScoped<MachinesRepository>();
             service.AddScoped<RoomsRepository>();
             service.AddScoped<RoomsAndMachinesRepository>();
+            service.AddScoped<TrainingsRepository>();
             service.AddDbContext<SlimFitGymContext>();
         }
     }

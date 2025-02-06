@@ -18,5 +18,8 @@ namespace SlimFitGym.Models.Models
 
         [Required, ForeignKey("Accounts")]
         public int AccountId { get; set; }
+
+        public Account Account { get; set; }
+        public Training Training { get; set; }
     }
 }

@@ -18,10 +18,13 @@ namespace SlimFitGym.Models.Models
         [StringLength(13), Required]
         public string Phone { get; set; }
 
+        [Required,StringLength(255)]
+        public string Password { get; set; }
+
         [Required]
         public string Role { get; set; }
 
         [Required, DefaultValue(true)]
-        public bool isActive { get; set; }
+        public bool isActive { get; set; } = true;
     }
 }
