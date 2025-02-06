@@ -60,6 +60,8 @@ namespace SlimFitGym.EFData
                 new { Id = 2, MachineId = 2, RoomId = 1, MachineCount = 4 }
             );
 
+            //For developing only, in production hasing+salting will be used!!
+
             modelBuilder.Entity<Account>().HasData
             (
                 new Account() { Id=1,Name="admin",Password="admin",Email="admin@gmail.com",Phone="+36123456789",Role="admin"},

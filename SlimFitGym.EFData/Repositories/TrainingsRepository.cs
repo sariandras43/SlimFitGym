@@ -119,7 +119,7 @@ namespace SlimFitGym.EFData.Repositories
         public Training? DeleteTraining(int id)
         {
             if (id <= 0)
-                return null;
+                throw new Exception("Érvénytelen azonosító.");
             var trainingToDelete = this.context.Set<Training>().SingleOrDefault(t => t.Id == id);
             if (trainingToDelete == null)
                 return null;
