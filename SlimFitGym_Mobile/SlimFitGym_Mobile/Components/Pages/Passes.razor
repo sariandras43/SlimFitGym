@@ -1,0 +1,55 @@
+﻿@page "/passes"
+
+<Header />
+
+<div class="container mt-2 d-flex flex-column">
+    <div class="sticky-top py-3 bg-white text-center border-bottom">
+        <h2 class="fw-bold">Jegyek és bérletek</h2>
+    </div>
+
+    <div class="overflow-auto flex-grow-1">
+        <div class="row row-cols-1 g-4">
+            @foreach (var plan in plans)
+            {
+                <div class="col d-flex justify-content-center">
+                    <div class="card p-3 w-100 border rounded shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="fw-bold">@plan.Name</h5>
+                                <h4 class="fw-bold text-primary">$@plan.Price</h4>
+                            </div>
+                            <p class="text-muted">@plan.Description</p>
+                            <NavLink href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="btn btn-primary w-100">Vásárlás</NavLink>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<Navbar />
+
+@code {
+    private class Plan
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public int Price { get; set; }
+    }
+
+    private List<Plan> plans = new()
+    {
+        new Plan { Id = 1 ,Name = "Megnevezés", Description = "Marketing sallang", Price = 5000 },
+        new Plan { Id = 2 ,Name = "Megnevezés", Description = "Marketing sallang", Price = 5000 },
+        new Plan { Id = 3 ,Name = "Megnevezés", Description = "Marketing sallang", Price = 5000 },
+        new Plan { Id = 4 ,Name = "Megnevezés", Description = "Marketing sallang", Price = 5000 },
+        new Plan { Id = 5 ,Name = "Megnevezés", Description = "Marketing sallang", Price = 5000 },
+        new Plan { Id = 6 ,Name = "Megnevezés", Description = "Marketing sallang", Price = 5000 },
+        new Plan { Id = 7 ,Name = "Megnevezés", Description = "Marketing sallang", Price = 5000 },
+        new Plan { Id = 8 ,Name = "Megnevezés", Description = "Marketing sallang", Price = 5000 },
+        new Plan { Id = 9 ,Name = "Megnevezés", Description = "Marketing sallang", Price = 5000 },
+    };
+}
