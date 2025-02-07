@@ -1,4 +1,5 @@
 ﻿@page "/trainings"
+@using SlimFitGym_Mobile.Models
 @inject IJSRuntime JS
 
 <Header/>
@@ -17,9 +18,9 @@
                 <div class="card col d-flex m-2 me-3 ms-3 w-75 @(training.Id % 2 == 0 ? "me-auto" : "ms-auto")">
                     <div class="card-body">
                         <h5 class="card-title">@training.Name</h5>
-                        <p class="card-text">🏋️ Edző: <b>@training.Coach</b></p>
-                        <p class="card-text">📅 Dátum: <b>@training.Date.ToString("yyyy.MM.dd HH:mm")</b></p>
-                        <p class="card-text">📖 @training.Description</p>
+                        <p class="card-text">🏋️ Edző: <b>@training.TrainerId</b></p>
+                        <p class="card-text">📅 Dátum: <b>@training.TrainingStart.ToString("yyyy.MM.dd HH:mm")</b></p>
+                        <p class="card-text">Férőhelyek: @training.MaxPeople</p>
 
                         <button class="btn @(isSignedUp ? "btn-danger" : "btn-primary") float-end"
                                 data-bs-toggle="modal"
@@ -52,27 +53,7 @@
 <Navbar />
 
 @code {
-    private class Training
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Coach { get; set; }
-        public DateTime Date { get; set; }
-        public string Description { get; set; }
-    }
-
-    private List<Training> trainings = new()
-    {
-        new Training { Id = 1, Name = "Cardio", Coach = "John Doe", Description = "Improve endurance with high-intensity cardio.", Date = DateTime.Now },
-        new Training { Id = 2, Name = "Strength", Coach = "Jane Doe", Description = "Build muscle and increase strength.", Date = DateTime.Now },
-        new Training { Id = 3, Name = "Yoga", Coach = "John Doe", Description = "Relax and stretch with guided yoga.", Date = DateTime.Now },
-        new Training { Id = 4, Name = "Pilates", Coach = "Jane Doe", Description = "Core-strengthening Pilates exercises.", Date = DateTime.Now },
-        new Training { Id = 5, Name = "Zumba", Coach = "John Doe", Description = "Dance-based workout for fun and fitness.", Date = DateTime.Now },
-        new Training { Id = 6, Name = "Spinning", Coach = "Jane Doe", Description = "High-energy cycling for calorie burning.", Date = DateTime.Now },
-        new Training { Id = 7, Name = "Crossfit", Coach = "John Doe", Description = "Intense functional training and lifting.", Date = DateTime.Now },
-        new Training { Id = 8, Name = "HIIT", Coach = "Jane Doe", Description = "Short bursts of intense exercise.", Date = DateTime.Now },
-        new Training { Id = 9, Name = "Pilates", Coach = "John Doe", Description = "Improve flexibility and posture.", Date = DateTime.Now },
-    };
+    private List<Training> trainings = Training.GetTrainings();
 
     private HashSet<int> signedUpTrainings = new();
     private string modalTitle = "Biztosan szeretnél jelentkezni?";

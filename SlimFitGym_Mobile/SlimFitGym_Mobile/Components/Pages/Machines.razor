@@ -1,4 +1,5 @@
 ﻿@inject NavigationManager NavigationManager
+@using SlimFitGym_Mobile.Models
 @page "/machines"
 
 <Header />
@@ -25,8 +26,8 @@
 
                 <div class="col d-flex justify-content-center">
                         <NavLink href="/machineDetails" class="card border rounded shadow-sm text-decoration-none w-100">
-                        <img src="@machine.ImageUrl" class="card-img-top p-2" alt="@machine.Name">
                         <div class="card-body text-center p-2">
+                            <img src="#" class="w-50 h-75" alt="Alternate Text" />
                             <p class="fw-bold text-dark mb-0">@machine.Name</p>
                         </div>
                     </NavLink>
@@ -40,30 +41,11 @@
 <Navbar/>
 
 @code {
+    private List<Machine> machinesList = Machine.GetMachines();
     private string searchText = string.Empty;
 
     private List<Machine> filteredMachines => machinesList
         .Where(m => m.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase))
         .ToList();
 
-
-    // mock data
-    private List<Machine> machinesList = new()
-    {
-        new Machine { Id = 1, Name = "Treadmill", ImageUrl = "https://example.com/treadmill.jpg" },
-        new Machine { Id = 2, Name = "Elliptical", ImageUrl = "https://example.com/elliptical.jpg" },
-        new Machine { Id = 3, Name = "Stationary Bike", ImageUrl = "https://example.com/bike.jpg" },
-        new Machine { Id = 4, Name = "Rowing Machine", ImageUrl = "https://example.com/rowing.jpg" },
-        new Machine { Id = 5, Name = "Rowing Machine", ImageUrl = "https://example.com/rowing.jpg" },
-        new Machine { Id = 6, Name = "Rowing Machine", ImageUrl = "https://example.com/rowing.jpg" },
-        new Machine { Id = 7, Name = "Rowing Machine", ImageUrl = "https://example.com/rowing.jpg" },
-        new Machine { Id = 8, Name = "Rowing Machine", ImageUrl = "https://example.com/rowing.jpg" },
-        new Machine { Id = 9, Name = "Rowing Machine", ImageUrl = "https://example.com/rowing.jpg" },
-    };
-    private class Machine
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string ImageUrl { get; set; }
-    }
 }

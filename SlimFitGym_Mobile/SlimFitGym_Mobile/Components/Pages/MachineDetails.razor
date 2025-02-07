@@ -1,4 +1,5 @@
 ﻿@page "/machineDetails"
+@using SlimFitGym_Mobile.Models
 
 <Header />
 <div class="border rounded-3 d-inline-block mt-3">
@@ -12,7 +13,7 @@
         @* image carousel *@
         <div id="plansCarousel" class="carousel slide">
             <div class="carousel-inner">
-                @for (int i = 0; i < machine.ImageUrls.Length; i++)
+                @* @for (int i = 0; i < machine.ImageUrls.Length; i++)
                 {
                     <div class="carousel-item @(i == 0 ? "active" : "")">
                         <div class="card home-card">
@@ -21,7 +22,7 @@
                             </div>
                         </div>
                     </div>
-                }
+                } *@
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#plansCarousel" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -46,19 +47,5 @@
     [Parameter]
     public int Id { get; set; }
 
-    private class Machine
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string[] ImageUrls { get; set; }
-    }
-
-    private Machine machine = new Machine
-    {
-        Id = 1,
-        Name = "Treadmill",
-        Description = "This is a treadmill.",
-            ImageUrls = ["https://example.com/treadmill.jpg", "https://example.com/treadmill.jpg"]
-    };
+    private Machine machine = Machine.GetMachines()[0];
 }

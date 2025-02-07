@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @page "/"
+@using SlimFitGym_Mobile.Models
 
 <Header/>
 
@@ -13,18 +14,18 @@
 <div class="container mt-4 carousel-container">
     <h3 class="section-title">Érvényes bérleteid</h3>
 
-    @if (validPlans.Any())
+    @if (validPasses.Any())
     {
         <div id="plansCarousel" class="carousel slide" >
             <div class="carousel-inner">
-                @for (int i = 0; i < validPlans.Count; i++)
+                @for (int i = 0; i < validPasses.Count; i++)
                 {
                     <div class="carousel-item @(i == 0 ? "active" : "")">
                         <div class="card home-card">
                             <div class="card-body">
-                                <h5 class="card-title">@validPlans[i].Name</h5>
-                                <p class="card-text">🎟 Hátralévő belépések: <b>@validPlans[i].RemainingEntries</b></p>
-                                <p class="card-text">📅 Érvényes eddig: <b>@validPlans[i].ValidTo.ToString("yyyy.MM.dd")</b></p>
+                                <h5 class="card-title">@validPasses[i].Name</h5>
+                                <p class="card-text">🎟 Hátralévő belépések: <b>@validPasses[i].MaxEntries</b></p>
+                                @* <p class="card-text">📅 Érvényes eddig: <b>@validPasses[i]. .ToString("yyyy.MM.dd")</b></p> *@
                             </div>
                         </div>
                     </div>
@@ -58,8 +59,8 @@
                         <div class="card home-card">
                             <div class="card-body">
                                 <h5 class="card-title">@trainings[i].Name</h5>
-                                <p class="card-text">📅 Dátum: <b>@trainings[i].Date.ToString("yyyy.MM.dd HH:mm")</b></p>
-                                <p class="card-text">🏋️ Edző: <b>@trainings[i].Coach</b></p>
+                                <p class="card-text">📅 Dátum: <b>@trainings[i].TrainingStart.ToString("yyyy.MM.dd HH:mm")</b></p>
+                                <p class="card-text">🏋️ Edző: <b>@trainings[i].TrainerId</b></p>
                                 <p class="card-text">📍 Helyszín: <b>@trainings[i].RoomId</b></p>
                             </div>
                         </div>
@@ -85,32 +86,10 @@
 <Navbar/>
 
 @code {
-// Dummy data
-    private List<Plan> validPlans = new List<Plan>
-    {
-        new Plan { Name = "Havi Bérlet", RemainingEntries = 10, ValidTo = DateTime.Now.AddDays(30) },
-        new Plan { Name = "Heti Bérlet", RemainingEntries = 5, ValidTo = DateTime.Now.AddDays(7) }
-    };
+    // Dummy data
+    private List<Pass> validPasses = Pass.GetPasses();
 
-    private List<Training> trainings = new List<Training>
-    {
-        new Training { Name = "CrossFit", Date = DateTime.Now.AddDays(2).AddHours(18), Coach="Józsi", RoomId = 1 },
-        new Training { Name = "Súlyemelés", Date = DateTime.Now.AddDays(5).AddHours(17),Coach = "Béla", RoomId = 1 }
-    };
-
-    private class Plan
-    {
-        public string Name { get; set; }
-        public int RemainingEntries { get; set; }
-        public DateTime ValidTo { get; set; }
-    }
-    private class Training
-    {
-        public string Name { get; set; }
-        public DateTime Date { get; set; }
-        public string Coach { get; set; }
-        public int RoomId { get; set; }
-    }
+    private List<Training> trainings = Training.GetTrainings();
 }
 
 
