@@ -1,11 +1,102 @@
 ﻿@page "/trainings"
+@inject IJSRuntime JS
 
-<Header />
-<h3>Trainings</h3>
+<Header/>
 
+<div class="container mt-4 d-flex flex-column">
+    <div class="sticky-top py-3 bg-white">
+        <h2 class="text-center fw-bold">Elérhető edzésprogramok</h2>
+    </div>
+
+    <div class="overflow-auto flex-grow-1">
+        <div class="row row-cols-1 g-4">
+            @foreach (var training in trainings)
+            {
+                bool isSignedUp = signedUpTrainings.Contains(training.Id);
+
+                <div class="card col d-flex m-2 me-3 ms-3 w-75 @(training.Id % 2 == 0 ? "me-auto" : "ms-auto")">
+                    <div class="card-body">
+                        <h5 class="card-title">@training.Name</h5>
+                        <p class="card-text">🏋️ Edző: <b>@training.Coach</b></p>
+                        <p class="card-text">📅 Dátum: <b>@training.Date.ToString("yyyy.MM.dd HH:mm")</b></p>
+                        <p class="card-text">📖 @training.Description</p>
+
+                        <button class="btn @(isSignedUp ? "btn-danger" : "btn-primary") float-end"
+                                data-bs-toggle="modal"
+                                data-bs-target="#confirmModal"
+                                @onclick="() => ShowConfirmation(training.Id, isSignedUp)">
+                            @(isSignedUp ? "Visszavonás" : "Jelentkezés")
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@modalTitle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Vissza</button>
+                <button type="button" class="btn btn-primary" @onclick="ConfirmAction">Igen</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <Navbar />
 
 @code {
+    private class Training
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Coach { get; set; }
+        public DateTime Date { get; set; }
+        public string Description { get; set; }
+    }
 
+    private List<Training> trainings = new()
+    {
+        new Training { Id = 1, Name = "Cardio", Coach = "John Doe", Description = "Improve endurance with high-intensity cardio.", Date = DateTime.Now },
+        new Training { Id = 2, Name = "Strength", Coach = "Jane Doe", Description = "Build muscle and increase strength.", Date = DateTime.Now },
+        new Training { Id = 3, Name = "Yoga", Coach = "John Doe", Description = "Relax and stretch with guided yoga.", Date = DateTime.Now },
+        new Training { Id = 4, Name = "Pilates", Coach = "Jane Doe", Description = "Core-strengthening Pilates exercises.", Date = DateTime.Now },
+        new Training { Id = 5, Name = "Zumba", Coach = "John Doe", Description = "Dance-based workout for fun and fitness.", Date = DateTime.Now },
+        new Training { Id = 6, Name = "Spinning", Coach = "Jane Doe", Description = "High-energy cycling for calorie burning.", Date = DateTime.Now },
+        new Training { Id = 7, Name = "Crossfit", Coach = "John Doe", Description = "Intense functional training and lifting.", Date = DateTime.Now },
+        new Training { Id = 8, Name = "HIIT", Coach = "Jane Doe", Description = "Short bursts of intense exercise.", Date = DateTime.Now },
+        new Training { Id = 9, Name = "Pilates", Coach = "John Doe", Description = "Improve flexibility and posture.", Date = DateTime.Now },
+    };
+
+    private HashSet<int> signedUpTrainings = new();
+    private string modalTitle = "Biztosan szeretnél jelentkezni?";
+    private int selectedTrainingId;
+
+    private void ShowConfirmation(int trainingId, bool isSignedUp)
+    {
+        selectedTrainingId = trainingId;
+        modalTitle = isSignedUp ? "Biztosan szeretnéd visszavonni a jelentkezést?" : "Biztosan szeretnél jelentkezni?";
+        StateHasChanged();
+    }
+
+    private async Task ConfirmAction()
+    {
+        if (signedUpTrainings.Contains(selectedTrainingId))
+        {
+            signedUpTrainings.Remove(selectedTrainingId);
+        }
+        else
+        {
+            signedUpTrainings.Add(selectedTrainingId);
+        }
+
+        StateHasChanged();
+        await JS.InvokeVoidAsync("closeModal", "confirmModal");
+    }
 }

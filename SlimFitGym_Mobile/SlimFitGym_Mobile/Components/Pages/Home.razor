@@ -11,18 +11,11 @@
 
 
 <div class="container mt-4 carousel-container">
-    <!-- Érvényes bérleteid -->
     <h3 class="section-title">Érvényes bérleteid</h3>
 
     @if (validPlans.Any())
     {
         <div id="plansCarousel" class="carousel slide" >
-            <div class="carousel-indicators">
-                @for (int i = 0; i < validPlans.Count; i++)
-                {
-                    <button type="button" data-bs-target="#plansCarousel" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")"></button>
-                }
-            </div>
             <div class="carousel-inner">
                 @for (int i = 0; i < validPlans.Count; i++)
                 {
@@ -52,20 +45,12 @@
         <p class="text-muted">Nincsenek érvényes bérleteid.</p>
     }
 
-    <hr class="my-4" />
 
-    <!-- Edzéseid -->
     <h3 class="section-title">Edzéseid</h3>
 
     @if (trainings.Any())
     {
         <div id="trainingsCarousel" class="carousel slide" >
-            <div class="carousel-indicators">
-                @for (int i = 0; i < trainings.Count; i++)
-                {
-                    <button type="button" data-bs-target="#trainingsCarousel" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")"></button>
-                }
-            </div>
             <div class="carousel-inner">
                 @for (int i = 0; i < trainings.Count; i++)
                 {

@@ -118,7 +118,6 @@ h1:focus {
 
 #navbar {
     z-index: 999;
-    background-color: white;
 }
 
 /*Header:*/
@@ -153,7 +152,7 @@ h1:focus {
 
 /*Machines*/
 
-#machinesList img {
+#machinesList img, #detailImage {
     height: 150px;
     object-fit: cover;
 }

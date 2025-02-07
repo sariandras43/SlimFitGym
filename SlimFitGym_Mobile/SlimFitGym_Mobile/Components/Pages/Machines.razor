@@ -4,7 +4,7 @@
 <Header />
 
 <div class="container mt-4 d-flex flex-column">
-    <div class="sticky-top bg-white py-3">
+    <div class="sticky-top py-3">
         <h2 class="text-center fw-bold">Gépeink</h2>
 
         <div class="mb-3">
@@ -24,7 +24,7 @@
                 var machineUrl = $"/machineDetails/{machine.Id}";
 
                 <div class="col d-flex justify-content-center">
-                        <NavLink href="@machineUrl" class="card border rounded shadow-sm text-decoration-none w-100">
+                        <NavLink href="/machineDetails" class="card border rounded shadow-sm text-decoration-none w-100">
                         <img src="@machine.ImageUrl" class="card-img-top p-2" alt="@machine.Name">
                         <div class="card-body text-center p-2">
                             <p class="fw-bold text-dark mb-0">@machine.Name</p>
