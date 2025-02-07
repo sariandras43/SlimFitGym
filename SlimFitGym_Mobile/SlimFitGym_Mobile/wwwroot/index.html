@@ -61,6 +61,40 @@
             }
         };
 
+
+        async function startQRScanner(videoId, dotNetHelper) {
+            const video = document.getElementById(videoId);
+
+            // Access the camera
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+            video.srcObject = stream;
+            video.play();
+
+            // Start scanning
+            scanQRCode(video, dotNetHelper);
+        }
+
+        function scanQRCode(video, dotNetHelper) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+
+            // Use jsQR to decode the QR code
+            const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+            if (code) {
+                // Pass the result back to Blazor
+                dotNetHelper.invokeMethodAsync('OnQRCodeScanned', code.data);
+            }
+
+            // Continue scanning
+            requestAnimationFrame(() => scanQRCode(video, dotNetHelper));
+        }
     </script>
 
 
