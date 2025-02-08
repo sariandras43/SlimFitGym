@@ -1,4 +1,6 @@
 ﻿@using SlimFitGym_Mobile.Models
+@using SlimFitGym_Mobile.Services
+@inject DataService DataService
 @page "/passes"
 
 <Header />
@@ -33,5 +35,12 @@
 <Navbar />
 
 @code {
-    private List<Pass> passes = Pass.GetPasses();
+    private List<PassModel> passes = PassModel.GetPasses();
+
+    // private List<PassModel>? passes = new List<PassModel>();
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     passes = await DataService.GetMachines();
+    // }
+
 }

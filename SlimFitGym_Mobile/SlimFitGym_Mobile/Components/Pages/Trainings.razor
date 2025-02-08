@@ -1,5 +1,7 @@
 ﻿@page "/trainings"
 @using SlimFitGym_Mobile.Models
+@using SlimFitGym_Mobile.Services
+@inject DataService DataService
 @inject IJSRuntime JS
 
 <Header/>
@@ -53,7 +55,12 @@
 <Navbar />
 
 @code {
-    private List<Training> trainings = Training.GetTrainings();
+    private List<TrainingModel> trainings = TrainingModel.GetTrainings();
+    // private List<TrainingModel>? trainings = new List<TrainingModel>();
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     trainings = await DataService.GetMachines();
+    // }
 
     private HashSet<int> signedUpTrainings = new();
     private string modalTitle = "Biztosan szeretnél jelentkezni?";

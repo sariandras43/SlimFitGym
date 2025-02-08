@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SlimFitGym_Mobile.Models
 {
-    public class Entry
+    public class EntryModel
     {
         public int Id { get; set; }
         public string AccountId { get; set; }

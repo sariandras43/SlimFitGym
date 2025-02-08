@@ -1,5 +1,7 @@
 ﻿@inject NavigationManager NavigationManager
+@inject DataService DataService
 @using SlimFitGym_Mobile.Models
+@using SlimFitGym_Mobile.Services
 @page "/machines"
 
 <Header />
@@ -41,10 +43,15 @@
 <Navbar/>
 
 @code {
-    private List<Machine> machinesList = Machine.GetMachines();
+    private List<MachineModel> machines = MachineModel.GetMachines();
+    // private List<MachineModel>? machines= new List<MachineModel>();
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     machines = await DataService.GetMachines();
+    // }
+    
     private string searchText = string.Empty;
-
-    private List<Machine> filteredMachines => machinesList
+    private List<MachineModel> filteredMachines => machines
         .Where(m => m.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase))
         .ToList();
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using SlimFitGym_Mobile.Services;
 
 namespace SlimFitGym_Mobile
 {
@@ -13,7 +14,9 @@ namespace SlimFitGym_Mobile
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 });
-
+            builder.Services.AddScoped<DataService>();
+            builder.Services.AddScoped<AuthService>();
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://yourbackend.com/api/") });
             builder.Services.AddMauiBlazorWebView();
 
 #if DEBUG
