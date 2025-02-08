@@ -33,5 +33,22 @@ namespace SlimFitGym_Mobile.Services
         //    var response = await _httpClient.PostAsync($"{apiBaseURL}auth/resetpassword", new StringContent($"{{\"email\":\"{email}\", \"new password\":\"{newPassword}\", \"new password again\":\"{newPasswordAgain}\"}}", Encoding.UTF8, "application/json"));
         //    return await response.Content.ReadAsStringAsync();
         //}
+
+        public bool IsValidEmail(string email)
+        {
+            string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+            return System.Text.RegularExpressions.Regex.IsMatch(email, pattern);
+        }
+
+        public bool IsValidPassword(string password)
+        {
+            // - Minimum 8 characters
+            // - At least one uppercase letter
+            // - At least one lowercase letter
+            // - At least one digit
+            // - At least one special character
+            string pattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\""\\|,.<>\/?]).{8,}$";
+            return System.Text.RegularExpressions.Regex.IsMatch(password, pattern);
+        }
     }
 }
