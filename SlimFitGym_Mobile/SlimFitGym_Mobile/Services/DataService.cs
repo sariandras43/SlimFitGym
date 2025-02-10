@@ -43,9 +43,9 @@ namespace SlimFitGym_Mobile.Services
         //    return await _httpClient.GetFromJsonAsync<List<PassModel>>($"{apiBaseURL}passes/{accountId}") ?? new List<PassModel>();
         //}
 
-        //public async Task<List<AccountModel>> GetAccounts()
+        //public async Task<List<AccountModel>> GetAccount(int id)
         //{
-        //    return await _httpClient.GetFromJsonAsync<List<AccountModel>>($"{apiBaseURL}accounts") ?? new List<AccountModel>();
+        //    return await _httpClient.GetFromJsonAsync<List<AccountModel>>($"{apiBaseURL}accounts/{id}") ?? new List<AccountModel>();
         //}
 
         //public async Task<List<EntryModel>> GetEntries()

@@ -49,7 +49,6 @@
 </div>
 
 @code {
-    public bool loggedIn = false;
     private string email;
     private string password;
     private string errorMessage;
@@ -74,8 +73,20 @@
         //     errorMessage = "A jelszó formátuma nem megfelelő!";
         //     return;
         // }
-        //AuthService.Login(email, password);
-        loggedIn = true;
+        // if (!AuthService.Login(email, password))
+        //     return;
+        //AccountModel.LoggedInUser = DataService.GetAccount(id);
+        AccountModel.LoggedInUser = new AccountModel
+        {
+            Id = 1,
+            Name = "John Doe",
+            Email = "john.doe@gmail.com",
+            Phone = "123",
+            Password = "Tr4iner_",
+            Role = "trainer",
+            isActive = true
+        };
+        // save logged user to local storage
         NavigationManager.NavigateTo("/");
     }
 }

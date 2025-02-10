@@ -17,5 +17,7 @@ namespace SlimFitGym_Mobile.Models
         public string Password { get; set; }
         public string Role { get; set; }
         public bool isActive { get; set; }
+        public static AccountModel? LoggedInUser { get; set; } = null;
+        
     }
 }

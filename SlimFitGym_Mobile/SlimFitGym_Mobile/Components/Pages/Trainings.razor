@@ -7,10 +7,21 @@
 <Header/>
 
 <div class="container mt-2 d-flex flex-column">
+@if (AccountModel.LoggedInUser?.Role == "trainer")
+{
+    <div class="sticky-top py-3 bg-white d-flex align-items-center justify-content-between">
+        <h2 class="text-center flex-grow-1 fw-bold">Elérhető edzésprogramok</h2>
+        <NavLink href="/addTraining">
+            <img class="fw-bold mb-2" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAc0lEQVR4nO2UMQqAMAxF3/Gsg3j/wULVQS8Rl05FpGATpeTBX/MgCR+cnzMDJ3AAk6V4ByRnsxRLERerIb5qK6SbVY9AvBn8NhEIT+KkIK1quPSVOACLgnQBBhrQz1fX4mIzxG9sRSzKwYwArDlNGslBiwtYs6fhOILl9QAAAABJRU5ErkJggg==" alt="plus-math">
+        </NavLink>
+    </div>
+}
+else
+{
     <div class="sticky-top py-3 bg-white">
         <h2 class="text-center fw-bold">Elérhető edzésprogramok</h2>
     </div>
-
+}
     <div class="overflow-auto flex-grow-1">
         <div class="row row-cols-1 g-4">
             @foreach (var training in trainings)

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using SlimFitGym_Mobile.Services;
+using Microsoft.AspNetCore.Components.WebView.Maui;
 
 namespace SlimFitGym_Mobile
 {
@@ -18,9 +19,13 @@ namespace SlimFitGym_Mobile
             builder.Services.AddScoped<AuthService>();
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://yourbackend.com/api/") });
             builder.Services.AddMauiBlazorWebView();
+            builder.Services.ConfigureMauiHandlers(handlers =>
+            {
+                handlers.AddHandler<BlazorWebView, BlazorWebViewHandler>();
+            });
 
 #if DEBUG
-    		builder.Services.AddBlazorWebViewDeveloperTools();
+            builder.Services.AddBlazorWebViewDeveloperTools();
     		builder.Logging.AddDebug();
 #endif
 

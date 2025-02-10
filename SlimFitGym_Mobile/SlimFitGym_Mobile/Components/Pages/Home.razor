@@ -14,75 +14,78 @@
 
 
 <div class="container mt-4 carousel-container">
+    @if (AccountModel.LoggedInUser?.Role != "trainer")
+    {
     <h3 class="section-title">Érvényes bérleteid</h3>
 
-    @if (validPasses.Any())
-    {
-        <div id="plansCarousel" class="carousel slide" >
-            <div class="carousel-inner">
-                @for (int i = 0; i < validPasses.Count; i++)
-                {
-                    <div class="carousel-item @(i == 0 ? "active" : "")">
-                        <div class="card home-card">
-                            <div class="card-body">
-                                <h5 class="card-title">@validPasses[i].Name</h5>
-                                <p class="card-text">🎟 Hátralévő belépések: <b>@validPasses[i].MaxEntries</b></p>
-                                @* <p class="card-text">📅 Érvényes eddig: <b>@validPasses[i]. .ToString("yyyy.MM.dd")</b></p> *@
+        @if (validPasses.Any())
+        {
+            <div id="plansCarousel" class="carousel slide" >
+                <div class="carousel-inner">
+                    @for (int i = 0; i < validPasses.Count; i++)
+                    {
+                        <div class="carousel-item @(i == 0 ? "active" : "")">
+                            <div class="card home-card">
+                                <div class="card-body">
+                                    <h5 class="card-title">@validPasses[i].Name</h5>
+                                    <p class="card-text">🎟 Hátralévő belépések: <b>@validPasses[i].MaxEntries</b></p>
+                                    @* <p class="card-text">📅 Érvényes eddig: <b>@validPasses[i]. .ToString("yyyy.MM.dd")</b></p> *@
+                                </div>
                             </div>
                         </div>
-                    </div>
-                }
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#plansCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#plansCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#plansCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#plansCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-        </div>
-    }
-    else
-    {
-        <p class="text-muted">Nincsenek érvényes bérleteid.</p>
+        }
+        else
+        {
+            <p class="text-muted">Nincsenek érvényes bérleteid.</p>
+        }
     }
 
 
-    <h3 class="section-title">Edzéseid</h3>
+        <h3 class="section-title">Edzéseid</h3>
 
-    @if (trainings.Any())
-    {
-        <div id="trainingsCarousel" class="carousel slide" >
-            <div class="carousel-inner">
-                @for (int i = 0; i < trainings.Count; i++)
-                {
-                    <div class="carousel-item @(i == 0 ? "active" : "")">
-                        <div class="card home-card">
-                            <div class="card-body">
-                                <h5 class="card-title">@trainings[i].Name</h5>
-                                <p class="card-text">📅 Dátum: <b>@trainings[i].TrainingStart.ToString("yyyy.MM.dd HH:mm")</b></p>
-                                <p class="card-text">🏋️ Edző: <b>@trainings[i].TrainerId</b></p>
-                                <p class="card-text">📍 Helyszín: <b>@trainings[i].RoomId</b></p>
+        @if (trainings.Any())
+        {
+            <div id="trainingsCarousel" class="carousel slide" >
+                <div class="carousel-inner">
+                    @for (int i = 0; i < trainings.Count; i++)
+                    {
+                        <div class="carousel-item @(i == 0 ? "active" : "")">
+                            <div class="card home-card">
+                                <div class="card-body">
+                                    <h5 class="card-title">@trainings[i].Name</h5>
+                                    <p class="card-text">📅 Dátum: <b>@trainings[i].TrainingStart.ToString("yyyy.MM.dd HH:mm")</b></p>
+                                    <p class="card-text">🏋️ Edző: <b>@trainings[i].TrainerId</b></p>
+                                    <p class="card-text">📍 Helyszín: <b>@trainings[i].RoomId</b></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                }
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#trainingsCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#trainingsCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#trainingsCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#trainingsCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-        </div>
-    }
-    else
-    {
-        <p class="text-muted">Nincsenek tervezett edzéseid.</p>
-    }
+        }
+        else
+        {
+            <p class="text-muted">Nincsenek tervezett edzéseid.</p>
+        }
 </div>
 
 <Navbar/>

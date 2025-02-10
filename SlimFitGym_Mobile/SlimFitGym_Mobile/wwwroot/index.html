@@ -61,40 +61,43 @@
             }
         };
 
+        /*Camera*/
+        window.startCamera = async (cameraFeed) => {
+            try {
+                console.log("📷 Attempting to start camera...");
 
-        async function startQRScanner(videoId, dotNetHelper) {
-            const video = document.getElementById(videoId);
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    console.error("🚨 navigator.mediaDevices.getUserMedia is not available!");
+                    return;
+                }
 
-            // Access the camera
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-            video.srcObject = stream;
-            video.play();
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                console.log("✅ Camera stream retrieved:", stream);
 
-            // Start scanning
-            scanQRCode(video, dotNetHelper);
-        }
+                const videoElement = document.getElementById(cameraFeed);
+                if (!videoElement) {
+                    console.error("🚨 Video element not found!");
+                    return;
+                }
 
-        function scanQRCode(video, dotNetHelper) {
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-
-            // Use jsQR to decode the QR code
-            const code = jsQR(imageData.data, imageData.width, imageData.height);
-
-            if (code) {
-                // Pass the result back to Blazor
-                dotNetHelper.invokeMethodAsync('OnQRCodeScanned', code.data);
+                videoElement.srcObject = stream;
+                await videoElement.play();
+                console.log("🎥 Camera started successfully!");
+            } catch (error) {
+                console.error("🚨 Error accessing camera:", error);
             }
+        };
 
-            // Continue scanning
-            requestAnimationFrame(() => scanQRCode(video, dotNetHelper));
-        }
+
+        window.stopCamera = (cameraFeed) => {
+            const videoElement = document.getElementById(cameraFeed);
+            if (videoElement && videoElement.srcObject) {
+                const stream = videoElement.srcObject;
+                const tracks = stream.getTracks();
+                tracks.forEach(track => track.stop());
+                videoElement.srcObject = null;
+            }
+        };
     </script>
 
 

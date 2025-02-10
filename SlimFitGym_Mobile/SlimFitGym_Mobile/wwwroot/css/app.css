@@ -150,6 +150,10 @@ h1:focus {
     margin: 0 auto;
 }
 
+.dropdown-menu {
+    z-index: 1050 !important;
+}
+
 /*Machines*/
 
 #machinesList img, #detailImage {

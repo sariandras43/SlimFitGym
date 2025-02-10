@@ -42,11 +42,6 @@ namespace SlimFitGym_Mobile.Services
 
         public bool IsValidPassword(string password)
         {
-            // - Minimum 8 characters
-            // - At least one uppercase letter
-            // - At least one lowercase letter
-            // - At least one digit
-            // - At least one special character
             string pattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\""\\|,.<>\/?]).{8,}$";
             return System.Text.RegularExpressions.Regex.IsMatch(password, pattern);
         }

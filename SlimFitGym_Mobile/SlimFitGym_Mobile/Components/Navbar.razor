@@ -22,10 +22,13 @@
             <div>Belépők</div>
         </NavLink>
 
-        <NavLink class="nav-item text-center custom-navlink" href="/QRcheckin" active-class="active">
-            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAABmUlEQVR4nO1WMUvDQBT+/kBJB5fsXQvFRQfBTC5d4tK5+AucOkoHMUNB+hO6ugXdXLq6tWuHQLeuVRBxihx8B49HeskdcdF+8Mi9l/fdl1xe7h1wxH9EDCB1WMS8IQ2MuThxE2GTWDpswLw9DYy5OKmP8ArAXFhRIfwF4EYIF4qzChGeA0gATDlxXiFs/K0QzjmekjsPFZ5yPFbCdwC+K944Z25JbrDwgBP1lPCWY/2Nc+aOGQsSLjiRtZ0QvgLwWSG8U5wiRLisqeoLWmtVHXGiGUkz+taeAayVbZi7PMCN4IFbks1VYu14s7yG68SQ3+4RQJfXvdilOoy/07rCRjXcRsIZ/Yz+SIlI4Y7iBgkfgv2dqswsv0TQUkeqmKwtOdmmorieFHfC+MSnuNKGv5OLazYO/MYGYqHbX8acF/oP5J6hpS3TwrUy3t84bdAkpPCHaoWvjL8BuAwVThxt0QqbhiEhu5MX0oYHAS3cY949l/gcwDVj/barWgon9BfivldVxw0Pe/YhTYs0OKF/Ku73fQ57R/wt/AAjS/kqMxH5qAAAAABJRU5ErkJggg==" alt="qr-code">
-            <div>QR Belépés</div>
-        </NavLink>
+        @if (AccountModel.LoggedInUser != null)
+        {
+            <NavLink class="nav-item text-center custom-navlink" href="/QRcheckin" active-class="active">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAABmUlEQVR4nO1WMUvDQBT+/kBJB5fsXQvFRQfBTC5d4tK5+AucOkoHMUNB+hO6ugXdXLq6tWuHQLeuVRBxihx8B49HeskdcdF+8Mi9l/fdl1xe7h1wxH9EDCB1WMS8IQ2MuThxE2GTWDpswLw9DYy5OKmP8ArAXFhRIfwF4EYIF4qzChGeA0gATDlxXiFs/K0QzjmekjsPFZ5yPFbCdwC+K944Z25JbrDwgBP1lPCWY/2Nc+aOGQsSLjiRtZ0QvgLwWSG8U5wiRLisqeoLWmtVHXGiGUkz+taeAayVbZi7PMCN4IFbks1VYu14s7yG68SQ3+4RQJfXvdilOoy/07rCRjXcRsIZ/Yz+SIlI4Y7iBgkfgv2dqswsv0TQUkeqmKwtOdmmorieFHfC+MSnuNKGv5OLazYO/MYGYqHbX8acF/oP5J6hpS3TwrUy3t84bdAkpPCHaoWvjL8BuAwVThxt0QqbhiEhu5MX0oYHAS3cY949l/gcwDVj/barWgon9BfivldVxw0Pe/YhTYs0OKF/Ku73fQ57R/wt/AAjS/kqMxH5qAAAAABJRU5ErkJggg==" alt="qr-code">
+                <div>QR Belépés</div>
+            </NavLink>
+        }
     </div>
 </nav>
 
