@@ -1,10 +1,11 @@
-$widht: 60%;
+
 $border_width: 4px;
 
 nav {
+  
   padding:  0.5em 2em 0.5em 2em;
   margin-inline: auto;
-  width: $widht;
+  width: min(90em, 85%);
   border-bottom-left-radius: var(--border-radius);
   border-bottom-right-radius: var(--border-radius);
   border-bottom: $border_width solid var(--tertiary-color);
@@ -24,12 +25,12 @@ nav {
     }
     li {
       list-style: none;
-      &:hover{
+      &:hover, &:focus-visible{
         transform: scale(1.05);
         
         transition: transform  0.1s ease-in-out;
       }
-      button {
+      .btn {
         font-size: 1.5rem;
         border-radius: 1em;
         border: none;
