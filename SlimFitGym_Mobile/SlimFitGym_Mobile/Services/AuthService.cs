@@ -1,7 +1,10 @@
-﻿using System;
+﻿using SlimFitGym_Mobile.Models;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace SlimFitGym_Mobile.Services
@@ -9,7 +12,8 @@ namespace SlimFitGym_Mobile.Services
     public class AuthService
     {
         private readonly HttpClient _httpClient;
-        private const string apiBaseURL = "backendurl/api/";
+        private const string apiBaseURL = "backendurl/api/"; 
+        public static event Action OnChange;
 
         public AuthService(HttpClient httpClient)
         {
@@ -44,6 +48,23 @@ namespace SlimFitGym_Mobile.Services
         {
             string pattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\""\\|,.<>\/?]).{8,}$";
             return System.Text.RegularExpressions.Regex.IsMatch(password, pattern);
+        }
+
+        public static void SaveUser(AccountModel user)
+        {
+            Preferences.Set("LoggedInUser", JsonSerializer.Serialize(user));
+            Debug.WriteLine($"saved: {user}");
+        }
+
+        public static AccountModel LoadUser()
+        {
+            var userData = Preferences.Get("LoggedInUser", null);
+            if (!string.IsNullOrEmpty(userData))
+            {
+                Debug.WriteLine($"loaded: {userData}");
+                return JsonSerializer.Deserialize<AccountModel>(userData);
+            }
+            return null;
         }
     }
 }

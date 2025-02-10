@@ -34,13 +34,15 @@ else
                         <p class="card-text">🏋️ Edző: <b>@training.TrainerId</b></p>
                         <p class="card-text">📅 Dátum: <b>@training.TrainingStart.ToString("yyyy.MM.dd HH:mm")</b></p>
                         <p class="card-text">Férőhelyek: @training.MaxPeople</p>
-
-                        <button class="btn @(isSignedUp ? "btn-danger" : "btn-primary") float-end"
-                                data-bs-toggle="modal"
-                                data-bs-target="#confirmModal"
-                                @onclick="() => ShowConfirmation(training.Id, isSignedUp)">
-                            @(isSignedUp ? "Visszavonás" : "Jelentkezés")
-                        </button>
+                        @if (AccountModel.LoggedInUser != null)
+                        {
+                            <button class="btn @(isSignedUp ? "btn-danger" : "btn-primary") float-end"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#confirmModal"
+                                    @onclick="() => ShowConfirmation(training.Id, isSignedUp)">
+                                @(isSignedUp ? "Visszavonás" : "Jelentkezés")
+                            </button>
+                        }
                     </div>
                 </div>
             }

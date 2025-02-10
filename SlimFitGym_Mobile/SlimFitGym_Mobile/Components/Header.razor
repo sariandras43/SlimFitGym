@@ -28,7 +28,7 @@
 @code {
     private void Logout()
     {
-        //TODO: Implement logout
+        Preferences.Remove("LoggedInUser");
         AccountModel.LoggedInUser = null;
         StateHasChanged();
         NavigationManager.NavigateTo("/", forceLoad: true);

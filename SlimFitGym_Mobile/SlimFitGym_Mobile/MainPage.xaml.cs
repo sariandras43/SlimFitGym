@@ -1,4 +1,6 @@
-﻿namespace SlimFitGym_Mobile
+﻿using SlimFitGym_Mobile.Services;
+
+namespace SlimFitGym_Mobile
 {
     public partial class MainPage : ContentPage
     {

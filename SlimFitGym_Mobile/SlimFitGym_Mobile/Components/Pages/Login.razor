@@ -2,6 +2,7 @@
 @page "/login"
 @using SlimFitGym_Mobile.Models
 @using SlimFitGym_Mobile.Services
+@using System.Text.Json
 @inject DataService DataService
 @inject AuthService AuthService
 
@@ -86,8 +87,7 @@
             Role = "trainer",
             isActive = true
         };
-        // save logged user to local storage
+        AuthService.SaveUser(AccountModel.LoggedInUser);
         NavigationManager.NavigateTo("/");
     }
 }
-
