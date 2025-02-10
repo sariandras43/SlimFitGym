@@ -33,6 +33,17 @@ namespace SlimFitGym_Mobile.Services
         //    return await _httpClient.GetFromJsonAsync<List<TrainingModel>>($"{apiBaseURL}trainings/{accountId}") ?? new List<TrainingModel>();
         //}
 
+        //public async Task<TrainingModel> CreateTraining(TrainingModel training)
+        //{
+        //    var response = await _httpClient.PostAsJsonAsync($"{apiBaseURL}trainings", training);
+        //    return await response.Content.ReadFromJsonAsync<TrainingModel>();
+        //}
+
+        public async Task<List<RoomModel>> GetRooms()
+        {
+            return await _httpClient.GetFromJsonAsync<List<RoomModel>>($"{apiBaseURL}rooms") ?? new List<RoomModel>();
+        }
+
         //public async Task<List<PassModel>> GetPasses()
         //{
         //    return await _httpClient.GetFromJsonAsync<List<PassModel>>($"{apiBaseURL}passes") ?? new List<PassModel>();

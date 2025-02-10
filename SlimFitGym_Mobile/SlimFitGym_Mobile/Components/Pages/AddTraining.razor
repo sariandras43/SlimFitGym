@@ -1,0 +1,107 @@
+﻿@using SlimFitGym_Mobile.Models
+@using SlimFitGym_Mobile.Services
+@inject NavigationManager NavigationManager
+@inject DataService DataService
+@page "/addTraining"
+
+<Header />
+<div class="sticky-top py-3">
+    <h2 class="text-center fw-bold">Edzés létrehozása</h2>
+</div>
+
+<div class="container mt-5">
+    <div class="border rounded-3 d-inline-block mt-3">
+        <NavLink href="/trainings" class="d-block p-1">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAeUlEQVR4nO3XQQrCMBCF4e8MWkrvErLw/oeRWlxXChHEVRd1hHT+C/zJ42WY0BEjrtHSigfukfKKBStmXCKkpd10kz5xS+mRZLw/pWR7u4t3+JAubSzqWvy3qN+kfM3YBVKy7c72zuvXejtEy+d2gO1HEcqIKVq6mxcYKlU4XwQ2VAAAAABJRU5ErkJggg==" alt="back">
+        </NavLink>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Edzés létrehozása</h2>
+                    <form @onsubmit="addTraining">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Név</label>
+                            <input type="text" class="form-control" id="name" placeholder="Név" @bind="newTraining.Name" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="trainingStart" class="form-label">Kezdési idő</label>
+                            <input type="datetime-local" class="form-control" id="trainingStart" @bind="newTraining.TrainingStart" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="trainingEnd" class="form-label">Befejezés idő</label>
+                            <input type="datetime-local" class="form-control" id="trainingEnd" @bind="newTraining.TrainingEnd" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="maxPeople" class="form-label">Max. résztvevők</label>
+                            <input type="number" class="form-control" max="50" id="maxPeople" placeholder="Max. résztvevők" @bind="newTraining.MaxPeople" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="roomId" class="form-label">Terem</label>
+                            <select class="form-select" id="roomId" placeholder="Válassz termet" @bind="newTraining.RoomId">
+                                @foreach (var room in rooms)
+                                {
+                                    <option value="@room.Id">@room.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary">Edzés létrehozása</button>
+                        </div>
+                    </form>
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger mt-3">
+                            @((MarkupString)errorMessage.Replace("\n", "<br>"))
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private TrainingModel newTraining = new TrainingModel();
+    newTraining.TrainerId = AccountModel.LoggedInUser.Id;
+    private List<RoomModel> rooms = new List<RoomModel>();
+    private string errorMessage;
+
+    private async Task addTraining()
+    {
+        errorMessage = string.Empty;
+        try
+        {
+            if (string.IsNullOrEmpty(newTraining.Name) || newTraining.TrainingStart == null || newTraining.TrainingEnd == null || newTraining.MaxPeople == 0 || newTraining.RoomId == 0)
+            {
+                errorMessage = "Minden mező kitöltése kötelező";
+                return;
+            }
+            if (newTraining.TrainingStart >= newTraining.TrainingEnd)
+            {
+                errorMessage = "A kezdési időpontnak korábbinak kell lennie, mint a befejezés";
+                return;
+            }
+            if (newTraining.TrainingEnd.Subtract(newTraining.TrainingStart).TotalMinutes < 30)
+            {
+                errorMessage = "Az edzés legkisebb időtartama 30 perc";
+            }
+
+            var result = await DataService.CreateTraining(newTraining);
+            if (result)
+            {
+                NavigationManager.NavigateTo("/trainings");
+            }
+            else
+            {
+                errorMessage = "Hiba történt az edzés létrehozása közben";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Hiba: {ex.Message}";
+        }
+    }
+}
+
