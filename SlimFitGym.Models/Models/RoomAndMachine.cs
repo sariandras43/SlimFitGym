@@ -14,9 +14,13 @@ namespace SlimFitGym.Models.Models
         [Key]
         public int Id { get; set; }
 
+        [Required, ForeignKey("Rooms")]
         public int RoomId { get; set; }
 
+        [Required, ForeignKey("Machines")]
         public int MachineId { get; set; }
+
+        [Required]
         public int MachineCount { get; set; }
         public Room? Room { get; set; }
         public Machine? Machine { get; set; }

@@ -13,6 +13,8 @@ namespace SlimFitGym.EFData
     {
         public DbSet<RoomAndMachine> RoomsAndMachines { get; set; } = null!;
         public DbSet<Reservation> Reservations { get; set; } = null!;
+        public DbSet<Purchase> Purchases { get; set; } = null!;
+        public DbSet<TrainerApplicant> TrainerApplicants { get; set; } = null!;
         public string DbPath { get; }
 
         public SlimFitGymContext()
@@ -80,6 +82,28 @@ namespace SlimFitGym.EFData
             );
 
 
+            modelBuilder.Entity<Benefit>().HasData
+            (
+                new Benefit() { Id = 1, BenefitName="Legjobb" }
+            );
+
+            modelBuilder.Entity<Pass>().HasData
+            (
+                new Pass() { Id=1,Days=30,Name="Havi",MaxEntries=10,Price=15000}
+            );
+            modelBuilder.Entity<PassAndBenefit>().HasData
+            (
+                new PassAndBenefit() { Id=1,BenefitId=1,PassId=1}
+            );
+            modelBuilder.Entity<Purchase>().HasData
+            (
+                new Purchase() {Id=1,AccountId=1,PassId=1,PurchaseDate= new DateTime(2025, 2, 6, 17, 0, 0) }
+            );
+
+            modelBuilder.Entity<Benefit>().HasIndex(b => b.BenefitName).IsUnique();
+            modelBuilder.Entity<Account>().HasIndex(a=>a.Email).IsUnique();
+            modelBuilder.Entity<Machine>().HasIndex(m=>m.Name).IsUnique();
+            modelBuilder.Entity<Room>().HasIndex(r=>r.Name).IsUnique();
         }
 
         //public override int SaveChanges()

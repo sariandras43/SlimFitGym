@@ -15,7 +15,7 @@ namespace SlimFitGym.Models.Models
         [StringLength(320), Required]
         public string Email { get; set; }
 
-        [StringLength(13), Required]
+        [StringLength(16), Required]
         public string Phone { get; set; }
 
         [Required,StringLength(255)]

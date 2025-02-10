@@ -8,21 +8,18 @@ using System.Threading.Tasks;
 
 namespace SlimFitGym.Models.Models
 {
-    [Table("Purchases")]
-    public class Purchase
+    [Table("PassesAndBenefits")]
+    public class PassAndBenefit
     {
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        public DateTime PurchaseDate { get; set; }
-
         [Required, ForeignKey("Passes")]
         public int PassId { get; set; }
 
-        [Required, ForeignKey("Accounts")]
-        public int AccountId { get; set; }
-
+        [Required,ForeignKey("Benefits")]
+        public int BenefitId { get; set; }
         public Pass Pass { get; set; }
+        public Benefit Benefit { get; set; }
     }
 }

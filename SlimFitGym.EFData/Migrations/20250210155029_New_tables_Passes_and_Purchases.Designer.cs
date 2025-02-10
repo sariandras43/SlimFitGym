@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SlimFitGym.EFData;
 
@@ -10,9 +11,11 @@ using SlimFitGym.EFData;
 namespace SlimFitGym.EFData.Migrations
 {
     [DbContext(typeof(SlimFitGymContext))]
-    partial class SlimFitGymContextModelSnapshot : ModelSnapshot
+    [Migration("20250210155029_New_tables_Passes_and_Purchases")]
+    partial class New_tables_Passes_and_Purchases
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.1");
@@ -51,9 +54,6 @@ namespace SlimFitGym.EFData.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
 
                     b.ToTable("Accounts");
 
@@ -103,9 +103,6 @@ namespace SlimFitGym.EFData.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BenefitName")
-                        .IsUnique();
-
                     b.ToTable("Benefits");
 
                     b.HasData(
@@ -132,9 +129,6 @@ namespace SlimFitGym.EFData.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
 
                     b.ToTable("Machines");
 
@@ -304,9 +298,6 @@ namespace SlimFitGym.EFData.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
                     b.ToTable("Rooms");
 
                     b.HasData(
@@ -364,20 +355,6 @@ namespace SlimFitGym.EFData.Migrations
                             MachineId = 2,
                             RoomId = 1
                         });
-                });
-
-            modelBuilder.Entity("SlimFitGym.Models.Models.TrainerApplicant", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AccountId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TrainerApplicants");
                 });
 
             modelBuilder.Entity("SlimFitGym.Models.Models.Training", b =>

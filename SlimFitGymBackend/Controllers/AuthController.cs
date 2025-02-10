@@ -6,7 +6,7 @@ using SlimFitGym.Models.Requests;
 
 namespace SlimFitGymBackend.Controllers
 {
-    [Route("api/auth")]
+    [Route("/api/auth")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -27,9 +27,12 @@ namespace SlimFitGymBackend.Controllers
         }
 
         [HttpPost("/register")]
-        public IActionResult Register([FromBody] LoginRequest loginInfo)
+        public IActionResult Register([FromBody] RegistrationRequest registration)
         {
-
+            return this.Execute(() =>
+            {
+                return Ok(accountRepository.Register(registration));
+            });
         }
 
     }

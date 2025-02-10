@@ -18,9 +18,6 @@ namespace SlimFitGym.Models.Models
         [Required, StringLength(100)]
         public string Name { get; set; }
 
-        [Required, StringLength(500)]
-        public string Description { get; set; }
-
         [Required]
         public int MaxEntries { get; set; }
 
@@ -31,7 +28,10 @@ namespace SlimFitGym.Models.Models
         public decimal Price { get; set; }
 
         [Required, DefaultValue(true)]
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
+
+        [Required, DefaultValue(false)]
+        public bool IsHighlighted { get; set; } = false;
 
     }
 }
