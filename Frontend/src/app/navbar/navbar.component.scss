@@ -2,7 +2,12 @@
 $border_width: 4px;
 
 nav {
-  
+   background-color: var(--bg-color-20);
+  backdrop-filter: blur(5px);
+-webkit-backdrop-filter: blur(5px);
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
   padding:  0.5em 2em 0.5em 2em;
   margin-inline: auto;
   width: min(90em, 85%);
