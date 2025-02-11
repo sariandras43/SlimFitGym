@@ -9,8 +9,8 @@
     <h2 class="text-center fw-bold">Edzés létrehozása</h2>
 </div>
 
-<div class="container mt-5">
-    <div class="border rounded-3 d-inline-block mt-3">
+<div class="container">
+    <div class="border rounded-3 d-inline-block mb-3">
         <NavLink href="/trainings" class="d-block p-1">
             <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAeUlEQVR4nO3XQQrCMBCF4e8MWkrvErLw/oeRWlxXChHEVRd1hHT+C/zJ42WY0BEjrtHSigfukfKKBStmXCKkpd10kz5xS+mRZLw/pWR7u4t3+JAubSzqWvy3qN+kfM3YBVKy7c72zuvXejtEy+d2gO1HEcqIKVq6mxcYKlU4XwQ2VAAAAABJRU5ErkJggg==" alt="back">
         </NavLink>
@@ -19,23 +19,24 @@
         <div class="col-md-6 col-lg-4">
             <div class="card shadow">
                 <div class="card-body">
-                    <h2 class="card-title text-center mb-4">Edzés létrehozása</h2>
                     <form @onsubmit="addTraining">
                         <div class="mb-3">
                             <label for="name" class="form-label">Név</label>
                             <input type="text" class="form-control" id="name" placeholder="Név" @bind="newTraining.Name" />
                         </div>
                         <div class="mb-3">
-                            <label for="trainingStart" class="form-label">Kezdési idő</label>
-                            <input type="datetime-local" class="form-control" id="trainingStart" @bind="newTraining.TrainingStart" />
+                            <label for="trainingEnd" class="form-label">Kezdési idő</label>
+                            <input type="datetime" class="form-control" id="trainingEnd" @bind="newTraining.TrainingStart" />
                         </div>
+
                         <div class="mb-3">
-                            <label for="trainingEnd" class="form-label">Befejezés idő</label>
-                            <input type="datetime-local" class="form-control" id="trainingEnd" @bind="newTraining.TrainingEnd" />
+                            <label for="trainingEnd" class="form-label">Befejezési idő</label>
+                            <input type="datetime" class="form-control" id="trainingEnd" @bind="newTraining.TrainingEnd" />
                         </div>
+
                         <div class="mb-3">
                             <label for="maxPeople" class="form-label">Max. résztvevők</label>
-                            <input type="number" class="form-control" max="50" id="maxPeople" placeholder="Max. résztvevők" @bind="newTraining.MaxPeople" />
+                            <input type="number" class="form-control w-25 text-center" maxlength="2" step="1" id="maxPeople" @bind="newTraining.MaxPeople" />
                         </div>
                         <div class="mb-3">
                             <label for="roomId" class="form-label">Terem</label>
@@ -63,10 +64,16 @@
 </div>
 
 @code {
-    private TrainingModel newTraining = new TrainingModel();
-    newTraining.TrainerId = AccountModel.LoggedInUser.Id;
-    private List<RoomModel> rooms = new List<RoomModel>();
+    private TrainingModel newTraining = new TrainingModel()
+    {
+        TrainerId = AccountModel.LoggedInUser.Id,
+        TrainingStart = DateTime.Now,
+        TrainingEnd = DateTime.Now.AddMinutes(30)
+    };
+    private List<RoomModel> rooms = RoomModel.GetRooms();
+    //private List<RoomModel> rooms = DataService.GetRooms();
     private string errorMessage;
+
 
     private async Task addTraining()
     {
@@ -87,10 +94,21 @@
             {
                 errorMessage = "Az edzés legkisebb időtartama 30 perc";
             }
-
-            var result = await DataService.CreateTraining(newTraining);
-            if (result)
+            if (newTraining.MaxPeople < 1)
             {
+                errorMessage = "Minimum résztvevő 1 fő";
+                return;
+            }
+            if (newTraining.MaxPeople > 50)
+            {
+                errorMessage = "A résztvevők korláta 50 fő";
+                return;
+            }
+
+            //var result = await DataService.CreateTraining(newTraining);
+            if (true) //result
+            {
+                Trainings.trainings.Add(newTraining);
                 NavigationManager.NavigateTo("/trainings");
             }
             else

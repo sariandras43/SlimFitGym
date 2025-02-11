@@ -20,15 +20,15 @@
                     <form @onsubmit="register">
                         <div class="mb-3">
                             <label for="name" class="form-label">Név</label>
-                            <input type="text" class="form-control" id="name" placeholder="Név" @bind="name">
+                            <input type="text" class="form-control" id="name" placeholder="Név" @bind="newUser.Name">
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input type="text" class="form-control" id="email" placeholder="Email" @bind="email">
+                            <input type="text" class="form-control" id="email" placeholder="Email" @bind="newUser.Email">
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Jelszó</label>
-                            <input type="password" class="form-control" id="password" placeholder="Jelszó" @bind="password">
+                            <input type="password" class="form-control" id="password" placeholder="Jelszó" @bind="newUser.Password">
                         </div>
                         <div class="mb-3">
                             <label for="passwordAgain" class="form-label">Jelszó újra</label>
@@ -54,38 +54,57 @@
 </div>
 
 @code {
-    private string name;
-    private string email;
-    private string password;
+    private AccountModel newUser = new AccountModel();
     private string passwordAgain;
     private string errorMessage;
 
-    private void register()
+    private async Task register()
     {
-
-        //TODO: refactor like addTraining
         errorMessage = string.Empty;
-        if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(passwordAgain))
+
+        try
         {
-            errorMessage = "Minden mező kitöltése kötelező!";
-            return;
+            if (string.IsNullOrEmpty(newUser.Name) ||
+                string.IsNullOrEmpty(newUser.Email) ||
+                string.IsNullOrEmpty(newUser.Password) ||
+                string.IsNullOrEmpty(passwordAgain))
+            {
+                errorMessage = "Minden mező kitöltése kötelező!";
+                return;
+            }
+
+            if (!AuthService.IsValidEmail(newUser.Email))
+            {
+                errorMessage = "Az email cím formátuma nem megfelelő!";
+                return;
+            }
+
+            if (!AuthService.IsValidPassword(newUser.Password))
+            {
+                errorMessage = "A jelszó formátuma nem megfelelő!\n- Minimum 8 karakter\n- Nagy betű\n- Szám\n- Speciális karakter";
+                return;
+            }
+
+            if (newUser.Password != passwordAgain)
+            {
+                errorMessage = "A két jelszó nem egyezik!";
+                return;
+            }
+
+            //var result = await AuthService.Register(newUser, passwordAgain);
+
+            if (true) // result
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+            else
+            {
+                errorMessage = "Hiba történt a regisztráció során!";
+            }
         }
-        if (!AuthService.IsValidEmail(email))
+        catch (Exception ex)
         {
-            errorMessage = "Az email cím formátuma nem megfelelő!";
-            return;
+            errorMessage = $"Hiba: {ex.Message}";
         }
-        if (!AuthService.IsValidPassword(password))
-        {
-            errorMessage = "A jelszó formátuma nem megfelelő!\n- Minimum 8 karakter\n- Nagy betű\n- Szám\n- Speciális karakter";
-            return;
-        }
-        if (password != passwordAgain)
-        {
-            errorMessage = "A két jelszó nem egyezik!";
-            return;
-        }
-        //AuthService.Register(name, email, password, passwordAgain);
-        NavigationManager.NavigateTo("/login");
     }
 }

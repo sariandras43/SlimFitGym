@@ -68,7 +68,7 @@ else
 <Navbar />
 
 @code {
-    private List<TrainingModel> trainings = TrainingModel.GetTrainings();
+    public static List<TrainingModel> trainings = TrainingModel.GetTrainings();
     // private List<TrainingModel>? trainings = new List<TrainingModel>();
     // protected override async Task OnInitializedAsync()
     // {

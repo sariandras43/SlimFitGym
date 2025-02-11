@@ -26,9 +26,9 @@ namespace SlimFitGym_Mobile.Services
         //    return await response.Content.ReadAsStringAsync();
         //}
 
-        //public async Task<string> Register(string name, string email, string password, string passwordAgain)
+        //public async Task<string> Register(AccountModel newUser, string passwordAgain)
         //{
-        //    var response = await _httpClient.PostAsync($"{apiBaseURL}auth/register", new StringContent($"{{\"name\":\"{name}\",\"email\":\"{email}\",\"password\":\"{password}\",\"password again\":\"{passwordAgain}\"}}", Encoding.UTF8, "application/json"));
+        //    var response = await _httpClient.PostAsync($"{apiBaseURL}auth/register", new StringContent($"{{\"name\":\"{newUser.Name}\",\"email\":\"{newUser.Email}\",\"password\":\"{newUser.Password}\",\"password again\":\"{passwordAgain}\"}}", Encoding.UTF8, "application/json"));
         //    return await response.Content.ReadAsStringAsync();
         //}
 
