@@ -10,7 +10,7 @@ nav {
   transform: translateX(-50%);
   padding:  0.5em 2em 0.5em 2em;
   margin-inline: auto;
-  width: min(90em, 85%);
+  width: min(90em, 90%);
   border-bottom-left-radius: var(--border-radius);
   border-bottom-right-radius: var(--border-radius);
   border-bottom: $border_width solid var(--tertiary-color);
@@ -21,10 +21,7 @@ nav {
     width: 4em;
   }
   ul {
-    &.flex {
-      align-items: center;
-      gap: 1em;
-    }
+    
     &.right{
         margin-left: auto;
     }
@@ -70,6 +67,3 @@ nav {
   }
 }
 
-.flex {
-  display: flex;
-}

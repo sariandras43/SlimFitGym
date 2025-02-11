@@ -89,3 +89,23 @@ body{
   width: 80%;
   margin:  0 auto;
 }
+.flex {
+  display: flex;
+}
+.vcenter{
+  align-items: center;
+}
+.hcenter{
+  justify-content: center;
+}
+.g1 {
+  
+  gap: 1em;
+}
+.g5 {
+  
+  gap: 5em;
+}
+.mt5{
+  margin-top: 5em;
+}
