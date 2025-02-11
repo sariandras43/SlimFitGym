@@ -1,11 +1,23 @@
 <div class="card">
     
     <h3 class="title">
-        Alap csicska
+        {{title()}}
     </h3>
-    <p class="priceWrap"> <span class="price">3500</span> <span class="unit">Ft/hó</span></p>
+    <p class="priceWrap"> <span class="price">{{price()}}</span> <span class="unit">{{unit()}}</span></p>
     <ul class="benefits">
-        <li class="">5 belépés</li>
+        @for (benefit of benefits(); track $index) {
+
+            <li class="">{{benefit}}</li>
+        }
     </ul>
-    <button class="buyBtn">Vásárlás</button>
+    <div class="flex buttonWrapper g1">
+        @if (btnText()) {
+            <button class="btn">{{btnText()}}</button>
+
+        }
+        @if (linkBtnText()) {
+
+            <a href="{{linkTo()}}" class="btn">{{linkBtnText()}}</a>
+        }
+    </div>
 </div>
