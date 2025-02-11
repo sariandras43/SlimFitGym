@@ -1,0 +1,36 @@
+.card{
+    background-color: var(--bg-color);
+    padding: 1em 3em;
+    border-radius: var(--border-radius);
+    opacity: 100%;
+    .title{
+        font-size: 2rem;
+        text-align: center;
+    }
+    .priceWrap{
+        
+        .price{
+            font-weight: bold;
+            font-size: 4rem;
+        }
+        .unit{
+            font-size: 1.5rem;
+            color: var(--secondary-text);
+        }
+    }
+    .benefits{
+        
+            list-style: none;
+          
+        li{
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+        }
+        li:before {
+            content: '✓';
+            color: var(--secondary-color);
+            font-weight: bolder;
+          }
+    }
+}
