@@ -1,0 +1,28 @@
+.subscriptions{
+    isolation: isolate;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    position: relative;
+    height: 40em;
+    overflow: hidden;
+    img{
+        z-index: -1;
+        position: absolute;
+        opacity: 20%;
+        object-fit: cover;
+        &.leftSmall{
+            object-position: top;
+            top: 1em;
+            left: 0;
+            width: 80%;
+            transform: translateX(-20%);
+        }
+    }
+}
+h2{
+    font-size: 4rem;
+}
