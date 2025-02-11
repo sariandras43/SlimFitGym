@@ -4,6 +4,7 @@
     width: 100%;
     height: 100vh;
     display: flex;
+    align-items: center;
     
     img{
         position: absolute;
@@ -15,9 +16,8 @@
         object-fit: cover;
     }
     .containter{
-        margin-top: 25rem;
         h1{
-            font-size: 6rem;
+            font-size: 8rem;
         }
         p{
             font-size: 2rem;
