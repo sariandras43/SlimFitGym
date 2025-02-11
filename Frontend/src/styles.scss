@@ -2,7 +2,7 @@
     --main-text: #FAFFFD;
     --secondary-text: #D4DBD8;
     --bg-color: #342e37;
-    --bg-color-20: #352e3833;
+    --bg-color-40: hsla(282, 10%, 20%, 0.4);
     --bg-secondary: #2B272D;
     --bg-tertiary: #000000;
     --primary-color: #FA824C;
@@ -85,7 +85,7 @@ body{
     color: var(--main-text);
 
 }
-.containter{
+.container{
   width: 80%;
   margin:  0 auto;
 }
