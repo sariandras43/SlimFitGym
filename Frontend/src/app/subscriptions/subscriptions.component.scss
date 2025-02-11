@@ -1,28 +1,43 @@
+
 .subscriptions{
     isolation: isolate;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+
+
     align-items: center;
     background-color: var(--bg-secondary);
     border-radius: var(--border-radius);
     position: relative;
-    height: 40em;
     overflow: hidden;
+    padding: 5em 3em;
     img{
         z-index: -1;
         position: absolute;
         opacity: 20%;
         object-fit: cover;
-        &.leftSmall{
-            object-position: top;
-            top: 1em;
-            left: 0;
-            width: 80%;
-            transform: translateX(-20%);
-        }
+        bottom: 0;
+        
     }
 }
 h2{
     font-size: 4rem;
+}
+@media only screen and (min-width: 90.5em) {
+    
+    .subscriptions .leftSmall{
+        object-position: top;
+        top: 1em;
+        bottom: unset;
+        left: 0;
+        width: 80%;
+        transform: translateX(-10%);
+    }
+}
+@media only screen and (max-width:971px){
+    .subscriptions .leftSmall{
+    height: 100%;
+    translate: -10%;
+}
 }
