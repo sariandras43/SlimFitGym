@@ -24,5 +24,14 @@ namespace SlimFitGym.Models.Responses
             Role = a.Role;
             ValidTo = DateTime.Now.AddMinutes(30);
         }
+        public AccountResponse(AccountResponse a)
+        {
+            Id = a.Id;
+            Name = a.Name;
+            Email = a.Email;
+            Token = "To be implemented";
+            Role = a.Role;
+            ValidTo = DateTime.Now.AddMinutes(30);
+        }
     }
 }

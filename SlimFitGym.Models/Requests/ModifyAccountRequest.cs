@@ -24,5 +24,9 @@ namespace SlimFitGym.Models.Requests
             Password = a.Password;
             Role = a.Role;
         }
+        public ModifyAccountRequest()
+        {
+
+        }
     }
 }

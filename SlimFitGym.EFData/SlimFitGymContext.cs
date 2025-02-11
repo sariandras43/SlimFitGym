@@ -66,7 +66,7 @@ namespace SlimFitGym.EFData
 
             modelBuilder.Entity<Account>().HasData
             (
-                new Account() { Id=1,Name="admin",Password="admin",Email="admin@gmail.com",Phone="+36123456789",Role="admin"},
+                new Account() { Id=1,Name="admin",Password="admin", Email="admin@gmail.com",Phone="+36123456789",Role="admin"},
                 new Account() { Id = 2, Name = "kazmer", Password = "kazmer", Email = "kazmer@gmail.com", Phone = "+36123456799", Role = "trainer" },
                 new Account() { Id = 3, Name = "pista", Password = "pista", Email = "pista@gmail.com", Phone = "+36123456788", Role = "user" }
             );

@@ -39,7 +39,7 @@ namespace SlimFitGym.EFData.Repositories
         {
             if (applicant.AccountId <= 0)
                 throw new Exception("Nem létezik ez a felhasználó.");
-            Account? a = context.Set<Account>().SingleOrDefault(a=>a.Id == applicant.AccountId);
+            Account? a = context.Set<Account>().SingleOrDefault(a => a.Id == applicant.AccountId);
             if (a == null)
                 return null;
 
@@ -54,26 +54,19 @@ namespace SlimFitGym.EFData.Repositories
 
         public AccountResponse? AcceptAsTrainer(int id)
         {
-            if (id<=0)
+            if (id <= 0)
                 return null;
 
             TrainerApplicant? tr = GetApplicantById(id);
             if (tr == null)
                 return null;
 
-            Account? a = context.Set<Account>().SingleOrDefault(a=>a.Id == tr.AccountId); 
-            if (a == null)
+            AccountResponse? newTrainer = accountRepository.BecomeATrainer(tr.AccountId);
+            if (newTrainer == null)
                 return null;
-
-            if (a.Role == "trainer" || a.Role == "admin")
-                throw new Exception("Ez a felhasználó már edző.");
-
-            a.Role = "trainer";
-            //TODO error
-            if(accountRepository.ModifyAccount(tr.AccountId, new ModifyAccountRequest(a))!=null)
-                //TODO: remove from the applicant table
-                return new AccountResponse(a);
-             return null;
+            this.context.Set<TrainerApplicant>().Remove(tr);
+            this.context.SaveChanges();
+            return newTrainer;
         }
     }
 }

@@ -55,7 +55,7 @@ namespace SlimFitGym.EFData.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Accounts");
+                    b.ToTable("Accounts", (string)null);
 
                     b.HasData(
                         new
@@ -106,7 +106,7 @@ namespace SlimFitGym.EFData.Migrations
                     b.HasIndex("BenefitName")
                         .IsUnique();
 
-                    b.ToTable("Benefits");
+                    b.ToTable("Benefits", (string)null);
 
                     b.HasData(
                         new
@@ -136,7 +136,7 @@ namespace SlimFitGym.EFData.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Machines");
+                    b.ToTable("Machines", (string)null);
 
                     b.HasData(
                         new
@@ -179,7 +179,7 @@ namespace SlimFitGym.EFData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Passes");
+                    b.ToTable("Passes", (string)null);
 
                     b.HasData(
                         new
@@ -212,7 +212,7 @@ namespace SlimFitGym.EFData.Migrations
 
                     b.HasIndex("PassId");
 
-                    b.ToTable("PassesAndBenefits");
+                    b.ToTable("PassesAndBenefits", (string)null);
 
                     b.HasData(
                         new
@@ -242,7 +242,7 @@ namespace SlimFitGym.EFData.Migrations
 
                     b.HasIndex("PassId");
 
-                    b.ToTable("Purchases");
+                    b.ToTable("Purchases", (string)null);
 
                     b.HasData(
                         new
@@ -272,7 +272,7 @@ namespace SlimFitGym.EFData.Migrations
 
                     b.HasIndex("TrainingId");
 
-                    b.ToTable("Reservations");
+                    b.ToTable("Reservations", (string)null);
 
                     b.HasData(
                         new
@@ -307,7 +307,7 @@ namespace SlimFitGym.EFData.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Rooms");
+                    b.ToTable("Rooms", (string)null);
 
                     b.HasData(
                         new
@@ -347,7 +347,7 @@ namespace SlimFitGym.EFData.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("RoomsAndMachines");
+                    b.ToTable("RoomsAndMachines", (string)null);
 
                     b.HasData(
                         new
@@ -377,7 +377,7 @@ namespace SlimFitGym.EFData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TrainerApplicants");
+                    b.ToTable("TrainerApplicants", (string)null);
                 });
 
             modelBuilder.Entity("SlimFitGym.Models.Models.Training", b =>
@@ -411,7 +411,7 @@ namespace SlimFitGym.EFData.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Training");
+                    b.ToTable("Training", (string)null);
 
                     b.HasData(
                         new
