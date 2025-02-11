@@ -2,6 +2,7 @@
 $border_width: 4px;
 
 nav {
+  z-index: 100;
    background-color: var(--bg-color-40);
   backdrop-filter: blur(10px);
 -webkit-backdrop-filter: blur(5px);
@@ -66,4 +67,3 @@ nav {
     }
   }
 }
-
