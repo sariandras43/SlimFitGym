@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
 using SlimFitGym.Models.Responses;
@@ -22,69 +23,69 @@ namespace SlimFitGym.EFData.Repositories
             this.context = context;
         }
 
-        public List<RoomWithMachines>? GetRoomsWithMachines()
+        public List<RoomWithMachinesResponse>? GetRoomsWithMachines()
         {
-            var result = context.RoomsAndMachines
-                .Join(context.Set<Room>(),
-                      roomAndMachine => roomAndMachine.RoomId,
-                      room => room.Id,
-                      (roomAndMachine, room) => new { roomAndMachine, room })
-                .Join(context.Set<Machine>(),
-                      roomAndMachine => roomAndMachine.roomAndMachine.MachineId,
-                      machine => machine.Id,
-                      (roomAndMachineAndRoom, machine) => new
-                      {
-                          roomAndMachineAndRoom.roomAndMachine,
-                          roomAndMachineAndRoom.room,
-                          machine
-                      })
-                .GroupBy(x => x.room)
-                .Select(group => new RoomWithMachines
+            var result = context.Set<Room>()
+                .Select(room => new
                 {
-                    Id = group.Key.Id,
-                    Name = group.Key.Name,
-                    Machines = group.Select(x => new MachineDetails
-                    {
-                        Id = x.machine.Id,
-                        Name = x.machine.Name,
-                        MachineCount = x.roomAndMachine.MachineCount
-                    }).ToList()
+                    room,
+                    RoomAndMachines = context.RoomsAndMachines
+                        .Where(rm => rm.RoomId == room.Id)
+                        .FirstOrDefault()  
+                })
+                .AsEnumerable()  
+                .Select(x => new RoomWithMachinesResponse
+                {
+                    Id = x.room.Id,
+                    Name = x.room.Name,
+                    Description = x.room.Description,
+                    RecommendedPeople = x.room.RecommendedPeople,
+                    Machines = x.RoomAndMachines == null
+                        ? new List<MachineDetails>()  
+                        : context.Set<Machine>()
+                            .Where(m => m.Id == x.RoomAndMachines.MachineId) 
+                            .Select(machine => new MachineDetails
+                            {
+                                Id = machine.Id,
+                                Name = machine.Name,
+                                MachineCount = x.RoomAndMachines.MachineCount
+                            })
+                            .ToList() 
                 })
                 .ToList();
             return result;
         }
 
-        public RoomWithMachines? GetRoomWithMachinesById(int id)
+        public RoomWithMachinesResponse? GetRoomWithMachinesById(int id)
         {
-            var result = context.Set<RoomAndMachine>()
-                .Join(context.Set<Room>(),
-                      roomAndMachine => roomAndMachine.RoomId,
-                      room => room.Id,
-                      (roomAndMachine, room) => new { roomAndMachine, room })
-                .Join(context.Set<Machine>(),
-                      roomAndMachine => roomAndMachine.roomAndMachine.MachineId,
-                      machine => machine.Id,
-                      (roomAndMachineAndRoom, machine) => new
-                      {
-                          roomAndMachineAndRoom.roomAndMachine,
-                          roomAndMachineAndRoom.room,
-                          machine
-                      })
-                .Where(r => r.roomAndMachine.RoomId == id)
-                .GroupBy(x => x.room)
-                .Select(group => new RoomWithMachines
+            var result = context.Set<Room>()
+                .Select(room => new
                 {
-                    Id = group.Key.Id,
-                    Name = group.Key.Name,
-                    Machines = group.Select(x => new MachineDetails
-                    {
-                        Id = x.machine.Id,
-                        Name = x.machine.Name,
-                        MachineCount = x.roomAndMachine.MachineCount
-
-                    }).ToList()
+                    room,
+                    RoomAndMachines = context.RoomsAndMachines
+                        .Where(rm => rm.RoomId == room.Id)
+                        .FirstOrDefault()
                 })
-                .FirstOrDefault();
+                .AsEnumerable()
+                .Select(x => new RoomWithMachinesResponse
+                {
+                    Id = x.room.Id,
+                    Name = x.room.Name,
+                    Description = x.room.Description,
+                    RecommendedPeople = x.room.RecommendedPeople,
+                    Machines = x.RoomAndMachines == null
+                        ? new List<MachineDetails>()
+                        : context.Set<Machine>()
+                            .Where(m => m.Id == x.RoomAndMachines.MachineId)
+                            .Select(machine => new MachineDetails
+                            {
+                                Id = machine.Id,
+                                Name = machine.Name,
+                                MachineCount = x.RoomAndMachines.MachineCount
+                            })
+                            .ToList()
+                })
+                .SingleOrDefault(r=>r.Id==id);
 
             return result;
         }
@@ -96,6 +97,22 @@ namespace SlimFitGym.EFData.Repositories
                 return new RoomAndMachineResponse(roomAndMachine);
             return null;
 
+        }
+
+        public List<RoomAndMachine>? GetRoomsAndMachinesByRoomId(int roomId)
+        {
+            List<RoomAndMachine>? roomsAndMachines = context.Set<RoomAndMachine>().Where(rm=>rm.RoomId==roomId).ToList();
+            if (roomsAndMachines != null)
+                return roomsAndMachines;
+            return null;
+        }
+
+        public RoomAndMachine? GetRoomAndMachineByMachineAndRoomId(int machineId, int roomId)
+        {
+            RoomAndMachine? roomAndMachine = context.Set<RoomAndMachine>().SingleOrDefault(rm => rm.MachineId == machineId && rm.RoomId == roomId);
+            if (roomAndMachine != null)
+                return roomAndMachine;
+            return null;
         }
 
         public List<RoomAndMachineResponse>? GetRoomAndMachineConnections()
@@ -152,19 +169,7 @@ namespace SlimFitGym.EFData.Repositories
         }
 
 
-        public class RoomWithMachines
-        {
-            public int Id { get; set; }
-            public string Name { get; set; }
-            public List<MachineDetails> Machines { get; set; }
-        }
 
-        public class MachineDetails
-        {
-            public int Id { get; set; }
-            public string Name { get; set; }
-            public int MachineCount { get; set; }
-        }
 
     }
 }

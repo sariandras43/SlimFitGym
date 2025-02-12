@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models.Models;
+using SlimFitGym.Models.Requests;
 
 namespace SlimFitGymBackend.Controllers
 {
@@ -50,7 +51,7 @@ namespace SlimFitGymBackend.Controllers
 
         // POST api/<RoomsController>
         [HttpPost]
-        public IActionResult Post([FromBody] Room value)
+        public IActionResult Post([FromBody] RoomRequest value)
         {
             return this.Execute(() =>
             {
@@ -61,7 +62,7 @@ namespace SlimFitGymBackend.Controllers
 
         // PUT api/<RoomsController>/5
         [HttpPut("{id}")]
-        public IActionResult Put([FromRoute] string id, [FromBody] dynamic value)
+        public IActionResult Put([FromRoute] string id, [FromBody] RoomRequest value)
         {
             return this.Execute(() =>
             {
@@ -69,8 +70,8 @@ namespace SlimFitGymBackend.Controllers
                 if (int.TryParse(id,out idNum))
                 {
                     //TODO: JSON parse error!!!
-                    Room room = Newtonsoft.Json.JsonConvert.DeserializeObject<Room>(value.ToString());
-                    var res = roomsRepository.UpdateRoom(idNum, room);
+                    //Room room = Newtonsoft.Json.JsonConvert.DeserializeObject<Room>(value.ToString());
+                    var res = roomsRepository.UpdateRoom(idNum, value);
                     if (res!=null)
                         return Ok(res);
                     return NotFound(new { message = "Szoba nem található" });

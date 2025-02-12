@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SlimFitGym.Models.Models;
+using SlimFitGym.Models.Requests;
+using SlimFitGym.Models.Responses;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -7,16 +9,19 @@ using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
+using Machine = SlimFitGym.Models.Models.Machine;
 
 namespace SlimFitGym.EFData.Repositories
 {
     public class RoomsRepository
     {
         readonly SlimFitGymContext context;
+        readonly RoomsAndMachinesRepository roomsAndMachinesRepository;
 
-        public RoomsRepository(SlimFitGymContext context)
+        public RoomsRepository(SlimFitGymContext context, RoomsAndMachinesRepository roomsAndMachinesRepository)
         {
             this.context = context;
+            this.roomsAndMachinesRepository = roomsAndMachinesRepository;
         }
 
         public List<Room> GetAllRooms() 
@@ -33,7 +38,7 @@ namespace SlimFitGym.EFData.Repositories
             return result;
         }
 
-        public Room? NewRoom(Room newRoom)
+        public RoomWithMachinesResponse? NewRoom(RoomRequest newRoom)
         {
 
             if (newRoom == null)
@@ -42,7 +47,7 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("A név mező kitöltése kötelező.");
             if (newRoom.Description == null || newRoom.Description.Length == 0)
                 throw new Exception("A leírás mező kitöltése kötelező.");
-            if (newRoom.RecommendedPeople == 0)
+            if (newRoom.RecommendedPeople <= 0)
                 throw new Exception("A javasolt befogadóképesség mező kitöltése kötelező");
             if (newRoom.Name.Length > 100)
                 throw new Exception("A név maximum 100 karakter hosszú lehet.");
@@ -51,14 +56,36 @@ namespace SlimFitGym.EFData.Repositories
             if (context.Set<Room>().Any(r => r.Name == newRoom.Name))
                 throw new Exception("Ilyen terem már létezik.");
 
+            Room savedRoom;
+            if (newRoom.Machines?.Count>0)
+            {
+                foreach (MachineForRoom mr in newRoom.Machines)
+                {
+                    if (!context.Set<Machine>().Any(m => m.Id == mr.Id))
+                        throw new Exception($"Az {mr.Id} azonosítójú gép nem létezik.");
+                }
+                savedRoom = this.context.Set<Room>().Add(new Room() { Name=newRoom.Name,Description=newRoom.Description,RecommendedPeople=newRoom.RecommendedPeople}).Entity;
+                this.context.SaveChanges();
 
-            Room savedRoom = this.context.Set<Room>().Add(newRoom).Entity;
-            this.context.SaveChanges();
-            return savedRoom;
+                foreach (MachineForRoom mr in newRoom.Machines)
+                {
+                    RoomAndMachine roomAndMachine = new RoomAndMachine() { MachineId=mr.Id,RoomId=savedRoom.Id,MachineCount=mr.Count};
+                    roomsAndMachinesRepository.ConnectRoomAndMachine(roomAndMachine);
+                    this.context.SaveChanges();
+
+                }
+            }
+            else
+            {
+                savedRoom = this.context.Set<Room>().Add(new Room() { Name = newRoom.Name, Description = newRoom.Description, RecommendedPeople = newRoom.RecommendedPeople }).Entity;
+                this.context.SaveChanges();
+
+            }
+            return roomsAndMachinesRepository.GetRoomWithMachinesById(savedRoom.Id);
 
         }
 
-        public Room? UpdateRoom(int id,Room room)
+        public RoomWithMachinesResponse? UpdateRoom(int id,RoomRequest room)
         {
 
             if (id != room.Id)
@@ -77,13 +104,67 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("A név maximum 100 karakter hosszú lehet.");
             if (room.Description != null && room.Description!.Length > 500)
                 throw new Exception("A leírás maximum 500 karakter hosszú lehet.");
-            if (context.Set<Room>().Any(r => r.Name == room.Name))
-                throw new Exception("Ilyen terem már létezik.");
+
+            Room modifiedRoom = new Room
+            {
+                Id = room.Id,
+                Name = room.Name,
+                Description = room.Description,
+                RecommendedPeople = room.RecommendedPeople
+            };
 
 
-            this.context.Entry(room).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            if (room.Machines.Count==0)
+            {
+
+                List<RoomAndMachine> roomsAndMachines = roomsAndMachinesRepository.GetRoomsAndMachinesByRoomId(room.Id);
+                foreach (RoomAndMachine rm in roomsAndMachines)
+                {
+                    roomsAndMachinesRepository.DeleteConnection(rm.Id);
+                }
+            }
+            else
+            {
+                foreach (MachineForRoom mr in room.Machines)
+                {
+                    
+                    if (!context.Set<Machine>().Any(m => m.Id == mr.Id))
+                        throw new Exception($"Az {mr.Id} azonosítójú gép nem létezik.");
+                }
+
+                List<RoomAndMachine>? roomsAndMachines = roomsAndMachinesRepository.GetRoomsAndMachinesByRoomId(room.Id);
+                List<MachineForRoom> machines = room.Machines;
+                if (roomsAndMachines!=null || roomsAndMachines!.Count>0)
+                {
+                    foreach (MachineForRoom mr in machines)
+                    {
+                        RoomAndMachine? roomAndMachine = roomsAndMachines.SingleOrDefault(rm => rm.MachineId == mr.Id);
+                        if (roomAndMachine == null)
+                        {
+                            RoomAndMachine newRm = new RoomAndMachine() { MachineCount = mr.Count, MachineId = mr.Id, RoomId = room.Id };
+                            roomsAndMachinesRepository.ConnectRoomAndMachine(newRm);
+                        }
+                        else
+                        {
+                            var res = roomsAndMachinesRepository.UpdateRoomAndMachineConnection(roomAndMachine.Id, new RoomAndMachineRequest() { Id = roomAndMachine.Id, MachineId = mr.Id });
+                            RoomAndMachine toRemove = roomsAndMachines.Single(rm => rm.MachineId == res.MachineId);
+                            roomsAndMachines.Remove(toRemove);
+
+                        }
+
+                    }
+                    foreach (RoomAndMachine rm in roomsAndMachines)
+                    {
+                        roomsAndMachinesRepository.DeleteConnection(rm.Id);
+                    }
+
+                }
+
+            }
+            this.context.Entry(modifiedRoom).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             this.context.SaveChanges();
-            return room;
+
+            return roomsAndMachinesRepository.GetRoomWithMachinesById(modifiedRoom.Id);
         }
 
         public Room? DeleteRoom(int id)
@@ -92,6 +173,11 @@ namespace SlimFitGym.EFData.Repositories
             if (roomToDelete == null)
                 return null;
 
+            List<RoomAndMachine> machinesInTheRoom = roomsAndMachinesRepository.GetRoomsAndMachinesByRoomId(roomToDelete.Id);
+            foreach (RoomAndMachine rm in machinesInTheRoom)
+            {
+                roomsAndMachinesRepository.DeleteConnection(rm.Id);
+            }
             this.context.Set<Room>().Remove(roomToDelete);
             this.context.SaveChanges();
             return roomToDelete;

@@ -1,26 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SlimFitGym.Models.Models
+namespace SlimFitGym.Models.Requests
 {
-    [Table("Rooms")]
-    public class Room
+    public class RoomRequest
     {
-        [Key]
         public int Id { get; set; }
-
-        [StringLength(100), Required]
         public required string Name { get; set; }
-
-        [StringLength(500)]
         public string? Description { get; set; }
-
-        [Required]
         public int RecommendedPeople { get; set; }
+        public List<MachineForRoom> Machines { get; set; }
     }
 }
