@@ -4,6 +4,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    
 
 
     align-items: center;
@@ -11,7 +12,7 @@
     border-radius: var(--border-radius);
     position: relative;
     overflow: hidden;
-    padding: 5em 3em;
+    padding: 5em 10em;
     img{
         z-index: -1;
         position: absolute;
