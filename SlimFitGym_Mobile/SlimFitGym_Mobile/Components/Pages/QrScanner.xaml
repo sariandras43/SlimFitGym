@@ -1,0 +1,47 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:tool="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
+             xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI.Controls"
+             xmlns:blazor="clr-namespace:Microsoft.AspNetCore.Components.WebView.Maui;assembly=Microsoft.AspNetCore.Components.WebView.Maui"
+             xmlns:local="clr-namespace:SlimFitGym_Mobile.Components"  
+             xmlns:services="clr-namespace:SlimFitGym_Mobile.Services"
+                x:Class="SlimFitGym_Mobile.Components.Pages.QrScanner"
+             Title=""
+             Shell.NavBarIsVisible="False">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+
+        <blazor:BlazorWebView Grid.Row="0" HostPage="wwwroot/index.html">
+            <blazor:BlazorWebView.RootComponents>
+                <blazor:RootComponent Selector="#app" ComponentType="{x:Type local:Header}" />
+            </blazor:BlazorWebView.RootComponents>
+        </blazor:BlazorWebView>
+
+        <blazor:BlazorWebView Grid.Row="1"  HostPage="wwwroot/index.html">
+            <blazor:BlazorWebView.RootComponents>
+                <blazor:RootComponent Selector="#app" ComponentType="{x:Type local:QrTop}" />
+            </blazor:BlazorWebView.RootComponents>
+        </blazor:BlazorWebView>
+
+        <Grid Grid.Row="2"  x:Name="qrGrid">
+        </Grid>
+
+        <blazor:BlazorWebView Grid.Row="3"  HostPage="wwwroot/index.html">
+            <blazor:BlazorWebView.RootComponents>
+                <blazor:RootComponent Selector="#app" ComponentType="{x:Type local:QrBottom}" />
+            </blazor:BlazorWebView.RootComponents>
+        </blazor:BlazorWebView>
+
+        <blazor:BlazorWebView Grid.Row="4"  HostPage="wwwroot/index.html">
+            <blazor:BlazorWebView.RootComponents>
+                <blazor:RootComponent Selector="#app" ComponentType="{x:Type local:Navbar}" />
+            </blazor:BlazorWebView.RootComponents>
+        </blazor:BlazorWebView>
+    </Grid>
+</ContentPage>

@@ -1,16 +1,14 @@
 ﻿@inherits LayoutComponentBase
-@page "/"
 @using SlimFitGym_Mobile.Models
 @using SlimFitGym_Mobile.Services
-@inject DataService DataService
+@page "/"
 
 <Header/>
-<div class="d-flex justify-content-center my-auto">
-    <img class="w-75" src="../Resources/AppIcon/appicon.svg" alt="Alternate Text" />
-</div>
 @if (AccountModel.LoggedInUser == null)
 {
-    
+    <div class="d-flex justify-content-center my-auto">
+        <img class="w-75" src="../Resources/AppIcon/appicon.svg" alt="Alternate Text" />
+    </div>
 }
 else
 {

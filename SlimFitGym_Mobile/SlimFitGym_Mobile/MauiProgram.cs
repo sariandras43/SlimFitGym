@@ -1,6 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using SlimFitGym_Mobile.Services;
 using Microsoft.AspNetCore.Components.WebView.Maui;
+using CommunityToolkit.Maui;
+using ZXing.Net.Maui;
+using ZXing.Net.Maui.Controls;
+using SlimFitGym_Mobile.Components.Pages;
 
 namespace SlimFitGym_Mobile
 {
@@ -11,12 +15,16 @@ namespace SlimFitGym_Mobile
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseMauiCommunityToolkit()
+                .UseBarcodeReader()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 });
-            builder.Services.AddScoped<DataService>();
-            builder.Services.AddScoped<AuthService>();
+            builder.Services.AddSingleton<MainPage>();
+            builder.Services.AddTransient<QrScanner>();
+            builder.Services.AddSingleton<AuthService>();
+            builder.Services.AddSingleton<CameraService>();
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://yourbackend.com/api/") });
             builder.Services.AddMauiBlazorWebView();
             builder.Services.ConfigureMauiHandlers(handlers =>

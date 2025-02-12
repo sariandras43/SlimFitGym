@@ -1,11 +1,10 @@
 ﻿@using SlimFitGym_Mobile.Models
 @using SlimFitGym_Mobile.Services
 @inject NavigationManager NavigationManager
-@inject DataService DataService
 @page "/addTraining"
 
 <Header />
-<div class="sticky-top py-3">
+<div class="sticky-top py-3 border-bottom">
     <h2 class="text-center fw-bold">Edzés létrehozása</h2>
 </div>
 
@@ -21,7 +20,7 @@
                 <div class="card-body">
                     <form @onsubmit="addTraining">
                         <div class="mb-3">
-                            <label for="name" class="form-label">Név</label>
+                            <label for="name" class="form-label">Edzés neve</label>
                             <input type="text" class="form-control" id="name" placeholder="Név" @bind="newTraining.Name" />
                         </div>
                         <div class="mb-3">

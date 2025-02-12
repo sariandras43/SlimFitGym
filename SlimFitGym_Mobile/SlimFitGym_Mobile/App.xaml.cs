@@ -1,4 +1,5 @@
-﻿using SlimFitGym_Mobile.Models;
+﻿using Microsoft.Extensions.DependencyInjection;
+using SlimFitGym_Mobile.Models;
 using SlimFitGym_Mobile.Services;
 
 namespace SlimFitGym_Mobile
@@ -9,8 +10,7 @@ namespace SlimFitGym_Mobile
         {
             AccountModel.LoggedInUser = AuthService.LoadUser();
             InitializeComponent();
-
-            MainPage = new MainPage();
+            MainPage = new AppShell();
         }
 
     }

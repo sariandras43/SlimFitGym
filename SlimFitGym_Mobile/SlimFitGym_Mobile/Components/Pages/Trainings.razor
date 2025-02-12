@@ -1,7 +1,6 @@
 ﻿@page "/trainings"
 @using SlimFitGym_Mobile.Models
 @using SlimFitGym_Mobile.Services
-@inject DataService DataService
 @inject IJSRuntime JS
 
 <Header/>
@@ -9,7 +8,7 @@
 <div class="container mt-2 d-flex flex-column">
 @if (AccountModel.LoggedInUser?.Role == "trainer")
 {
-    <div class="sticky-top py-3 bg-white d-flex align-items-center justify-content-between">
+        <div class="sticky-top py-3 bg-white d-flex align-items-center justify-content-between border-bottom">
         <h2 class="text-center flex-grow-1 fw-bold">Elérhető edzésprogramok</h2>
         <NavLink href="/addTraining">
             <img class="fw-bold mb-2" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAc0lEQVR4nO2UMQqAMAxF3/Gsg3j/wULVQS8Rl05FpGATpeTBX/MgCR+cnzMDJ3AAk6V4ByRnsxRLERerIb5qK6SbVY9AvBn8NhEIT+KkIK1quPSVOACLgnQBBhrQz1fX4mIzxG9sRSzKwYwArDlNGslBiwtYs6fhOILl9QAAAABJRU5ErkJggg==" alt="plus-math">
@@ -18,7 +17,7 @@
 }
 else
 {
-    <div class="sticky-top py-3 bg-white">
+        <div class="sticky-top py-3 bg-white border-bottom">
         <h2 class="text-center fw-bold">Elérhető edzésprogramok</h2>
     </div>
 }
@@ -69,10 +68,10 @@ else
 
 @code {
     public static List<TrainingModel> trainings = TrainingModel.GetTrainings();
-    // private List<TrainingModel>? trainings = new List<TrainingModel>();
+    //private List<TrainingModel>? trainings = new List<TrainingModel>();
     // protected override async Task OnInitializedAsync()
     // {
-    //     trainings = await DataService.GetMachines();
+    //     trainings = await DataService.GetTrainings();
     // }
 
     private HashSet<int> signedUpTrainings = new();
