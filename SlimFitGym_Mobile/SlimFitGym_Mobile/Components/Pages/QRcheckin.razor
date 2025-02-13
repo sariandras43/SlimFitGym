@@ -1,9 +1,10 @@
 ﻿@page "/QRcheckin"
 @using SlimFitGym_Mobile.Models
 @using SlimFitGym_Mobile.Services
-@inject IJSRuntime JS
+@using System.Diagnostics
 @inject NavigationManager navigationManager
-@using Microsoft.Maui.Media
+@inject CameraService CameraService
+
 
 <Header />
 
@@ -11,68 +12,47 @@
     <div class="sticky-top py-3 bg-white text-center border-bottom">
         <h2 class="fw-bold">QR belépés olvasó</h2>
     </div>
-        @if (!MediaPicker.Default.IsCaptureSupported)
-        {
-            <div class="alert-danger">Nem található kamera!</div>
-        }
-        else
-        {
-            <div class="w-75 ratio ratio-1x1 border rounded mx-auto mt-5 d-flex justify-content-center align-items-center">
-                <video id="cameraFeed" autoplay playsinline class="border rounded w-100 ratio-1x1"></video>
-            </div>
 
-            <div class="mt-3 text-center">
-                <div class="fw-bold">
-                    @if (scanned)
-                    {
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEBklEQVR4nO3dzU5TQRQH8JvoE/jxCm78iis/noEYIREF9RFECiYkJCBEjD6EtqAbLRAsocUVTdB2zjTEDS5o5CORzoFETXQPuWYKJSyQlvb2njO355+cPef8Op25QO54nkQikUgkEolEIpFIJBKJRNLCyfrZ07lS4Vbe6AeAEFNGD0ShACFme9IlfdP26HEPbMJVZfQEoP4NqP0ol0L4ZXtVm+qKxy1LZumcMvqtMrBLPSgIG8bArjIwrkv6rMchha3CJWX0OvVggB5mzc6CA8Zf6mEAk1IG/ugtfZEEwy5RMLBKPQTgVkZvLOLX86GDgIF35M0jz7J7SqgY9mTRihs41A6ymysVroUHsne0JW8cOJeBRCgY9oHInsHJG0beZWcUysOjfQKnbhZcqW240XSQvV+HMGgWHSgDXU0HAYSn5I2iG6VQ9zcdRBk9Qt0oOFJ2VgKC9BACgvTDFxCkH7iAIP2QBQTpBppey/jTxRkBAQaf7vR6xr8/99DvSHX6H4qTskKAFGO+jNE2c6dc9aLIsReDx2gERUCwORiHUZIrtaMICDYPox4UAcH6N/CudHWMSg0sDgoIhLSBV6sn2T7/SykvIOAYhnxlIS8MAUFeGAKCvDAEBKsPKLP+KTQMAcHqGF1zj0LDEBDkhSEgyAtDQJAXhpMgr5fj/hi8ZLGB92b7/ZzJBfozOAWSWB73b3/sKA/juXph//XSJ1sZC8GuDOdA4ssTBxiVepYfDQSFC4YzIEdhVGo41xgKJwwnQI7DaBQlwwyDPUj8W6IqRtt+jaqxE6FQn6acBLF/j26fvVvz0IZzIzWhcFwZToDYShanAkXJMMZwAiRIlMwJMXoWYqFiOAMSBMr8Bn8Mp0DqQRnaR7EY3Wn+GM6B2Hq/kvTbU7WjDH4eOhFG2HuG8yD1rJS2E62MYH831RIgtiaL04Gi9DDAcBokSJQeJhjOg1RQOmY7I4ERCRBoAIUbRmRAoA4UjhiRAgHU/lSNKI8XelliRA4EakDhjBFJEDgGhTtGZEHgCBQXMCINAodQXMGIPAig9lOrKWcwWgIEHCsBQXoEAUH6wQsI0g+bDwjqfupGwZFSqPuaDqKN7qZuFBwpVSrcazqIvCZW83pNbNJPnlIIP6k/fcC8QnuRso192Tx1w8C/4l5YyW/nL4PROwya9lmW0TuhX+4iq0T/F0ShfuOFnfyP/BlA/Z3804i8yl7/ZO/k8ihir/ex1/xQDwGYFOmVRwcoJX1BIaxQDwOoy8AqOcbh+6jsntKSt+6Y8uEmbr/CPW7ZO31BohUufFH2WcxAgvyqvFofHu1Tqr0/w15XCgivIlIx25PaUtdtj9RzlkgkEolEIpFIJBKJRCKRSDzC/APZejDG1uLOGwAAAABJRU5ErkJggg==" alt="checked-2--v1">
-                        Task.Delay(1000).ContinueWith(_ =>
-                        {
-                            StopCamera();
-                            navigationManager.NavigateTo("/");
-                        });
-                    }
-                </div>
-            @if (!string.IsNullOrEmpty(errorMessage))
-            {
-                <div class="alert-danger">@errorMessage</div>
-            }
-            </div>
+    @if (!string.IsNullOrEmpty(CameraService.ErrorMessage))
+    {
+        <div class="alert alert-danger">@CameraService.ErrorMessage</div>
+    }
+    else
+    {
+        <button class="btn btn-primary mt-3" @onclick="TakePhoto">Kamera indítása</button>
+        
+        @if (CameraService.isScanned)
+        {
+            <img class="justify-content-center mt-3" src="data:image/png;base64,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" alt="checked-2--v1">
         }
+    }
 </div>
 
 <Navbar />
 
 @code {
-    private bool scanned = false;
-    private string errorMessage;
-
-    //scanning qr code
-
-    protected override async Task OnInitializedAsync()
+    private async Task TakePhoto()
     {
-        if (!MediaPicker.Default.IsCaptureSupported)
-        {
-            errorMessage = "Camera not supported";
-        }
-        var status = await Permissions.RequestAsync<Permissions.Camera>();
-        if (status != PermissionStatus.Granted)
-        {
-            errorMessage = "Camera permission denied!";
-            return;
-        }
-        //permission working!
         try
         {
-        await JS.InvokeVoidAsync("startCamera", "cameraFeed");
-        } catch (Exception ex)
+            var photo = await CameraService.InitializeCameraAsync();
+        }
+        catch (Exception ex)
         {
-            errorMessage = ex.Message;
+
+            CameraService.ErrorMessage = ex.Message;
         }
     }
 
-    private async Task StopCamera()
-    {
-        await JS.InvokeVoidAsync("stopCamera", "cameraFeed");
-    }
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     CameraService.isScanned = false;
+    //     var success = await CameraService.InitializeCameraAsync();
+
+    //     if (!success)
+    //     {
+    //         StateHasChanged();
+    //         return;
+    //     }
+    // }
 }

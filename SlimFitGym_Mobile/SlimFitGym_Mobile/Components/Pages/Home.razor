@@ -5,12 +5,11 @@
 @inject DataService DataService
 
 <Header/>
-<div class="d-flex justify-content-center my-auto">
-    <img class="w-75" src="../Resources/AppIcon/appicon.svg" alt="Alternate Text" />
-</div>
 @if (AccountModel.LoggedInUser == null)
 {
-    
+    <div class="d-flex justify-content-center my-auto">
+        <img class="w-75" src="../Resources/AppIcon/appicon.svg" alt="Alternate Text" />
+    </div>
 }
 else
 {

@@ -12,12 +12,13 @@ namespace SlimFitGym_Mobile
             base.OnCreate(savedInstanceState);
             Platform.Init(this, savedInstanceState);
 
-            if (CheckSelfPermission(Android.Manifest.Permission.Camera) != Permission.Granted)
-            {
-                RequestPermissions(new string[] { Android.Manifest.Permission.Camera }, 0);
-            }
 
             Android.Webkit.WebView.SetWebContentsDebuggingEnabled(true);
+            Android.Webkit.WebView WebView = new Android.Webkit.WebView(this);
+            WebView.Settings.JavaScriptEnabled = true;
+            WebView.Settings.MediaPlaybackRequiresUserGesture = false;
+            WebView.Settings.AllowFileAccess = true;
+            WebView.Settings.AllowContentAccess = true;
         }
     }
 }

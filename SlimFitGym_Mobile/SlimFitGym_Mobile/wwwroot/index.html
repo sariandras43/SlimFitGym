@@ -24,6 +24,8 @@
     </div>
     <script src="_framework/blazor.webview.js" autostart="false"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="_content/BlazorBarcodeScanner.ZXing.JS/zxingjs.index.min.js"></script>
+    <script src="_content/BlazorBarcodeScanner.ZXing.JS/BlazorBarcodeScanner.js"></script>
     <script>
         /*Carousel*/
         document.addEventListener("DOMContentLoaded", function () {
@@ -58,44 +60,6 @@
             let modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
             if (modal) {
                 modal.hide();
-            }
-        };
-
-        /*Camera*/
-        window.startCamera = async (cameraFeed) => {
-            try {
-                console.log("📷 Attempting to start camera...");
-
-                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                    console.error("🚨 navigator.mediaDevices.getUserMedia is not available!");
-                    return;
-                }
-
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                console.log("✅ Camera stream retrieved:", stream);
-
-                const videoElement = document.getElementById(cameraFeed);
-                if (!videoElement) {
-                    console.error("🚨 Video element not found!");
-                    return;
-                }
-
-                videoElement.srcObject = stream;
-                await videoElement.play();
-                console.log("🎥 Camera started successfully!");
-            } catch (error) {
-                console.error("🚨 Error accessing camera:", error);
-            }
-        };
-
-
-        window.stopCamera = (cameraFeed) => {
-            const videoElement = document.getElementById(cameraFeed);
-            if (videoElement && videoElement.srcObject) {
-                const stream = videoElement.srcObject;
-                const tracks = stream.getTracks();
-                tracks.forEach(track => track.stop());
-                videoElement.srcObject = null;
             }
         };
     </script>

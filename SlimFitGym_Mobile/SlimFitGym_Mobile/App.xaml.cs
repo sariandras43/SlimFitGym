@@ -9,6 +9,7 @@ namespace SlimFitGym_Mobile
         {
             AccountModel.LoggedInUser = AuthService.LoadUser();
             InitializeComponent();
+            //App.Current.UserAppTheme = AppTheme.Unspecified;
 
             MainPage = new MainPage();
         }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using SlimFitGym_Mobile.Services;
 using Microsoft.AspNetCore.Components.WebView.Maui;
+using CommunityToolkit.Maui;
 
 namespace SlimFitGym_Mobile
 {
@@ -11,12 +12,14 @@ namespace SlimFitGym_Mobile
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 });
-            builder.Services.AddScoped<DataService>();
-            builder.Services.AddScoped<AuthService>();
+            builder.Services.AddSingleton<DataService>(); //AddScoped
+            builder.Services.AddSingleton<AuthService>();
+            builder.Services.AddSingleton<CameraService>();
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://yourbackend.com/api/") });
             builder.Services.AddMauiBlazorWebView();
             builder.Services.ConfigureMauiHandlers(handlers =>
