@@ -11,7 +11,7 @@ namespace SlimFitGym_Mobile.Models
     public class EntryModel
     {
         public int Id { get; set; }
-        public string AccountId { get; set; }
+        public int AccountId { get; set; }
         public DateTime EntryDate { get; set; }
     }
 }

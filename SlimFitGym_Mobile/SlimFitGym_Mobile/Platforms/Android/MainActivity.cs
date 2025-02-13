@@ -13,6 +13,7 @@ namespace SlimFitGym_Mobile
             Platform.Init(this, savedInstanceState);
 
 
+
             Android.Webkit.WebView.SetWebContentsDebuggingEnabled(true);
             Android.Webkit.WebView WebView = new Android.Webkit.WebView(this);
             WebView.Settings.JavaScriptEnabled = true;

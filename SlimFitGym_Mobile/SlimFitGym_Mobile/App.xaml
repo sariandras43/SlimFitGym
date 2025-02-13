@@ -20,7 +20,6 @@
                 <Setter Property="BackgroundColor" Value="#000" />
                 <Setter Property="Padding" Value="14,10" />
             </Style>
-
         </ResourceDictionary>
     </Application.Resources>
 </Application>
