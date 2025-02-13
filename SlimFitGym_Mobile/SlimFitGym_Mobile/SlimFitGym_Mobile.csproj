@@ -76,10 +76,4 @@
       </MauiIcon>
     </ItemGroup>
 
-    <ItemGroup>
-      <MauiXaml Update="Components\Pages\QrScanner.xaml">
-        <Generator>MSBuild:Compile</Generator>
-      </MauiXaml>
-    </ItemGroup>
-
 </Project>

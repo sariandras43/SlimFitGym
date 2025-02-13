@@ -60,11 +60,11 @@ namespace SlimFitGym_Mobile.Services
         //    return await _httpClient.GetFromJsonAsync<List<EntryModel>>($"{apiBaseURL}entries") ?? new List<EntryModel>();
         //}
 
-        public static async Task<EntryModel> PostEntry(EntryModel entry)
-        {
-            var response = await _httpClient.PostAsJsonAsync($"{apiBaseURL}entries", entry);
-            return await response.Content.ReadFromJsonAsync<EntryModel>();
-        }
+        //public static async Task<EntryModel> PostEntry(EntryModel entry)
+        //{
+        //    var response = await _httpClient.PostAsJsonAsync($"{apiBaseURL}entries", entry);
+        //    return await response.Content.ReadFromJsonAsync<EntryModel>();
+        //}
 
     }
 

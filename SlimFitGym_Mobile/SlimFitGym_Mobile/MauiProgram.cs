@@ -2,6 +2,7 @@
 using SlimFitGym_Mobile.Services;
 using Microsoft.AspNetCore.Components.WebView.Maui;
 using CommunityToolkit.Maui;
+using Microsoft.AspNetCore.Components;
 
 namespace SlimFitGym_Mobile
 {
@@ -17,7 +18,6 @@ namespace SlimFitGym_Mobile
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 });
-            builder.Services.AddSingleton<DataService>(); //AddScoped
             builder.Services.AddSingleton<AuthService>();
             builder.Services.AddSingleton<CameraService>();
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://yourbackend.com/api/") });

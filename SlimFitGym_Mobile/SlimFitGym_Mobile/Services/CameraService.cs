@@ -1,31 +1,33 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.Diagnostics;
 using SlimFitGym_Mobile.Models;
-using ZXing.Net.Maui;
-using ZXing.Net.Maui.Controls;
 using SlimFitGym_Mobile.Components.Pages;
 
 namespace SlimFitGym_Mobile.Services
 {
     public class CameraService
     {
-        public Grid? qrGrid { get; set; }
-        public CameraBarcodeReaderView Camera { get; set; }
-        public bool isScanned { get; set; } = true;
-        public string Url { get; set; }
-        public string ErrorMessage { get; set; } = string.Empty;
-        public NavigationManager navigationManager { get; set; }
+        public  bool isScanned { get; set; } = false;
+        public  string Url { get; set; }
+        public  string ErrorMessage { get; set; } = string.Empty;
+        private readonly NavigationManager _navigationManager;
 
-        public CameraService() { }
-
-        public async Task<FileResult> InitializeCameraAsync()
+        public CameraService(NavigationManager navigationManager)
+        {
+            _navigationManager = navigationManager;
+        }
+        public  async Task InitializeCameraAsync()
         {
             if (MediaPicker.Default.IsCaptureSupported)
-        {
-                await MediaPicker.Default.CapturePhotoAsync();
-                }
-            ErrorMessage = "Kamera nem engedélyezve";
-            return null;
+            {
+                var photo = await MediaPicker.Default.CapturePhotoAsync();
+                // qr code implementation
+            }
+            else
+            {
+                ErrorMessage = "Kamera nem engedélyezve";
+                return;
+            }
         }
     }
 }
