@@ -12,16 +12,36 @@ namespace SlimFitGym.EFData.Repositories
     public class PurchasesRepository
     {
         readonly SlimFitGymContext context;
+        readonly AccountRepository accountRepository;
 
-        public PurchasesRepository(SlimFitGymContext context)
+        public PurchasesRepository(SlimFitGymContext context, AccountRepository accountRepository)
         {
             this.context = context;
+            this.accountRepository = accountRepository;
         }
 
 
         public List<PurchaseResponse> GetAllPurchases() 
         {
             return context.Set<Purchase>().Select(p=>new PurchaseResponse(p)).ToList();
+        }
+
+        public List<Purchase>? GetPurchasesByAccountId(int accountId)
+        {
+            if (accountId<= 0) return null;
+
+            List<Purchase>? purchases = context.Set<Purchase>().Where(p => p.AccountId == accountId).ToList();
+            if (purchases == null) return null;
+            return purchases;
+        }
+
+        public Purchase? GetLatestPurchaseByAccountId(int accountId)
+        {
+            if (accountId <= 0) return null;
+
+            Purchase? purchase = context.Set<Purchase>().Where(p => p.AccountId == accountId).OrderByDescending(p=>p.Id).FirstOrDefault();
+            if (purchase == null) return null;
+            return purchase;
         }
 
         public PurchaseResponse? GetPurchaseById(int id)

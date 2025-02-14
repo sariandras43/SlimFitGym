@@ -79,6 +79,14 @@ namespace SlimFitGym.EFData.Repositories
         }
 
 
+        public Pass? GetPassModelById(int id)
+        {
+            Pass? pass = context.Set<Pass>().SingleOrDefault(p => p.Id == id);
+            if (pass == null)
+                return null;
+            return pass;
+        }
+
         public PassResponse? NewPass(PassRequest pass)
         {
             if (pass.Price < 0)

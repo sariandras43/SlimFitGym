@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SlimFitGym.EFData;
 
@@ -10,9 +11,11 @@ using SlimFitGym.EFData;
 namespace SlimFitGym.EFData.Migrations
 {
     [DbContext(typeof(SlimFitGymContext))]
-    partial class SlimFitGymContextModelSnapshot : ModelSnapshot
+    [Migration("20250214071239_Alter_table_rooms")]
+    partial class Alter_table_rooms
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.1");

@@ -15,7 +15,7 @@ namespace SlimFitGym.Models.Models
         public int Id { get; set; }
 
         [ForeignKey("Accounts")]
-        public string AccountId { get; set; }
+        public int AccountId { get; set; }
 
         [Required]
         public DateTime EntryDate { get; set; }

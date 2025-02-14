@@ -23,6 +23,7 @@ namespace SlimFitGym.Data.Repository
             service.AddScoped<PassesRepository>();
             service.AddScoped<PurchasesRepository>();
             service.AddScoped<TrainerApplicantsRepository>();
+            service.AddScoped<EntriesRepository>();
             service.AddDbContext<SlimFitGymContext>();
         }
     }

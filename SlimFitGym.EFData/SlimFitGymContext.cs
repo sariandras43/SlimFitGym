@@ -15,6 +15,7 @@ namespace SlimFitGym.EFData
         public DbSet<Reservation> Reservations { get; set; } = null!;
         public DbSet<Purchase> Purchases { get; set; } = null!;
         public DbSet<TrainerApplicant> TrainerApplicants { get; set; } = null!;
+        public DbSet<Entry> Entries { get; set; } = null!;
         public string DbPath { get; }
 
         public SlimFitGymContext()
@@ -64,6 +65,7 @@ namespace SlimFitGym.EFData
 
             //For developing only, in production hasing+salting will be used!!
 
+            
             modelBuilder.Entity<Account>().HasData
             (
                 new Account() { Id=1,Name="admin",Password="admin", Email="admin@gmail.com",Phone="+36123456789",Role="admin"},
@@ -89,7 +91,7 @@ namespace SlimFitGym.EFData
 
             modelBuilder.Entity<Pass>().HasData
             (
-                new Pass() { Id=1,Days=30,Name="Havi",MaxEntries=10,Price=15000}
+                new Pass() { Id=1,Days=30,Name="Havi",MaxEntries=0,Price=15000}
             );
             modelBuilder.Entity<PassAndBenefit>().HasData
             (
@@ -104,6 +106,8 @@ namespace SlimFitGym.EFData
             modelBuilder.Entity<Account>().HasIndex(a=>a.Email).IsUnique();
             modelBuilder.Entity<Machine>().HasIndex(m=>m.Name).IsUnique();
             modelBuilder.Entity<Room>().HasIndex(r=>r.Name).IsUnique();
+
+            modelBuilder.Entity<Entry>().HasData();
         }
 
         //public override int SaveChanges()
