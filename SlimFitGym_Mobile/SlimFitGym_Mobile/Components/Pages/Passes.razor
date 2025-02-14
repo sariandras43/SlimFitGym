@@ -5,7 +5,7 @@
 <Header />
 
 <div class="container mt-2 d-flex flex-column">
-    <div class="sticky-top py-3 bg-white text-center border-bottom">
+    <div class="sticky-top py-3 text-center border-bottom">
         <h2 class="fw-bold">Jegyek és bérletek</h2>
     </div>
 
@@ -14,13 +14,13 @@
             @foreach (var pass in passes)
             {
                 <div class="col d-flex justify-content-center">
-                    <div class="card p-3 w-100 border rounded shadow-sm">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="fw-bold">@pass.Name</h5>
-                                <h4 class="fw-bold text-primary">$@pass.Price</h4>
+                    <div class="card p-3 w-100 border rounded shadow-sm lighter-dark">
+                        <div class="card-body lighter-dark">
+                            <div class="d-flex justify-content-between align-items-center lighter-dark">
+                                <h5 class="fw-bold lighter-dark">@pass.Name</h5>
+                                <h4 class="fw-bold text-primary lighter-dark">$@pass.Price</h4>
                             </div>
-                            <p class="text-muted">@pass.Description</p>
+                            <p class="text-muted lighter-dark">@pass.Description</p>
                             @if (AccountModel.LoggedInUser?.Role != "trainer")
                             {
                                 <NavLink href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="btn btn-primary w-100">Vásárlás</NavLink>

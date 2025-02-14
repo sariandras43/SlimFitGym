@@ -4,12 +4,12 @@
 <Header />
 <div class="border rounded-3 d-inline-block mt-3">
     <NavLink href="/machines" class="d-block p-1">
-        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAeUlEQVR4nO3XQQrCMBCF4e8MWkrvErLw/oeRWlxXChHEVRd1hHT+C/zJ42WY0BEjrtHSigfukfKKBStmXCKkpd10kz5xS+mRZLw/pWR7u4t3+JAubSzqWvy3qN+kfM3YBVKy7c72zuvXejtEy+d2gO1HEcqIKVq6mxcYKlU4XwQ2VAAAAABJRU5ErkJggg==" alt="back">
+        <img class="invert" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAeUlEQVR4nO3XQQrCMBCF4e8MWkrvErLw/oeRWlxXChHEVRd1hHT+C/zJ42WY0BEjrtHSigfukfKKBStmXCKkpd10kz5xS+mRZLw/pWR7u4t3+JAubSzqWvy3qN+kfM3YBVKy7c72zuvXejtEy+d2gO1HEcqIKVq6mxcYKlU4XwQ2VAAAAABJRU5ErkJggg==" alt="back">
     </NavLink>
 </div>
 <div class="container mt-4 d-flex flex-column">
     <h2 class="text-center fw-bold border-bottom">@machine.Name</h2>
-    <div class="card border rounded shadow-sm text-decoration-none w-100">
+    <div class="card border rounded shadow-sm text-decoration-none w-100 lighter-dark">
         @* image carousel *@
         <div id="plansCarousel" class="carousel slide">
             <div class="carousel-inner">
@@ -35,7 +35,7 @@
         </div>
         @* carousel end *@
 
-        <div class="card-body text-center p-2">
+        <div class="card-body text-center p-2 lighter-dark">
             <p class="fw-bold mb-0">@machine.Description</p>
         </div>
     </div>

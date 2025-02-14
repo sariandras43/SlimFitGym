@@ -96,10 +96,70 @@ h1:focus {
 
 /*------- Custom: ----------*/
 
+/*General:*/
+/* Global theme settings for light mode */
+:root {
+    --background-color: #ffffff;
+    --text-color: #212529;
+    --card-bg: #ffffff;
+    --card-text: #212529;
+    /* Add more variables as needed */
+}
+
+/* Apply the variables globally */
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+/* Example usage on common elements */
+.card {
+    background-color: var(--card-bg);
+    color: var(--card-text);
+}
+nav {
+    background-color: white;
+}
+
+.navbar,
+.container,
+header,
+footer,
+div {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+/* Dark mode overrides */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #212529; /*#212529*/
+        --text-color: #ffffff;
+        --card-bg: #343a40;
+        --card-text: #ffffff;
+        /* Override additional variables as needed */
+    }
+
+    /* Force dark mode colors on elements that may have hard-coded styles */
+    body, .container, h2, input {
+        background-color: #212529 !important;
+        color: #fff !important;
+    }
+
+    .lighter-dark {
+        background-color: #000 !important;
+    }
+
+    /* Invert inline SVGs and <img> tags ending with .svg */
+    .invert {
+        filter: invert(1) hue-rotate(180deg) !important;
+    }
+}
+
+
 /*Navbar:*/
 .custom-navlink {
     text-decoration: none;
-    color: inherit;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -135,6 +195,9 @@ h1:focus {
 
 .carousel-container {
     margin: 0 auto;
+}
+.d-none {
+    display:none !important;
 }
 
 .section-title {

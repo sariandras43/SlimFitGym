@@ -8,16 +8,16 @@
 <div class="container mt-2 d-flex flex-column">
 @if (AccountModel.LoggedInUser?.Role == "trainer")
 {
-        <div class="sticky-top py-3 bg-white d-flex align-items-center justify-content-between border-bottom">
+        <div class="sticky-top py-3 d-flex align-items-center justify-content-between">
         <h2 class="text-center flex-grow-1 fw-bold">Elérhető edzésprogramok</h2>
         <NavLink href="/addTraining">
-            <img class="fw-bold mb-2" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAc0lEQVR4nO2UMQqAMAxF3/Gsg3j/wULVQS8Rl05FpGATpeTBX/MgCR+cnzMDJ3AAk6V4ByRnsxRLERerIb5qK6SbVY9AvBn8NhEIT+KkIK1quPSVOACLgnQBBhrQz1fX4mIzxG9sRSzKwYwArDlNGslBiwtYs6fhOILl9QAAAABJRU5ErkJggg==" alt="plus-math">
+            <img class="fw-bold mb-2 invert" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAc0lEQVR4nO2UMQqAMAxF3/Gsg3j/wULVQS8Rl05FpGATpeTBX/MgCR+cnzMDJ3AAk6V4ByRnsxRLERerIb5qK6SbVY9AvBn8NhEIT+KkIK1quPSVOACLgnQBBhrQz1fX4mIzxG9sRSzKwYwArDlNGslBiwtYs6fhOILl9QAAAABJRU5ErkJggg==" alt="plus-math">
         </NavLink>
     </div>
 }
 else
 {
-        <div class="sticky-top py-3 bg-white border-bottom">
+        <div class="sticky-top py-3 ">
         <h2 class="text-center fw-bold">Elérhető edzésprogramok</h2>
     </div>
 }
@@ -27,12 +27,12 @@ else
             {
                 bool isSignedUp = signedUpTrainings.Contains(training.Id);
 
-                <div class="card col d-flex m-2 me-3 ms-3 w-75 @(training.Id % 2 == 0 ? "me-auto" : "ms-auto")">
-                    <div class="card-body">
-                        <h5 class="card-title">@training.Name</h5>
-                        <p class="card-text">🏋️ Edző: <b>@training.TrainerId</b></p>
-                        <p class="card-text">📅 Dátum: <b>@training.TrainingStart.ToString("yyyy.MM.dd HH:mm")</b></p>
-                        <p class="card-text">Férőhelyek: @training.MaxPeople</p>
+                <div class="card col d-flex m-2 me-3 ms-3 w-75 lighter-dark @(training.Id % 2 == 0 ? "me-auto" : "ms-auto")">
+                    <div class="card-body lighter-dark">
+                        <h5 class="card-title lighter-dark">@training.Name</h5>
+                        <p class="card-text lighter-dark">🏋️ Edző: <b>@training.TrainerId</b></p>
+                        <p class="card-text lighter-dark">📅 Dátum: <b>@training.TrainingStart.ToString("yyyy.MM.dd HH:mm")</b></p>
+                        <p class="card-text lighter-dark">Férőhelyek: @training.MaxPeople</p>
                         @if (AccountModel.LoggedInUser != null)
                         {
                             <button class="btn @(isSignedUp ? "btn-danger" : "btn-primary") float-end"
@@ -49,14 +49,14 @@ else
     </div>
 </div>
 
-<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">@modalTitle</h5>
+<div class="modal fade lighter-dark" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered lighter-dark">
+        <div class="modal-content lighter-dark">
+            <div class="modal-header lighter-dark">
+                <h5 class="modal-title lighter-dark">@modalTitle</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer lighter-dark">
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Vissza</button>
                 <button type="button" class="btn btn-primary" @onclick="ConfirmAction">Igen</button>
             </div>
