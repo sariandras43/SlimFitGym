@@ -12,6 +12,7 @@ namespace SlimFitGym.Models.Responses
         public int Id { get; set; }
         public string Name { get; set; }
         public int MaxEntries { get; set; }
+        public int Days { get; set; }
         public decimal Price { get; set; }
         public bool isActive { get; set; }
         public bool isHighlighted { get; set; }
@@ -21,6 +22,7 @@ namespace SlimFitGym.Models.Responses
         {
             Id = p.Id;
             Name = p.Name;
+            Days = p.Days;
             MaxEntries = p.MaxEntries;
             Price = p.Price;
             isActive = p.IsActive;

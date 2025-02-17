@@ -25,7 +25,7 @@ namespace SlimFitGym.EFData.Repositories
             this.passesRepository = passesRepository;
         }
 
-        public Entry? NewEntry(int accountId)
+        public Entry NewEntry(int accountId)
         {
             if (accountId<=0) throw new Exception("Ez a felhasználó nem létezik.");
             Account? account = accountRepository.GetAccountById(accountId);
@@ -58,7 +58,8 @@ namespace SlimFitGym.EFData.Repositories
             }
             else
             {
-                if ((DateTime.Now - latestPurchase.PurchaseDate).TotalSeconds < (latestPurchase.PurchaseDate.AddDays(pass.Days) - latestPurchase.PurchaseDate).TotalSeconds)
+                var asd =(latestPurchase.PurchaseDate.AddDays(pass.Days) - latestPurchase.PurchaseDate).TotalSeconds;
+                if ((DateTime.Now - latestPurchase.PurchaseDate).TotalSeconds > (latestPurchase.PurchaseDate.AddDays(pass.Days) - latestPurchase.PurchaseDate).TotalSeconds)
                     throw new Exception("A felhasználó legutóbb vásárolt bérlete nem érvényes már.");
                 List<Entry> entriesByAccountId = GetEntriesByAccountId(accountId, latestPurchase.PurchaseDate.ToString());
                 if (entriesByAccountId.Count == pass.MaxEntries) throw new Exception("Ezzel a bérlettel nem lehet többször belépni.");

@@ -15,24 +15,45 @@ namespace SlimFitGymBackend.Controllers
             this.entriesRepository = entriesRepository;
         }
 
-        // GET: api/<EntriesController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
 
-        // GET api/<EntriesController>/5
-        [HttpGet("{id}")]
+
+        
+        //GET api/<EntriesController>/5
+        [HttpGet("{accountId}")]
         public IActionResult Get([FromRoute] string accountId)
         {
-            entriesRepository.GetEntriesByAccountId()
+            return this.Execute(() =>
+            {
+                int idNum;
+                if (int.TryParse(accountId, out idNum))
+                {
+                    var res = entriesRepository.GetEntriesByAccountId(idNum);
+                    if (res != null)
+                        return Ok(res);
+                    return NotFound(new { message = "Nem található a felhasználó." });
+
+                }
+                throw new Exception("Érvénytelen azonosító.");
+            });
         }
 
-        // POST api/<EntriesController>
-        [HttpPost]
-        public void Post([FromRoute] string accountId)
+        // POST api/<EntriesController>/4
+        [HttpPost("{accountId}")]
+        public IActionResult Post([FromRoute] string accountId)
         {
+            return this.Execute(() =>
+            {
+                int idNum;
+                if (int.TryParse(accountId, out idNum))
+                {
+                    var res = entriesRepository.NewEntry(idNum);
+                    if (res != null)
+                        return Ok(res);
+                    //return NotFound(new { message = "Nem található a felhasználó." });
+
+                }
+                throw new Exception("Érvénytelen azonosító.");
+            });
         }
 
 
