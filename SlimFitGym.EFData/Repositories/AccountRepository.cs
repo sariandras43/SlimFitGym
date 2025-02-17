@@ -2,6 +2,7 @@
 using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
 using SlimFitGym.Models.Responses;
+using SlimFitGymBackend;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,10 +17,12 @@ namespace SlimFitGym.EFData.Repositories
     public class AccountRepository
     {
         readonly SlimFitGymContext context;
+        readonly TokenGenerator tokenGenerator;
 
-        public AccountRepository(SlimFitGymContext context)
+        public AccountRepository(SlimFitGymContext context, TokenGenerator tokenGenerator)
         {
             this.context = context;
+            this.tokenGenerator = tokenGenerator;
         }
 
         public AccountResponse? Login(LoginRequest login)
@@ -27,10 +30,20 @@ namespace SlimFitGym.EFData.Repositories
             Account? a = context.Set<Account>().SingleOrDefault(a => a.Email == login.Email);
             if (a == null || !a.isActive)
                 return null;
-            string hash = BCrypt.Net.BCrypt.EnhancedHashPassword(login.Password, 10);
+            //string hash = BCrypt.Net.BCrypt.EnhancedHashPassword(login.Password, 10);
+#if DEBUG
+            if (a.Password!=login.Password)
+                throw new Exception("Helytelen email cím vagy jelszó.");
+            //else if (!BCrypt.Net.BCrypt.EnhancedVerify(login.Password, a.Password))
+            //    throw new Exception("Helytelen email cím vagy jelszó.");
+#else
+
             if (!BCrypt.Net.BCrypt.EnhancedVerify(login.Password, a.Password))
                 throw new Exception("Helytelen email cím vagy jelszó.");
-            return new AccountResponse(a);
+
+
+#endif
+            return new AccountResponse(a,tokenGenerator.GenerateToken(a.Email,false,a.Role));
 
         }
 
@@ -62,16 +75,15 @@ namespace SlimFitGym.EFData.Repositories
             {
                 Email = registration.Email,
                 isActive = true,
-                Name = registration.Name
-                ,
+                Name = registration.Name,
                 Password = hash,
-                Phone = registration.Phone.Replace(" ", ""),
+                Phone = registration.Phone.Replace(" ", "").Replace("-",""),
                 Role = "user"
             };
 
             Account savedAccount = this.context.Set<Account>().Add(newAccount).Entity;
             this.context.SaveChanges();
-            return new AccountResponse(savedAccount);
+            return new AccountResponse(savedAccount, tokenGenerator.GenerateToken(savedAccount.Email, false, savedAccount.Role));
 
         }
 

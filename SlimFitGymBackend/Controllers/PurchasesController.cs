@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models.Models;
@@ -19,6 +20,8 @@ namespace SlimFitGymBackend.Controllers
         }
         // GET: api/purchases
         [HttpGet]
+        [Authorize(Roles = "admin")]
+
         public IActionResult Get()
         {
             return this.Execute(() =>
@@ -28,15 +31,17 @@ namespace SlimFitGymBackend.Controllers
         }
 
         // GET api/purchases/5
-        [HttpGet("{id}")]
-        public IActionResult Get([FromRoute] string id)
+        [HttpGet("{accountId}")]
+        [Authorize]
+        //TODO: the authorized can only get the purchases related to them
+        public IActionResult Get([FromRoute] string accountId)
         {
             return this.Execute(() =>
             {
                 int idNum;
-                if (int.TryParse(id, out idNum))
+                if (int.TryParse(accountId, out idNum))
                 {
-                    var res = purchasesRepository.GetPurchaseById(idNum);
+                    var res = purchasesRepository.GetPurchasesByAccountId(idNum);
                     if (res != null)
                         return Ok(res);
                     return NotFound(new { message = "Nem található ez a vásárlás" });
@@ -47,6 +52,8 @@ namespace SlimFitGymBackend.Controllers
 
         // POST api/purchases
         [HttpPost]
+        [Authorize]
+        //TODO: the authorized can only add a purchase to themself
         public IActionResult Post([FromBody] PurchaseRequest purchase)
         {
             return this.Execute(() =>

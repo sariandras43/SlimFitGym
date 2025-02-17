@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SlimFitGym.EFData.Repositories;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -20,6 +21,8 @@ namespace SlimFitGymBackend.Controllers
         
         //GET api/<EntriesController>/5
         [HttpGet("{accountId}")]
+        [Authorize]
+        //TODO
         public IActionResult Get([FromRoute] string accountId)
         {
             return this.Execute(() =>
@@ -39,6 +42,8 @@ namespace SlimFitGymBackend.Controllers
 
         // POST api/<EntriesController>/4
         [HttpPost("{accountId}")]
+        [Authorize]
+        //TODO
         public IActionResult Post([FromRoute] string accountId)
         {
             return this.Execute(() =>

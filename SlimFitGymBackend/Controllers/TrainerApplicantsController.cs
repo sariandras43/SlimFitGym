@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models.Models;
@@ -19,6 +20,8 @@ namespace SlimFitGymBackend.Controllers
 
         // GET: api/<TrainerApplicantsController>
         [HttpGet]
+        [Authorize(Roles = "admin")]
+
         public IActionResult Get()
         {
             return this.Execute(() =>
@@ -29,6 +32,8 @@ namespace SlimFitGymBackend.Controllers
 
         // GET api/<TrainerApplicantsController>/5
         [HttpGet("{id}")]
+        [Authorize(Roles = "admin")]
+
         public IActionResult Get(string id)
         {
             return this.Execute(() =>
@@ -48,6 +53,8 @@ namespace SlimFitGymBackend.Controllers
 
         // POST api/<TrainerApplicantsController>
         [HttpPost("/accept/{id}")]
+        [Authorize(Roles = "admin")]
+
         public IActionResult Accept([FromRoute] string id)
         {
             return this.Execute(() =>
@@ -66,6 +73,8 @@ namespace SlimFitGymBackend.Controllers
         }
 
         [HttpPost()]
+        [Authorize]
+
         public IActionResult Post([FromBody] TrainerApplicant applicant)
         {
             return this.Execute(() =>

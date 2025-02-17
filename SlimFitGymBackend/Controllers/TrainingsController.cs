@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SlimFitGym.EFData;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models.Models;
@@ -20,6 +21,7 @@ namespace SlimFitGymBackend.Controllers
 
         // GET: api/<TrainingsController>
         [HttpGet]
+        [Authorize(Roles ="admin,trainer")]
         public IActionResult Get()
         {
             return this.Execute(() =>
@@ -72,6 +74,8 @@ namespace SlimFitGymBackend.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "admin,trainer")]
+        //TODO
         public IActionResult Post([FromBody] Training training)
         {
             return this.Execute(() =>
@@ -82,6 +86,8 @@ namespace SlimFitGymBackend.Controllers
 
         // PUT api/<TrainingsController>/5
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin,trainer")]
+        //TODO
         public IActionResult Put([FromRoute]string id, [FromBody] Training training)
         {
             return this.Execute(() =>
@@ -100,6 +106,8 @@ namespace SlimFitGymBackend.Controllers
 
         // DELETE api/<TrainingsController>/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin,trainer")]
+        //TODO
         public IActionResult Delete([FromRoute]string id)
         {
             return this.Execute(() =>

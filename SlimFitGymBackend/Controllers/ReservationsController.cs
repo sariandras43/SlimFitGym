@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
@@ -49,6 +50,9 @@ namespace SlimFitGymBackend.Controllers
 
         // POST api/<ReservationsController>
         [HttpPost]
+        [Authorize]
+        //TODO
+
         public IActionResult Post([FromBody] ReservationRequest reservation)
         {
             return this.Execute(() =>
@@ -60,6 +64,8 @@ namespace SlimFitGymBackend.Controllers
 
         // DELETE api/<ReservationsController>/5
         [HttpDelete("{id}")]
+        [Authorize]
+        //TODO
         public IActionResult Delete(string id)
         {
             return this.Execute(() =>

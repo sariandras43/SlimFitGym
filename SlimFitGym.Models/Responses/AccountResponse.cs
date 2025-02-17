@@ -15,6 +15,16 @@ namespace SlimFitGym.Models.Responses
         public string Token { get; set; }
         public DateTime ValidTo { get; set; }
         public string Role { get; set; }
+        public AccountResponse(Account a, string token)
+        {
+            Id = a.Id;
+            Name = a.Name;
+            Email = a.Email;
+            Token = token;
+            Role = a.Role;
+            ValidTo = DateTime.Now.AddMinutes(2);
+        }
+
         public AccountResponse(Account a)
         {
             Id = a.Id;
@@ -22,7 +32,7 @@ namespace SlimFitGym.Models.Responses
             Email = a.Email;
             Token = "To be implemented";
             Role = a.Role;
-            ValidTo = DateTime.Now.AddMinutes(30);
+            ValidTo = DateTime.Now.AddMinutes(2);
         }
         public AccountResponse(AccountResponse a)
         {

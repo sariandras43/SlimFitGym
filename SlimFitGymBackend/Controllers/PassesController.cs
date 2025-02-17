@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
@@ -14,12 +15,13 @@ namespace SlimFitGymBackend.Controllers
     {
 
         readonly PassesRepository passesRepository;
-        public PassesController(PassesRepository pr)
+        public PassesController(PassesRepository passesRepository)
         {
-            passesRepository = pr;
+            this.passesRepository = passesRepository;
         }
 
         [HttpGet]
+        [Authorize(Roles ="admin")]
         public IActionResult Get()
         {
             return this.Execute(() =>
@@ -52,8 +54,8 @@ namespace SlimFitGymBackend.Controllers
                     if (idNum < 0)
                         throw new Exception("Érvénytelen azonosító");
 
-                    PassResponse? p = passesRepository.GetPassById(idNum);
-                    if (p == null)
+                    PassResponse? p = passesRepository.GetOnlyActivePassById(idNum);
+                    if (p == null||!p.isActive)
                         return NotFound(new { message = "A keresett bérlet nem található" });
                     return Ok(p);
 
@@ -67,6 +69,8 @@ namespace SlimFitGymBackend.Controllers
 
         // GET api/<PassesController>/active/5
         [HttpGet("active/{id}")]
+        [Authorize(Roles = "admin")]
+
         public IActionResult GetActivePassById([FromRoute] string id)
         {
             return this.Execute(() =>
@@ -90,6 +94,8 @@ namespace SlimFitGymBackend.Controllers
 
         // POST api/<PassesController>
         [HttpPost]
+        [Authorize(Roles = "admin")]
+
         public IActionResult Post([FromBody] PassRequest pass)
         {
             return this.Execute(() =>
@@ -103,6 +109,8 @@ namespace SlimFitGymBackend.Controllers
 
         // PUT api/<PassesController>/5
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
+
         public IActionResult Put([FromRoute] string id, [FromBody] PassRequest pass)
         {
             return this.Execute(() =>
@@ -121,6 +129,8 @@ namespace SlimFitGymBackend.Controllers
 
         // DELETE api/<PassesController>/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
+
         public IActionResult Delete(string id)
         {
             return this.Execute(() =>
