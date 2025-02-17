@@ -18,10 +18,8 @@ namespace SlimFitGym.Models.Models
         [Required, StringLength(100)]
         public string Name { get; set; }
 
-        [Required]
         public int MaxEntries { get; set; }
-
-        [Required]
+ 
         public int Days { get; set; }
 
         [Required]

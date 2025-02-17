@@ -93,10 +93,9 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Érvénytelen ár.");
             if (pass.Name.Length > 100)
                 throw new Exception("Túl hosszú név.");
-            if (pass.MaxEntries < 1)
-                throw new Exception("Érvénytelen maximum belépés.");
-            if (pass.Days < 1)
-                throw new Exception("Érvénytelen felhasználási idő.");
+            if (pass.MaxEntries < 1 && pass.Days<1)
+                throw new Exception("Kötelező megadni legalább a maximum belépések számát vagy a felhasználható napok értékét.");
+
 
             Pass passToSave = new Pass()
             {

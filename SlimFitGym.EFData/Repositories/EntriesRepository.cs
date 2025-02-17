@@ -37,7 +37,7 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Nem létezik ilyen bérlet.");
             if (pass.MaxEntries==0)
             {
-                if ((DateTime.Now-latestPurchase.PurchaseDate).TotalSeconds<(latestPurchase.PurchaseDate.AddDays(pass.Days)-latestPurchase.PurchaseDate).TotalSeconds)
+                if ((DateTime.Now-latestPurchase.PurchaseDate).TotalSeconds>(latestPurchase.PurchaseDate.AddDays(pass.Days)-latestPurchase.PurchaseDate).TotalSeconds)
                     throw new Exception("A felhasználó legutóbb vásárolt bérlete nem érvényes már.");
                 Entry entryToSave = new Entry() { AccountId=account.Id,EntryDate=DateTime.Now};
                 Entry newEntry = context.Set<Entry>().Add(entryToSave).Entity;
