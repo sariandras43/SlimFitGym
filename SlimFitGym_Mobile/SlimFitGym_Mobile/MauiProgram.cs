@@ -3,6 +3,7 @@ using SlimFitGym_Mobile.Services;
 using Microsoft.AspNetCore.Components.WebView.Maui;
 using CommunityToolkit.Maui;
 using Microsoft.AspNetCore.Components;
+using SlimFitGym_Mobile.Components.Pages;
 
 namespace SlimFitGym_Mobile
 {

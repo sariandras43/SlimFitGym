@@ -4,8 +4,8 @@
 @using SlimFitGym_Mobile.Services
 @inject AuthService AuthService
 
-<div class="border rounded-3 d-inline-block mt-3">
-    <NavLink href="/login" class="d-block p-1">
+<div class="border rounded-3 d-inline-block mt-3 lighter-dark">
+    <NavLink href="/login" class="d-block p-1 lighter-dark">
         <img class="invert" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAeUlEQVR4nO3XQQrCMBCF4e8MWkrvErLw/oeRWlxXChHEVRd1hHT+C/zJ42WY0BEjrtHSigfukfKKBStmXCKkpd10kz5xS+mRZLw/pWR7u4t3+JAubSzqWvy3qN+kfM3YBVKy7c72zuvXejtEy+d2gO1HEcqIKVq6mxcYKlU4XwQ2VAAAAABJRU5ErkJggg==" alt="back">
     </NavLink>
 </div>
@@ -14,30 +14,30 @@
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-4">
             <div class="card shadow">
-                <div class="card-body">
-                    <h2 class="card-title text-center mb-4">Regisztráció</h2>
+                <div class="card-body lighter-dark">
+                    <h2 class="card-title text-center mb-4 lighter-dark">Regisztráció</h2>
                     <form @onsubmit="register">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Név</label>
-                            <input type="text" class="form-control" id="name" placeholder="Név" @bind="newUser.Name">
+                        <div class="mb-3 lighter-dark">
+                            <label for="name" class="form-label lighter-dark">Név</label>
+                            <input type="text" class="form-control lighter-dark" id="name" placeholder="Név" @bind="newUser.Name">
                         </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="text" class="form-control" id="email" placeholder="Email" @bind="newUser.Email">
+                        <div class="mb-3 lighter-dark">
+                            <label for="email" class="form-label lighter-dark">Email</label>
+                            <input type="text" class="form-control lighter-dark" id="email" placeholder="Email" @bind="newUser.Email">
                         </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Jelszó</label>
-                            <input type="password" class="form-control" id="password" placeholder="Jelszó" @bind="newUser.Password">
+                        <div class="mb-3 lighter-dark">
+                            <label for="password" class="form-label lighter-dark">Jelszó</label>
+                            <input type="password" class="form-control lighter-dark" id="password" placeholder="Jelszó" @bind="newUser.Password">
                         </div>
-                        <div class="mb-3">
-                            <label for="passwordAgain" class="form-label">Jelszó újra</label>
-                            <input type="password" class="form-control" id="passwordAgain" placeholder="Jelszó újra" @bind="passwordAgain">
+                        <div class="mb-3 lighter-dark">
+                            <label for="passwordAgain" class="form-label lighter-dark">Jelszó újra</label>
+                            <input type="password" class="form-control lighter-dark" id="passwordAgain" placeholder="Jelszó újra" @bind="passwordAgain">
                         </div>
-                        <div class="d-grid mb-3">
+                        <div class="d-grid mb-3 lighter-dark">
                             <button type="submit" class="btn btn-primary">Regisztráció</button>
                         </div>
-                        <div class="text-center">
-                            <NavLink href="/login" class="text-decoration-none">Már van fiókod? Jelentkezz be!</NavLink>
+                        <div class="text-center lighter-dark">
+                            <NavLink href="/login" class="text-decoration-none lighter-dark">Már van fiókod? Jelentkezz be!</NavLink>
                         </div>
                     </form>
                     @if (!string.IsNullOrEmpty(errorMessage))

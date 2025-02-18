@@ -97,22 +97,19 @@ h1:focus {
 /*------- Custom: ----------*/
 
 /*General:*/
-/* Global theme settings for light mode */
 :root {
     --background-color: #ffffff;
     --text-color: #212529;
     --card-bg: #ffffff;
     --card-text: #212529;
-    /* Add more variables as needed */
+     Add more variables as needed 
 }
 
-/* Apply the variables globally */
 body {
     background-color: var(--background-color);
     color: var(--text-color);
 }
 
-/* Example usage on common elements */
 .card {
     background-color: var(--card-bg);
     color: var(--card-text);
@@ -130,32 +127,28 @@ div {
     color: var(--text-color);
 }
 
-/* Dark mode overrides */
 @media (prefers-color-scheme: dark) {
     :root {
-        --background-color: #212529; /*#212529*/
+        --background-color: #000;
         --text-color: #ffffff;
         --card-bg: #343a40;
         --card-text: #ffffff;
-        /* Override additional variables as needed */
     }
 
-    /* Force dark mode colors on elements that may have hard-coded styles */
     body, .container, h2, input {
-        background-color: #212529 !important;
+        background-color: #000 !important;
         color: #fff !important;
     }
 
     .lighter-dark {
-        background-color: #000 !important;
+        background-color: #212529 !important;
+        color: white;
     }
 
-    /* Invert inline SVGs and <img> tags ending with .svg */
     .invert {
         filter: invert(1) hue-rotate(180deg) !important;
     }
 }
-
 
 /*Navbar:*/
 .custom-navlink {

@@ -5,8 +5,8 @@
 @using System.Text.Json
 @inject AuthService AuthService
 
-<div class="border rounded-3 d-inline-block mt-3">
-    <NavLink href="/" class="d-block p-1">
+<div class="border rounded-3 d-inline-block mt-3 lighter-dark">
+    <NavLink href="/" class="d-block p-1 lighter-dark">
         <img class="invert" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAeUlEQVR4nO3XQQrCMBCF4e8MWkrvErLw/oeRWlxXChHEVRd1hHT+C/zJ42WY0BEjrtHSigfukfKKBStmXCKkpd10kz5xS+mRZLw/pWR7u4t3+JAubSzqWvy3qN+kfM3YBVKy7c72zuvXejtEy+d2gO1HEcqIKVq6mxcYKlU4XwQ2VAAAAABJRU5ErkJggg==" alt="back">
     </NavLink>
 </div>
@@ -14,25 +14,25 @@
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-4">
             <div class="card shadow">
-                <div class="card-body">
-                    <h2 class="card-title text-center mb-4">Bejelentkezés</h2>
+                <div class="card-body lighter-dark">
+                    <h2 class="card-title text-center mb-4 lighter-dark">Bejelentkezés</h2>
                     <form @onsubmit="login">
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="text" class="form-control" id="email" placeholder="Email" @bind="email">
+                        <div class="mb-3 lighter-dark">
+                            <label for="email" class="form-label lighter-dark">Email</label>
+                            <input type="text" class="form-control lighter-dark" id="email" placeholder="Email" @bind="email">
                         </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Jelszó</label>
-                            <input type="password" class="form-control" id="password" placeholder="Jelszó" @bind="password">
+                        <div class="mb-3 lighter-dark">
+                            <label for="password" class="form-label lighter-dark">Jelszó</label>
+                            <input type="password" class="form-control lighter-dark" id="password" placeholder="Jelszó" @bind="password">
                         </div>
-                        <div class="d-grid mb-3">
+                        <div class="d-grid mb-3 lighter-dark">
                             <button type="submit" class="btn btn-primary">Bejelentkezés</button>
                         </div>
-                        <div class="text-center mb-3">
-                            <NavLink href="/newPassword" class="text-decoration-none">Elfelejtett jelszó</NavLink>
+                        <div class="text-center mb-3 lighter-dark">
+                            <NavLink href="/newPassword" class="text-decoration-none lighter-dark">Elfelejtett jelszó</NavLink>
                         </div>
-                        <div class="text-center">
-                            <NavLink href="/registration" class="text-decoration-none">Regisztráció</NavLink>
+                        <div class="text-center lighter-dark">
+                            <NavLink href="/registration" class="text-decoration-none lighter-dark">Regisztráció</NavLink>
                         </div>
                     </form>
 
