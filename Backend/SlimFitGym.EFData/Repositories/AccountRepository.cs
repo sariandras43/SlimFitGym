@@ -28,11 +28,9 @@ namespace SlimFitGym.EFData.Repositories
         public AccountResponse? Login(LoginRequest login)
         {
             Account? a = context.Set<Account>().SingleOrDefault(a => a.Email == login.Email);
-            if (a == null || !a.isActive)
-                return null;
             //string hash = BCrypt.Net.BCrypt.EnhancedHashPassword(login.Password, 10);
 #if DEBUG
-            if (a.Password!=login.Password)
+            if (a==null || a.Password!=login.Password)
                 throw new Exception("Helytelen email cím vagy jelszó.");
             //else if (!BCrypt.Net.BCrypt.EnhancedVerify(login.Password, a.Password))
             //    throw new Exception("Helytelen email cím vagy jelszó.");

@@ -1,7 +1,9 @@
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SlimFitGym.Data.Repository;
+using System.Runtime.CompilerServices;
 
 namespace SlimFitGymBackend
 {
@@ -34,6 +36,17 @@ namespace SlimFitGymBackend
 
 
             app.MapControllers();
+
+
+            //TODO Making it work from container with dotnet cli command
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+
+                var context = services.GetRequiredService<SlimFitGym.EFData.SlimFitGymContext>();
+                if (context.Database.GetPendingMigrations().Any())
+                    context.Database.Migrate();
+            }
 
             app.Run();
         }
