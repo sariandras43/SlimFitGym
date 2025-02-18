@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Configuration;
 using SlimFitGym.Models.Models;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace SlimFitGym.EFData
 {
     public class SlimFitGymContext : DbContext
     {
+        public readonly IConfiguration config;
         public DbSet<RoomAndMachine> RoomsAndMachines { get; set; } = null!;
         public DbSet<Reservation> Reservations { get; set; } = null!;
         public DbSet<Purchase> Purchases { get; set; } = null!;
@@ -18,19 +20,20 @@ namespace SlimFitGym.EFData
         public DbSet<Entry> Entries { get; set; } = null!;
         public string DbPath { get; }
 
-        public SlimFitGymContext()
+        public SlimFitGymContext(IConfiguration configuration)
         {
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
-            //TODO: write it into a config file
-            DbPath = System.IO.Path.Join(path, "slimfitgym.db");
+            this.config = configuration;
+            DbPath = System.IO.Path.Join(path, config["DatabaseName"]);
         }
 
-        public SlimFitGymContext(DbContextOptions options) : base(options)
+        public SlimFitGymContext(DbContextOptions options,IConfiguration configuration) : base(options)
         {
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
-            DbPath = System.IO.Path.Join(path, "slimfitgym.db");
+            this.config = configuration;
+            DbPath = System.IO.Path.Join(path, config["DatabaseName"]);
         }
 
 
