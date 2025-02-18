@@ -30,29 +30,32 @@ namespace SlimFitGym.EFData.Repositories
                 {
                     room,
                     RoomAndMachines = context.RoomsAndMachines
-                        .Where(rm => rm.RoomId == room.Id)
-                        .FirstOrDefault()  
+                        .Where(rm => rm.RoomId == room.Id) 
+                        .ToList()  
                 })
-                .AsEnumerable()  
+                .AsEnumerable() 
                 .Select(x => new RoomWithMachinesResponse
                 {
                     Id = x.room.Id,
                     Name = x.room.Name,
-                    Description = x.room.Description,
+                    Description = x.room.Description!,
                     RecommendedPeople = x.room.RecommendedPeople,
-                    Machines = x.RoomAndMachines == null
+                    Machines = x.RoomAndMachines == null || !x.RoomAndMachines.Any()
                         ? new List<MachineDetails>()  
-                        : context.Set<Machine>()
-                            .Where(m => m.Id == x.RoomAndMachines.MachineId) 
-                            .Select(machine => new MachineDetails
+                        : x.RoomAndMachines
+                            .Select(rm => new MachineDetails
                             {
-                                Id = machine.Id,
-                                Name = machine.Name,
-                                MachineCount = x.RoomAndMachines.MachineCount
+                                Id = rm.MachineId,
+                                Name = context.Set<Machine>()
+                                    .Where(m => m.Id == rm.MachineId)
+                                    .Select(m => m.Name)
+                                    .FirstOrDefault()!, 
+                                MachineCount = rm.MachineCount
                             })
-                            .ToList() 
+                            .ToList()
                 })
                 .ToList();
+
             return result;
         }
 
@@ -64,28 +67,29 @@ namespace SlimFitGym.EFData.Repositories
                     room,
                     RoomAndMachines = context.RoomsAndMachines
                         .Where(rm => rm.RoomId == room.Id)
-                        .FirstOrDefault()
+                        .ToList()
                 })
                 .AsEnumerable()
                 .Select(x => new RoomWithMachinesResponse
                 {
                     Id = x.room.Id,
                     Name = x.room.Name,
-                    Description = x.room.Description,
+                    Description = x.room.Description!,
                     RecommendedPeople = x.room.RecommendedPeople,
-                    Machines = x.RoomAndMachines == null
+                    Machines = x.RoomAndMachines == null || !x.RoomAndMachines.Any()
                         ? new List<MachineDetails>()
-                        : context.Set<Machine>()
-                            .Where(m => m.Id == x.RoomAndMachines.MachineId)
-                            .Select(machine => new MachineDetails
+                        : x.RoomAndMachines
+                            .Select(rm => new MachineDetails
                             {
-                                Id = machine.Id,
-                                Name = machine.Name,
-                                MachineCount = x.RoomAndMachines.MachineCount
+                                Id = rm.MachineId,
+                                Name = context.Set<Machine>()
+                                    .Where(m => m.Id == rm.MachineId)
+                                    .Select(m => m.Name)
+                                    .FirstOrDefault()!,
+                                MachineCount = rm.MachineCount
                             })
                             .ToList()
-                })
-                .SingleOrDefault(r=>r.Id==id);
+                }).SingleOrDefault(r=>r.Id==id);
 
             return result;
         }
@@ -115,9 +119,10 @@ namespace SlimFitGym.EFData.Repositories
             return null;
         }
 
-        public List<RoomAndMachineResponse>? GetRoomAndMachineConnections()
+        public List<RoomAndMachine>? GetRoomAndMachineConnections()
         {
-            return context.Set<RoomAndMachine>().Select(rm=>new RoomAndMachineResponse(rm)).ToList();
+            //return context.Set<RoomAndMachine>().Select(rm=>new RoomAndMachineResponse(rm)).ToList();
+            return context.Set<RoomAndMachine>().ToList();
         }
 
         public RoomAndMachineResponse? ConnectRoomAndMachine(RoomAndMachine roomAndMachine)
@@ -145,16 +150,24 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Érvénytelen gépszám.");
             if (!context.Set<RoomAndMachine>().Any(r => r.Id == rm.Id))
                 return null;
-            if (context.Set<RoomAndMachine>().Any(x => x.MachineId == rm.MachineId && x.RoomId == rm.RoomId))
-                throw new Exception("Ehhez a teremhez már hozzá van rendelve ez a gép.");
-            if (!context.Set<Machine>().Any(m => m.Id == rm.Id))
+            //if (context.Set<RoomAndMachine>().Any(x => x.MachineId == rm.MachineId && x.RoomId == rm.RoomId))
+            //    throw new Exception("Ehhez a teremhez már hozzá van rendelve ez a gép.");
+            if (!context.Set<Machine>().Any(m => m.Id == rm.MachineId))
                 throw new Exception("Ez a gép nem létezik");
-            if (!context.Set<Room>().Any(r => r.Id == rm.Id))
+            if (!context.Set<Room>().Any(r => r.Id == rm.RoomId))
                 throw new Exception("Ez a terem nem létezik");
 
-            this.context.Entry(rm).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            RoomAndMachine modifiedRoomAndMachineConnection = new RoomAndMachine
+            {
+                Id=id,
+                MachineCount=rm.MachineCount,
+                MachineId=rm.MachineId,
+                RoomId= rm.RoomId
+            };
+
+            this.context.Entry(modifiedRoomAndMachineConnection).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             this.context.SaveChanges();
-            return new RoomAndMachineResponse(rm);
+            return new RoomAndMachineResponse(modifiedRoomAndMachineConnection);
         }
 
         public RoomAndMachineResponse? DeleteConnection(int id)

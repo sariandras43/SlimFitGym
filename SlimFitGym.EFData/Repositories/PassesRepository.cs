@@ -143,7 +143,7 @@ namespace SlimFitGym.EFData.Repositories
         public PassResponse? UpdatePass(int id, PassRequest pass)
         {
             if (pass.Id <= 0)
-                throw new Exception("Ilyen edző nem létezik");
+                throw new Exception("Ilyen bérlet nem létezik");
             if (id != pass.Id)
                 throw new Exception("Érvénytelen azonosító.");
             if (pass == null)

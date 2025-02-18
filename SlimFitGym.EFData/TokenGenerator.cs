@@ -30,7 +30,7 @@ namespace SlimFitGymBackend
             SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(2),
+                Expires = DateTime.UtcNow.AddMinutes(20),
                 Issuer = config["Auth:Issuer"],
                 Audience = config["Auth:Audience"],
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),SecurityAlgorithms.HmacSha256),

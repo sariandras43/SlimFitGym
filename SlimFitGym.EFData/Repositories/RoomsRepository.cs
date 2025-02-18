@@ -138,7 +138,7 @@ namespace SlimFitGym.EFData.Repositories
                 {
                     foreach (MachineForRoom mr in machines)
                     {
-                        RoomAndMachine? roomAndMachine = roomsAndMachines.SingleOrDefault(rm => rm.MachineId == mr.Id);
+                        RoomAndMachine? roomAndMachine = roomsAndMachines.SingleOrDefault(rm => rm.MachineId == mr.Id && rm.RoomId==room.Id);
                         if (roomAndMachine == null)
                         {
                             RoomAndMachine newRm = new RoomAndMachine() { MachineCount = mr.Count, MachineId = mr.Id, RoomId = room.Id };
@@ -146,9 +146,17 @@ namespace SlimFitGym.EFData.Repositories
                         }
                         else
                         {
-                            var res = roomsAndMachinesRepository.UpdateRoomAndMachineConnection(roomAndMachine.Id, new RoomAndMachineRequest() { Id = roomAndMachine.Id, MachineId = mr.Id });
-                            RoomAndMachine toRemove = roomsAndMachines.Single(rm => rm.MachineId == res.MachineId);
+                            if (roomAndMachine.MachineCount!=mr.Count)
+                            {
+                                roomsAndMachinesRepository.DeleteConnection(roomAndMachine.Id);
+                                var newConnection = roomsAndMachinesRepository.ConnectRoomAndMachine(new RoomAndMachine() {MachineId=mr.Id,RoomId=id,MachineCount=mr.Count });
+                                //RoomAndMachine toRemove = roomsAndMachines.Single(rm => rm.MachineId == newConnection.MachineId);
+                                //roomsAndMachines.Remove(toRemove);
+                            }
+                            RoomAndMachine toRemove = roomsAndMachines.Single(rm => rm.MachineId == mr.Id);
                             roomsAndMachines.Remove(toRemove);
+
+                            //var res = roomsAndMachinesRepository.UpdateRoomAndMachineConnection(roomAndMachine.Id, new RoomAndMachineRequest() { Id = roomAndMachine.Id, MachineId = mr.Id, MachineCount=mr.Count,RoomId=room.Id });
 
                         }
 
