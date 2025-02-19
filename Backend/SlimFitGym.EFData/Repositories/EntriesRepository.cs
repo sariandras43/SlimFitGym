@@ -80,7 +80,7 @@ namespace SlimFitGym.EFData.Repositories
             DateTime from;
             if (!DateTime.TryParse(fromDate,CultureInfo.InvariantCulture,out from))
                 throw new Exception("Nem magyar formátumú a dátum.");
-            return context.Set<Entry>().Where(e=>e.AccountId==accountId && e.EntryDate>from).ToList();
+            return context.Set<Entry>().Where(e=>e.AccountId==accountId && e.EntryDate>from).OrderByDescending(e=>e.EntryDate).Take(10).ToList();
         }
     }
 }

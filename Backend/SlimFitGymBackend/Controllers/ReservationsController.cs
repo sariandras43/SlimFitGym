@@ -50,7 +50,7 @@ namespace SlimFitGymBackend.Controllers
 
         // POST api/<ReservationsController>
         [HttpPost]
-        [Authorize]
+        //[Authorize]
         //TODO
 
         public IActionResult Post([FromBody] ReservationRequest reservation)

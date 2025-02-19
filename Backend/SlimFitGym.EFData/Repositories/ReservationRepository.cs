@@ -32,6 +32,24 @@ namespace SlimFitGym.EFData.Repositories
                 return new ReservationResponse(res);
             return null;
         }
+        public List<Reservation>? GetReservationsByTrainingId(int trainingId)
+        {
+            if (trainingId <= 0)
+                throw new Exception("Érvénytelen azonosító.");
+            var res = context.Set<Reservation>().Where(r => r.TrainingId == trainingId).ToList();
+            if (res != null)
+                return res;
+            return null;
+        }
+        public List<Reservation>? GetReservationsByAccountId(int accountId)
+        {
+            if (accountId <= 0)
+                throw new Exception("Érvénytelen azonosító.");
+            var res = context.Set<Reservation>().Where(r => r.TrainingId == accountId).ToList();
+            if (res != null)
+                return res;
+            return null;
+        }
 
         public ReservationResponse? NewReservation(ReservationRequest reservation)
         {
@@ -41,13 +59,15 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Nincs ilyen edzés.");
             if (reservation.AccountId <= 0)
                 throw new Exception("Nincs ilyen edző.");
-            Training? training = context.Set<Training>().SingleOrDefault(t=>t.Id == reservation.TrainingId);
+            Training? training = context.Set<Training>().SingleOrDefault(t=>t.Id == reservation.TrainingId && t.IsActive);
             if (training == null)
                 throw new Exception("Nincs ilyen edzés.");
             Account? trainer = context.Set<Account>().SingleOrDefault(a=>a.Id == training.TrainerId);
             // In theory, this check is not mandatory
             if (trainer == null)
                 throw new Exception("Nincs ilyen edző.");
+            if (trainer.Id == reservation.AccountId)
+                throw new Exception("Az edzés szervezője nem iratkozhat fel a saját programjára.");
             if (trainer.Role == "user")
                 throw new Exception("Nem lehet nála edzést felvenni.");
             if (context.Set<Reservation>().Any(r => r.AccountId == reservation.AccountId && r.TrainingId == reservation.TrainingId))

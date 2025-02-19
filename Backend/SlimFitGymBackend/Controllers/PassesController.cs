@@ -21,19 +21,7 @@ namespace SlimFitGymBackend.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles ="admin")]
         public IActionResult Get()
-        {
-            return this.Execute(() =>
-            {
-                return Ok(passesRepository.GetAllPasses());
-            });
-        }
-
-
-        // GET: api/<PassesController>/active
-        [HttpGet("active")]
-        public IActionResult GetAllActivePasses()
         {
             return this.Execute(() =>
             {
@@ -42,8 +30,20 @@ namespace SlimFitGymBackend.Controllers
         }
 
 
+        // GET: api/<PassesController>/active
+        //[Authorize(Roles ="admin")]
+
+        [HttpGet("all")]
+        public IActionResult GetAllPasses()
+        {
+            return this.Execute(() =>
+            {
+                return Ok(passesRepository.GetAllPasses());
+            });
+        }
+
+
         [HttpGet("{id}")]
-        [Authorize(Roles = "admin")]
         public IActionResult GetPassById([FromRoute] string id)
         {
             return this.Execute(() =>

@@ -219,7 +219,7 @@ namespace SlimFitGym.EFData.Repositories
         {
             if (id <= 0)
                 throw new Exception("Nincs ilyen felhasználó");
-            return context.Set<Account>().SingleOrDefault(a => a.Id == id);
+            return context.Set<Account>().SingleOrDefault(a => a.Id == id&&a.isActive);
         }
 
         public AccountResponse? BecomeATrainer(int id)

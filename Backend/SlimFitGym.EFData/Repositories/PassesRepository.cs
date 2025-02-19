@@ -71,7 +71,8 @@ namespace SlimFitGym.EFData.Repositories
             PassResponse? pass = context.Set<Pass>().Where(p =>p.Id == id).Select(p => new PassResponse(p)).SingleOrDefault();
             if (pass == null)
                 return null;
-
+            if (!pass.isActive)
+                return null;
             List<PassAndBenefit> pbs = context.Set<PassAndBenefit>().Where(pb => pb.PassId == pass.Id).ToList();
             foreach (PassAndBenefit pb in pbs)
             {
@@ -214,7 +215,8 @@ namespace SlimFitGym.EFData.Repositories
             Pass? passToDelete = GetPassModelById(id);
             if (passToDelete == null)
                 return null;
-
+            if (!passToDelete.IsActive)
+                return null;
             if (this.purchasesRepository.GetAllPurchases().Any(purchase => purchase.PassId == id))
             {
                 passToDelete.IsActive = false;

@@ -63,6 +63,7 @@ namespace SlimFitGym.EFData.Repositories
             Pass? p = context.Set<Pass>().SingleOrDefault(p => p.Id == purchase.PassId);
             if (p == null)
                 throw new Exception("Ilyen bérlet nem létezik.");
+            //In theory this check is not mandatory
             if (!p.IsActive)
                 throw new Exception("Ilyen bérlet nem létezik.");
             Account? a = context.Set<Account>().SingleOrDefault(a => a.Id == purchase.AccountId);
