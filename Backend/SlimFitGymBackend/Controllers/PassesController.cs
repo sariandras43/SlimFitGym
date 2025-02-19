@@ -138,7 +138,7 @@ namespace SlimFitGymBackend.Controllers
                 int idNum;
                 if (int.TryParse(id, out idNum))
                 {
-                    var res = passesRepository.MakePassInactive(idNum);
+                    var res = passesRepository.DeleteOrMakePassInactive(idNum);
                     if (res != null)
                         return Ok(res);
                     return NotFound(new { message = "Nem található a bérlet." });

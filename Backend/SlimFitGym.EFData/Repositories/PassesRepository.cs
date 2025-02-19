@@ -13,9 +13,11 @@ namespace SlimFitGym.EFData.Repositories
     {
 
         readonly SlimFitGymContext context;
-        public PassesRepository(SlimFitGymContext context)
+        readonly PurchasesRepository purchasesRepository;
+        public PassesRepository(SlimFitGymContext context,PurchasesRepository purchasesRepository)
         {
             this.context = context;
+            this.purchasesRepository = purchasesRepository;
         }
 
         public List<PassResponse> GetAllActivePasses()
@@ -152,22 +154,79 @@ namespace SlimFitGym.EFData.Repositories
             Pass? p = context.Set<Pass>().SingleOrDefault(p=>p.Id == id);
             if (p == null)
                 throw new Exception("Nem található ilyen bérlet.");
-            MakePassInactive(id);
+            if (this.purchasesRepository.GetAllPurchases().Any(purchase=>purchase.PassId==id))
+            {
+                DeleteOrMakePassInactive(id);
+                return NewPass(pass);
+            }
+            if (pass.Price < 0)
+                throw new Exception("Érvénytelen ár.");
+            if (pass.Name.Length > 100)
+                throw new Exception("Túl hosszú név.");
+            if (pass.MaxEntries < 1 && pass.Days < 1)
+                throw new Exception("Kötelező megadni legalább a maximum belépések számát vagy a felhasználható napok értékét.");
 
-            return NewPass(pass);
+            Pass passToModify = new Pass()
+            {
+                Id=id,
+                Days = pass.Days,
+                IsActive = pass.isActive,
+                IsHighlighted = pass.isHighlighted,
+                MaxEntries = pass.MaxEntries,
+                Name = pass.Name,
+                Price = pass.Price
+
+            };
+            this.context.Entry(passToModify).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            this.context.SaveChanges();
+
+            foreach (string bName in pass.Benefits)
+            {
+                if (bName != "")
+                {
+                    Benefit? b = context.Set<Benefit>().SingleOrDefault(b => b.BenefitName == bName);
+                    if (b == null)
+                    {
+                        Benefit savedBenefit = this.context.Set<Benefit>().Add(new Benefit() { BenefitName = bName }).Entity;
+                        this.context.SaveChanges();
+                        PassAndBenefit newPb = this.context.Set<PassAndBenefit>().Add(new PassAndBenefit() { BenefitId = savedBenefit.Id, PassId = pass.Id }).Entity;
+                        this.context.SaveChanges();
+                    }
+                    else
+                    {
+                        PassAndBenefit? pb = this.context.Set<PassAndBenefit>().SingleOrDefault(pb => pb.PassId == pass.Id && pb.BenefitId == b.Id);
+                        if (pb == null)
+                        {
+                            PassAndBenefit newPb = this.context.Set<PassAndBenefit>().Add(new PassAndBenefit() { BenefitId = b.Id, PassId = pass.Id }).Entity;
+                            this.context.SaveChanges();
+
+                        }
+                    }
+                }
+            }
+            return GetPassById(id);
+            
+
         }
 
-        public PassResponse? MakePassInactive(int id)
+        public PassResponse? DeleteOrMakePassInactive(int id)
         {
-            Pass? passToDelete = this.context.Set<Pass>().SingleOrDefault(p => p.Id == id && p.IsActive);
+            Pass? passToDelete = this.context.Set<Pass>().SingleOrDefault(p => p.Id == id);
             if (passToDelete == null)
                 return null;
-
-            passToDelete.IsActive = false;
-            passToDelete.IsHighlighted = false;
-            this.context.Entry(passToDelete).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            
+            if(this.purchasesRepository.GetAllPurchases().Any(purchase => purchase.PassId == id))
+            {
+                passToDelete.IsActive = false;
+                passToDelete.IsHighlighted = false;
+                this.context.Entry(passToDelete).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                this.context.SaveChanges();
+                return new PassResponse(passToDelete);
+            }
+            this.context.Set<Pass>().Remove(passToDelete);
             this.context.SaveChanges();
             return new PassResponse(passToDelete);
+
         }
     }
 }
