@@ -24,49 +24,16 @@
     </div>
     <script src="_framework/blazor.webview.js" autostart="false"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!--<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <!--<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>-->
     <script>
-        window.startQrScanner = (dotNetObjRef) => {
-            // Create a new instance of the HTML5QrCodeScanner with file scanning disabled.
-            const html5QrCodeScanner = new Html5QrcodeScanner(
-                "reader", // ID of the HTML element where the scanner will be rendered
-                {
-                    fps: 10,
-                    qrbox: 250,
-                    disableScanFromFile: true // Disables the file selection option
-                },
-                false // Verbose mode set to false
-            );
-
-            // Render the scanner and define the callbacks.
-            html5QrCodeScanner.render(
-                (decodedText, decodedResult) => {
-                    // Success callback: a QR code has been successfully scanned.
-                    console.log(`QR Code detected: ${decodedText}`);
-                    // Call the .NET method on the Blazor component.
-                    dotNetObjRef.invokeMethodAsync('OnScanSuccess', decodedText);
-                    // Optionally, stop the scanner after a successful scan.
-                    html5QrCodeScanner.clear().catch(error => {
-                        console.error("Failed to clear the QR scanner.", error);
-                    });
-                },
-                (errorMessage) => {
-                    // Error callback: log any errors (you may choose to update the UI with errors).
-                    console.warn(`QR Code scan error: ${errorMessage}`);
-                }
-            );
-        };
-    </script>-->
-
-    <script>
-        /*Carousel*/
-        document.addEventListener("DOMContentLoaded", function () {
+        window.initializeCarousels = () => {
             let carousels = document.querySelectorAll(".carousel");
 
             carousels.forEach((carousel) => {
                 let touchStartX = 0;
                 let touchEndX = 0;
-                let bsCarousel = new bootstrap.Carousel(carousel, { interval: false });
+                // Initialize with touch support enabled
+                let bsCarousel = new bootstrap.Carousel(carousel, { interval: false, touch: true });
 
                 carousel.addEventListener("touchstart", function (e) {
                     touchStartX = e.touches[0].clientX;
@@ -78,7 +45,6 @@
 
                 carousel.addEventListener("touchend", function () {
                     let swipeDistance = touchStartX - touchEndX;
-
                     if (swipeDistance > 50) { // Swipe left
                         bsCarousel.next();
                     } else if (swipeDistance < -50) { // Swipe right
@@ -86,7 +52,9 @@
                     }
                 });
             });
-        });
+        };
+
+
 
         window.closeModal = (modalId) => {
             let modal = bootstrap.Modal.getInstance(document.getElementById(modalId));

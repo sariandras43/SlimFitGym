@@ -2,100 +2,78 @@
 @using SlimFitGym_Mobile.Models
 @using SlimFitGym_Mobile.Services
 @inject CameraService CameraService
+@inject IJSRuntime JS
 @page "/"
 
-<Header/>
-@if (AccountModel.LoggedInUser == null)
-{
-    <div class="d-flex justify-content-center my-auto">
-        <img class="w-75 invert" src="../Resources/AppIcon/appicon.svg" alt="Alternate Text" />
-    </div>
-}
-else
-{
-    <div class="d-flex justify-content-center">
-        <div class="d-flex justify-content-center mt-3">
-            <img class="invert" src="data:image/png;base64,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" alt="camera">
-        </div>
-    </div>
-
-
+<div class="d-flex flex-column min-vh-100">
+    <Header />
+    <div class="flex-grow-1 position-relative">
+        @if (AccountModel.LoggedInUser != null)
+        {
+            <!-- Logged in content -->
+            <div class="d-flex justify-content-center">
+                <div class="d-flex justify-content-center">
+                    <img class="w-50" src="icon.png" alt="Logo" />
+                </div>
+            </div>
     <div class="container mt-4 carousel-container">
         @if (AccountModel.LoggedInUser?.Role != "trainer")
         {
-        <h3 class="section-title">Érvényes bérleteid</h3>
-
             @if (validPasses.Any())
             {
-                <div id="plansCarousel" class="carousel slide lighter-dark rounded" >
-                    <div class="carousel-inner lighter-dark">
-                        @for (int i = 0; i < validPasses.Count; i++)
-                        {
-                            <div class="carousel-item @(i == 0 ? "active" : "") lighter-dark">
-                                <div class="card home-card lighter-dark">
-                                    <div class="card-body lighter-dark">
-                                        <h5 class="card-title lighter-dark">@validPasses[i].Name</h5>
-                                        <p class="card-text lighter-dark">🎟 Hátralévő belépések: <b>@validPasses[i].MaxEntries</b></p>
-                                        @* <p class="card-text">📅 Érvényes eddig: <b>@validPasses[i]. .ToString("yyyy.MM.dd")</b></p> *@
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                    <button class="carousel-control-prev d-none" type="button" data-bs-target="#plansCarousel" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon visually-hidden" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next d-none" type="button" data-bs-target="#plansCarousel" data-bs-slide="next">
-                        <span class="carousel-control-next-icon visually-hidden" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
-            }
-            else
-            {
-                <p class="text-muted">Nincsenek érvényes bérleteid.</p>
-            }
-        }
-
-
-            <h3 class="section-title">Edzéseid</h3>
-
-            @if (trainings.Any())
-            {
-                <div id="trainingsCarousel" class="carousel slide lighter-dark" >
+                <h3 class="section-title">Érvényes bérleteid</h3>
+                <div id="plansCarousel" class="carousel slide lighter-dark" data-bs-touch="true" data-bs-interval="false">
                     <div class="carousel-inner lighter-dark rounded">
-                        @for (int i = 0; i < trainings.Count; i++)
+                        @for (int i = 0; i < validPasses.Count; i++)
                         {
                             <div class="carousel-item @(i == 0 ? "active" : "")">
                                 <div class="card home-card lighter-dark">
                                     <div class="card-body lighter-dark">
-                                    <h5 class="card-title lighter-dark">@trainings[i].Name</h5>
-                                    <p class="card-text lighter-dark">📅 Dátum: <b>@trainings[i].TrainingStart.ToString("yyyy.MM.dd HH:mm")</b></p>
-                                    <p class="card-text lighter-dark">🏋️ Edző: <b>@trainings[i].TrainerId</b></p>
-                                    <p class="card-text lighter-dark">📍 Helyszín: <b>@trainings[i].RoomId</b></p>
+                                        <h5 class="card-title lighter-dark">@validPasses[i].Name</h5>
+                                        <p class="card-text lighter-dark">🎟 Hátralévő belépések: <b>@validPasses[i].MaxEntries</b></p>
                                     </div>
                                 </div>
                             </div>
                         }
                     </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#trainingsCarousel" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#trainingsCarousel" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
                 </div>
             }
-            else
-            {
-                <p class="text-muted">Nincsenek tervezett edzéseid.</p>
-            }
+        }
+
+
+
+        @if (trainings.Any())
+        {
+            <h3 class="section-title mt-4">Edzéseid</h3>
+            <div id="trainingsCarousel" class="carousel slide lighter-dark" data-bs-touch="true" data-bs-interval="false">
+                <div class="carousel-inner lighter-dark rounded">
+                    @for (int i = 0; i < trainings.Count; i++)
+                    {
+                        <div class="carousel-item @(i == 0 ? "active" : "")">
+                            <div class="card home-card lighter-dark">
+                                <div class="card-body lighter-dark">
+                                    <h5 class="card-title lighter-dark">@trainings[i].Name</h5>
+                                    <p class="card-text lighter-dark">📅 Dátum: <b>@trainings[i].TrainingStart.ToString("yyyy.MM.dd HH:mm")</b></p>
+                                    <p class="card-text lighter-dark">🏋️ Edző: <b>@trainings[i].TrainerId</b></p>
+                                    <p class="card-text lighter-dark">📍 Helyszín: <b>@trainings[i].RoomId</b></p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
     </div>
-}
-<Navbar/>
+        }
+        else
+        {
+            <div class="h-100 d-flex justify-content-center align-items-center">
+                <img class="w-50" src="icon.png" alt="Logo" />
+            </div>
+        }
+    </div>
+    <Navbar />
+</div>
 
 @code {
     // Dummy data
@@ -103,7 +81,15 @@ else
     //private List<PassModel> validPasses = DataService.GetAccountsPasses(accountId);
 
     private List<TrainingModel> trainings = TrainingModel.GetTrainings();
-    //private List<TrainingModel> trainings = DataService.GetSignedUpTrainings(accountId);
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initializeCarousels");
+        }
+    }
 }
+@* <img class="invert" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAAGkElEQVR4nO2dD6yWUxzHP10q5VbX/1hlxLDMRoT+YArzZ8yKGm3V0Owmbf6PafM3tRmXQqUZRn8ktlCuyDBDi2GFiSSU1K0sIuW1X/u9c7t7z3met/ec532f5zmf7bfd7b47v+c53+c57zm/8zu/FwKBQCAQCAQCgUAgEAgE4tIBGALcATwMTN9LmwrcD4wEeobuL59uwAPAJqDg2HYBS4CBQZh4DAR+9CBEW/tX35z2QRgzFwHbExCjtb0WRCnNicC2hMUoWlN4S/akDlhWJTGK3ysDgij/Mzqiw34HmoF5e2kLgE8jfHwCtAuiQGfgJ0tHPQ80OOqo/sB6i6+rgyAw0dJBr3t4as+3+FsDdMqzKIfpcFSqc/4Genvy+6pFFFmE5panLR0zxaPf3iq46fuqOznkJGCnoVM2AQd69v+Y5WF4goxxQAx709Ih4xO4xoOBzQb//wB9Y9zDvtTo98B1wEJgLbCjwjXBNwmunG9xsH75BXgPuBU4lioiQ8pDHkIdlyYcTf7W8fUvrIYw53mKxL6b9I0Awz3ch4wS45K6get1jHV9E7t03E4aWed86OF+ipMDCQt5Y6iGrX1c/Cyqx+mWGV+lJvs6qYrGypsxB6inuoz0NAzLAzzMxwU3x5gd3Qmcq0NPHDsZOIjaoQNwQhnXPwhoBD6I6Ju1rkMyQyzO5FW/vVbn5Akiw/nWpEIysy2OrnHpKOWcYVkGyPTaCR0tyss+Q2BP7rI8vH1wpLrJgfwvsCddLG/JOFdjY6nGW3zPsVPMEkOfTXLR+HhD419Q3V3Gs4CxwH2aRCd2r8bVBulnqsUsQ58966Lx2wyNf0zyyXNjgaWWvYzWJp95RwXqmvC1TjVck+zvp16QBuDBiClllG3RVFIRNQkyK8hwYF0FQrQ1CZVfkcB1Z06QjsBMh0K0tem6KvdFpgTpYpmluLRmj/GzzAiyn34Rx+3UTTrbk3ShN/TvcgKEb+vbmCpBTNucH+GeF2J04gb9ku9nWAfVaThdPvNbjPacTEWTFORKQ+MSMnfJtREdt13XGTKkxaWrrlP+imh7TJoEkbDx120alh3DM3FHd52aFgy2rsIwTf+I2ZpEHQ5NiyDFDnsG+ErTd87BLTMj9hJ6OfDRKyKH+ClSJIhPelpW3n843mc/DfjT4EuGtR6O/KRakHssT+0ED/5utviTxG/yLsgqw8V/72nxJtPc1ZZt6FwLcozlaW306PcGi9+j8yzIGEumxhEe/fawpDONyrMgUwwXvjwB358ZfEt6bM0LMkATitdrDEiOErhgnuHC5+KflzwueL0KclyJPeItjqaIiwwX/gj+edTgW2JiNS3IZEPjNzlo+y1D25Pxj+m+ZASoaUHmGhp/3EHbryQY8GvLcwbfL1PjgpjGeXFaKU9awuK+WWrwPS3PgkywhEw64Y/OlhDK+DwL0t/QdsHzSarLLX5lnyW3grS3ZJMswh+mA6ebHSWNp1YQNKxveloH4x5bJQc5N0/eBRlk6aCVjpPcupXYbGttrioCpVoQ4X1LJy0G9nHgo05PyCZx4DT1ggyMOLu4oMKUnXrLmqegvl1uSTcZ/Mg5m1QIElX3pAB8rkfgyqWvpgfZ2p7h+F4afW6AJSVIfcT4XjwgKqlCp8Q46iyfeTHGqeEVwP4e7mVFGz8/aDmP1AgiHB8zl6pY20qSI+7WinSj9e+ZZVQ13eCx6kKDvhHz9Wi0s6yWJAURTgU2xuzQSmxjlQoVpE4Q9Gjydx7FWKVvYyqphiDFV97kuxKbk+A5kUwJUuRiXSBWKoR8yV5IBqi2IMVF3TCNQZVTk2SnLiyHZumAai0I0hqZrYzQxVezvj1r1VaqaE16+uoQqovkgB3uurJqrQmSFia2KtYjE5SzXTUcBCmfUSUe4K1aDrFigiDls9hnXZjZCaTvZ43lHjN1dudIlWpcoqeB0vxs6LOr8Hjo81dH+xRZo7dlGi7lQCpmsMWBzO8D8fKVd2jxZSeJCC0GJ6tdhZQzQl9LaSY5e5/IGcBlno8OpIV+WrrD1E9yytgZR0ZUsG7RAphHkS/a6UbYtIgS617Kp0+KGT/apivTrNuaMsqsX4YH2mvObdzAXjC8/w7K7hq7X4bOJu7DNj+JpUF9xE8GBWN3HzQlGfKv06L8LouLFTJiknJ0AVVC3pYbtaSSj19MKKTEtulBnxG1tBHWoIlsl2hUc2zGbZS+CX3y/lN7gUAgEAgEAoFAIBAIkFn+A8JSlRaPOjEGAAAAAElFTkSuQmCC" alt="camera"> *@
 
 

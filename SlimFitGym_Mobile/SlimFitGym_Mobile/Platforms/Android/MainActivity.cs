@@ -11,8 +11,7 @@ namespace SlimFitGym_Mobile
         {
             base.OnCreate(savedInstanceState);
             Platform.Init(this, savedInstanceState);
-
-
+            Window.SetStatusBarColor(Android.Graphics.Color.Black);
 
             Android.Webkit.WebView.SetWebContentsDebuggingEnabled(true);
             Android.Webkit.WebView WebView = new Android.Webkit.WebView(this);

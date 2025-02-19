@@ -43,7 +43,7 @@
         <!-- App Icon -->
 
         <!-- Splash Screen -->
-        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+        <MauiSplashScreen Include="Resources\Splash\appsplash.svg" Color="#000" BaseSize="160,160" />
 
         <!-- Images -->
         <MauiImage Include="Resources\Images\*" />
@@ -54,6 +54,10 @@
 
         <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <MauiImage Remove="Resources\Images\icon.png" />
     </ItemGroup>
 
     <ItemGroup>
@@ -79,6 +83,15 @@
       <MauiIcon Include="Resources\AppIcon\appicon.svg">
         <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       </MauiIcon>
+      <MauiSplashScreen Include="Resources\Splash\appsplash.svg">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </MauiSplashScreen>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="wwwroot\icon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>
