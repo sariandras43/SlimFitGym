@@ -24,7 +24,7 @@ namespace SlimFitGym_Mobile.Services
         //    return await _httpClient.GetFromJsonAsync<List<TrainingModel>>($"{apiBaseURL}trainings") ?? new List<TrainingModel>();
         //}
 
-        //public static async Task<List<TrainingModel>> GetSignedUpTrainings(string accountId)
+        //public static async Task<List<TrainingModel>> GetSignedUpTrainings(int accountId)
         //{
         //    return await _httpClient.GetFromJsonAsync<List<TrainingModel>>($"{apiBaseURL}trainings/{accountId}") ?? new List<TrainingModel>();
         //}
@@ -45,7 +45,7 @@ namespace SlimFitGym_Mobile.Services
         //    return await _httpClient.GetFromJsonAsync<List<PassModel>>($"{apiBaseURL}passes") ?? new List<PassModel>();
         //}
 
-        //public static async Task<List<PassModel>> GetAccountsPasses(string accountId)
+        //public static async Task<List<PassModel>> GetAccountsPasses(int accountId)
         //{
         //    return await _httpClient.GetFromJsonAsync<List<PassModel>>($"{apiBaseURL}passes/{accountId}") ?? new List<PassModel>();
         //}
@@ -55,9 +55,9 @@ namespace SlimFitGym_Mobile.Services
         //    return await _httpClient.GetFromJsonAsync<List<AccountModel>>($"{apiBaseURL}accounts/{id}") ?? new List<AccountModel>();
         //}
 
-        //public static async Task<List<EntryModel>> GetEntries()
+        //public static async Task<List<EntryModel>> GetEntries(int accountId)
         //{
-        //    return await _httpClient.GetFromJsonAsync<List<EntryModel>>($"{apiBaseURL}entries") ?? new List<EntryModel>();
+        //    return await _httpClient.GetFromJsonAsync<List<EntryModel>>($"{apiBaseURL}entries/id") ?? new List<EntryModel>();
         //}
 
         //public static async Task<EntryModel> PostEntry(EntryModel entry)

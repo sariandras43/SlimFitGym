@@ -18,6 +18,7 @@ namespace SlimFitGym_Mobile.Models
         public DateTime TrainingStart { get; set; }
         public DateTime TrainingEnd { get; set; }
         public int MaxPeople { get; set; }
+        public string Description { get; set; }
         public bool IsActive { get; set; } = true;
 
         public static List<TrainingModel> GetTrainings()

@@ -38,6 +38,10 @@
                             <input type="number" class="form-control w-25 text-center lighter-dark" maxlength="2" step="1" id="maxPeople" @bind="newTraining.MaxPeople" />
                         </div>
                         <div class="mb-3 lighter-dark">
+                            <label for="name" class="form-label lighter-dark">Leírás</label>
+                            <textarea class="form-control lighter-dark" id="description" placeholder="Leírás" @bind="newTraining.Description" />
+                        </div>
+                        <div class="mb-3 lighter-dark">
                             <label for="roomId" class="form-label lighter-dark">Terem</label>
                             <select class="form-select lighter-dark" id="roomId" @bind="newTraining.RoomId">
                                 <option selected disabled>Válassz termet</option>
@@ -80,7 +84,7 @@
         errorMessage = string.Empty;
         try
         {
-            if (string.IsNullOrEmpty(newTraining.Name) || newTraining.TrainingStart == null || newTraining.TrainingEnd == null || newTraining.MaxPeople == 0 || newTraining.RoomId == 0)
+            if (string.IsNullOrEmpty(newTraining.Name) || newTraining.TrainingStart == null || newTraining.TrainingEnd == null || newTraining.MaxPeople == 0 || string.IsNullOrEmpty(newTraining.Name) || newTraining.RoomId == 0)
             {
                 errorMessage = "Minden mező kitöltése kötelező";
                 return;
