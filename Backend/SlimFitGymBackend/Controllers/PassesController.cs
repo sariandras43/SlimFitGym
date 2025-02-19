@@ -43,6 +43,7 @@ namespace SlimFitGymBackend.Controllers
 
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "admin")]
         public IActionResult GetPassById([FromRoute] string id)
         {
             return this.Execute(() =>
@@ -56,7 +57,7 @@ namespace SlimFitGymBackend.Controllers
 
                     PassResponse? p = passesRepository.GetOnlyActivePassById(idNum);
                     if (p == null||!p.isActive)
-                        return NotFound(new { message = "A keresett bérlet nem található" });
+                        return NotFound(new { message = "A keresett bérlet nem található." });
                     return Ok(p);
 
                 }
@@ -69,7 +70,6 @@ namespace SlimFitGymBackend.Controllers
 
         // GET api/<PassesController>/active/5
         [HttpGet("active/{id}")]
-        [Authorize(Roles = "admin")]
 
         public IActionResult GetActivePassById([FromRoute] string id)
         {
@@ -84,7 +84,7 @@ namespace SlimFitGymBackend.Controllers
 
                     PassResponse? p = passesRepository.GetOnlyActivePassById(idNum);
                     if (p==null)
-                        return NotFound(new { message = "A keresett bérlet nem található" });
+                        return NotFound(new { message = "Nem található aktív bérlet ezzel az azonosítóval." });
                     return Ok(p);
 
                 }
@@ -120,10 +120,10 @@ namespace SlimFitGymBackend.Controllers
                 {
                     var res = passesRepository.UpdatePass(idNum, pass);
                     if (res != null) return Ok(res);
-                    return NotFound("Nem található a bérlet.");
+                    return NotFound("Nem található aktív bérlet ezzel az azonosítóval.");
 
                 }
-                throw new Exception("Nem érvényes azonosító.");
+                throw new Exception("Érvénytelen azonosító.");
             });
         }
 
@@ -141,10 +141,10 @@ namespace SlimFitGymBackend.Controllers
                     var res = passesRepository.DeleteOrMakePassInactive(idNum);
                     if (res != null)
                         return Ok(res);
-                    return NotFound(new { message = "Nem található a bérlet." });
+                    return NotFound(new { message = "Nem található aktív bérlet ezzel az azonosítóval." });
 
                 }
-                throw new Exception("Nem érvényes azonosító.");
+                throw new Exception("Érvénytelen azonosító.");
             });
         }
     }

@@ -29,7 +29,7 @@ namespace SlimFitGym.EFData.Repositories
                 List<PassAndBenefit> pbs = context.Set<PassAndBenefit>().Where(pb=>pb.PassId==p.Id).ToList();
                 foreach (PassAndBenefit pb in pbs)
                 {
-                    p.Benefits = context.Set<Benefit>().Where(b=>b.Id==pb.Id).Select(b=>b.BenefitName).ToList();              
+                    p.Benefits.Add(context.Set<Benefit>().SingleOrDefault(b=>b.Id==pb.BenefitId).BenefitName);              
                 }
             }
             return passes;
@@ -44,7 +44,7 @@ namespace SlimFitGym.EFData.Repositories
                 List<PassAndBenefit> pbs = context.Set<PassAndBenefit>().Where(pb => pb.PassId == p.Id).ToList();
                 foreach (PassAndBenefit pb in pbs)
                 {
-                    p.Benefits = context.Set<Benefit>().Where(b => b.Id == pb.Id).Select(b => b.BenefitName).ToList();
+                    p.Benefits.Add(context.Set<Benefit>().SingleOrDefault(b => b.Id == pb.BenefitId).BenefitName);
                 }
             }
             return passes;
@@ -59,7 +59,8 @@ namespace SlimFitGym.EFData.Repositories
             List<PassAndBenefit> pbs = context.Set<PassAndBenefit>().Where(pb => pb.PassId == pass.Id).ToList();
             foreach (PassAndBenefit pb in pbs)
             {
-                pass.Benefits = context.Set<Benefit>().Where(b => b.Id == pb.Id).Select(b => b.BenefitName).ToList();
+                pass.Benefits.Add(context.Set<Benefit>().SingleOrDefault(b => b.Id == pb.BenefitId).BenefitName);
+
             }
 
             return pass;
@@ -74,7 +75,7 @@ namespace SlimFitGym.EFData.Repositories
             List<PassAndBenefit> pbs = context.Set<PassAndBenefit>().Where(pb => pb.PassId == pass.Id).ToList();
             foreach (PassAndBenefit pb in pbs)
             {
-                pass.Benefits = context.Set<Benefit>().Where(b => b.Id == pb.Id).Select(b => b.BenefitName).ToList();
+                pass.Benefits.Add(context.Set<Benefit>().SingleOrDefault(b => b.Id == pb.BenefitId).BenefitName);
             }
 
             return pass;
@@ -113,37 +114,37 @@ namespace SlimFitGym.EFData.Repositories
 
             this.context.SaveChanges();
 
+            pass.Benefits.RemoveAll(s => string.IsNullOrWhiteSpace(s));
             foreach (string bName in pass.Benefits)
             {
-                if (bName!="")
+                Benefit? b = context.Set<Benefit>().SingleOrDefault(b => b.BenefitName == bName);
+                if (b==null)
                 {
-                    Benefit? b = context.Set<Benefit>().SingleOrDefault(b => b.BenefitName == bName);
-                    if (b==null)
-                    {
-                        Benefit savedBenefit = this.context.Set<Benefit>().Add(new Benefit() { BenefitName=bName}).Entity;
-                        this.context.SaveChanges();
-                        PassAndBenefit newPb = this.context.Set<PassAndBenefit>().Add(new PassAndBenefit() { BenefitId=savedBenefit.Id,PassId=savedPass.Id}).Entity;
-                        this.context.SaveChanges();
-                    }
-                    else
-                    {
-                        PassAndBenefit? pb = this.context.Set<PassAndBenefit>().SingleOrDefault(pb=>pb.PassId==passToSave.Id && pb.BenefitId == b.Id);
-                        if (pb==null)
-                        {
-                            PassAndBenefit newPb = this.context.Set<PassAndBenefit>().Add(new PassAndBenefit() { BenefitId = b.Id, PassId = savedPass.Id }).Entity;
-                            this.context.SaveChanges();
-      
-                        }
-                    }         
+                    Benefit savedBenefit = this.context.Set<Benefit>().Add(new Benefit() { BenefitName=bName}).Entity;
+                    this.context.SaveChanges();
+                    PassAndBenefit newPb = this.context.Set<PassAndBenefit>().Add(new PassAndBenefit() { BenefitId=savedBenefit.Id,PassId=savedPass.Id}).Entity;
+                    this.context.SaveChanges();
                 }
+                else
+                {
+                    PassAndBenefit? pb = this.context.Set<PassAndBenefit>().SingleOrDefault(pb=>pb.PassId==savedPass.Id && pb.BenefitId == b.Id);
+                    if (pb==null)
+                    {
+                        PassAndBenefit newPb = this.context.Set<PassAndBenefit>().Add(new PassAndBenefit() { BenefitId = b.Id, PassId = savedPass.Id }).Entity;
+                        this.context.SaveChanges();
+      
+                    }
+                }                      
             }
 
 
             return GetPassById(savedPass.Id);
         }
 
-        public PassResponse? UpdatePass(int id, PassRequest pass)
+        public dynamic? UpdatePass(int id, PassRequest pass)
         {
+
+            //return context.Set<PassAndBenefit>().ToList();
             if (pass.Id <= 0)
                 throw new Exception("Ilyen bérlet nem létezik");
             if (id != pass.Id)
@@ -151,7 +152,7 @@ namespace SlimFitGym.EFData.Repositories
             if (pass == null)
                 throw new Exception("Hibás kérés.");
 
-            Pass? p = context.Set<Pass>().SingleOrDefault(p=>p.Id == id);
+            Pass? p = context.Set<Pass>().SingleOrDefault(p=>p.Id == id && p.IsActive);
             if (p == null)
                 throw new Exception("Nem található ilyen bérlet.");
             if (this.purchasesRepository.GetAllPurchases().Any(purchase=>purchase.PassId==id))
@@ -166,42 +167,41 @@ namespace SlimFitGym.EFData.Repositories
             if (pass.MaxEntries < 1 && pass.Days < 1)
                 throw new Exception("Kötelező megadni legalább a maximum belépések számát vagy a felhasználható napok értékét.");
 
-            Pass passToModify = new Pass()
-            {
-                Id=id,
-                Days = pass.Days,
-                IsActive = pass.isActive,
-                IsHighlighted = pass.isHighlighted,
-                MaxEntries = pass.MaxEntries,
-                Name = pass.Name,
-                Price = pass.Price
-
-            };
-            this.context.Entry(passToModify).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            this.context.Entry(p).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             this.context.SaveChanges();
 
+            pass.Benefits.RemoveAll(s => string.IsNullOrWhiteSpace(s));
             foreach (string bName in pass.Benefits)
             {
-                if (bName != "")
+                Benefit? b = context.Set<Benefit>().SingleOrDefault(b => b.BenefitName == bName);
+                if (b == null)
                 {
-                    Benefit? b = context.Set<Benefit>().SingleOrDefault(b => b.BenefitName == bName);
-                    if (b == null)
+                    Benefit savedBenefit = this.context.Set<Benefit>().Add(new Benefit() { BenefitName = bName }).Entity;
+                    this.context.SaveChanges();
+                    PassAndBenefit newPb = this.context.Set<PassAndBenefit>().Add(new PassAndBenefit() { BenefitId = savedBenefit.Id, PassId = pass.Id }).Entity;
+                    this.context.SaveChanges();
+                }
+                else
+                {
+                    PassAndBenefit? pb = this.context.Set<PassAndBenefit>().SingleOrDefault(pb => pb.PassId == pass.Id && pb.BenefitId == b.Id);
+                    if (pb==null)
                     {
-                        Benefit savedBenefit = this.context.Set<Benefit>().Add(new Benefit() { BenefitName = bName }).Entity;
+                        PassAndBenefit newPb = this.context.Set<PassAndBenefit>().Add(new PassAndBenefit() { BenefitId = b.Id, PassId = pass.Id }).Entity;
                         this.context.SaveChanges();
-                        PassAndBenefit newPb = this.context.Set<PassAndBenefit>().Add(new PassAndBenefit() { BenefitId = savedBenefit.Id, PassId = pass.Id }).Entity;
-                        this.context.SaveChanges();
+         
                     }
-                    else
-                    {
-                        PassAndBenefit? pb = this.context.Set<PassAndBenefit>().SingleOrDefault(pb => pb.PassId == pass.Id && pb.BenefitId == b.Id);
-                        if (pb == null)
-                        {
-                            PassAndBenefit newPb = this.context.Set<PassAndBenefit>().Add(new PassAndBenefit() { BenefitId = b.Id, PassId = pass.Id }).Entity;
-                            this.context.SaveChanges();
 
-                        }
-                    }
+                }
+            }
+            List<PassAndBenefit> passAndBenefits = context.Set<PassAndBenefit>().Where(pb=>pb.PassId==id).ToList();
+            foreach (PassAndBenefit pb in passAndBenefits)
+            {
+                Benefit? b = context.Set<Benefit>().SingleOrDefault(b => b.Id == pb.BenefitId);
+                if (!pass.Benefits.Contains(b.BenefitName))
+                {
+                    this.context.Set<PassAndBenefit>().Remove(pb);
+                    this.context.SaveChanges();
+                    
                 }
             }
             return GetPassById(id);
@@ -211,11 +211,11 @@ namespace SlimFitGym.EFData.Repositories
 
         public PassResponse? DeleteOrMakePassInactive(int id)
         {
-            Pass? passToDelete = this.context.Set<Pass>().SingleOrDefault(p => p.Id == id);
+            Pass? passToDelete = GetPassModelById(id);
             if (passToDelete == null)
                 return null;
-            
-            if(this.purchasesRepository.GetAllPurchases().Any(purchase => purchase.PassId == id))
+
+            if (this.purchasesRepository.GetAllPurchases().Any(purchase => purchase.PassId == id))
             {
                 passToDelete.IsActive = false;
                 passToDelete.IsHighlighted = false;
@@ -226,6 +226,7 @@ namespace SlimFitGym.EFData.Repositories
             this.context.Set<Pass>().Remove(passToDelete);
             this.context.SaveChanges();
             return new PassResponse(passToDelete);
+
 
         }
     }
