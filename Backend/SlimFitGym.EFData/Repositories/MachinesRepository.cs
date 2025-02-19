@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore.Internal;
+using SlimFitGym.Models.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
@@ -82,6 +84,11 @@ namespace SlimFitGym.EFData.Repositories
             if (machineToDelete == null)
                 return null;
 
+            var machineRoomConnections = this.context.Set<RoomAndMachine>().Where(rm=>rm.MachineId == id);
+            foreach (var connection in machineRoomConnections)
+            {
+                this.context.Set<RoomAndMachine>().Remove(connection);
+            }
             this.context.Set<Machine>().Remove(machineToDelete);
             this.context.SaveChanges();
             return machineToDelete;

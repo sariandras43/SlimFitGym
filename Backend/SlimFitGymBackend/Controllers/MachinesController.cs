@@ -49,7 +49,7 @@ namespace SlimFitGymBackend.Controllers
 
         // POST api/<MachinesController>
         [HttpPost]
-        [Authorize(Roles ="admin")]
+        //[Authorize(Roles ="admin")]
         public IActionResult Post([FromBody] dynamic value)
         {
             return this.Execute(() =>
@@ -80,7 +80,7 @@ namespace SlimFitGymBackend.Controllers
 
         // DELETE api/<MachinesController>/5
         [HttpDelete("{id}")]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public IActionResult Delete([FromRoute] string id)
         {
             return this.Execute(() =>

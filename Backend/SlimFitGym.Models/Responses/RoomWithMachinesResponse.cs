@@ -12,6 +12,7 @@ namespace SlimFitGym.Models.Responses
         public string Description { get; set; }
         public int RecommendedPeople { get; set; }
         public string Name { get; set; }
+        public bool IsActive { get; set; }
         public List<MachineDetails> Machines { get; set; }
     }
     public class MachineDetails

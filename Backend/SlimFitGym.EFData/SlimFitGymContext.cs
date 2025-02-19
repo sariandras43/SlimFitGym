@@ -12,7 +12,7 @@ namespace SlimFitGym.EFData
 {
     public class SlimFitGymContext : DbContext
     {
-        public readonly IConfiguration config;
+        //public readonly IConfiguration config;
         public DbSet<RoomAndMachine> RoomsAndMachines { get; set; } = null!;
         public DbSet<Reservation> Reservations { get; set; } = null!;
         public DbSet<Purchase> Purchases { get; set; } = null!;
@@ -20,20 +20,21 @@ namespace SlimFitGym.EFData
         public DbSet<Entry> Entries { get; set; } = null!;
         public string DbPath { get; }
 
-        public SlimFitGymContext(IConfiguration configuration)
+        public SlimFitGymContext()
         {
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
-            this.config = configuration;
-            DbPath = System.IO.Path.Join(path, config["DatabaseName"]);
+            //DbPath = System.IO.Path.Join(path, config["DatabaseName"]??"slimfitgym.db");
+            DbPath = System.IO.Path.Join(path, "slimfitgym.db");
+
         }
 
         public SlimFitGymContext(DbContextOptions options,IConfiguration configuration) : base(options)
         {
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
-            this.config = configuration;
-            DbPath = System.IO.Path.Join(path, config["DatabaseName"]);
+            DbPath = System.IO.Path.Join(path, "slimfitgym.db");
+            //DbPath = System.IO.Path.Join(path, config["DatabaseName"] ?? "slimfitgym.db");
         }
 
 
@@ -57,8 +58,8 @@ namespace SlimFitGym.EFData
 
             modelBuilder.Entity<Room>().HasData
             (
-                new Room() { Id = 1, Name = "Futós szoba", Description = "", RecommendedPeople = 15 },
-                new Room() { Id = 2, Name = "Biciklizős Szoba", Description = "", RecommendedPeople = 10 }
+                new Room() { Id = 1, Name = "Futós szoba", Description = "", RecommendedPeople = 15, IsActive=true },
+                new Room() { Id = 2, Name = "Biciklizős Szoba", Description = "", RecommendedPeople = 10,IsActive=true }
             );
             modelBuilder.Entity<RoomAndMachine>().HasData
             (

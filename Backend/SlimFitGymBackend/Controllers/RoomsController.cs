@@ -28,6 +28,16 @@ namespace SlimFitGymBackend.Controllers
                 return Ok(roomsAndMachinesRepository.GetRoomsWithMachines());
             });
         }
+        [HttpGet("all")]
+        //[Authorize(Roles = "admin")]
+
+        public IActionResult GetAll()
+        {
+            return this.Execute(() =>
+            {
+                return Ok(roomsRepository.GetAllRooms());
+            });
+        }
 
         // GET api/<RoomsController>/5
         [HttpGet("{id}")]
@@ -52,7 +62,7 @@ namespace SlimFitGymBackend.Controllers
 
         // POST api/<RoomsController>
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
 
         public IActionResult Post([FromBody] RoomRequest value)
         {
@@ -65,7 +75,7 @@ namespace SlimFitGymBackend.Controllers
 
         // PUT api/<RoomsController>/5
         [HttpPut("{id}")]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
 
         public IActionResult Put([FromRoute] string id, [FromBody] RoomRequest value)
         {
@@ -88,7 +98,7 @@ namespace SlimFitGymBackend.Controllers
 
         // DELETE api/<RoomsController>/5
         [HttpDelete("{id}")]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
 
         public IActionResult Delete([FromRoute] string id)
         {

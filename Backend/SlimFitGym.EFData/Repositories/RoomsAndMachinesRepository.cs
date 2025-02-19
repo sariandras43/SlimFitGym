@@ -40,6 +40,7 @@ namespace SlimFitGym.EFData.Repositories
                     Name = x.room.Name,
                     Description = x.room.Description!,
                     RecommendedPeople = x.room.RecommendedPeople,
+                    IsActive = x.room.IsActive,
                     Machines = x.RoomAndMachines == null || !x.RoomAndMachines.Any()
                         ? new List<MachineDetails>()  
                         : x.RoomAndMachines
@@ -54,6 +55,7 @@ namespace SlimFitGym.EFData.Repositories
                             })
                             .ToList()
                 })
+                .Where(r=>r.IsActive)
                 .ToList();
 
             return result;
@@ -75,6 +77,7 @@ namespace SlimFitGym.EFData.Repositories
                     Id = x.room.Id,
                     Name = x.room.Name,
                     Description = x.room.Description!,
+                    IsActive = x.room.IsActive,
                     RecommendedPeople = x.room.RecommendedPeople,
                     Machines = x.RoomAndMachines == null || !x.RoomAndMachines.Any()
                         ? new List<MachineDetails>()
@@ -89,7 +92,7 @@ namespace SlimFitGym.EFData.Repositories
                                 MachineCount = rm.MachineCount
                             })
                             .ToList()
-                }).SingleOrDefault(r=>r.Id==id);
+                }).SingleOrDefault(r=>r.Id==id&&r.IsActive);
 
             return result;
         }

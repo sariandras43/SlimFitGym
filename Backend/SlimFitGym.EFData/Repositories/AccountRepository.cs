@@ -27,7 +27,7 @@ namespace SlimFitGym.EFData.Repositories
 
         public AccountResponse? Login(LoginRequest login)
         {
-            Account? a = context.Set<Account>().SingleOrDefault(a => a.Email == login.Email);
+            Account? a = context.Set<Account>().SingleOrDefault(a => a.Email == login.Email && a.isActive);
             //string hash = BCrypt.Net.BCrypt.EnhancedHashPassword(login.Password, 10);
 #if DEBUG
             if (a==null || a.Password!=login.Password)
@@ -144,7 +144,7 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Érvénytelen azonosító.");
             if (request == null)
                 throw new Exception("Érvénytelen kérés.");
-            Account? account = context.Set<Account>().SingleOrDefault(a => a.Id == request.Id);
+            Account? account = context.Set<Account>().SingleOrDefault(a => a.Id == request.Id&&a.isActive);
             if (account == null)
                 return null;
             if (account.Id != request.Id)
@@ -204,7 +204,7 @@ namespace SlimFitGym.EFData.Repositories
         {
             if (id <= 0)
                 throw new Exception("Érvénytelen azonosító.");
-            var accountToDelete = this.context.Set<Account>().SingleOrDefault(a => a.Id == id);
+            var accountToDelete = this.context.Set<Account>().SingleOrDefault(a => a.Id == id&&a.isActive);
             if (accountToDelete == null)
                 return null;
 
