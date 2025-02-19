@@ -69,28 +69,28 @@ namespace SlimFitGymBackend.Controllers
 
 
         // GET api/<PassesController>/active/5
-        [HttpGet("active/{id}")]
+        //[HttpGet("{id}")]
 
-        public IActionResult GetActivePassById([FromRoute] string id)
-        {
-            return this.Execute(() =>
-            {
-                int idNum;
+        //public IActionResult GetActivePassById([FromRoute] string id)
+        //{
+        //    return this.Execute(() =>
+        //    {
+        //        int idNum;
 
-                if (int.TryParse(id, out idNum))
-                {
-                    if (idNum<0)
-                        throw new Exception("Érvénytelen azonosító");
+        //        if (int.TryParse(id, out idNum))
+        //        {
+        //            if (idNum<0)
+        //                throw new Exception("Érvénytelen azonosító");
 
-                    PassResponse? p = passesRepository.GetOnlyActivePassById(idNum);
-                    if (p==null)
-                        return NotFound(new { message = "Nem található aktív bérlet ezzel az azonosítóval." });
-                    return Ok(p);
+        //            PassResponse? p = passesRepository.GetOnlyActivePassById(idNum);
+        //            if (p==null)
+        //                return NotFound(new { message = "Nem található aktív bérlet ezzel az azonosítóval." });
+        //            return Ok(p);
 
-                }
-                throw new Exception("Érvénytelen azonosító");
-            });
-        }
+        //        }
+        //        throw new Exception("Érvénytelen azonosító");
+        //    });
+        //}
 
         // POST api/<PassesController>
         [HttpPost]
