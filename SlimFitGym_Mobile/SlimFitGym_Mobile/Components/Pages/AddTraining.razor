@@ -74,8 +74,8 @@
         TrainingStart = DateTime.Now,
         TrainingEnd = DateTime.Now.AddMinutes(30)
     };
+    //private List<RoomModel> rooms = DataService.GetRooms().Result;
     private List<RoomModel> rooms = RoomModel.GetRooms();
-    //private List<RoomModel> rooms = DataService.GetRooms();
     private string errorMessage;
 
 

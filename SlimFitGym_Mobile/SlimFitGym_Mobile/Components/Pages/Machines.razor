@@ -12,10 +12,10 @@
 
             <div class="mb-3 px-2">
                 <input type="text"
-                       class="form-control border-secondary"
-                       placeholder="Keresés"
-                       @bind="searchText"
-                       @bind:event="oninput" />
+                class="form-control border-secondary"
+                placeholder="Keresés"
+                @bind="searchText"
+                @bind:event="oninput" />
             </div>
         </div>
 
@@ -50,6 +50,12 @@
 
 @code {
     private string searchText = string.Empty;
+    public List<MachineModel> machines;
+
+    protected override async Task OnInitializedAsync()
+    {
+       machines = await DataService.GetMachines();
+    }
 
     private List<MachineModel> filteredMachines => MachineModel.machines
         .Where(m => m.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase))

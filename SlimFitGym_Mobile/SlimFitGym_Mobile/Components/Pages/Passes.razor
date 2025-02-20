@@ -37,12 +37,12 @@
 <Navbar />
 
 @code {
-    private List<PassModel> passes = PassModel.GetPasses();
 
-    // private List<PassModel>? passes = new List<PassModel>();
+    // private List<PassModel> passes = new List<PassModel>();
     // protected override async Task OnInitializedAsync()
     // {
-    //     passes = await DataService.GetMachines();
+    //     passes = await DataService.GetPasses();
     // }
 
+    private List<PassModel> passes = PassModel.GetPasses();
 }

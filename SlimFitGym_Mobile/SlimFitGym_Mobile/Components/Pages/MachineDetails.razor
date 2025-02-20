@@ -1,6 +1,7 @@
 ﻿@page "/machineDetails/{Id:int}"
 @using SlimFitGym_Mobile.Models
 @inject IJSRuntime JS
+@inject Machines Machines
 
 <Header />
 
@@ -47,7 +48,7 @@
 
     protected override void OnInitialized()
     {
-        machine = MachineModel.machines.FirstOrDefault(m => m.Id == Id);
+        machine = Machines.machines.FirstOrDefault(m => m.Id == Id);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

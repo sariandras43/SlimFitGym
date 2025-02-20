@@ -14,57 +14,154 @@ namespace SlimFitGym_Mobile.Services
         private const string apiBaseURL = "backendurl/api/";
 
 
-        //public static async Task<List<MachineModel>> GetMachines()
+        public static async Task<List<MachineModel>> GetMachines()
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<List<MachineModel>>($"{apiBaseURL}machines");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public static async Task<List<TrainingModel>> GetTrainings()
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<List<TrainingModel>>($"{apiBaseURL}trainings");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public static async Task<List<TrainingModel>> GetSignedUpTrainings(int accountId)
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<List<TrainingModel>>($"{apiBaseURL}trainings/{accountId}");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        //public static async Task<TrainingModel> SignUpTraining(int accountId, int trainingId)
         //{
-        //    return await _httpClient.GetFromJsonAsync<List<MachineModel>>($"{apiBaseURL}machines") ?? new List<MachineModel>();
+        //    try
+        //    {
+        //        var response = await _httpClient.PostAsJsonAsync($"{apiBaseURL}trainings/...");
+        //        return await response.Content.ReadFromJsonAsync<TrainingModel>();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
         //}
 
-        //public static async Task<List<TrainingModel>> GetTrainings()
-        //{
-        //    return await _httpClient.GetFromJsonAsync<List<TrainingModel>>($"{apiBaseURL}trainings") ?? new List<TrainingModel>();
-        //}
+        public static async Task<TrainingModel> DeleteSignUp(int accountId, int trainingId)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"{apiBaseURL}trainings/....");
+                return await response.Content.ReadFromJsonAsync<TrainingModel>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
-        //public static async Task<List<TrainingModel>> GetSignedUpTrainings(int accountId)
-        //{
-        //    return await _httpClient.GetFromJsonAsync<List<TrainingModel>>($"{apiBaseURL}trainings/{accountId}") ?? new List<TrainingModel>();
-        //}
+        public static async Task<TrainingModel> CreateTraining(TrainingModel training)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync($"{apiBaseURL}trainings", training);
+                return await response.Content.ReadFromJsonAsync<TrainingModel>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
-        //public static async Task<TrainingModel> CreateTraining(TrainingModel training)
-        //{
-        //    var response = await _httpClient.PostAsJsonAsync($"{apiBaseURL}trainings", training);
-        //    return await response.Content.ReadFromJsonAsync<TrainingModel>();
-        //}
+        public static async Task<List<RoomModel>> GetRooms()
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<List<RoomModel>>($"{apiBaseURL}rooms");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
-        //public static async Task<List<RoomModel>> GetRooms()
-        //{
-        //    return await _httpClient.GetFromJsonAsync<List<RoomModel>>($"{apiBaseURL}rooms") ?? new List<RoomModel>();
-        //}
+        public static async Task<List<PassModel>> GetPasses()
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<List<PassModel>>($"{apiBaseURL}passes");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
-        //public static async Task<List<PassModel>> GetPasses()
-        //{
-        //    return await _httpClient.GetFromJsonAsync<List<PassModel>>($"{apiBaseURL}passes") ?? new List<PassModel>();
-        //}
+        public static async Task<List<PassModel>> GetAccountsPasses(int accountId)
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<List<PassModel>>($"{apiBaseURL}passes/{accountId}");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
-        //public static async Task<List<PassModel>> GetAccountsPasses(int accountId)
-        //{
-        //    return await _httpClient.GetFromJsonAsync<List<PassModel>>($"{apiBaseURL}passes/{accountId}") ?? new List<PassModel>();
-        //}
+        public static async Task<List<AccountModel>> GetAccount(int id)
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<List<AccountModel>>($"{apiBaseURL}accounts/{id}");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
-        //public static async Task<List<AccountModel>> GetAccount(int id)
-        //{
-        //    return await _httpClient.GetFromJsonAsync<List<AccountModel>>($"{apiBaseURL}accounts/{id}") ?? new List<AccountModel>();
-        //}
+        public static async Task<List<EntryModel>> GetEntriesOfAccount(int accountId)
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<List<EntryModel>>($"{apiBaseURL}entries/{accountId}");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
-        //public static async Task<List<EntryModel>> GetEntries(int accountId)
-        //{
-        //    return await _httpClient.GetFromJsonAsync<List<EntryModel>>($"{apiBaseURL}entries/id") ?? new List<EntryModel>();
-        //}
+        public static async Task<EntryModel> PostEntry(EntryModel entry)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync($"{apiBaseURL}entries", entry);
+                return await response.Content.ReadFromJsonAsync<EntryModel>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
-        //public static async Task<EntryModel> PostEntry(EntryModel entry)
-        //{
-        //    var response = await _httpClient.PostAsJsonAsync($"{apiBaseURL}entries", entry);
-        //    return await response.Content.ReadFromJsonAsync<EntryModel>();
-        //}
 
     }
 

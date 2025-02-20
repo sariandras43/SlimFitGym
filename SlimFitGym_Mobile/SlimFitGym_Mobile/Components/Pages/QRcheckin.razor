@@ -40,13 +40,14 @@
 <Navbar />
 
 @code {
+    // private List<EntryModel> lastEntriesOfAccount;
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     lastEntriesOfAccount = await DataService.GetEntriesOfAccount(AccountModel.LoggedInUser.Id);
+    //     CameraService.ErrorMessage = null;
+    //     StateHasChanged();
+    // }
     private List<EntryModel> entries = EntryModel.lastEntriesOfAccount;
-
-    protected override void OnInitialized()
-    {
-        CameraService.ErrorMessage = null;
-        StateHasChanged();
-    }
 
     private async Task Scan()
     {

@@ -41,9 +41,9 @@
                             @if (AccountModel.LoggedInUser != null)
                             {
                                 <button class="btn @(isSignedUp ? "btn-danger" : "btn-primary") float-end"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#confirmModal"
-                                        @onclick="() => ShowConfirmation(training.Id, isSignedUp)">
+                                data-bs-toggle="modal"
+                                data-bs-target="#confirmModal"
+                                @onclick="() => ShowConfirmation(training.Id, isSignedUp)">
                                     @(isSignedUp ? "Visszavonás" : "Jelentkezés")
                                 </button>
                             }
@@ -73,13 +73,13 @@
 </div>
 
 @code {
-    public static List<TrainingModel> trainings = TrainingModel.GetTrainings();
-    //private List<TrainingModel>? trainings = new List<TrainingModel>();
+    // private List<TrainingModel> trainings;
     // protected override async Task OnInitializedAsync()
     // {
-    //     trainings = await DataService.GetTrainings();
+    //     trainings = await DataService.GetTrainings().Result;
     // }
 
+    public static List<TrainingModel> trainings = TrainingModel.GetTrainings();
     private HashSet<int> signedUpTrainings = new();
     private string modalTitle = "Biztosan szeretnél jelentkezni?";
     private int selectedTrainingId;
@@ -96,10 +96,12 @@
         if (signedUpTrainings.Contains(selectedTrainingId))
         {
             signedUpTrainings.Remove(selectedTrainingId);
+            //await DataService.DeleteSignUp(AccountModel.LoggedInUser.Id, selectedTrainingId);
         }
         else
         {
             signedUpTrainings.Add(selectedTrainingId);
+            //await DataService.SignUpTraining(AccountModel.LoggedInUser.Id, selectedTrainingId);
         }
 
         StateHasChanged();
