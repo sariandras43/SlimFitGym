@@ -19,7 +19,7 @@ namespace SlimFitGymBackend.Controllers
         }
 
         // POST api/<AuthController>
-        [HttpPost("/login")]
+        [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest loginInfo)
         {
             return this.Execute(() =>
@@ -31,7 +31,7 @@ namespace SlimFitGymBackend.Controllers
             });
         }
 
-        [HttpPost("/register")]
+        [HttpPost("register")]
         public IActionResult Register([FromBody] RegistrationRequest registration)
         {
             return this.Execute(() =>
@@ -40,7 +40,7 @@ namespace SlimFitGymBackend.Controllers
             });
         }
 
-        [HttpPut("/modify/{id}")]
+        [HttpPut("modify/{id}")]
         public IActionResult Modify([FromRoute] string id, [FromBody] ModifyAccountRequest accountInfo)
         {
             return this.Execute(() =>
@@ -57,7 +57,7 @@ namespace SlimFitGymBackend.Controllers
             });
         }
 
-        [HttpDelete("/delete/{id}")]
+        [HttpDelete("delete/{id}")]
         public IActionResult Delete([FromRoute] string id)
         {
             return this.Execute(() =>

@@ -28,19 +28,10 @@ namespace SlimFitGym.EFData.Repositories
         public AccountResponse? Login(LoginRequest login)
         {
             Account? a = context.Set<Account>().SingleOrDefault(a => a.Email == login.Email && a.isActive);
-            //string hash = BCrypt.Net.BCrypt.EnhancedHashPassword(login.Password, 10);
-#if DEBUG
-            if (a==null || a.Password!=login.Password)
-                throw new Exception("Helytelen email cím vagy jelszó.");
-            //else if (!BCrypt.Net.BCrypt.EnhancedVerify(login.Password, a.Password))
-            //    throw new Exception("Helytelen email cím vagy jelszó.");
-#else
 
-            if (!BCrypt.Net.BCrypt.EnhancedVerify(login.Password, a.Password))
+            if (a==null || !BCrypt.Net.BCrypt.EnhancedVerify(login.Password, a.Password))
                 throw new Exception("Helytelen email cím vagy jelszó.");
 
-
-#endif
             return new AccountResponse(a,tokenGenerator.GenerateToken(a.Email,false,a.Role));
 
         }
@@ -207,6 +198,8 @@ namespace SlimFitGym.EFData.Repositories
             var accountToDelete = this.context.Set<Account>().SingleOrDefault(a => a.Id == id&&a.isActive);
             if (accountToDelete == null)
                 return null;
+            if (this.context.Set<Account>().Where(a=>a.Role=="admin" && a.isActive).Count()==1)
+                throw new Exception("Utolsó adminisztrátor fiók nem törölhető");
 
             accountToDelete.isActive = false;
             this.context.Entry(accountToDelete).State = Microsoft.EntityFrameworkCore.EntityState.Modified;

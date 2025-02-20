@@ -6,7 +6,7 @@ using SlimFitGym.EFData.Repositories;
 
 namespace SlimFitGymBackend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/entries")]
     [ApiController]
     public class EntriesController : ControllerBase
     {

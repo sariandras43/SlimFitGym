@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SlimFitGym.EFData;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models.Models;
+using SlimFitGym.Models.Requests;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -105,7 +106,7 @@ namespace SlimFitGymBackend.Controllers
         [HttpPost]
         //[Authorize(Roles = "admin,trainer")]
         //TODO
-        public IActionResult Post([FromBody] Training training)
+        public IActionResult Post([FromBody] TrainingRequest training)
         {
             return this.Execute(() =>
             {
@@ -117,7 +118,7 @@ namespace SlimFitGymBackend.Controllers
         [HttpPut("{id}")]
         //[Authorize(Roles = "admin,trainer")]
         //TODO
-        public IActionResult Put([FromRoute]string id, [FromBody] Training training)
+        public IActionResult Put([FromRoute]string id, [FromBody] TrainingRequest training)
         {
             return this.Execute(() =>
             {

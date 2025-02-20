@@ -1,4 +1,6 @@
-﻿using SlimFitGym.Models.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using SlimFitGym.Models.Models;
+using SlimFitGym.Models.Requests;
 using SlimFitGym.Models.Responses;
 using System;
 using System.Collections.Generic;
@@ -113,7 +115,7 @@ namespace SlimFitGym.EFData.Repositories
             return context.Set<Training>().Where(t=>t.Name.ToLower().Contains(nameFragment.ToLower())).Skip(offset).Take(limit).ToList();
         }
 
-        public Training? NewTraining(Training training)
+        public Training? NewTraining(TrainingRequest training)
         {
             if (training.TrainerId <= 0)
                 throw new Exception("Ilyen edző nem létezik");
@@ -123,6 +125,8 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Hibás kérés.");
             if (training.Name== null || training.Name.Length == 0)
                 throw new Exception("A név mező kitöltése kötelező.");
+            if (training.Description == null || training.Description.Length == 0)
+                throw new Exception("A leírás mező kitöltése kötelező.");
             TimeSpan trainingSpan = training.TrainingEnd - training.TrainingStart; 
             if (trainingSpan.TotalMinutes<30)
                 throw new Exception("Érvénytelen időintervallum (minimum 30 perces edzés vehető fel).");
@@ -130,6 +134,8 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("A maximum résztvevők mező kitöltése kötelező");
             if (training.Name.Length > 100)
                 throw new Exception("A név maximum 100 karakter hosszú lehet.");
+            if (training.Description.Length > 500)
+                throw new Exception("A leírás maximum 500 karakter hosszú lehet.");
             Account? account = accountRepository.GetAccountById(training.TrainerId);
             if (account==null)
                 throw new Exception("Ilyen fiók nem létezik");
@@ -145,12 +151,24 @@ namespace SlimFitGym.EFData.Repositories
                     throw new Exception("Ebben az időpontban foglalt a terem");
             }
 
-            Training savedTraining = this.context.Set<Training>().Add(training).Entity;
+            Training trainingToSave = new Training()
+            {
+                TrainingStart = training.TrainingStart,
+                TrainingEnd = training.TrainingEnd,
+                IsActive=true,
+                Description =training.Description,
+                Name = training.Name,
+                MaxPeople=training.MaxPeople,
+                RoomId = training.RoomId,
+                TrainerId = training.TrainerId
+            };
+
+            Training savedTraining = this.context.Set<Training>().Add(trainingToSave).Entity;
             this.context.SaveChanges();
             return savedTraining;
         }
 
-        public Training? UpdateTraining(int id,Training training)
+        public Training? UpdateTraining(int id,TrainingRequest training)
         {
             if (training.TrainerId<=0)
                 throw new Exception("Ilyen edző nem létezik");
@@ -162,13 +180,22 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Hibás kérés.");
             if (training.Name == null || training.Name.Length == 0)
                 throw new Exception("A név mező kitöltése kötelező.");
-            if (training.TrainingEnd <= training.TrainingStart)
-                throw new Exception("Érvénytelen időintervallum.");
+            if (training.Description == null || training.Description.Length == 0)
+                throw new Exception("A leírás mező kitöltése kötelező.");
+            TimeSpan trainingSpan = training.TrainingEnd - training.TrainingStart;
+            if (trainingSpan.TotalMinutes < 30)
+                throw new Exception("Érvénytelen időintervallum (minimum 30 perces edzés vehető fel).");
+            if (training.MaxPeople < 1)
+                throw new Exception("A maximum résztvevők mező kitöltése kötelező");
+            if (training.Description.Length > 500)
+                throw new Exception("A leírás maximum 500 karakter hosszú lehet.");
+            if (training.Name.Length > 100)
+                throw new Exception("A név maximum 100 karakter hosszú lehet.");
             if (training.MaxPeople < 1)
                 throw new Exception("A maximum résztvevők mező kitöltése kötelező");
             if (training.Name.Length > 100)
                 throw new Exception("A név maximum 100 karakter hosszú lehet.");
-            if (!this.context.Set<Training>().Any(t => t.Id == id))
+            if (!this.context.Set<Training>().Any(t => t.Id == id && t.IsActive))
                 return null;
             if (training.MaxPeople - reservationRepository.GetReservationsByTrainingId(id)!.Count < 0)
                 throw new Exception("Több a résztvevő, mint az új látszám");
@@ -180,17 +207,30 @@ namespace SlimFitGym.EFData.Repositories
             Room? room = roomsRepository.GetRoomById(training.RoomId);
             if (room == null)
                 throw new Exception("Ilyen terem nem létezik");
-            List<Training> trainingsInTheSpecificRoom = context.Set<Training>().Where(t => t.RoomId == training.RoomId && t.IsActive).ToList();
+            List<Training> trainingsInTheSpecificRoom = context.Set<Training>().AsNoTracking().Where(t => t.RoomId == training.RoomId && t.IsActive).ToList();
             trainingsInTheSpecificRoom.RemoveAll(t=>t.Id==id);
             foreach (Training t in trainingsInTheSpecificRoom)
             {
                 if (t.TrainingStart <= training.TrainingStart && t.TrainingEnd >= training.TrainingEnd)
                     throw new Exception("Ebben az időpontban foglalt a terem");
             }
-            //TODO
-            this.context.Entry(training).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+
+            Training trainingToModify = new Training()
+            {
+                Id = training.Id,
+                TrainingStart = training.TrainingStart,
+                TrainingEnd = training.TrainingEnd,
+                Description = training.Description,
+                IsActive = true,
+                Name = training.Name,
+                MaxPeople = training.MaxPeople,
+                RoomId = training.RoomId,
+                TrainerId = training.TrainerId
+            };
+
+            this.context.Entry(trainingToModify).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             this.context.SaveChanges();
-            return training;
+            return trainingToModify;
         }
 
         public TrainingResponse? DeleteOrMakeInactive(int id)

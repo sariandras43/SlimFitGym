@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using SlimFitGym.Models.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -66,20 +67,17 @@ namespace SlimFitGym.EFData
                 new { Id = 1, MachineId = 1, RoomId = 2, MachineCount=1 },
                 new { Id = 2, MachineId = 2, RoomId = 1, MachineCount = 4 }
             );
-
-            //For developing only, in production hasing+salting will be used!!
-
             
             modelBuilder.Entity<Account>().HasData
             (
-                new Account() { Id=1,Name="admin",Password="admin", Email="admin@gmail.com",Phone="+36123456789",Role="admin"},
-                new Account() { Id = 2, Name = "kazmer", Password = "kazmer", Email = "kazmer@gmail.com", Phone = "+36123456799", Role = "trainer" },
-                new Account() { Id = 3, Name = "pista", Password = "pista", Email = "pista@gmail.com", Phone = "+36123456788", Role = "user" }
+                new Account() { Id=1,Name="admin",Password= BCrypt.Net.BCrypt.EnhancedHashPassword("admin", 10), Email="admin@gmail.com",Phone="+36123456789",Role="admin"},
+                new Account() { Id = 2, Name = "kazmer", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("kazmer", 10), Email = "kazmer@gmail.com", Phone = "+36123456799", Role = "trainer" },
+                new Account() { Id = 3, Name = "pista", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("pista", 10), Email = "pista@gmail.com", Phone = "+36123456788", Role = "user" }
             );
 
             modelBuilder.Entity<Training>().HasData
             (
-                new Training() { Id=1, Name="TRX edzés",RoomId=1,TrainerId=2,MaxPeople=1,TrainingStart=new DateTime(2025,2,6,17,0,0),TrainingEnd= new DateTime(2025, 2, 6, 18, 0, 0) }
+                new Training() { Id=1, Name="TRX edzés",RoomId=1,TrainerId=2,MaxPeople=1,Description="Izmos személyek számára",TrainingStart=new DateTime(2025,2,6,17,0,0),TrainingEnd= new DateTime(2025, 2, 6, 18, 0, 0) }
             );
 
             modelBuilder.Entity<Reservation>().HasData
@@ -114,17 +112,29 @@ namespace SlimFitGym.EFData
             modelBuilder.Entity<Entry>().HasData();
         }
 
+
+        //Supposed to work, but doesn't
         //public override int SaveChanges()
         //{
-        //    try
-        //    {
-        //        return base.SaveChanges();
+        //    IEnumerable<ValidationResult> validationErrors = ChangeTracker
+        //        .Entries<IValidatableObject>()
+        //        .SelectMany(e => e.Entity.Validate(null!))
+        //        .Where(r => r != ValidationResult.Success);
 
-        //    }
-        //    catch (DbUpdateException ex)
+        //    if (validationErrors.Any())
         //    {
-        //        throw new Exception("Típushiba");
+        //        try
+        //        {
+
+        //        }
+
+        //        catch (DbUpdateException exception)
+        //        {
+        //            throw new Exception("Nem megfelelő formátumú");
+        //        }
         //    }
+
+        //    return base.SaveChanges();
         //}
     }
 }

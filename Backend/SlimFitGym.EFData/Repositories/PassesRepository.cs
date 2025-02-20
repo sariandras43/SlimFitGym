@@ -93,18 +93,22 @@ namespace SlimFitGym.EFData.Repositories
 
         public PassResponse? NewPass(PassRequest pass)
         {
+            if (pass==null)
+                return null;
             if (pass.Price < 0)
                 throw new Exception("Érvénytelen ár.");
             if (pass.Name.Length > 100)
                 throw new Exception("Túl hosszú név.");
             if (pass.MaxEntries < 1 && pass.Days<1)
                 throw new Exception("Kötelező megadni legalább a maximum belépések számát vagy a felhasználható napok értékét.");
+            if (context.Set<Pass>().Any(p=>p.Name==pass.Name&&p.IsActive))
+                throw new Exception("Ilyen névvel létezik már aktív bérlet.");
 
 
             Pass passToSave = new Pass()
             {
                 Days = pass.Days,
-                IsActive = pass.isActive,
+                IsActive = true,
                 IsHighlighted = pass.isHighlighted,
                 MaxEntries = pass.MaxEntries,
                 Name = pass.Name,
@@ -145,13 +149,20 @@ namespace SlimFitGym.EFData.Repositories
         public dynamic? UpdatePass(int id, PassRequest pass)
         {
 
-            //return context.Set<PassAndBenefit>().ToList();
             if (pass.Id <= 0)
                 throw new Exception("Ilyen bérlet nem létezik");
             if (id != pass.Id)
                 throw new Exception("Érvénytelen azonosító.");
             if (pass == null)
                 throw new Exception("Hibás kérés.");
+            if (context.Set<Pass>().Any(p => p.Name == pass.Name && p.IsActive))
+                throw new Exception("Ilyen névvel létezik már aktív bérlet.");
+            if (pass.Price < 0)
+                throw new Exception("Érvénytelen ár.");
+            if (pass.Name.Length > 100)
+                throw new Exception("Túl hosszú név.");
+            if (pass.MaxEntries < 1 && pass.Days < 1)
+                throw new Exception("Kötelező megadni legalább a maximum belépések számát vagy a felhasználható napok értékét.");
 
             Pass? p = context.Set<Pass>().SingleOrDefault(p=>p.Id == id && p.IsActive);
             if (p == null)
@@ -161,13 +172,6 @@ namespace SlimFitGym.EFData.Repositories
                 DeleteOrMakePassInactive(id);
                 return NewPass(pass);
             }
-            if (pass.Price < 0)
-                throw new Exception("Érvénytelen ár.");
-            if (pass.Name.Length > 100)
-                throw new Exception("Túl hosszú név.");
-            if (pass.MaxEntries < 1 && pass.Days < 1)
-                throw new Exception("Kötelező megadni legalább a maximum belépések számát vagy a felhasználható napok értékét.");
-
             this.context.Entry(p).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             this.context.SaveChanges();
 

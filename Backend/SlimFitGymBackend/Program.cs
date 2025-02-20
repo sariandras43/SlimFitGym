@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -26,11 +25,11 @@ namespace SlimFitGymBackend
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            //if (app.Environment.IsDevelopment())
+            //{
+            //}
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             app.UseAuthorization();
 
@@ -38,14 +37,13 @@ namespace SlimFitGymBackend
             app.MapControllers();
 
 
-            //TODO Making it work from container with dotnet cli command
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
 
                 var context = services.GetRequiredService<SlimFitGym.EFData.SlimFitGymContext>();
-                if (context.Database.GetPendingMigrations().Any())
-                    context.Database.Migrate();
+                //if (context.Database.GetPendingMigrations().Any())
+                context.Database.EnsureCreated();
             }
 
             app.Run();

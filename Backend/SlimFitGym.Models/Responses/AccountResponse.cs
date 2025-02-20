@@ -22,7 +22,7 @@ namespace SlimFitGym.Models.Responses
             Email = a.Email;
             Token = token;
             Role = a.Role;
-            ValidTo = DateTime.Now.AddMinutes(2);
+            ValidTo = DateTime.Now.AddDays(1);
         }
 
         public AccountResponse(Account a)

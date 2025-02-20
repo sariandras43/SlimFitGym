@@ -13,7 +13,6 @@ namespace SlimFitGym.Models.Requests
         public int MaxEntries { get; set; }
         public decimal Price { get; set; }
         public int Days { get; set; }
-        public bool isActive { get; set; } = true;
         public bool isHighlighted { get; set; } = false;
         public List<string> Benefits { get; set; } = new List<string>();
     }
