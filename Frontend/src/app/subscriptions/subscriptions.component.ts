@@ -10,5 +10,5 @@ import { NgClass } from '@angular/common';
 })
 export class SubscriptionsComponent {
   highlightOnly = input<boolean>()
-
+  title = input<string>()
 }
