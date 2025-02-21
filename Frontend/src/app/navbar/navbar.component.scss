@@ -35,14 +35,15 @@ nav {
         transition: transform  0.1s ease-in-out;
       }
       .btn {
-        font-size: 1.5rem;
+        font-size: 1rem;
         border-radius: 1em;
         border: none;
         color: var(--main-text);
         font-weight: bold;
+        padding-block: .2em;
         padding-inline: .75em;
         background-color: inherit;
-        border: $border_width*1.5 solid var(--primary-color) ;            
+        border: $border_width solid var(--primary-color) ;            
         
         
         &.full{
@@ -59,10 +60,10 @@ nav {
       a {
         color: var(--main-text);
         text-decoration: none;
-        font-size: 1.5rem;
+        font-size: 1rem;
         font-weight: bold;
         h2 {
-          font-size: 3rem;
+          font-size: 2rem;
         }
       }
     }
