@@ -10,6 +10,7 @@
     border-radius: var(--border-radius);
     height: 100%;
     object-fit: cover;
+    view-transition-name: log-in-image;
   }
   .content{
     padding: 2em;
@@ -42,7 +43,7 @@
     }
     .links{
         display: flex;
-        gap: 1em;
+        gap: .25em;
         a{
         
             color: var(--secondary-text);
