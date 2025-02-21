@@ -1,6 +1,6 @@
 <div class="wrapperWrapper">
   <div class="loginWrapper">
-    <img class="logInImage" src="mainHero.jpeg" alt="" />
+    <img class="logInImage" [style.view-transition-name]="'log-in-image'" src="mainHero.jpeg" alt="" />
     <div class="content">
       <div class="inputField">
         <label class="input_title" for="loginEmail">Email</label>
@@ -23,7 +23,7 @@
         <input type="text" id="logInPassword" />
       </div>
       <div class="links">
-        <a href="">Bejelentkezés</a>
+        <a routerLink="/login">Bejelentkezés</a>
       </div>
       <button>Regisztráció</button>
     </div>
