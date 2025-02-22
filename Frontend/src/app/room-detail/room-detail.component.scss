@@ -1,0 +1,22 @@
+$card-width: 25rem;
+.machines
+{
+    h2{
+        font-size: 4rem;
+        margin-bottom: 0.5em;
+    }
+    .cardWrapper {
+      gap: 2em;
+      border-radius: var(--border-radius);
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      flex-basis: $card-width;
+      app-card {
+        max-width: $card-width;
+        background-color: var(--bg-tertiary);
+        
+      }
+    }
+
+}
