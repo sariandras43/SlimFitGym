@@ -1,22 +1,28 @@
 
 .subscriptions{
     isolation: isolate;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    // display: flex;
+    // flex-wrap: wrap;
+    // justify-content: center;
     
+    app-card{
+        background-color: var(--bg-color);
+    }
 
-
-    align-items: center;
+    // align-items: center;
     background-color: var(--bg-secondary);
     border-radius: var(--border-radius);
     position: relative;
     overflow: hidden;
-    padding: 5em 10em;
+    padding: 5em 2em;
+    // flex-basis: 30rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, min(27rem, 100%));
+    justify-content: center;
     img{
         z-index: -1;
         position: absolute;
-        opacity: 20%;
+        opacity: 40%;
         object-fit: cover;
         bottom: 0;
         

@@ -4,7 +4,8 @@
     --bg-color: #342e37;
     --bg-color-40: #352e3866;
     --bg-secondary: #2B272D;
-    --bg-tertiary: #000000;
+    
+    --bg-tertiary: #0f0f10;
     --primary-color: #FA824C;
     --secondary-color: hsl(178, 40%, 47%);
     --tertiary-color: #4281A4;
@@ -108,4 +109,9 @@ body{
 }
 .mt5{
   margin-top: 5em;
+}
+.counterContainer{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
