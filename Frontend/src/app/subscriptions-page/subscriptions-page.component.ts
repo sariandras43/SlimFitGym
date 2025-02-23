@@ -4,7 +4,7 @@ import { HeroComponent } from "../hero/hero.component";
 
 @Component({
   selector: 'app-subscriptions-page',
-  imports: [SubscriptionsComponent, HeroComponent],
+  imports: [SubscriptionsComponent],
   templateUrl: './subscriptions-page.component.html',
   styleUrl: './subscriptions-page.component.scss'
 })

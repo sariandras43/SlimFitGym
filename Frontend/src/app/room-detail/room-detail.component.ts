@@ -10,5 +10,5 @@ import { CardComponent } from "../card/card.component";
   styleUrl: './room-detail.component.scss'
 })
 export class RoomDetailComponent {
-
+gepek = Array<string>(10)
 }
