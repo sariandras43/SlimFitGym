@@ -1,31 +1,37 @@
 <div class="wrapperWrapper">
   <div class="loginWrapper">
-    <img class="logInImage" [style.view-transition-name]="'log-in-image'" src="mainHero.jpeg" alt="" />
-    <div class="content">
+    <img
+      class="logInImage"
+      [style.view-transition-name]="'log-in-image'"
+      src="mainHero.jpeg"
+      alt=""
+    />
+    <form class="content" [formGroup]="profileForm">
       <div class="inputField">
-        <label class="input_title" for="loginEmail">Email</label>
-        <input type="text" id="loginEmail" />
+        <label class="input_title" for="singUpEmail" >Email</label>
+        <input type="email" id="singUpEmail" formControlName="email" />
       </div>
       <div class="inputField">
-        <label class="input_title" for="loginEmail">Név</label>
-        <input type="text" id="logInPassword" />
+        <label class="input_title" for="singUpName">Név</label>
+        <input type="text" id="singUpName" formControlName="name" />
       </div>
       <div class="inputField">
-        <label class="input_title" for="loginEmail">Telefonszám</label>
-        <input type="text" id="logInPassword" />
+        <label class="input_title" for="singUpPhone" >Telefonszám</label>
+        <input type="text" formControlName="phone" id="singUpPhone" />
       </div>
       <div class="inputField">
-        <label class="input_title" for="loginEmail">Jelszó</label>
-        <input type="text" id="logInPassword" />
+        <label class="input_title" for="singUpPassword">Jelszó</label>
+        <input type="password" id="singUpPassword" formControlName="password"  />
       </div>
       <div class="inputField">
-        <label class="input_title" for="loginEmail">Jelszó újra</label>
-        <input type="text" id="logInPassword" />
+        <label class="input_title" for="singUpPasswordAgain">Jelszó újra</label>
+        <input type="password" id="singUpPasswordAgain" formControlName="passwordAgain"  />
       </div>
+      <p>Form Status: {{ profileForm.status }}</p>
       <div class="links">
         <a routerLink="/login">Bejelentkezés</a>
       </div>
-      <button>Regisztráció</button>
-    </div>
+      <input type="submit" value="Regisztráció"/>
+    </form>
   </div>
 </div>
