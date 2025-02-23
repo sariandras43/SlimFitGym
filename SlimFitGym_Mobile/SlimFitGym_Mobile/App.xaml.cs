@@ -9,12 +9,24 @@ namespace SlimFitGym_Mobile
         public AppTheme DeviceTheme { get; set; }
         public App()
         {
-            AccountModel.LoggedInUser = AuthService.LoadUser();
-            DeviceTheme = Application.Current.RequestedTheme;
-            InitializeComponent();
+            var internetConnection = Connectivity.Current.NetworkAccess;
+            if (internetConnection != NetworkAccess.Internet)
+            {
+                MainPage = new MainPage();
+                Application.Current.Dispatcher.Dispatch(async () =>
+                {
+                    await MainPage.DisplayAlert("No Internet Connection", "Az alkalmazás használatához internet kapcsolat szükséges!", "OK");
+                    System.Diagnostics.Process.GetCurrentProcess().Kill();
+                });
+                return;
+            }
 
+            DeviceTheme = Application.Current.RequestedTheme;
+            AccountModel.LoggedInUser = AuthService.LoadUser();
+            InitializeComponent();
             MainPage = new MainPage();
         }
+
 
     }
 }

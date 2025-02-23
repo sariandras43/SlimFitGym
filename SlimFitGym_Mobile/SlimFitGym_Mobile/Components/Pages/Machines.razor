@@ -50,12 +50,12 @@
 
 @code {
     private string searchText = string.Empty;
-    public List<MachineModel> machines;
+    // public List<MachineModel> machines;
 
-    protected override async Task OnInitializedAsync()
-    {
-       machines = await DataService.GetMachines();
-    }
+    // protected override async Task OnInitializedAsync()
+    // {
+    //    machines = await DataService.GetMachines();
+    // }
 
     private List<MachineModel> filteredMachines => MachineModel.machines
         .Where(m => m.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase))

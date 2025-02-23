@@ -41,12 +41,12 @@
 
 @code {
     // private List<EntryModel> lastEntriesOfAccount;
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     lastEntriesOfAccount = await DataService.GetEntriesOfAccount(AccountModel.LoggedInUser.Id);
-    //     CameraService.ErrorMessage = null;
-    //     StateHasChanged();
-    // }
+    protected override async Task OnInitializedAsync()
+    {
+        //lastEntriesOfAccount = await DataService.GetEntriesOfAccount(AccountModel.LoggedInUser.Id);
+        CameraService.ErrorMessage = null;
+        StateHasChanged();
+    }
     private List<EntryModel> entries = EntryModel.lastEntriesOfAccount;
 
     private async Task Scan()

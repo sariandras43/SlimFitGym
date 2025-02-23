@@ -1,5 +1,4 @@
-﻿using QRCodeDecoderLibrary;
-using System.Text;
+﻿using System.Text;
 using System.Drawing;
 using SkiaSharp;
 using ZXing;
@@ -86,31 +85,3 @@ namespace SlimFitGym_Mobile.Services
         }
     }
 }
-
-//using (var stream = await photo.OpenReadAsync())
-//{
-//    Bitmap bitmap = new Bitmap(photo);
-
-//    QRDecoder decoder = new();
-
-//    byte[][] resultArray = decoder.ImageDecoder(bitmap);
-
-//    if (resultArray != null && resultArray.Length > 0)
-//    {
-//        string textResult = QRDecoder.ByteArrayToStr(resultArray[0]);
-
-//        if (!string.IsNullOrWhiteSpace(textResult))
-//        {
-//            Url = textResult;
-//            isScanned = true;
-//        }
-//        else
-//        {
-//            ErrorMessage = "QR code decoded but result is empty.";
-//        }
-//    }
-//    else
-//    {
-//        ErrorMessage = "QR code not detected.";
-//    }
-//}
