@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -9,6 +9,7 @@ import { RouterLink } from '@angular/router';
   styleUrl: './card.component.scss'
 })
 export class CardComponent {
+
   benefits = input<string[]>();
    title = input<string>();
    price = input<string>();
@@ -20,6 +21,14 @@ export class CardComponent {
    description = input<string>()
    isClickable = input<boolean>()
    viewTransition= input<string>()
+   expandable = input<boolean>(false);
+   expanded = false;
 
-  
+
+
+
+   cardClicked() {
+    //expands component if it can
+    this.expanded = this.expandable() && !this.expanded;
+  }
 }
