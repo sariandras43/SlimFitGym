@@ -1,5 +1,6 @@
 
 .loginWrapper {
+    
     display: grid;
     grid-template-columns: 4fr 5fr;
     width: 70%;
@@ -82,8 +83,9 @@
   }
   }
   .wrapperWrapper {
-    min-height: 100vh;
-    min-height: 100svh;
+    padding-top: 6rem;
+    min-height:  100vh;
+    min-height: calc(100svh - 6rem);
     display: flex;
     align-items: center;
     justify-content: center;
