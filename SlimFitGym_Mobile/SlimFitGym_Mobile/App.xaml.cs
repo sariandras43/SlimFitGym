@@ -22,11 +22,14 @@ namespace SlimFitGym_Mobile
             }
 
             DeviceTheme = Application.Current.RequestedTheme;
-            AccountModel.LoggedInUser = AuthService.LoadUser();
+            OnStartAsync();
             InitializeComponent();
             MainPage = new MainPage();
         }
 
-
+        private async void OnStartAsync()
+        {
+            AccountModel.LoggedInUser = await AuthService.LoadUser();
+        }
     }
 }

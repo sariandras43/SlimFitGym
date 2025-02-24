@@ -53,7 +53,7 @@
     private string password;
     private string errorMessage;
 
-    private void login()
+    private async void login()
     {
         errorMessage = string.Empty;
 
@@ -71,7 +71,7 @@
         //     return;
         //AccountModel.LoggedInUser = DataService.GetAccount(id);
         AccountModel.LoggedInUser = AccountModel.users.FirstOrDefault(u => u.Email == email);
-        AuthService.SaveUser(AccountModel.LoggedInUser);
+        await AuthService.SaveUser(AccountModel.LoggedInUser);
         NavigationManager.NavigateTo("/");
     }
 }

@@ -50,20 +50,36 @@ namespace SlimFitGym_Mobile.Services
             return System.Text.RegularExpressions.Regex.IsMatch(password, pattern);
         }
 
-        public static void SaveUser(AccountModel user)
+        public static async Task SaveUser(AccountModel user)
         {
-            Preferences.Set("LoggedInUser", JsonSerializer.Serialize(user));
-            Debug.WriteLine($"saved: {user}");
+            try
+            {
+                var serializedUser = JsonSerializer.Serialize(user);
+                await SecureStorage.SetAsync("LoggedInUser", serializedUser);
+                Debug.WriteLine($"saved: {user}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error saving user: {ex.Message}");
+            }
         }
 
-        public static AccountModel LoadUser()
+        public static async Task<AccountModel> LoadUser()
         {
-            var userData = Preferences.Get("LoggedInUser", null);
-            if (!string.IsNullOrEmpty(userData))
+            try
             {
-                Debug.WriteLine($"loaded: {userData}");
-                return JsonSerializer.Deserialize<AccountModel>(userData);
+                var userData = await SecureStorage.GetAsync("LoggedInUser");
+                if (!string.IsNullOrEmpty(userData))
+                {
+                    Debug.WriteLine($"loaded: {userData}");
+                    return JsonSerializer.Deserialize<AccountModel>(userData);
+                }
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error loading user: {ex.Message}");
+            }
+
             return null;
         }
     }
