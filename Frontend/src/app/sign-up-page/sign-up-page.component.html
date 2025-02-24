@@ -6,7 +6,7 @@
       src="mainHero.jpeg"
       alt=""
     />
-    <form class="content" [formGroup]="profileForm">
+    <form class="content" [formGroup]="profileForm" unambiguousRole>
       <div class="inputField">
         <label class="input_title" for="singUpEmail">Email</label>
         <input type="email" id="singUpEmail" formControlName="email" />
@@ -14,7 +14,9 @@
           *ngIf="email?.invalid && (false || email?.dirty || email?.touched)"
           class="alert alert-danger errorField"
         >
-          <div *ngIf="email?.hasError('required')">email is required.</div>
+          <div *ngIf="email?.hasError('required')">
+            Kérjük adja meg az email címét
+          </div>
           <div *ngIf="email?.hasError('pattern')">
             Please provide a valid email
           </div>
@@ -27,9 +29,9 @@
           *ngIf="name?.invalid && (false || name?.dirty || name?.touched)"
           class="alert alert-danger errorField"
         >
-          <div *ngIf="name?.hasError('required')">Name is required.</div>
+          <div *ngIf="name?.hasError('required')">Kérjük adja meg a nevét.</div>
           <div *ngIf="name?.hasError('minlength')">
-            Name must be at least 4 characters long.
+            A név mezőnek legalább 4 karakterből kell állnia
           </div>
         </div>
       </div>
@@ -38,12 +40,14 @@
         <input type="text" formControlName="phone" id="singUpPhone" />
         <div
           *ngIf="phone?.invalid && (false || phone?.dirty || phone?.touched)"
-          class="alert alert-danger errorField" 
+          class="alert alert-danger errorField"
         >
-          <div *ngIf="phone?.hasError('required')">Phone is required.</div>
-          <div *ngIf="phone?.hasError('pattern')">Kérjük adjon meg egy rendes telefonszámot (pl.:+36301234567)</div>
-          
-          
+          <div *ngIf="phone?.hasError('required')">
+            Kérjük adja meg a telefonszámát
+          </div>
+          <div *ngIf="phone?.hasError('pattern')">
+            Kérjük adjon meg egy rendes telefonszámot (pl.:+36301234567)
+          </div>
         </div>
       </div>
 
@@ -51,12 +55,47 @@
         <label class="input_title" for="singUpPassword">Jelszó</label>
         <input type="password" id="singUpPassword" formControlName="password" />
         <div
-          *ngIf="password?.invalid && (false || password?.dirty || password?.touched)"
+          *ngIf="
+            password?.invalid && (false || password?.dirty || password?.touched)
+          "
           class="alert alert-danger errorField"
         >
-          <div *ngIf="password?.hasError('required')">password is required.</div>
-          <div *ngIf="password?.hasError('pattern')">Password should be safe.</div>
-         
+        @if (password?.hasError('required')) {
+          <div>
+            Kérjük adjon meg egy biztonságos jelszavat.
+          </div>
+
+        }
+        @else if (!password?.value?.match('^(?=.*[A-Z])')) {
+
+          <span class="block" 
+            >A jelszóban legyen legalább egy nagybetű.</span
+          >
+        }
+        @else if (!password?.value?.match('(?=.*[a-z])')) {
+
+          <span class="block" 
+            >A jelszóban legyen legalább egy kisbetű.</span
+          >
+        }
+        @else if (!password?.value?.match('(.*[0-9].*)')) {
+          
+          <span class="block"
+            >A jelszóban legyen legalább egy szám.</span
+          >
+        }
+        @else if (!password?.value?.match('(?=.*[!@#$%^&*])')) {
+
+          <span class="block" 
+            >A jelszóban legyen legalább egy speciális karakter.</span
+          >
+        }
+        @else if (!password?.value?.match('.{8,}')) {
+
+          <span class="block" 
+            >A jelszóban legyen legalább 8 karakter hosszú.</span
+          >
+        }
         </div>
       </div>
       <div class="inputField">
@@ -67,17 +106,27 @@
           formControlName="passwordAgain"
         />
         <div
-          *ngIf="passwordAgain?.invalid && (false || passwordAgain?.dirty || passwordAgain?.touched)"
+          *ngIf="
+            (passwordAgain?.invalid || profileForm.hasError('passwordMismatch') ) &&
+            (false || passwordAgain?.dirty || passwordAgain?.touched)
+          "
           class="alert alert-danger errorField"
         >
-          <div *ngIf="passwordAgain?.hasError('required')">passwordAgain is required.</div>
-          <div *ngIfElse="profileForm.hasError('passwordMismatch')">
-            Passwords do not match!
+        @if (passwordAgain?.hasError('required')) {
+
+          <div>
+            Kérjük adja meg újból a jelszavát!
           </div>
-          
-        </div>
+        }
+        @else if (profileForm.hasError('passwordMismatch') ) {
+
+          <div >
+            A két jelszó nem egyezik meg
+          </div>
+        }
       </div>
-      
+    </div>
+
       <div class="links">
         <a routerLink="/login">Bejelentkezés</a>
       </div>

@@ -1,9 +1,16 @@
 import { RouterModule } from '@angular/router';
-import { FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import {
+  FormGroup,
+  FormControl,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { passwordValidator } from '../validators/passwordValidation';
 @Component({
   selector: 'app-sign-up-page',
   imports: [RouterModule, ReactiveFormsModule, CommonModule],
@@ -11,17 +18,6 @@ import { CommonModule } from '@angular/common';
   styleUrl: './sign-up-page.component.scss',
 })
 export class SignUpPageComponent {
-
-  passwordMatch(control: AbstractControl): ValidationErrors | null {
-    const password = control.get('password');
-    const passwordAgain = control.get('passwordAgain');
-
-    if (password && passwordAgain && password.value !== passwordAgain.value) {
-      return { passwordMismatch: true };
-    }
-
-    return null;
-  }
   private formBuilder = inject(FormBuilder);
   profileForm = this.formBuilder.group({
     name: ['', [Validators.required, Validators.minLength(4)]],
@@ -32,17 +28,35 @@ export class SignUpPageComponent {
         Validators.pattern(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/),
       ],
     ],
-    phone: ['', [Validators.required, Validators.pattern(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/)]],
-    password: ['', [Validators.required, Validators.pattern(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/)] ],
+    phone: [
+      '',
+      [
+        Validators.required,
+        Validators.pattern(
+          /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/
+        ),
+      ],
+    ],
+    password: [
+      '',
+      [
+        Validators.required,
+        Validators.pattern(
+          /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/
+        ),
+      ],
+    ],
     passwordAgain: ['', Validators.required],
-  } , { validators: this.passwordMatch });
+    
+  } , { validators: passwordValidator  });
+  
   get name() {
     return this.profileForm.get('name');
   }
   get email() {
     return this.profileForm.get('email');
   }
-  
+
   get phone() {
     return this.profileForm.get('phone');
   }
@@ -52,6 +66,4 @@ export class SignUpPageComponent {
   get passwordAgain() {
     return this.profileForm.get('passwordAgain');
   }
-
- 
 }

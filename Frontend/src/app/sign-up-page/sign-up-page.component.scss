@@ -29,6 +29,7 @@
             input{
                 border-bottom: 2px solid var(--danger);
             }
+
            }
           input{
               background-color: inherit;
@@ -39,7 +40,9 @@
               
               &:focus{
                   border-bottom: 2px solid var(--primary-color);
-                
+                &+.errorField{
+                  display: none;
+                }
                 }
 
               
