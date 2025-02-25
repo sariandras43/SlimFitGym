@@ -1,5 +1,5 @@
 describe('Signup Form Validation (Tab off/Input)', () => {
-  describe('Signup Form Validation (Tab off/Input)', () => {
+  describe('Signup Form Validation frontend', () => {
     beforeEach(() => {
       // Visit the page containing the signup form
       cy.visit('http://localhost:4200/signup'); // Adjust the URL based on your app's route
@@ -18,7 +18,7 @@ describe('Signup Form Validation (Tab off/Input)', () => {
       cy.get('#singUpEmail').blur(); // Simulate tabbing off by triggering blur
       cy.get('.errorField')
         .should('be.visible')
-        .contains('Please provide a valid email'); // Expected error message for invalid email
+        .contains('Kérjük adjon meg egy valós emailt'); // Expected error message for invalid email
     });
   
     it('should show an error message when the name is empty after tabbing off', () => {
