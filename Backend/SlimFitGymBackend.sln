@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35707.178 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlimFitGymBackend", "SlimFitGymBackend.csproj", "{03957165-415A-4183-AB50-343086743AE5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlimFitGymBackend", "SlimFitGymBackend\SlimFitGymBackend.csproj", "{03957165-415A-4183-AB50-343086743AE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlimFitGym.Models", "..\SlimFitGym.Models\SlimFitGym.Models.csproj", "{DF422C42-F75C-404A-9FA4-C6B8F56B2758}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlimFitGym.Models", "SlimFitGym.Models\SlimFitGym.Models.csproj", "{DF422C42-F75C-404A-9FA4-C6B8F56B2758}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlimFitGym.EFData", "..\SlimFitGym.EFData\SlimFitGym.EFData.csproj", "{230A43E8-9EBA-4721-81B8-4540B8AE3DD0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlimFitGym.EFData", "SlimFitGym.EFData\SlimFitGym.EFData.csproj", "{230A43E8-9EBA-4721-81B8-4540B8AE3DD0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

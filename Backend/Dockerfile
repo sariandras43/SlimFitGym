@@ -11,10 +11,12 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["SlimFitGymBackend.csproj", "."]
-RUN dotnet restore "./SlimFitGymBackend.csproj"
+COPY ["SlimFitGymBackend/SlimFitGymBackend.csproj", "SlimFitGymBackend/"]
+COPY ["SlimFitGym.Models/SlimFitGym.Models.csproj", "SlimFitGym.Models/"]
+COPY ["SlimFitGym.EFData/SlimFitGym.EFData.csproj", "SlimFitGym.EFData/"]
+RUN dotnet restore "SlimFitGymBackend\SlimFitGymBackend.csproj"
 COPY . .
-WORKDIR "/src/."
+WORKDIR "/src/SlimFitGymBackend"
 RUN dotnet build "./SlimFitGymBackend.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
