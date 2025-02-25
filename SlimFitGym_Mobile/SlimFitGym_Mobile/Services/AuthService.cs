@@ -44,6 +44,13 @@ namespace SlimFitGym_Mobile.Services
             return System.Text.RegularExpressions.Regex.IsMatch(email, pattern);
         }
 
+        public bool IsValidPhoneNumber(string phone)
+        {
+            string pattern = @"^\+[1-9]\d{7,14}$";
+            return System.Text.RegularExpressions.Regex.IsMatch(phone, pattern);
+        }
+
+
         public bool IsValidPassword(string password)
         {
             string pattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\""\\|,.<>\/?]).{8,}$";

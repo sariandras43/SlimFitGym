@@ -26,6 +26,13 @@
                             <input type="text" class="form-control lighter-dark" id="email" placeholder="Email" @bind="newUser.Email">
                         </div>
                         <div class="mb-3 lighter-dark">
+                            <label for="phone" class="form-label lighter-dark">Telefonszám</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control lighter-dark w-25 text-center" id="countryCode" placeholder="+36" @bind="countryCode" maxlength="5">
+                                <input type="text" class="form-control lighter-dark w-75" id="phone" placeholder="Telefonszám" @bind="newUser.Phone">
+                            </div>
+                        </div>
+                        <div class="mb-3 lighter-dark">
                             <label for="password" class="form-label lighter-dark">Jelszó</label>
                             <input type="password" class="form-control lighter-dark" id="password" placeholder="Jelszó" @bind="newUser.Password">
                         </div>
@@ -56,6 +63,7 @@
     private AccountModel newUser = new AccountModel();
     private string passwordAgain;
     private string errorMessage;
+    private string countryCode = "+36";
 
     private async Task register()
     {
@@ -65,6 +73,8 @@
         {
             if (string.IsNullOrEmpty(newUser.Name) ||
                 string.IsNullOrEmpty(newUser.Email) ||
+                string.IsNullOrEmpty(countryCode) ||
+                string.IsNullOrEmpty(newUser.Phone) ||
                 string.IsNullOrEmpty(newUser.Password) ||
                 string.IsNullOrEmpty(passwordAgain))
             {
@@ -89,6 +99,14 @@
                 errorMessage = "A két jelszó nem egyezik!";
                 return;
             }
+
+            var fullPhoneNumber = countryCode.Trim() + newUser.Phone.Trim();
+            if (!AuthService.IsValidPhoneNumber(fullPhoneNumber))
+            {
+                errorMessage = "A telefonszám formátuma nem megfelelő!";
+                return;
+            }
+            newUser.Phone = fullPhoneNumber;
 
             //var result = await AuthService.Register(newUser, passwordAgain);
 

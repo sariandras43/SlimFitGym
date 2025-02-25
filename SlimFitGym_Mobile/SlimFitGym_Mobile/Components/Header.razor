@@ -29,7 +29,7 @@
 @code {
     private void Logout()
     {
-        Preferences.Remove("LoggedInUser");
+        SecureStorage.Remove("LoggedInUser");
         AccountModel.LoggedInUser = null;
         StateHasChanged();
         NavigationManager.NavigateTo("/", forceLoad: true);
