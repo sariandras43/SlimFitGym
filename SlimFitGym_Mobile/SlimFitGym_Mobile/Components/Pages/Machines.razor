@@ -1,0 +1,63 @@
+﻿@inject NavigationManager NavigationManager
+@using SlimFitGym_Mobile.Models
+@using SlimFitGym_Mobile.Services
+@page "/machines"
+
+<div class="d-flex flex-column vh-100">
+    <Header />
+
+    <div class="container flex-grow-1 position-relative mb-5 pb-5">
+        <div class="sticky-top pt-2">
+            <h2 class="text-center fw-bold mb-3">Gépeink</h2>
+
+            <div class="mb-3 px-2">
+                <input type="text"
+                class="form-control border-secondary"
+                placeholder="Keresés"
+                @bind="searchText"
+                @bind:event="oninput" />
+            </div>
+        </div>
+
+        @if (!filteredMachines.Any())
+        {
+            <div class="d-flex align-items-center justify-content-center">
+                <p class="text-muted text-center">Nincs találat.</p>
+            </div>
+        }
+        else
+        {
+            <div id="machinesList" class="overflow-auto mb-5">
+                <div class="row row-cols-2 g-4 px-2">
+                    @foreach (var machine in filteredMachines)
+                    {
+                        <div class="col d-flex justify-content-center">
+                            <NavLink href="@($"/machineDetails/{machine.Id}")" class="card rounded shadow-sm text-decoration-none w-100">
+                                <div class="card-body text-center p-1 lighter-dark">
+                                    <img src="@machine.ImageUrls[0]" class=" bg-white" alt="Alternate Text" />
+                                    <p class="fw-bold mb-0 lighter-dark">@machine.Name</p>
+                                </div>
+                            </NavLink>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <Navbar />
+</div>
+
+@code {
+    private string searchText = string.Empty;
+    // public List<MachineModel> machines;
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //    machines = await DataService.GetMachines();
+    // }
+
+    private List<MachineModel> filteredMachines => MachineModel.machines
+        .Where(m => m.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+        .ToList();
+}
