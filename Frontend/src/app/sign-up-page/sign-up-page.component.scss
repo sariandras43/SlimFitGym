@@ -43,6 +43,8 @@
                   border-bottom: 2px solid var(--primary-color);
                 &+.errorField{
                   color: var(--secondary-text);
+                  font-style: italic;
+                  font-weight: 300;
                   
                 }
                 }
