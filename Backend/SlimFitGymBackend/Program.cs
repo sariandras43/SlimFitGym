@@ -45,7 +45,9 @@ namespace SlimFitGymBackend
                 //if (context.Database.GetPendingMigrations().Any())
                 context.Database.EnsureCreated();
             }
-
+#if DEBUG
+            app.Urls.Add("http://*:8080");
+#endif
             app.Run();
         }
     }
