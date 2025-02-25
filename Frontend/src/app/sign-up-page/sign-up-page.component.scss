@@ -42,7 +42,8 @@
               &:focus{
                   border-bottom: 2px solid var(--primary-color);
                 &+.errorField{
-                  display: none;
+                  color: var(--secondary-text);
+                  
                 }
                 }
 
