@@ -8,13 +8,15 @@ namespace SlimFitGymBackend
     public class TokenGenerator
     {
         private readonly IConfiguration config;
+        private readonly JwtSecurityTokenHandler tokenHandler;
         public TokenGenerator(IConfiguration config)
         {
             this.config = config;
+            tokenHandler = new JwtSecurityTokenHandler();
         }
-        public string GenerateToken(string email, bool rememberMe, string role)
+        public string GenerateToken(int id,string email, bool rememberMe, string role)
         {
-            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+            //JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
 
             string keyFromConfig = config["Auth:Key"]!;
             Byte[] key = System.Text.Encoding.UTF8.GetBytes(keyFromConfig);
@@ -22,7 +24,7 @@ namespace SlimFitGymBackend
             List<Claim> claims = new List<Claim>
             {
                 new(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
-                new(JwtRegisteredClaimNames.Sub,email),
+                new(JwtRegisteredClaimNames.Sub,id.ToString()),
                 new(JwtRegisteredClaimNames.Email,email),
                 new("role",role)
             };
@@ -38,6 +40,15 @@ namespace SlimFitGymBackend
 
             SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+
+        public int GetAccountIdFromToken(string token)
+        {
+            JwtSecurityToken jwtToken = tokenHandler.ReadJwtToken(token);
+            var userId = jwtToken.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+            if (int.Parse(userId!)>0)
+                return int.Parse(userId!);
+            return 0;
         }
 
     }

@@ -32,7 +32,7 @@ namespace SlimFitGym.EFData.Repositories
             if (a==null || !BCrypt.Net.BCrypt.EnhancedVerify(login.Password, a.Password))
                 throw new Exception("Helytelen email cím vagy jelszó.");
 
-            return new AccountResponse(a,tokenGenerator.GenerateToken(a.Email,false,a.Role));
+            return new AccountResponse(a,tokenGenerator.GenerateToken(a.Id,a.Email,false,a.Role));
 
         }
 
@@ -55,10 +55,10 @@ namespace SlimFitGym.EFData.Repositories
             }
             if (!registration.Phone.StartsWith('+') || registration.Phone.Length > 16 || !isMadeUpOfDigits || registration.Phone.Length < 7)
                 throw new Exception("Érvénytelen formátumú telefonszám.");
-            Account? account = context.Set<Account>().SingleOrDefault(a => a.Email == registration.Email);
-            if (account != null)
-                throw new Exception("Ezzel az email címmel már regisztráltak");
-
+            if (context.Set<Account>().Any(a => a.Email == registration.Email))
+                throw new Exception("Ezzel az email címmel már regisztráltak.");
+            if (context.Set<Account>().Any(a => a.Phone == registration.Phone))
+                throw new Exception("Ez a telefonszám már használatban van.");
             string hash = BCrypt.Net.BCrypt.EnhancedHashPassword(registration.Password, 10);
             Account newAccount = new Account()
             {
@@ -72,7 +72,7 @@ namespace SlimFitGym.EFData.Repositories
 
             Account savedAccount = this.context.Set<Account>().Add(newAccount).Entity;
             this.context.SaveChanges();
-            return new AccountResponse(savedAccount, tokenGenerator.GenerateToken(savedAccount.Email, false, savedAccount.Role));
+            return new AccountResponse(savedAccount, tokenGenerator.GenerateToken(savedAccount.Id,savedAccount.Email, false, savedAccount.Role));
 
         }
 
@@ -129,10 +129,12 @@ namespace SlimFitGym.EFData.Repositories
             return new AccountResponse(account);
         }
 
-        public AccountResponse? UpdateAccountPublic(int id, ModifyAccountRequest request)
+        public AccountResponse? UpdateAccountPublic(string token,int id, ModifyAccountRequest request)
         {
             if (request.Id != id)
                 throw new Exception("Érvénytelen azonosító.");
+            if (tokenGenerator.GetAccountIdFromToken(token)!=id)
+                throw new Exception("Nem lehet másik felhasználó adatait módosítani");
             if (request == null)
                 throw new Exception("Érvénytelen kérés.");
             Account? account = context.Set<Account>().SingleOrDefault(a => a.Id == request.Id&&a.isActive);
@@ -191,16 +193,20 @@ namespace SlimFitGym.EFData.Repositories
             return new AccountResponse(account);
         }
 
-        public AccountResponse? DeleteAccount(int id)
+        public AccountResponse? DeleteAccount(string token, int id)
         {
             if (id <= 0)
                 throw new Exception("Érvénytelen azonosító.");
             var accountToDelete = this.context.Set<Account>().SingleOrDefault(a => a.Id == id&&a.isActive);
             if (accountToDelete == null)
                 return null;
-            if (this.context.Set<Account>().Where(a=>a.Role=="admin" && a.isActive).Count()==1)
-                throw new Exception("Utolsó adminisztrátor fiók nem törölhető");
-
+            var accountWhichDeletes = this.context.Set<Account>().SingleOrDefault(a => a.Id == tokenGenerator.GetAccountIdFromToken(token) && a.isActive);
+            if (accountWhichDeletes == null)
+                throw new Exception("A felhasználó aki törölne, nem létezik");
+            if (tokenGenerator.GetAccountIdFromToken(token)!=id && accountWhichDeletes.Role!="admin")
+                throw new Exception("Nem lehet másik felhasználó fiókját törölni.");
+            if (this.context.Set<Account>().Where(a=>a.Role=="admin" && a.isActive && a.Id == id).Count()==1)
+                throw new Exception("Utolsó adminisztrátor fiók nem törölhető.");
             accountToDelete.isActive = false;
             this.context.Entry(accountToDelete).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             this.context.SaveChanges();
