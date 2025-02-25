@@ -31,8 +31,10 @@ namespace SlimFitGym.EFData.Repositories
 
             if (a==null || !BCrypt.Net.BCrypt.EnhancedVerify(login.Password, a.Password))
                 throw new Exception("Helytelen email cím vagy jelszó.");
-
-            return new AccountResponse(a,tokenGenerator.GenerateToken(a.Id,a.Email,false,a.Role));
+            DateTime validTo = DateTime.Now.AddDays(1);
+            if (login.RememberMe)
+                validTo = DateTime.Now.AddDays(364);
+            return new AccountResponse(a,tokenGenerator.GenerateToken(a.Id,a.Email,login.RememberMe,a.Role),validTo);
 
         }
 
@@ -70,9 +72,12 @@ namespace SlimFitGym.EFData.Repositories
                 Role = "user"
             };
 
+            DateTime validTo = DateTime.Now.AddDays(1);
+            if (registration.RememberMe)
+                validTo = DateTime.Now.AddDays(364);
             Account savedAccount = this.context.Set<Account>().Add(newAccount).Entity;
             this.context.SaveChanges();
-            return new AccountResponse(savedAccount, tokenGenerator.GenerateToken(savedAccount.Id,savedAccount.Email, false, savedAccount.Role));
+            return new AccountResponse(savedAccount, tokenGenerator.GenerateToken(savedAccount.Id,savedAccount.Email, false, savedAccount.Role),validTo);
 
         }
 
@@ -122,7 +127,6 @@ namespace SlimFitGym.EFData.Repositories
 
 
             account.Name = request.Name;
-            account.Role = request.Role;
 
             this.context.Entry(account).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             this.context.SaveChanges();
@@ -142,6 +146,8 @@ namespace SlimFitGym.EFData.Repositories
                 return null;
             if (account.Id != request.Id)
                 throw new Exception("Érvénytelen azonosító.");
+            if (string.IsNullOrEmpty(request.Password) || !BCrypt.Net.BCrypt.EnhancedVerify(request.Password, account.Password))
+                throw new Exception("Nem megfelelő a jelszó.");
             if (!string.IsNullOrEmpty(request.Name))
             {
                 if (request.Name.Length > 100)
@@ -176,13 +182,13 @@ namespace SlimFitGym.EFData.Repositories
                 account.Email = request.Email;
             }
 
-            if (!string.IsNullOrEmpty(request.Password) && request.Password.Length < 8)
+            if (!string.IsNullOrEmpty(request.NewPassword) && request.NewPassword.Length < 8)
                 throw new Exception("Túl rövid jelszó.");
 
 
-            if (!BCrypt.Net.BCrypt.EnhancedVerify(request.Password, account.Password))
+            if (!string.IsNullOrEmpty(request.NewPassword!.Trim()) && !BCrypt.Net.BCrypt.EnhancedVerify(request.NewPassword, account.Password))
             {
-                string hash = BCrypt.Net.BCrypt.EnhancedHashPassword(request.Password, 10);
+                string hash = BCrypt.Net.BCrypt.EnhancedHashPassword(request.NewPassword, 10);
                 account.Password = hash;
             }
 

@@ -15,14 +15,14 @@ namespace SlimFitGym.Models.Responses
         public string Token { get; set; }
         public DateTime ValidTo { get; set; }
         public string Role { get; set; }
-        public AccountResponse(Account a, string token)
+        public AccountResponse(Account a, string token, DateTime validTo)
         {
             Id = a.Id;
             Name = a.Name;
             Email = a.Email;
             Token = token;
             Role = a.Role;
-            ValidTo = DateTime.Now.AddDays(1);
+            ValidTo = validTo;
         }
 
         public AccountResponse(Account a)
@@ -30,9 +30,7 @@ namespace SlimFitGym.Models.Responses
             Id = a.Id;
             Name = a.Name;
             Email = a.Email;
-            Token = "To be implemented";
             Role = a.Role;
-            ValidTo = DateTime.Now.AddMinutes(2);
         }
         public AccountResponse(AccountResponse a)
         {

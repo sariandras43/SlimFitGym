@@ -12,11 +12,10 @@ namespace SlimFitGymBackend
         public TokenGenerator(IConfiguration config)
         {
             this.config = config;
-            tokenHandler = new JwtSecurityTokenHandler();
+            this.tokenHandler = new JwtSecurityTokenHandler();
         }
         public string GenerateToken(int id,string email, bool rememberMe, string role)
         {
-            //JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
 
             string keyFromConfig = config["Auth:Key"]!;
             Byte[] key = System.Text.Encoding.UTF8.GetBytes(keyFromConfig);
@@ -29,10 +28,14 @@ namespace SlimFitGymBackend
                 new("role",role)
             };
 
+            DateTime expiration = DateTime.Now.AddDays(1);
+            if (rememberMe)
+                expiration = expiration.AddDays(364);
+
             SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddDays(1),
+                Expires = expiration,
                 Issuer = config["Auth:Issuer"],
                 Audience = config["Auth:Audience"],
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),SecurityAlgorithms.HmacSha256),
