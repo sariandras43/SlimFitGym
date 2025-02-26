@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SlimFitGym.Data.Repository;
 using System.Runtime.CompilerServices;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SlimFitGymBackend
 {
@@ -17,6 +20,7 @@ namespace SlimFitGymBackend
             builder.Services.AddControllers();
             builder.Services.AddRepositories();
             builder.Services.AddJwtAuthorization();
+            builder.Services.AddValidationErrorHandler();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

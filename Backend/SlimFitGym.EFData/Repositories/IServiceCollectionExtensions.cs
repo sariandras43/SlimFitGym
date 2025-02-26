@@ -11,6 +11,8 @@ using SlimFitGymBackend;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Mvc;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SlimFitGym.Data.Repository
 {
@@ -53,6 +55,26 @@ namespace SlimFitGym.Data.Repository
                     };
                 });
 
+        }
+
+        public static void AddValidationErrorHandler(this IServiceCollection service)
+        {
+            service.AddControllers()
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.InvalidModelStateResponseFactory = context =>
+                    {
+                        var errorResponse = new
+                        {
+                            Message = "Érvénytelen kérés: validációs, típus vagy hiányzó body miatti hiba."
+                        };
+
+                        return new BadRequestObjectResult(errorResponse)
+                        {
+                            ContentTypes = { Application.Json }
+                        };
+                    };
+                });
         }
     }
 }
