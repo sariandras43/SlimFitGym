@@ -2,10 +2,8 @@
     border-radius: var(--border-radius);
     flex-grow: 0;
     &:has(.cardExpanded){
-      // flex-grow: 1;
       max-width: none;
-      // transition: flex-grow 1.5s;
-    
+      
      
       
     }
@@ -17,13 +15,16 @@ overflow: hidden;
   img {
     width: 100%;
     height: 20em;
-    object-fit: cover;
+    object-fit: cover; 
+    &+.content{
+      padding: 1em 3em;
+    }
   }
   
   
   .content {
+    padding: 2em 3em;
       gap: 0.5em;
-      padding: 1em 3em;
       display: flex;
     //   min-width: 23em;
     //   min-height: 35em;
@@ -31,13 +32,13 @@ overflow: hidden;
     align-items: center;
     // flex-grow: 1;  
     .description{
-        font-size: 1.25rem;
+        font-size: 1rem;
         text-align: justify;
     }
     .title {
       font-size: 2rem;
       text-align: center;
-      margin-top: 1em;
+     
     }
     .priceWrap {
       .price {
@@ -94,8 +95,12 @@ overflow: hidden;
 }
 .cardExpanded{
   display: flex;
+  margin: 0 auto;
+  .content{
+    width: 30em;
+  }
   img{
-    width: 20em;
+    width: 30em;
 
   }
 }

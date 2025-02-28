@@ -5,40 +5,42 @@
   [routerLink]="isClickable() ? linkTo() : []"
   (click)="cardClicked()"
 >
-  @if (imgSrc()) {
-  <img [src]="imgSrc()" alt="" />
-  } @if (!expanded) {
-  <div class="content">
-    @if (title()) {
-    <h3 class="title">
-      {{ title() }}
-    </h3>
-    } @if (price()) {
-    <p class="priceWrap">
-      <span class="price">{{ price() }}</span>
-      <span class="unit">{{ unit() }}</span>
-    </p>
-    } @if (benefits()) {
-    <ul class="benefits">
-      @for (benefit of benefits(); track $index) {
-      <li class="">{{ benefit }}</li>
-      }
-    </ul>
-    } @if (description()) {
-    <p class="description">
-      {{ description() }}
-    </p>
-    } @if (btnText() || linkBtnText()) {
-    <div class="flex buttonWrapper g1">
-      @if (btnText()) {
-      <button (click)="cardClicked()" class="btn">{{ btnText() }}</button>
-      } @if (linkBtnText()) {
-      <a [routerLink]="linkTo()" class="btn">{{ linkBtnText() }}</a>
+  <div>
+    @if (imgSrc()) {
+    <img [src]="imgSrc()" alt="" />
+    }
+    <div class="content">
+      @if (title()) {
+      <h3 class="title">
+        {{ title() }}
+      </h3>
+      } @if (price()) {
+      <p class="priceWrap">
+        <span class="price">{{ price() }}</span>
+        <span class="unit">{{ unit() }}</span>
+      </p>
+      } @if (benefits()) {
+      <ul class="benefits">
+        @for (benefit of benefits(); track $index) {
+        <li class="">{{ benefit }}</li>
+        }
+      </ul>
+      } @if (description()) {
+      <p class="description">
+        {{ description() }}
+      </p>
+      } @if (btnText() || linkBtnText()) {
+      <div class="flex buttonWrapper g1">
+        @if (btnText()) {
+        <button (click)="cardClicked()" class="btn">{{ btnText() }}</button>
+        } @if (linkBtnText()) {
+        <a [routerLink]="linkTo()" class="btn">{{ linkBtnText() }}</a>
+        }
+      </div>
       }
     </div>
-    }
   </div>
-  } @if (expanded) {
+  @if (expanded) {
 
   <ng-content class="expanded" select="expanded-content"></ng-content>
 
