@@ -9,9 +9,11 @@
   <app-counter-bubble [number]="32" title="cucc" />
 </div>
 
-<div class="container">
-  <div class="eventWrapper"></div>
-  <div class="mt5 machines">
+<div class="container mt5" >
+  <div class="eventWrapper">
+  <app-events/>
+  </div>
+  <div class=" machines">
     <h2>Terem gépei</h2>
     <div class="flex cardWrapper">
       @for (item of gepek; track $index) {
@@ -20,23 +22,15 @@
         [isClickable]="true"
         imgSrc="templateMachine.webp"
         [expandable]="true"
+        description="
+          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+          Exercitationem quo, dolore harum voluptates ea veritatis laudantium
+          officiis. 
+        "
       >
         <div class="expandedContent" ngProjectAs="expanded-content">
-          <h3>Alap gép</h3>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            Exercitationem quo, dolore harum voluptates ea veritatis laudantium
-            officiis. Ipsam tempora, iusto asperiores in provident consequatur
-            commodi possimus harum. Perferendis, corrupti placeat? Rerum minima
-            sint temporibus deleniti natus id quaerat? Cum ad soluta deleniti
-            veritatis eligendi, aperiam quas perferendis officiis qui eius amet
-            inventore atque? Aspernatur eveniet amet officia illum, voluptates
-            esse veniam nostrum aut placeat nihil. Impedit, cumque. Adipisci
-            ratione maxime amet. Nisi quo corporis inventore iusto ullam saepe
-            ex dolores nam omnis ipsa in placeat consequatur obcaecati sunt
-            ipsum ut facilis esse, quas autem dignissimos asperiores eveniet.
-            Aut, nihil minus.
-          </p>
+          
+          <img src="mainHero.jpeg" alt="">
         </div>
       </app-card>
       }

@@ -17,21 +17,25 @@ $card-width: 25rem;
     }
 
 }
+.container{
+  display: flex;
+  gap: 3em;
+  .eventWrapper{
+    margin-top: 8em;
+  }
+}
 app-card {
   max-width: $card-width;
   width: fit-content;
 background-color: var(--bg-tertiary);
   .expandedContent{
-    padding-top: 3em;
-    padding-left: 1em;
-    padding-bottom: 1em;
-    padding-right: 3em;
+    img{
+
+      height: 100%;
+      width: 30em;
+     object-fit: cover;
+    }
     
-    h3{
-      font-size: 2rem;
-    }
-    p{
-      max-width: 70ch;
-    }
+   
   }
 }             
