@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -15,15 +16,19 @@ namespace SlimFitGym.Models.Models
         public int Id { get; set; }
 
         [ForeignKey("Accounts")]
-        public string AccountId { get; set; }
+        public int AccountId { get; set; }
 
         [ForeignKey("Machines")]
-        public string MachineId { get; set; }
+        public int MachineId { get; set; }
 
         [ForeignKey("Rooms")]
-        public string RoomId { get; set; }
+        public int RoomId { get; set; }
 
-        [Required, StringLength(200)]
+        [Required, StringLength(1024)]
         public string Url { get; set; }
+
+        [Required, StringLength(255)]
+        public required string CloudinaryId { get; set; }
+
     }
 }

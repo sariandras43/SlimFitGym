@@ -19,6 +19,7 @@ namespace SlimFitGym.EFData
         public DbSet<Purchase> Purchases { get; set; } = null!;
         public DbSet<TrainerApplicant> TrainerApplicants { get; set; } = null!;
         public DbSet<Entry> Entries { get; set; } = null!;
+        public DbSet<Image> Images { get; set; } = null!;
         public string DbPath { get; }
 
         public SlimFitGymContext()

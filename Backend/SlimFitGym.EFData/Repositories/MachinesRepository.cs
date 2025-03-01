@@ -1,5 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Internal;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using SlimFitGym.Models.Models;
+using SlimFitGym.Models.Requests;
+using SlimFitGym.Models.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +18,12 @@ namespace SlimFitGym.EFData.Repositories
     public class MachinesRepository
     {
         readonly SlimFitGymContext context;
+        readonly ImagesRepository imagesRepository;
 
-        public MachinesRepository(SlimFitGymContext context)
+        public MachinesRepository(SlimFitGymContext context, ImagesRepository imagesRepository)
         {
             this.context = context;
+            this.imagesRepository = imagesRepository;   
         }
 
         public List<Machine> GetAllMachine()
@@ -26,16 +31,16 @@ namespace SlimFitGym.EFData.Repositories
             return context.Set<Machine>().ToList();
         }
 
-        public Machine? GetMachineById(int id)
+        public MachineResponse? GetMachineById(int id)
         {
-            var result = context.Set<Machine>().SingleOrDefault(m => m.Id == id);
+            Machine? result = context.Set<Machine>().SingleOrDefault(m => m.Id == id);
             if (result!=null)
-                return result;
+                return new MachineResponse(result,imagesRepository.GetImageUrlsByMachineId(id));
 
             return null;
         }
 
-        public Machine? NewMachine(Machine newMachine)
+        public MachineResponse? NewMachine(MachineRequest newMachine)
         {
 
             if (newMachine == null)
@@ -49,33 +54,47 @@ namespace SlimFitGym.EFData.Repositories
             if (context.Set<Machine>().Any(m => m.Name == newMachine.Name))
                 throw new Exception("Ilyen gép már létezik.");
 
-            Machine savedMachine = this.context.Set<Machine>().Add(newMachine).Entity;
+            Machine machineToAdd = new Machine()
+            {
+                Name = newMachine.Name,
+                Description = newMachine.Description,
+            };
+            Machine savedMachine = this.context.Set<Machine>().Add(machineToAdd).Entity;
 
             this.context.SaveChanges();
-            return savedMachine;
+
+            List<Image> images= imagesRepository.UploadImagesToMachine(newMachine.Images,savedMachine.Id);
+
+            return new MachineResponse(savedMachine,imagesRepository.GetImageUrlsByMachineId(savedMachine.Id));
         }
 
-        public Machine? UpdateMachine (int id, Machine machine)
+        public MachineResponse? UpdateMachine (int id, MachineRequest machine)
         {
             if (id != machine.Id)
                 throw new Exception("Érvénytelen azonosító.");
-            if (!this.context.Set<Machine>().Any(m => m.Id == id))
+            Machine? m = context.Set<Machine>().FirstOrDefault(m => m.Id == id);
+            if (m==null)
                 return null;
             if (machine == null)
                 throw new Exception("Hibás kérés.");
+            if (machine.Description != null && machine.Description!.Length > 500)
+                throw new Exception("A leírás maximum 500 karakter hosszú lehet");
             if (machine.Name == null || machine.Name.Length == 0)
                 throw new Exception("Kötelező kitölteni a név mezőt.");
             if (machine.Name.Length > 100)
                 throw new Exception("A név maximum 100 karakter hosszú lehet");
-            if (machine.Description != null && machine.Description!.Length > 500)
-                throw new Exception("A leírás maximum 500 karakter hosszú lehet");
-            if (context.Set<Machine>().Any(m => m.Name == machine.Name))
-                throw new Exception("Ilyen gép már létezik.");
+            if (m.Name!=machine.Name && context.Set<Machine>().Any(m => m.Name == machine.Name))
+                throw new Exception("Ilyen nevű gép már létezik.");
+            m.Name = machine.Name;
+           
+            m.Description = machine.Description;
 
 
-            this.context.Entry(machine).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            this.context.Entry(m).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             this.context.SaveChanges();
-            return machine;
+            imagesRepository.DeleteImagesByMachineId(id);
+            imagesRepository.UploadImagesToMachine(machine.Images, id);
+            return new MachineResponse(m,imagesRepository.GetImageUrlsByMachineId(id));
         }
 
         public Machine? DeleteMachine(int id)
@@ -89,6 +108,7 @@ namespace SlimFitGym.EFData.Repositories
             {
                 this.context.Set<RoomAndMachine>().Remove(connection);
             }
+            imagesRepository.DeleteImagesByMachineId(id);
             this.context.Set<Machine>().Remove(machineToDelete);
             this.context.SaveChanges();
             return machineToDelete;

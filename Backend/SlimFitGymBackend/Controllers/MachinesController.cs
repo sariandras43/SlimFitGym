@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models.Models;
+using SlimFitGym.Models.Requests;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -50,26 +51,24 @@ namespace SlimFitGymBackend.Controllers
         // POST api/<MachinesController>
         [HttpPost]
         //[Authorize(Roles ="admin")]
-        public IActionResult Post([FromBody] dynamic value)
+        public IActionResult Post([FromBody] MachineRequest newMachine)
         {
             return this.Execute(() =>
             {
-                Machine newMachine = Newtonsoft.Json.JsonConvert.DeserializeObject<Machine>(value.ToString());
                 return Ok(machinesRepository.NewMachine(newMachine));
             });
         }
 
         // PUT api/<MachinesController>/5
         [HttpPut("{id}")]
-        [Authorize(Roles = "admin")]
-        public IActionResult Put([FromRoute]string id, [FromBody] dynamic value)
+        //[Authorize(Roles = "admin")]
+        public IActionResult Put([FromRoute]string id, MachineRequest machine)
         {
             return this.Execute(() =>
             {
                 int idNum;
                 if (int.TryParse(id,out idNum))
                 {
-                    Machine machine = Newtonsoft.Json.JsonConvert.DeserializeObject<Machine>(value.ToString());
                     var res = machinesRepository.UpdateMachine(idNum, machine);
                     if (res!=null) return Ok(res);
                     return NotFound("Nem található a gép");

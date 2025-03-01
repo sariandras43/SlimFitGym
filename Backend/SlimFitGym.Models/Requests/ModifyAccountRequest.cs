@@ -15,6 +15,7 @@ namespace SlimFitGym.Models.Requests
         public string Email { get; set; }
         public string Password { get; set; }
         public string? NewPassword { get; set; }
+        public ImageRequest Image { get; set; }
         public ModifyAccountRequest(Account a)
         {
             Id = a.Id;
