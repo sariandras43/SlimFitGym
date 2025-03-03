@@ -38,11 +38,9 @@
 
 @code {
 
-    // private List<PassModel> passes = new List<PassModel>();
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     passes = await DataService.GetPasses();
-    // }
-
-    private List<PassModel> passes = PassModel.GetPasses();
+    private List<PassModel> passes = new();
+    protected override async Task OnInitializedAsync()
+    {
+        passes = await DataService.GetPasses();
+    }
 }

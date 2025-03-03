@@ -1,11 +1,8 @@
 {
   "ExpandedNodes": [
     "",
-    "\\SlimFitGym_Mobile",
-    "\\SlimFitGym_Mobile\\SlimFitGym_Mobile",
-    "\\SlimFitGym_Mobile\\SlimFitGym_Mobile\\Components",
-    "\\SlimFitGym_Mobile\\SlimFitGym_Mobile\\Components\\Pages"
+    "\\Backend"
   ],
-  "SelectedNode": "\\SlimFitGym_Mobile\\SlimFitGym_Mobile\\Components\\Pages\\Home.razor",
+  "SelectedNode": "\\Backend\\SlimFitGymBackend.sln",
   "PreviewInSolutionExplorer": false
 }

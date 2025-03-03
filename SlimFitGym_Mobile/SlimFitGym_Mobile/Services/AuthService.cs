@@ -3,34 +3,115 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace SlimFitGym_Mobile.Services
 {
-    public class AuthService
+    public static class AuthService
     {
-        private readonly HttpClient _httpClient;
-        private const string apiBaseURL = "backendurl/api/"; 
+        private static HttpClient _httpClient = new();
+        private const string apiBaseURL = "http://10.0.2.2:8080/api/"; 
         public static event Action OnChange;
 
-        public AuthService(HttpClient httpClient)
+        public static async Task<LoginResult> Login(string email, string password)
         {
-            _httpClient = httpClient;
+            try
+            {
+                var loginData = new { email = $"{email}", password = $"{password}" };
+                var response = await _httpClient.PostAsync($"{apiBaseURL}auth/login",
+                    new StringContent(JsonSerializer.Serialize(loginData), Encoding.UTF8, "application/json")
+                );
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    };
+                    var account = JsonSerializer.Deserialize<AccountModel>(json, options);
+                    return new LoginResult
+                    {
+                        Success = true,
+                        Account = account,
+                        ErrorMessage = string.Empty
+                    };
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    };
+                    var error = JsonSerializer.Deserialize<ErrorResult>(errorContent, options);
+                    return new LoginResult
+                    {
+                        Success = false,
+                        ErrorMessage = error.Message,
+                        Account = null
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return null;
+            }
         }
 
-        //public async Task<string> Login(string email, string password)
-        //{
-        //    var response = await _httpClient.PostAsync($"{apiBaseURL}auth/login", new StringContent($"{{\"email\":\"{email}\",\"password\":\"{password}\"}}", Encoding.UTF8, "application/json"));
-        //    return await response.Content.ReadAsStringAsync();
-        //}
+        public static async Task<RegisterResult> Register(AccountModel newUser)
+        {
+            try
+            {
+                var registerData = new
+                {
+                    name = newUser.Name,
+                    phone = newUser.Phone,
+                    email = newUser.Email,
+                    password = newUser.Password
+                };
 
-        //public async Task<string> Register(AccountModel newUser, string passwordAgain)
-        //{
-        //    var response = await _httpClient.PostAsync($"{apiBaseURL}auth/register", new StringContent($"{{\"name\":\"{newUser.Name}\",\"email\":\"{newUser.Email}\",\"password\":\"{newUser.Password}\",\"password again\":\"{passwordAgain}\"}}", Encoding.UTF8, "application/json"));
-        //    return await response.Content.ReadAsStringAsync();
-        //}
+                var json = JsonSerializer.Serialize(registerData);
+                var response = await _httpClient.PostAsync($"{apiBaseURL}auth/register",
+                    new StringContent(json, Encoding.UTF8, "application/json"));
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return new RegisterResult
+                    {
+                        Success = true,
+                        ErrorMessage = string.Empty
+                    };
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    };
+                    var error = JsonSerializer.Deserialize<ErrorResult>(errorContent, options);
+                    return new RegisterResult
+                    {
+                        Success = false,
+                        ErrorMessage = error.Message
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return new RegisterResult
+                {
+                    Success = false,
+                    ErrorMessage = ex.Message
+                };
+            }
+        }
 
         //public async Task<string> ResetPassword(string email, string newPassword, string newPasswordAgain)
         //{
@@ -38,20 +119,20 @@ namespace SlimFitGym_Mobile.Services
         //    return await response.Content.ReadAsStringAsync();
         //}
 
-        public bool IsValidEmail(string email)
+        public static bool IsValidEmail(string email)
         {
             string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
             return System.Text.RegularExpressions.Regex.IsMatch(email, pattern);
         }
 
-        public bool IsValidPhoneNumber(string phone)
+        public static bool IsValidPhoneNumber(string phone)
         {
             string pattern = @"^\+[1-9]\d{7,14}$";
             return System.Text.RegularExpressions.Regex.IsMatch(phone, pattern);
         }
 
 
-        public bool IsValidPassword(string password)
+        public static bool IsValidPassword(string password)
         {
             string pattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\""\\|,.<>\/?]).{8,}$";
             return System.Text.RegularExpressions.Regex.IsMatch(password, pattern);
@@ -61,9 +142,10 @@ namespace SlimFitGym_Mobile.Services
         {
             try
             {
+                AccountModel.LoggedInUser = user;
                 var serializedUser = JsonSerializer.Serialize(user);
                 await SecureStorage.SetAsync("LoggedInUser", serializedUser);
-                Debug.WriteLine($"saved: {user}");
+                Debug.WriteLine($"saved: {user.Name}");
             }
             catch (Exception ex)
             {

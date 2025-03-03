@@ -34,7 +34,7 @@
                         <div class="col d-flex justify-content-center">
                             <NavLink href="@($"/machineDetails/{machine.Id}")" class="card rounded shadow-sm text-decoration-none w-100">
                                 <div class="card-body text-center p-1 lighter-dark">
-                                    <img src="@machine.ImageUrls[0]" class=" bg-white" alt="Alternate Text" />
+                                    @* <img src="@machine.ImageUrls[0]" alt="Alternate Text" /> *@
                                     <p class="fw-bold mb-0 lighter-dark">@machine.Name</p>
                                 </div>
                             </NavLink>
@@ -50,14 +50,14 @@
 
 @code {
     private string searchText = string.Empty;
-    // public List<MachineModel> machines;
+    public List<MachineModel> machines = new();
 
-    // protected override async Task OnInitializedAsync()
-    // {
-    //    machines = await DataService.GetMachines();
-    // }
+    protected override async Task OnInitializedAsync()
+    {
+       machines = await DataService.GetMachines();
+    }
 
-    private List<MachineModel> filteredMachines => MachineModel.machines
+    private List<MachineModel> filteredMachines => machines
         .Where(m => m.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase))
         .ToList();
 }

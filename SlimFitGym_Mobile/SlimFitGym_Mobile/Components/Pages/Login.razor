@@ -3,7 +3,6 @@
 @using SlimFitGym_Mobile.Models
 @using SlimFitGym_Mobile.Services
 @using System.Text.Json
-@inject AuthService AuthService
 
 <div class="rounded-3 d-inline-block mt-3 lighter-dark">
     <NavLink href="/" class="d-block p-1 lighter-dark">
@@ -53,7 +52,7 @@
     private string password;
     private string errorMessage;
 
-    private async void login()
+    private async Task login()
     {
         errorMessage = string.Empty;
 
@@ -67,11 +66,20 @@
             errorMessage = "Az email cím formátuma nem megfelelő!";
             return;
         }
-        // if (!AuthService.Login(email, password))
-        //     return;
-        //AccountModel.LoggedInUser = DataService.GetAccount(id);
-        AccountModel.LoggedInUser = AccountModel.users.FirstOrDefault(u => u.Email == email);
-        await AuthService.SaveUser(AccountModel.LoggedInUser);
-        NavigationManager.NavigateTo("/");
+
+        var loginResult = await AuthService.Login(email, password);
+
+        if (loginResult.Success && loginResult.Account != null)
+        {
+            await AuthService.SaveUser(loginResult.Account);
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            errorMessage = string.IsNullOrEmpty(loginResult.ErrorMessage)
+                ? "Hiba a bejelentkezés során!"
+                : loginResult.ErrorMessage;
+                StateHasChanged();
+        }
     }
 }

@@ -28,9 +28,9 @@
             </div>
 
             <h2 class="text-center mt-5">Legutóbbi belépések</h2>
-            @foreach (var item in entries)
+            @foreach (var item in lastEntriesOfAccount)
             {
-                <p class="text-center mt-1">@item.EntryDate</p>
+                <p class="text-center mt-1">@item</p>
             }
         }
     }
@@ -40,14 +40,14 @@
 <Navbar />
 
 @code {
-    // private List<EntryModel> lastEntriesOfAccount;
+    private List<string> lastEntriesOfAccount = new();
     protected override async Task OnInitializedAsync()
     {
-        //lastEntriesOfAccount = await DataService.GetEntriesOfAccount(AccountModel.LoggedInUser.Id);
+        lastEntriesOfAccount = await DataService.GetEntriesOfAccount(AccountModel.LoggedInUser.Id);
         CameraService.ErrorMessage = null;
         StateHasChanged();
     }
-    private List<EntryModel> entries = EntryModel.lastEntriesOfAccount;
+    //private List<EntryModel> entries = EntryModel.lastEntriesOfAccount;
 
     private async Task Scan()
     {

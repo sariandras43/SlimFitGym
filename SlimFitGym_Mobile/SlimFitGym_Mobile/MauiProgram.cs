@@ -19,9 +19,8 @@ namespace SlimFitGym_Mobile
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 });
-            builder.Services.AddSingleton<AuthService>();
             builder.Services.AddSingleton<CameraService>();
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://yourbackend.com/api/") });
+            builder.Services.AddScoped(sp => new HttpClient());
             builder.Services.AddMauiBlazorWebView();
             builder.Services.ConfigureMauiHandlers(handlers =>
             {

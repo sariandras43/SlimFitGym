@@ -2,7 +2,6 @@
 @using SlimFitGym_Mobile.Models
 @inject NavigationManager NavigationManager
 @using SlimFitGym_Mobile.Services
-@inject AuthService AuthService
 
 <div class="rounded-3 d-inline-block mt-3 lighter-dark">
     <NavLink href="/login" class="d-block p-1 lighter-dark">
@@ -60,7 +59,7 @@
 </div>
 
 @code {
-    private AccountModel newUser = new AccountModel();
+    private AccountModel newUser = new();
     private string passwordAgain;
     private string errorMessage;
     private string countryCode = "+36";
@@ -69,59 +68,54 @@
     {
         errorMessage = string.Empty;
 
-        try
+        if (string.IsNullOrEmpty(newUser.Name) ||
+            string.IsNullOrEmpty(newUser.Email) ||
+            string.IsNullOrEmpty(countryCode) ||
+            string.IsNullOrEmpty(newUser.Phone) ||
+            string.IsNullOrEmpty(newUser.Password) ||
+            string.IsNullOrEmpty(passwordAgain))
         {
-            if (string.IsNullOrEmpty(newUser.Name) ||
-                string.IsNullOrEmpty(newUser.Email) ||
-                string.IsNullOrEmpty(countryCode) ||
-                string.IsNullOrEmpty(newUser.Phone) ||
-                string.IsNullOrEmpty(newUser.Password) ||
-                string.IsNullOrEmpty(passwordAgain))
-            {
-                errorMessage = "Minden mező kitöltése kötelező!";
-                return;
-            }
-
-            if (!AuthService.IsValidEmail(newUser.Email))
-            {
-                errorMessage = "Az email cím formátuma nem megfelelő!";
-                return;
-            }
-
-            if (!AuthService.IsValidPassword(newUser.Password))
-            {
-                errorMessage = "A jelszó formátuma nem megfelelő!\n- Minimum 8 karakter\n- Nagy betű\n- Szám\n- Speciális karakter";
-                return;
-            }
-
-            if (newUser.Password != passwordAgain)
-            {
-                errorMessage = "A két jelszó nem egyezik!";
-                return;
-            }
-
-            var fullPhoneNumber = countryCode.Trim() + newUser.Phone.Trim();
-            if (!AuthService.IsValidPhoneNumber(fullPhoneNumber))
-            {
-                errorMessage = "A telefonszám formátuma nem megfelelő!";
-                return;
-            }
-            newUser.Phone = fullPhoneNumber;
-
-            //var result = await AuthService.Register(newUser, passwordAgain);
-
-            if (true) // result
-            {
-                NavigationManager.NavigateTo("/login");
-            }
-            else
-            {
-                errorMessage = "Hiba történt a regisztráció során!";
-            }
+            errorMessage = "Minden mező kitöltése kötelező!";
+            return;
         }
-        catch (Exception ex)
+
+        if (!AuthService.IsValidEmail(newUser.Email))
         {
-            errorMessage = $"Hiba: {ex.Message}";
+            errorMessage = "Az email cím formátuma nem megfelelő!";
+            return;
+        }
+
+        if (!AuthService.IsValidPassword(newUser.Password))
+        {
+            errorMessage = "A jelszó formátuma nem megfelelő!\n- Minimum 8 karakter\n- Nagy betű\n- Szám\n- Speciális karakter";
+            return;
+        }
+
+        if (newUser.Password != passwordAgain)
+        {
+            errorMessage = "A két jelszó nem egyezik!";
+            return;
+        }
+
+        var fullPhoneNumber = countryCode.Trim() + newUser.Phone.Trim();
+        if (!AuthService.IsValidPhoneNumber(fullPhoneNumber))
+        {
+            errorMessage = "A telefonszám formátuma nem megfelelő!";
+            return;
+        }
+        newUser.Phone = fullPhoneNumber;
+
+        var registerResult = await AuthService.Register(newUser);
+
+        if (registerResult.Success)
+        {
+            NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
+            errorMessage = string.IsNullOrEmpty(registerResult.ErrorMessage)
+                ? "Hiba történt a regisztráció során!"
+                : registerResult.ErrorMessage;
         }
     }
 }
