@@ -13,35 +13,29 @@ namespace SlimFitGym.Models.Responses
         public string Name { get; set; }
         public string Email { get; set; }
         public string Token { get; set; }
+        public string Phone { get; set; }
         public DateTime ValidTo { get; set; }
         public string Role { get; set; }
-        public AccountResponse(Account a, string token)
+        public string ImageUrl { get; set; }
+        public AccountResponse(Account a, string token, DateTime validTo,string imageUrl="")
         {
             Id = a.Id;
             Name = a.Name;
             Email = a.Email;
             Token = token;
             Role = a.Role;
-            ValidTo = DateTime.Now.AddDays(1);
+            Phone = a.Phone;
+            ValidTo = validTo;
+            ImageUrl = imageUrl;
         }
 
-        public AccountResponse(Account a)
+        public AccountResponse(Account a, string imageUrl="")
         {
             Id = a.Id;
             Name = a.Name;
             Email = a.Email;
-            Token = "To be implemented";
             Role = a.Role;
-            ValidTo = DateTime.Now.AddMinutes(2);
-        }
-        public AccountResponse(AccountResponse a)
-        {
-            Id = a.Id;
-            Name = a.Name;
-            Email = a.Email;
-            Token = "To be implemented";
-            Role = a.Role;
-            ValidTo = DateTime.Now.AddMinutes(30);
+            ImageUrl = imageUrl;
         }
     }
 }

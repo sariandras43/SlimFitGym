@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace SlimFitGym.Models.Requests
 {
-    public class LoginRequest
+    public class ImageRequest
     {
-        public string Email { get; set; }
-        public string Password { get; set; }
-        public bool RememberMe { get; set; } = false;
+        public string FileName { get; set; }
+        public string ImageInBase64 { get; set; }
     }
 }

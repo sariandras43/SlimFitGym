@@ -15,9 +15,11 @@ namespace SlimFitGymBackend.Controllers
     {
 
         readonly PassesRepository passesRepository;
-        public PassesController(PassesRepository passesRepository)
+        readonly PurchasesRepository purchasesRepository;
+        public PassesController(PassesRepository passesRepository, PurchasesRepository purchasesRepository)
         {
             this.passesRepository = passesRepository;
+            this.purchasesRepository = purchasesRepository;
         }
 
         [HttpGet]
@@ -31,8 +33,7 @@ namespace SlimFitGymBackend.Controllers
 
 
         // GET: api/<PassesController>/active
-        //[Authorize(Roles ="admin")]
-
+        [Authorize(Roles = "admin")]
         [HttpGet("all")]
         public IActionResult GetAllPasses()
         {
@@ -57,6 +58,32 @@ namespace SlimFitGymBackend.Controllers
 
                     PassResponse? p = passesRepository.GetOnlyActivePassById(idNum);
                     if (p == null||!p.isActive)
+                        return NotFound(new { message = "A keresett bérlet nem található." });
+                    return Ok(p);
+
+                }
+                throw new Exception("Érvénytelen azonosító");
+            });
+        }
+
+        [HttpGet("accounts/{accountId}/latest")]
+        public IActionResult GetLatestPassByAccountId([FromRoute] string accountId)
+        {
+            return this.Execute(() =>
+            {
+                int idNum;
+
+                if (int.TryParse(accountId, out idNum))
+                {
+                    if (idNum < 0)
+                        throw new Exception("Érvénytelen azonosító");
+
+                    Purchase purchases = purchasesRepository.GetLatestPurchaseByAccountId(idNum);
+                    if (purchases == null)
+                        return NotFound(new { message = "A felhasználónak nincsenek vásárlásai." });
+
+                    PassResponse? p = passesRepository.GetPassById(purchases.PassId);
+                    if (p == null || !p.isActive)
                         return NotFound(new { message = "A keresett bérlet nem található." });
                     return Ok(p);
 
@@ -109,7 +136,7 @@ namespace SlimFitGymBackend.Controllers
 
         // PUT api/<PassesController>/5
         [HttpPut("{id}")]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
 
         public IActionResult Put([FromRoute] string id, [FromBody] PassRequest pass)
         {

@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
 using SlimFitGym.Models.Responses;
+using SlimFitGymBackend;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,15 +18,21 @@ namespace SlimFitGym.EFData.Repositories
         public readonly RoomsRepository roomsRepository;
         public readonly AccountRepository accountRepository;
         public readonly ReservationRepository reservationRepository;
+        public readonly ImagesRepository imagesRepository;
+        public readonly TokenGenerator tokenGenerator;
         public TrainingsRepository(SlimFitGymContext slimFitGymContext,
             RoomsRepository roomsRepository,
             AccountRepository accountRepository,
-            ReservationRepository reservationRepository)
+            ReservationRepository reservationRepository,
+            ImagesRepository imagesRepository,
+            TokenGenerator tokenGenerator)
         {
             this.context = slimFitGymContext;
             this.roomsRepository = roomsRepository;
             this.accountRepository = accountRepository;
             this.reservationRepository = reservationRepository;
+            this.imagesRepository = imagesRepository;
+            this.tokenGenerator = tokenGenerator;
         }
 
         public List<Training> GetAllTrainings()
@@ -45,31 +53,49 @@ namespace SlimFitGym.EFData.Repositories
                 TrainingEnd = t.TrainingEnd,
                 Trainer = accountRepository.GetAccountById(t.TrainerId)!.Name,
                 Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
-                FreePlaces = t.MaxPeople-reservationRepository.GetReservationsByTrainingId(t.Id)!.Count()
+                FreePlaces = t.MaxPeople-reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
+                TrainerImageUrl = imagesRepository.GetImageUrlByAccountId(t.TrainerId),
+                RoomImageUrls = imagesRepository.GetImageUrlsByRoomId(t.RoomId),
+                TrainerId = t.TrainerId,
+                RoomId = t.RoomId
 
             }).ToList();
         }
 
-        public List<TrainingResponse> GetTrainingsByAccountId(int accountId)
+        public List<TrainingResponse>? GetTrainingsByAccountId(string token, int accountId)
         {
+            Account? accountFromToken = accountRepository.GetAccountById(tokenGenerator.GetAccountIdFromToken(token));
+            if (accountFromToken == null)
+                throw new Exception("Érvénytelen token.");
+            Account? account = accountRepository.GetAccountById(accountId);
+            if (accountFromToken.Role == "admin" && account == null)
+                return null;
+            else if (accountFromToken.Role != "admin" && account == null)
+                throw new Exception("Nem lehet más jelentkezéseit lekérni.");
+            if (accountId != tokenGenerator.GetAccountIdFromToken(token) && accountFromToken.Role != "admin")
+                throw new Exception("Nem lehet más jelentkezéseit lekérni.");
             var reservations = reservationRepository.GetReservationsByAccountId(accountId).Select(r=>r.TrainingId).ToList();
-            List<TrainingResponse?> res = new List<TrainingResponse>();
+            List<TrainingResponse> res = new List<TrainingResponse>();
             foreach (int trainingId in reservations)
             {
-            var traininRes = context.Set<Training>().Where(t => t.Id==trainingId).Select(t => new TrainingResponse()
-            {
-                Id = t.Id,
-                Name = t.Name,
-                MaxPeople = t.MaxPeople,
-                IsActive = t.IsActive,
-                TrainingStart = t.TrainingStart,
-                TrainingEnd = t.TrainingEnd,
-                Trainer = accountRepository.GetAccountById(t.TrainerId)!.Name,
-                Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
-                FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count()
+                var traininRes = context.Set<Training>().Where(t => t.Id==trainingId).Select(t => new TrainingResponse()
+                {
+                    Id = t.Id,
+                    Name = t.Name,
+                    MaxPeople = t.MaxPeople,
+                    IsActive = t.IsActive,
+                    TrainingStart = t.TrainingStart,
+                    TrainingEnd = t.TrainingEnd,
+                    Trainer = accountRepository.GetAccountById(t.TrainerId)!.Name,
+                    Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
+                    FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
+                    TrainerImageUrl = imagesRepository.GetImageUrlByAccountId(t.TrainerId),
+                    RoomImageUrls = imagesRepository.GetImageUrlsByRoomId(t.RoomId),
+                    TrainerId = t.TrainerId,
+                    RoomId = t.RoomId,
 
-            }).SingleOrDefault();
-            res.Add(traininRes);
+                }).SingleOrDefault();
+                res.Add(traininRes);
             }
             return res;
         }
@@ -90,7 +116,11 @@ namespace SlimFitGym.EFData.Repositories
                     TrainingEnd = t.TrainingEnd,
                     Trainer = accountRepository.GetAccountById(t.TrainerId)!.Name,
                     Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
-                    FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count()
+                    FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
+                    TrainerImageUrl = imagesRepository.GetImageUrlByAccountId(t.TrainerId),
+                    RoomImageUrls = imagesRepository.GetImageUrlsByRoomId(t.RoomId),
+                    RoomId = t.RoomId,
+                    TrainerId = t.TrainerId,
 
                 };
             return null;
@@ -115,7 +145,7 @@ namespace SlimFitGym.EFData.Repositories
             return context.Set<Training>().Where(t=>t.Name.ToLower().Contains(nameFragment.ToLower())).Skip(offset).Take(limit).ToList();
         }
 
-        public Training? NewTraining(TrainingRequest training)
+        public Training? NewTraining(string token, TrainingRequest training)
         {
             if (training.TrainerId <= 0)
                 throw new Exception("Ilyen edző nem létezik");
@@ -123,6 +153,11 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Ilyen terem nem létezik");
             if (training == null)
                 throw new Exception("Hibás kérés.");
+            Account? accountFromToken = accountRepository.GetAccountById(tokenGenerator.GetAccountIdFromToken(token));
+            if (accountFromToken == null)
+                throw new Exception("Érvénytelen token.");
+            if (training.TrainerId != tokenGenerator.GetAccountIdFromToken(token) ||  accountFromToken.Id != training.TrainerId)
+                throw new Exception("Nem lehet máshoz edzést felvenni.");
             if (training.Name== null || training.Name.Length == 0)
                 throw new Exception("A név mező kitöltése kötelező.");
             if (training.Description == null || training.Description.Length == 0)
@@ -168,7 +203,7 @@ namespace SlimFitGym.EFData.Repositories
             return savedTraining;
         }
 
-        public Training? UpdateTraining(int id,TrainingRequest training)
+        public Training? UpdateTraining(string token, int id, TrainingRequest training)
         {
             if (training.TrainerId<=0)
                 throw new Exception("Ilyen edző nem létezik");
@@ -178,6 +213,11 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Érvénytelen azonosító.");
             if (training == null)
                 throw new Exception("Hibás kérés.");
+            Account? accountFromToken = accountRepository.GetAccountById(tokenGenerator.GetAccountIdFromToken(token));
+            if (accountFromToken == null)
+                throw new Exception("Érvénytelen token.");
+            if (training.TrainerId != tokenGenerator.GetAccountIdFromToken(token) || accountFromToken.Id != training.TrainerId)
+                throw new Exception("Nem lehet más edzését módosítani felvenni.");
             if (training.Name == null || training.Name.Length == 0)
                 throw new Exception("A név mező kitöltése kötelező.");
             if (training.Description == null || training.Description.Length == 0)
@@ -233,15 +273,18 @@ namespace SlimFitGym.EFData.Repositories
             return trainingToModify;
         }
 
-        public TrainingResponse? DeleteOrMakeInactive(int id)
+        public TrainingResponse? DeleteOrMakeInactive(string token, int id)
         {
             if (id <= 0)
                 throw new Exception("Érvénytelen azonosító.");
-            Training? t = this.context.Set<Training>().SingleOrDefault(t => t.Id == id);
+            Account? accountFromToken = accountRepository.GetAccountById(tokenGenerator.GetAccountIdFromToken(token));
+            Training? t = this.context.Set<Training>().SingleOrDefault(t => t.Id == id && t.IsActive);
             if (t == null)
                 return null;
-            if (!t.IsActive)
-                return null;
+            if (accountFromToken == null)
+                throw new Exception("Érvénytelen token.");
+            if (accountFromToken.Role != "admin" && (t.TrainerId != tokenGenerator.GetAccountIdFromToken(token) || accountFromToken.Id != t.TrainerId))
+                throw new Exception("Nem lehet más edzését törölni.");
 
             if (reservationRepository.GetReservationsByTrainingId(id)!.Count==0)
             {

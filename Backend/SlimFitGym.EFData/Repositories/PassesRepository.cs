@@ -155,7 +155,7 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Érvénytelen azonosító.");
             if (pass == null)
                 throw new Exception("Hibás kérés.");
-            if (context.Set<Pass>().Any(p => p.Name == pass.Name && p.IsActive))
+            if (context.Set<Pass>().Any(p => p.Name == pass.Name && p.IsActive && pass.Name!=p.Name))
                 throw new Exception("Ilyen névvel létezik már aktív bérlet.");
             if (pass.Price < 0)
                 throw new Exception("Érvénytelen ár.");
@@ -172,6 +172,10 @@ namespace SlimFitGym.EFData.Repositories
                 DeleteOrMakePassInactive(id);
                 return NewPass(pass);
             }
+            p.Name = pass.Name;
+            p.Days = pass.Days;
+            p.Price = pass.Price;
+            p.MaxEntries = pass.MaxEntries;
             this.context.Entry(p).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             this.context.SaveChanges();
 

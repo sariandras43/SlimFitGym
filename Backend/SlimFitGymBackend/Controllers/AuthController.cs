@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json.Linq;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models.Requests;
@@ -18,7 +20,6 @@ namespace SlimFitGymBackend.Controllers
             this.accountRepository = accountRepository;
         }
 
-        // POST api/<AuthController>
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest loginInfo)
         {
@@ -41,14 +42,16 @@ namespace SlimFitGymBackend.Controllers
         }
 
         [HttpPut("modify/{id}")]
+        [Authorize]
         public IActionResult Modify([FromRoute] string id, [FromBody] ModifyAccountRequest accountInfo)
         {
+            string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
             return this.Execute(() =>
             {
                 int idNum;
                 if (int.TryParse(id, out idNum))
                 {
-                    var res = accountRepository.UpdateAccountPublic(idNum, accountInfo);
+                    var res = accountRepository.UpdateAccountPublic(token,idNum, accountInfo);
                     if (res != null) return Ok(res);
                     return NotFound("Nem található a felhasználó.");
 
@@ -58,14 +61,16 @@ namespace SlimFitGymBackend.Controllers
         }
 
         [HttpDelete("delete/{id}")]
+        [Authorize]
         public IActionResult Delete([FromRoute] string id)
         {
+            string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
             return this.Execute(() =>
             {
                 int idNum;
                 if (int.TryParse(id, out idNum))
                 {
-                    var res = accountRepository.DeleteAccount(idNum);
+                    var res = accountRepository.DeleteAccount(token,idNum);
                     if (res != null)
                         return Ok(res);
                     return NotFound(new { message = "Nem található a felhasználó.." });

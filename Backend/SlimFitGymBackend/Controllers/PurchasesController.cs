@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json.Linq;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models.Models;
@@ -33,18 +34,18 @@ namespace SlimFitGymBackend.Controllers
         // GET api/purchases/5
         [HttpGet("{accountId}")]
         [Authorize]
-        //TODO: the authorized can only get the purchases related to them
         public IActionResult Get([FromRoute] string accountId)
         {
+            string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
             return this.Execute(() =>
             {
                 int idNum;
                 if (int.TryParse(accountId, out idNum))
                 {
-                    var res = purchasesRepository.GetPurchasesByAccountId(idNum);
+                    var res = purchasesRepository.GetPurchasesByAccountId(token, idNum);
                     if (res != null)
                         return Ok(res);
-                    return NotFound(new { message = "Nem található ez a vásárlás" });
+                    return NotFound(new { message = "Nem található a felhasználó." });
                 }
                 throw new Exception("Érvénytelen azonosító.");
             });
@@ -53,12 +54,13 @@ namespace SlimFitGymBackend.Controllers
         // POST api/purchases
         [HttpPost]
         [Authorize]
-        //TODO: the authorized can only add a purchase to themself
         public IActionResult Post([FromBody] PurchaseRequest purchase)
         {
+            string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+
             return this.Execute(() =>
             {
-                return Ok(purchasesRepository.NewPurchase(purchase));
+                return Ok(purchasesRepository.NewPurchase(token, purchase));
             });
         }
 
