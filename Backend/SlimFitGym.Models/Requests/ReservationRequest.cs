@@ -11,6 +11,9 @@ namespace SlimFitGym.Models.Requests
 {
     public class ReservationRequest
     {
+        public int Id { get; set; }
+        public int TrainingId { get; set; }
+        public int AccountId { get; set; }
         public ReservationRequest()
         {
             
@@ -21,8 +24,5 @@ namespace SlimFitGym.Models.Requests
             TrainingId = r.TrainingId;
             AccountId = r.AccountId;
         }
-        public int Id { get; set; }
-        public int TrainingId { get; set; }
-        public int AccountId { get; set; }
     }
 }

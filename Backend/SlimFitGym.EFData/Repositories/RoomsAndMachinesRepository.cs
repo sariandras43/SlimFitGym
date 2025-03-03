@@ -17,10 +17,12 @@ namespace SlimFitGym.EFData.Repositories
     public class RoomsAndMachinesRepository
     {
         readonly SlimFitGymContext context;
+        readonly ImagesRepository imagesRepository;
 
-        public RoomsAndMachinesRepository(SlimFitGymContext context)
+        public RoomsAndMachinesRepository(SlimFitGymContext context, ImagesRepository imagesRepository)
         {
             this.context = context;
+            this.imagesRepository = imagesRepository;
         }
 
         public List<RoomWithMachinesResponse>? GetRoomsWithMachines()
@@ -41,6 +43,7 @@ namespace SlimFitGym.EFData.Repositories
                     Description = x.room.Description!,
                     RecommendedPeople = x.room.RecommendedPeople,
                     IsActive = x.room.IsActive,
+                    ImageUrls = imagesRepository.GetImageUrlsByRoomId(x.room.Id),
                     Machines = x.RoomAndMachines == null || !x.RoomAndMachines.Any()
                         ? new List<MachineDetails>()  
                         : x.RoomAndMachines
@@ -79,6 +82,7 @@ namespace SlimFitGym.EFData.Repositories
                     Description = x.room.Description!,
                     IsActive = x.room.IsActive,
                     RecommendedPeople = x.room.RecommendedPeople,
+                    ImageUrls = imagesRepository.GetImageUrlsByRoomId(x.room.Id),
                     Machines = x.RoomAndMachines == null || !x.RoomAndMachines.Any()
                         ? new List<MachineDetails>()
                         : x.RoomAndMachines

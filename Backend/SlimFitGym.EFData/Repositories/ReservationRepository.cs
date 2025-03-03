@@ -1,6 +1,7 @@
 ﻿using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
 using SlimFitGym.Models.Responses;
+using SlimFitGymBackend;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +13,14 @@ namespace SlimFitGym.EFData.Repositories
     public class ReservationRepository
     {
         readonly SlimFitGymContext context;
+        readonly TokenGenerator tokenGenerator;
+        readonly AccountRepository accountRepository;
 
-        public ReservationRepository(SlimFitGymContext context)
+        public ReservationRepository(SlimFitGymContext context, TokenGenerator tokenGenerator, AccountRepository accountRepository)
         {
             this.context = context;
+            this.tokenGenerator = tokenGenerator;
+            this.accountRepository = accountRepository;
         }
 
         public List<ReservationResponse> GetAllReservations()
@@ -45,13 +50,13 @@ namespace SlimFitGym.EFData.Repositories
         {
             if (accountId <= 0)
                 throw new Exception("Érvénytelen azonosító.");
-            var res = context.Set<Reservation>().Where(r => r.TrainingId == accountId).ToList();
+            var res = context.Set<Reservation>().Where(r => r.AccountId == accountId).ToList();
             if (res != null)
                 return res;
             return null;
         }
 
-        public ReservationResponse? NewReservation(ReservationRequest reservation)
+        public ReservationResponse? NewReservation(string token, ReservationRequest reservation)
         {
             if (reservation==null)
                 throw new Exception("Érvénytelen lekérdezés.");
@@ -59,9 +64,17 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Nincs ilyen edzés.");
             if (reservation.AccountId <= 0)
                 throw new Exception("Nincs ilyen edző.");
+
+            Account? accountFromToken = accountRepository.GetAccountById(tokenGenerator.GetAccountIdFromToken(token));
+            if (accountFromToken == null)
+                throw new Exception("Érvénytelen token.");
+            if (reservation.AccountId != tokenGenerator.GetAccountIdFromToken(token))
+                throw new Exception("Nem lehet más felhasználóként jelentkezni.");
+
+
             Training? training = context.Set<Training>().SingleOrDefault(t=>t.Id == reservation.TrainingId && t.IsActive);
             if (training == null)
-                throw new Exception("Nincs ilyen edzés.");
+                return null;
             Account? trainer = context.Set<Account>().SingleOrDefault(a=>a.Id == training.TrainerId);
             // In theory, this check is not mandatory
             if (trainer == null)
@@ -86,6 +99,29 @@ namespace SlimFitGym.EFData.Repositories
             if (id <= 0)
                 throw new Exception("Érvénytelen azonosító.");
             Reservation? reservationToDelete = this.context.Set<Reservation>().SingleOrDefault(t => t.Id == id);
+            if (reservationToDelete == null)
+                return null;
+
+            this.context.Set<Reservation>().Remove(reservationToDelete);
+            this.context.SaveChanges();
+            return new ReservationResponse(reservationToDelete);
+        }
+
+        public ReservationResponse? DeleteReservationByTrainingAndAccountId(string token, int accountId, int trainingId)
+        {
+            if (accountId <= 0 ||trainingId <= 0)
+                throw new Exception("Érvénytelen azonosítók.");
+
+            Account? accountFromToken = accountRepository.GetAccountById(tokenGenerator.GetAccountIdFromToken(token));
+            if (accountFromToken == null)
+                throw new Exception("Érvénytelen token.");
+            //Account? account = accountRepository.GetAccountById(accountId);
+            //if (accountFromToken.Role != "admin" && account == null)
+            //    return null;
+            if (accountId != tokenGenerator.GetAccountIdFromToken(token))
+                throw new Exception("Nem lehet más jelentkezését törölni.");
+
+            Reservation? reservationToDelete = this.context.Set<Reservation>().SingleOrDefault(r => r.TrainingId == trainingId && r.AccountId==accountId);
             if (reservationToDelete == null)
                 return null;
 

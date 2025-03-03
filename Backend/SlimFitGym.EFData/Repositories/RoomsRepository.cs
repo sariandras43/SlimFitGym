@@ -17,11 +17,13 @@ namespace SlimFitGym.EFData.Repositories
     {
         readonly SlimFitGymContext context;
         readonly RoomsAndMachinesRepository roomsAndMachinesRepository;
+        readonly ImagesRepository imagesRepository;
 
-        public RoomsRepository(SlimFitGymContext context, RoomsAndMachinesRepository roomsAndMachinesRepository)
+        public RoomsRepository(SlimFitGymContext context, RoomsAndMachinesRepository roomsAndMachinesRepository, ImagesRepository imagesRepository)
         {
             this.context = context;
             this.roomsAndMachinesRepository = roomsAndMachinesRepository;
+            this.imagesRepository = imagesRepository;
         }
 
         public List<Room> GetAllRooms() 
@@ -81,6 +83,9 @@ namespace SlimFitGym.EFData.Repositories
                 this.context.SaveChanges();
 
             }
+
+            List<Image> images = imagesRepository.UploadImagesToRoom(newRoom.Images, savedRoom.Id);
+
             return roomsAndMachinesRepository.GetRoomWithMachinesById(savedRoom.Id);
 
         }
@@ -171,6 +176,8 @@ namespace SlimFitGym.EFData.Repositories
                 }
 
             }
+            List<Image> images = imagesRepository.UploadImagesToRoom(room.Images, modifiedRoom.Id);
+
             this.context.Entry(modifiedRoom).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             this.context.SaveChanges();
 
