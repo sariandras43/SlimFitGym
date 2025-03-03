@@ -1,6 +1,7 @@
 ﻿using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
 using SlimFitGym.Models.Responses;
+using SlimFitGymBackend;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +15,12 @@ namespace SlimFitGym.EFData.Repositories
     {
         readonly SlimFitGymContext context;
         readonly AccountRepository accountRepository;
-        public TrainerApplicantsRepository(SlimFitGymContext slimFitGymContext, AccountRepository aR)
+        readonly TokenGenerator tokenGenerator;
+        public TrainerApplicantsRepository(SlimFitGymContext slimFitGymContext, AccountRepository accountRepository, TokenGenerator tokenGenerator)
         {
             context = slimFitGymContext;
-            accountRepository = aR;
+            this.accountRepository = accountRepository;
+            this.tokenGenerator = tokenGenerator;
         }
 
         public List<TrainerApplicant> GetAllApplicants()
@@ -35,13 +38,20 @@ namespace SlimFitGym.EFData.Repositories
             return null;
         }
 
-        public TrainerApplicant? NewApplicant(TrainerApplicant applicant)
+        public TrainerApplicant? NewApplicant(string token, TrainerApplicant applicant)
         {
             if (applicant.AccountId <= 0)
                 throw new Exception("Nem létezik ez a felhasználó.");
+
             Account? a = context.Set<Account>().SingleOrDefault(a => a.Id == applicant.AccountId);
             if (a == null)
                 return null;
+            Account? accountFromToken = accountRepository.GetAccountById(tokenGenerator.GetAccountIdFromToken(token));
+            if (accountFromToken == null)
+                throw new Exception("Érvénytelen token.");
+            if (a.Id != tokenGenerator.GetAccountIdFromToken(token) || accountFromToken.Id != applicant.AccountId)
+                throw new Exception("Nem lehet más felhasználóként jelentkezni edzőnek.");
+
 
             if (context.Set<TrainerApplicant>().Any(ta => ta.AccountId == applicant.AccountId))
                 throw new Exception("Ez a felhasználó már jelentkezett edzőnek");
@@ -67,6 +77,23 @@ namespace SlimFitGym.EFData.Repositories
             this.context.Set<TrainerApplicant>().Remove(tr);
             this.context.SaveChanges();
             return newTrainer;
+        }
+
+        public AccountResponse? Reject(int id)
+        {
+            if (id <= 0)
+                return null;
+
+            TrainerApplicant? tr = GetApplicantById(id);
+            if (tr == null)
+                return null;
+
+            Account? applicant = accountRepository.GetAccountById(tr.AccountId);
+            if (applicant == null)
+                return null;
+            this.context.Set<TrainerApplicant>().Remove(tr);
+            this.context.SaveChanges();
+            return new AccountResponse(applicant);
         }
     }
 }

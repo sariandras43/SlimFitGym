@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json.Linq;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models.Models;
@@ -13,9 +14,9 @@ namespace SlimFitGymBackend.Controllers
     public class TrainerApplicantsController : ControllerBase
     {
         readonly TrainerApplicantsRepository trainerApplicantsRepository;
-        public TrainerApplicantsController(TrainerApplicantsRepository taR)
+        public TrainerApplicantsController(TrainerApplicantsRepository trainerApplicantsRepository)
         {
-            trainerApplicantsRepository = taR;
+            this.trainerApplicantsRepository = trainerApplicantsRepository;
         }
 
         // GET: api/<TrainerApplicantsController>
@@ -47,12 +48,12 @@ namespace SlimFitGymBackend.Controllers
                     return NotFound(new { message = "Nem található a jelentkezés." });
 
                 }
-                throw new Exception("Nem érvényes azonosító.");
+                throw new Exception("Érvénytelen azonosító.");
             });
         }
 
         // POST api/<TrainerApplicantsController>
-        [HttpPost("/accept/{id}")]
+        [HttpPost("accept/{id}")]
         [Authorize(Roles = "admin")]
 
         public IActionResult Accept([FromRoute] string id)
@@ -68,26 +69,41 @@ namespace SlimFitGymBackend.Controllers
                     return NotFound(new { message = "Nem található a jelentkező." });
 
                 }
-                throw new Exception("Nem érvényes azonosító.");
+                throw new Exception("Érvénytelen azonosító.");
             });
         }
 
-        [HttpPost()]
+        [HttpPost]
         [Authorize]
 
         public IActionResult Post([FromBody] TrainerApplicant applicant)
         {
+            string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+
             return this.Execute(() =>
             {
-                return Ok(trainerApplicantsRepository.NewApplicant(applicant));
+                return Ok(trainerApplicantsRepository.NewApplicant(token, applicant));
             });
         }
 
         // DELETE api/<TrainerApplicantsController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("reject/{id}")]
+        [Authorize(Roles = "admin")]
+        public IActionResult Delete(string id)
         {
-            throw new NotImplementedException();
+            return this.Execute(() =>
+            {
+                int idNum;
+                if (int.TryParse(id, out idNum))
+                {
+                    var res = trainerApplicantsRepository.Reject(idNum);
+                    if (res != null)
+                        return Ok(res);
+                    return NotFound(new { message = "Nem található a jelentkező." });
+
+                }
+                throw new Exception("Érvénytelen azonosító.");
+            });
         }
     }
 }

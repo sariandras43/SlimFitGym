@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using SlimFitGym.EFData;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models.Models;
@@ -14,10 +15,12 @@ namespace SlimFitGymBackend.Controllers
     public class TrainingsController : ControllerBase
     {
         public readonly TrainingsRepository trainingsRepository;
+        public readonly ReservationRepository reservationRepository;
 
-        public TrainingsController(TrainingsRepository trainingsRepository)
+        public TrainingsController(TrainingsRepository trainingsRepository, ReservationRepository reservationRepository)
         {
             this.trainingsRepository = trainingsRepository;
+            this.reservationRepository = reservationRepository;
         }
 
         // GET: api/<TrainingsController>
@@ -31,7 +34,7 @@ namespace SlimFitGymBackend.Controllers
         }
 
         [HttpGet("all")]
-        //[Authorize(Roles ="admin")]
+        [Authorize(Roles = "admin")]
         public IActionResult GetAllTrainingsIncludedTheDeletedOnes()
         {
             return this.Execute(() =>
@@ -41,19 +44,20 @@ namespace SlimFitGymBackend.Controllers
         }
 
         [HttpGet("account/{accountId}")]
-        //[Authorize]
-        //TODO
+        [Authorize]
         public IActionResult GetActiveTrainings(string accountId)
         {
+            string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+
             return this.Execute(() =>
             {
                 int idNum;
                 if (int.TryParse(accountId, out idNum))
                 {
-                    var res = trainingsRepository.GetTrainingById(idNum);
+                    var res = trainingsRepository.GetTrainingsByAccountId(token, idNum);
                     if (res != null)
                         return Ok(res);
-                    return NotFound(new { message = "Nem található az edzés." });
+                    return NotFound(new { message = "Nem található a felhasználó." });
 
                 }
                 throw new Exception("Érvénytelen azonosító.");
@@ -104,30 +108,32 @@ namespace SlimFitGymBackend.Controllers
 
 
         [HttpPost]
-        //[Authorize(Roles = "admin,trainer")]
-        //TODO
+        [Authorize(Roles = "admin,trainer")]
         public IActionResult Post([FromBody] TrainingRequest training)
         {
+            string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+
             return this.Execute(() =>
             {
-                return Ok(trainingsRepository.NewTraining(training));
+                return Ok(trainingsRepository.NewTraining(token, training));
             });
         }
 
         // PUT api/<TrainingsController>/5
         [HttpPut("{id}")]
-        //[Authorize(Roles = "admin,trainer")]
-        //TODO
+        [Authorize(Roles = "admin,trainer")]
         public IActionResult Put([FromRoute]string id, [FromBody] TrainingRequest training)
         {
+            string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+
             return this.Execute(() =>
             {
                 int idNum;
                 if (int.TryParse(id, out idNum))
                 {
-                    var res = trainingsRepository.UpdateTraining(idNum, training);
+                    var res = trainingsRepository.UpdateTraining(token, idNum, training);
                     if (res != null) return Ok(res);
-                    return NotFound("Nem található az edzés.");
+                    return NotFound(new { message = "Nem található az edzés." });
 
                 }
                 throw new Exception("Nem érvényes azonosító.");
@@ -136,22 +142,54 @@ namespace SlimFitGymBackend.Controllers
 
         // DELETE api/<TrainingsController>/5
         [HttpDelete("{id}")]
-        //[Authorize(Roles = "admin")]
-        //TODO
+        [Authorize(Roles = "admin,trainer")]
         public IActionResult Delete([FromRoute]string id)
         {
+            string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+
             return this.Execute(() =>
             {
                 int idNum;
                 if (int.TryParse(id, out idNum))
                 {
-                    var res = trainingsRepository.DeleteOrMakeInactive(idNum);
+                    var res = trainingsRepository.DeleteOrMakeInactive(token, idNum);
                     if (res != null)
                         return Ok(res);
                     return NotFound(new { message = "Nem található az edzés." });
 
                 }
                 throw new Exception("Nem érvényes azonosító.");
+            });
+        }
+
+        [HttpPost("signup")]
+        [Authorize]
+        public IActionResult SignUpForATraining([FromBody] ReservationRequest reservation)
+        {
+            string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+
+            return this.Execute(() => {
+                var res = reservationRepository.NewReservation(token,reservation);
+                if (res == null)
+                    return NotFound( new { message = "Nem található az edzés." });
+                return  Ok(res);
+
+            });
+        }
+
+
+        [HttpPost("signout")]
+        [Authorize]
+        public IActionResult SignOutFromATraining([FromBody] ReservationRequest reservation)
+        {
+            string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+
+            return this.Execute(() => {
+                var res = reservationRepository.DeleteReservationByTrainingAndAccountId(token, reservation.AccountId, reservation.TrainingId);
+                if (res == null)
+                    return NotFound(new { message = "Nem található a jelentkezés." });
+                return Ok();
+
             });
         }
 

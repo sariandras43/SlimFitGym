@@ -42,15 +42,15 @@ namespace SlimFitGymBackend.Controllers
                     var res = machinesRepository.GetMachineById(idNum);
                     if (res!=null)
                         return Ok(res);        
-                    return NotFound(new {message="Nem található a gép" });
+                    return NotFound(new {message="Nem található a gép." });
                     
-                }throw new Exception("Nem érvényes azonosító.");
+                }throw new Exception("Érvénytelen azonosító.");
             });
         }
 
         // POST api/<MachinesController>
         [HttpPost]
-        //[Authorize(Roles ="admin")]
+        [Authorize(Roles = "admin")]
         public IActionResult Post([FromBody] MachineRequest newMachine)
         {
             return this.Execute(() =>
@@ -61,7 +61,7 @@ namespace SlimFitGymBackend.Controllers
 
         // PUT api/<MachinesController>/5
         [HttpPut("{id}")]
-        //[Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
         public IActionResult Put([FromRoute]string id, MachineRequest machine)
         {
             return this.Execute(() =>
@@ -71,15 +71,15 @@ namespace SlimFitGymBackend.Controllers
                 {
                     var res = machinesRepository.UpdateMachine(idNum, machine);
                     if (res!=null) return Ok(res);
-                    return NotFound("Nem található a gép");
+                    return NotFound("Nem található a gép.");
                     
-                }throw new Exception("Nem érvényes azonosító.");
+                }throw new Exception("Érvénytelen azonosító.");
             });
         }
 
         // DELETE api/<MachinesController>/5
         [HttpDelete("{id}")]
-        //[Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
         public IActionResult Delete([FromRoute] string id)
         {
             return this.Execute(() =>
@@ -90,10 +90,10 @@ namespace SlimFitGymBackend.Controllers
                     var res = machinesRepository.DeleteMachine(idNum);
                     if (res != null)
                         return Ok(res);
-                    return NotFound(new { message = "Nem található a gép" });
+                    return NotFound(new { message = "Nem található a gép." });
 
                 }
-                throw new Exception("Nem érvényes azonosító.");
+                throw new Exception("Érvénytelen azonosító.");
             });
         }
     }
