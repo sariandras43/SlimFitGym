@@ -1,20 +1,10 @@
-$card-width: 25rem;
 .machines
 {
     h2{
         font-size: 4rem;
         margin-bottom: 0.5em;
     }
-    .cardWrapper {
-      gap: 2em;
-      border-radius: var(--border-radius);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-      flex-basis: $card-width;
-      
-    }
+    
 
 }
 .container{
@@ -24,18 +14,3 @@ $card-width: 25rem;
     margin-top: 8em;
   }
 }
-app-card {
-  max-width: $card-width;
-  width: fit-content;
-background-color: var(--bg-tertiary);
-  .expandedContent{
-    img{
-
-      height: 100%;
-      width: 30em;
-     object-fit: cover;
-    }
-    
-   
-  }
-}             

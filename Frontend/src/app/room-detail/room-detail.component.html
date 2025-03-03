@@ -15,25 +15,6 @@
   </div>
   <div class=" machines">
     <h2>Terem gépei</h2>
-    <div class="flex cardWrapper">
-      @for (item of gepek; track $index) {
-      <app-card
-        title="Alap gép"
-        [isClickable]="true"
-        imgSrc="templateMachine.webp"
-        [expandable]="true"
-        description="
-          Lorem ipsum dolor sit amet consectetur adipisicing elit.
-          Exercitationem quo, dolore harum voluptates ea veritatis laudantium
-          officiis. 
-        "
-      >
-        <div class="expandedContent" ngProjectAs="expanded-content">
-          
-          <img src="mainHero.jpeg" alt="">
-        </div>
-      </app-card>
-      }
-    </div>
+    <app-machines [machines]="machines"/>
   </div>
 </div>
