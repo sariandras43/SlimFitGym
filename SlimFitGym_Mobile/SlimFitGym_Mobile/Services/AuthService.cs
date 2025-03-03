@@ -14,7 +14,6 @@ namespace SlimFitGym_Mobile.Services
     {
         private static HttpClient _httpClient = new();
         private const string apiBaseURL = "http://10.0.2.2:8080/api/"; 
-        public static event Action OnChange;
 
         public static async Task<LoginResult> Login(string email, string password)
         {

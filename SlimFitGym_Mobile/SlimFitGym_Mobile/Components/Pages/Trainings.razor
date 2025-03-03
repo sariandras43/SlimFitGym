@@ -10,20 +10,20 @@
     <div class="container flex-grow-1 position-relative mb-5 pb-3">
         @if (AccountModel.LoggedInUser?.Role == "trainer")
         {
-                <div class="sticky-top pt-2">
-                    <div class="d-flex align-items-center justify-content-between mb-5">
-                        <h2 class="text-center flex-grow-1 fw-bold mb-0">Elérhető edzésprogramok</h2>
-                        <NavLink href="/addTraining">
-                            <img class="fw-bold mb-2 invert" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAc0lEQVR4nO2UMQqAMAxF3/Gsg3j/wULVQS8Rl05FpGATpeTBX/MgCR+cnzMDJ3AAk6V4ByRnsxRLERerIb5qK6SbVY9AvBn8NhEIT+KkIK1quPSVOACLgnQBBhrQz1fX4mIzxG9sRSzKwYwArDlNGslBiwtYs6fhOILl9QAAAABJRU5ErkJggg==" alt="plus-math">
-                        </NavLink>
-                    </div>
+            <div class="sticky-top pt-2">
+                <div class="d-flex align-items-center justify-content-between mb-5">
+                    <h2 class="text-center flex-grow-1 fw-bold mb-0">Elérhető edzésprogramok</h2>
+                    <NavLink href="/addTraining">
+                        <img class="fw-bold mb-2 invert" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAc0lEQVR4nO2UMQqAMAxF3/Gsg3j/wULVQS8Rl05FpGATpeTBX/MgCR+cnzMDJ3AAk6V4ByRnsxRLERerIb5qK6SbVY9AvBn8NhEIT+KkIK1quPSVOACLgnQBBhrQz1fX4mIzxG9sRSzKwYwArDlNGslBiwtYs6fhOILl9QAAAABJRU5ErkJggg==" alt="plus-math">
+                    </NavLink>
                 </div>
+            </div>
         }
         else
         {
-                <div class="sticky-top py-3 text-center">
-                    <h2 class="fw-bold">Elérhető edzésprogramok</h2>
-                </div>
+            <div class="sticky-top py-3 text-center">
+                <h2 class="fw-bold">Elérhető edzésprogramok</h2>
+            </div>
         }
 
         <div class="overflow-auto pb-5">
@@ -33,39 +33,39 @@
                     var training = trainings[i];
                     bool isSignedUp = signedUpTrainings.Any(t => t.Id == training.Id);
 
-                        <div class="card col d-flex m-2 me-3 ms-3 w-75 lighter-dark @(i % 2 == 0 ? "me-auto" : "ms-auto") @(i == 0 ? "mt-4" : "")">
-                            <div class="card-body lighter-dark">
-                                <h5 class="card-title lighter-dark">@training.Name</h5>
-                                <p class="card-text lighter-dark">🏋️ Edző: <b>@training.Trainer</b></p>
-                                <p class="card-text lighter-dark">📅 Dátum: <b>@training.TrainingStart.ToString("yyyy.MM.dd HH:mm")</b></p>
-                                <p class="card-text lighter-dark">📍 Terem: <b>@training.Room</b></p>
-                                <p class="card-text lighter-dark">Férőhelyek: @training.MaxPeople</p>
+                    <div class="card col d-flex m-2 me-3 ms-3 w-75 lighter-dark @(i % 2 == 0 ? "me-auto" : "ms-auto") @(i == 0 ? "mt-4" : "")">
+                        <div class="card-body lighter-dark">
+                            <h5 class="card-title lighter-dark">@training.Name</h5>
+                            <p class="card-text lighter-dark">🏋️ Edző: <b>@training.Trainer</b></p>
+                            <p class="card-text lighter-dark">📅 Dátum: <b>@training.TrainingStart.ToString("yyyy.MM.dd HH:mm")</b></p>
+                            <p class="card-text lighter-dark">📍 Terem: <b>@training.Room</b></p>
+                            <p class="card-text lighter-dark">Férőhelyek: @training.MaxPeople</p>
                             @if (AccountModel.LoggedInUser != null)
                             {
                                 if (AccountModel.LoggedInUser.Role == "trainer" && training.Trainer == AccountModel.LoggedInUser.Name)
                                 {
-                                                <button class="btn btn-warning float-end me-2" @onclick="() => ModifyTraining(training.Id)">
-                                                    Módosítás
-                                                </button>
-                                                <button class="btn btn-danger float-start ms-2"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#confirmModal"
-                                                        @onclick="() => ShowDeleteConfirmation(training.Id)">
-                                                    Törlés
-                                                </button>
+                                    <button class="btn btn-warning float-end me-2" @onclick="() => ModifyTraining(training.Id)">
+                                        Módosítás
+                                    </button>
+                                    <button class="btn btn-danger float-start ms-2"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#confirmModal"
+                                    @onclick="() => ShowDeleteConfirmation(training.Id)">
+                                        Törlés
+                                    </button>
                                 }
                                 else
                                 {
-                                                <button class="btn @(isSignedUp ? "btn-danger" : "btn-primary") float-end"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#confirmModal"
-                                                        @onclick="() => ShowConfirmation(training.Id, isSignedUp)">
+                                    <button class="btn @(isSignedUp ? "btn-danger" : "btn-primary") float-end"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#confirmModal"
+                                    @onclick="() => ShowConfirmation(training.Id, isSignedUp)">
                                         @(isSignedUp ? "Visszavonás" : "Jelentkezés")
-                                                </button>
+                                    </button>
                                 }
                             }
-                            </div>
                         </div>
+                    </div>
                 }
             </div>
         </div>

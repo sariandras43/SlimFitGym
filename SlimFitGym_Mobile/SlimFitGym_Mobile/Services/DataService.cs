@@ -32,7 +32,7 @@ namespace SlimFitGym_Mobile.Services
             try
             {
                 var machine = await _httpClient.GetFromJsonAsync<MachineModel>($"{apiBaseURL}machines/{machineId}");
-                return machine;
+                return machine ?? new MachineModel();
             }
             catch (Exception ex)
             {
@@ -52,13 +52,26 @@ namespace SlimFitGym_Mobile.Services
                 throw new Exception(ex.Message);
             }
         }
+        
+        public static async Task<TrainingModel> GetTraining(int trainingId)
+        {
+            try
+            {
+                var training = await _httpClient.GetFromJsonAsync<TrainingModel>($"{apiBaseURL}trainings/{trainingId}");
+                return training;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
 
         public static async Task<List<TrainingModel>> GetSignedUpTrainings(int accountId)
         {
             try
             {
-                //var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var signedUpTrainings = await _httpClient.GetFromJsonAsync<List<TrainingModel>>($"{apiBaseURL}trainings/account/{accountId}"); // <- options
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var signedUpTrainings = await _httpClient.GetFromJsonAsync<List<TrainingModel>>($"{apiBaseURL}trainings/account/{accountId}", options);
                 return signedUpTrainings ?? new List<TrainingModel>();
             }
             catch (Exception ex)
@@ -71,7 +84,6 @@ namespace SlimFitGym_Mobile.Services
         {
             try
             {
-                // Assuming the API endpoint for signing up is as follows.
                 var response = await _httpClient.PostAsync($"{apiBaseURL}trainings/...", null);
                 return await response.Content.ReadFromJsonAsync<TrainingModel>();
             }
@@ -194,21 +206,6 @@ namespace SlimFitGym_Mobile.Services
             }
         }
 
-        public static async Task<TrainingModel> GetTraining(int trainingId)
-        {
-            try
-            {
-                var training = await _httpClient.GetFromJsonAsync<TrainingModel>($"{apiBaseURL}trainings/{trainingId}");
-                return training;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        
-
         public static async Task<TrainingModel> DeleteTraining(int trainingId)
         {
             try
@@ -261,12 +258,12 @@ namespace SlimFitGym_Mobile.Services
             }
         }
 
-        public static async Task<List<string>> GetEntriesOfAccount(int accountId)
+        public static async Task<List<EntryModel>> GetEntriesOfAccount(int accountId)
         {
             try
             {
-                var entries = await _httpClient.GetFromJsonAsync<List<string>>($"{apiBaseURL}entries/{accountId}");
-                return entries ?? new List<string>();
+                var entries = await _httpClient.GetFromJsonAsync<List<EntryModel>>($"{apiBaseURL}entries/{accountId}");
+                return entries ?? new List<EntryModel>();
             }
             catch (Exception ex)
             {
@@ -274,17 +271,26 @@ namespace SlimFitGym_Mobile.Services
             }
         }
 
-        //public static async Task<string> PostEntry(int accountId)
-        //{
-        //    try
-        //    {
-        //        var response = await _httpClient.PostAsJsonAsync($"{apiBaseURL}entries/{accountId}", null);
-        //        return await response.Content.ReadFromJsonAsync<string>();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception(ex.Message);
-        //    }
-        //}
+        public static async Task<EntryModel> PostEntry(EntryModel entry)
+        {
+            try
+            {
+                var newEntry = new
+                {
+                    accountId = entry.AccountId,
+                    entryTime = entry.EntryDate
+                };
+                var json = JsonSerializer.Serialize(newEntry);
+                var response = await _httpClient.PostAsync(
+                    $"{apiBaseURL}entries",
+                    new StringContent(json, Encoding.UTF8, "application/json")
+                );
+                return await response.Content.ReadFromJsonAsync<EntryModel>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }
