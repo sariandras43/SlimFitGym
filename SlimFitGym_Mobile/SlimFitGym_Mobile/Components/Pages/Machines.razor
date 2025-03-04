@@ -34,7 +34,10 @@
                         <div class="col d-flex justify-content-center">
                             <NavLink href="@($"/machineDetails/{machine.Id}")" class="card rounded shadow-sm text-decoration-none w-100">
                                 <div class="card-body text-center p-1 lighter-dark">
-                                    @* <img src="@machine.ImageUrls[0]" alt="Alternate Text" /> *@
+                                    @if (machine.ImageUrls != null && machine.ImageUrls.Any())
+                                    {
+                                        <img src="@machine.ImageUrls[0]" alt="Alternate Text" />
+                                    }
                                     <p class="fw-bold mb-0 lighter-dark">@machine.Name</p>
                                 </div>
                             </NavLink>

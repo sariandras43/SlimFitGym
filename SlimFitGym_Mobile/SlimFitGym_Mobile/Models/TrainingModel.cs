@@ -12,14 +12,18 @@ namespace SlimFitGym_Mobile.Models
     public class TrainingModel
     {
         public int Id { get; set; }
-        public int? TrainerId { get; set; }
         public string? Trainer { get; set; }
-        public int? RoomId { get; set; }
+        public int? TrainerId { get; set; }
         public string? Room { get; set; }
+        public int? RoomId { get; set; }
         public string Name { get; set; }
         public DateTime TrainingStart { get; set; }
         public DateTime TrainingEnd { get; set; }
-        public int MaxPeople { get; set; }
-        public bool IsActive { get; set; } = true;
+        public int? MaxPeople { get; set; }
+        public int? FreePlaces { get; set; }
+        public bool? IsActive { get; set; }
+        public string? TrainerImageUrl { get; set; }
+        public List<string>? RoomImageUrls { get; set; }
+
     }
 }

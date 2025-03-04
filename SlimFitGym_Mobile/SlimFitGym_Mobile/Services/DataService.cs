@@ -106,7 +106,7 @@ namespace SlimFitGym_Mobile.Services
                 }
                 else
                 {
-                    throw new Exception("Hiba az edzésre való jelentkezés során");
+                    throw new Exception("Hiba az edzésre jelentkezés során!");
                 }
             }
             catch (Exception ex)
