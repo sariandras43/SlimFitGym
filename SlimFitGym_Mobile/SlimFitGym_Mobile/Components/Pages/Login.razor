@@ -1,0 +1,85 @@
+﻿@inject NavigationManager NavigationManager
+@page "/login"
+@using SlimFitGym_Mobile.Models
+@using SlimFitGym_Mobile.Services
+@using System.Text.Json
+
+<div class="rounded-3 d-inline-block mt-3 lighter-dark">
+    <NavLink href="/" class="d-block p-1 lighter-dark">
+        <img class="invert" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAeUlEQVR4nO3XQQrCMBCF4e8MWkrvErLw/oeRWlxXChHEVRd1hHT+C/zJ42WY0BEjrtHSigfukfKKBStmXCKkpd10kz5xS+mRZLw/pWR7u4t3+JAubSzqWvy3qN+kfM3YBVKy7c72zuvXejtEy+d2gO1HEcqIKVq6mxcYKlU4XwQ2VAAAAABJRU5ErkJggg==" alt="back">
+    </NavLink>
+</div>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow">
+                <div class="card-body lighter-dark">
+                    <h2 class="card-title text-center mb-4 lighter-dark">Bejelentkezés</h2>
+                    <form @onsubmit="login">
+                        <div class="mb-3 lighter-dark">
+                            <label for="email" class="form-label lighter-dark">Email</label>
+                            <input type="text" class="form-control lighter-dark" id="email" placeholder="Email" @bind="email">
+                        </div>
+                        <div class="mb-3 lighter-dark">
+                            <label for="password" class="form-label lighter-dark">Jelszó</label>
+                            <input type="password" class="form-control lighter-dark" id="password" placeholder="Jelszó" @bind="password">
+                        </div>
+                        <div class="d-grid mb-3 lighter-dark">
+                            <button type="submit" class="btn btn-primary">Bejelentkezés</button>
+                        </div>
+                        @* <div class="text-center mb-3 lighter-dark">
+                            <NavLink href="/newPassword" class="text-decoration-none lighter-dark">Elfelejtett jelszó</NavLink>
+                        </div> *@
+                        <div class="text-center lighter-dark">
+                            <NavLink href="/registration" class="text-decoration-none lighter-dark">Regisztráció</NavLink>
+                        </div>
+                    </form>
+
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger mt-3">
+                            @errorMessage
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string email;
+    private string password;
+    private string errorMessage;
+
+    private async Task login()
+    {
+        errorMessage = string.Empty;
+
+        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+        {
+            errorMessage = "Minden mező kitöltése kötelező!";
+            return;
+        }
+        if (!AuthService.IsValidEmail(email))
+        {
+            errorMessage = "Az email cím formátuma nem megfelelő!";
+            return;
+        }
+
+        var loginResult = await AuthService.Login(email, password);
+
+        if (loginResult.Success && loginResult.Account != null)
+        {
+            await AuthService.SaveUser(loginResult.Account);
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            errorMessage = string.IsNullOrEmpty(loginResult.ErrorMessage)
+                ? "Hiba a bejelentkezés során!"
+                : loginResult.ErrorMessage;
+                StateHasChanged();
+        }
+    }
+}

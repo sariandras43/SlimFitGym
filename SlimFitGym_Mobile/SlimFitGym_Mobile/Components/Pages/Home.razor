@@ -1,0 +1,90 @@
+﻿@inherits LayoutComponentBase
+@using SlimFitGym_Mobile.Models
+@using SlimFitGym_Mobile.Services
+@inject CameraService CameraService
+@inject IJSRuntime JS
+@page "/"
+
+<div class="d-flex flex-column min-vh-100">
+    <Header />
+    <div class="flex-grow-1 position-relative">
+        @if (AccountModel.LoggedInUser != null)
+        {
+            <div class="d-flex justify-content-center">
+                <div class="d-flex justify-content-center">
+                    <img class="w-50" src="icon.png" alt="Logo" />
+                </div>
+            </div>
+            <div class="container mt-4 carousel-container">
+                @if (AccountModel.LoggedInUser?.Role != "trainer")
+                {
+                    @if (validPass != null)
+                    {
+                        <h3 class="section-title">Érvényes bérleted</h3>
+                        <div class="card home-card lighter-dark">
+                            <div class="card-body lighter-dark">
+                                <h5 class="card-title lighter-dark">@validPass.Name</h5>
+                                <p class="card-text lighter-dark">🎟 Hátralévő belépések: <b>@validPass.MaxEntries</b></p>
+                            </div>
+                        </div>
+                    }
+                }
+
+
+
+                @if (signedUpTrainings.Any())
+                {
+                    <h3 class="section-title mt-4">Edzéseid</h3>
+                    <div id="trainingsCarousel" class="carousel slide lighter-dark" data-bs-touch="true" data-bs-interval="false">
+                        <div class="carousel-inner lighter-dark rounded">
+                            @for (int i = 0; i < signedUpTrainings.Count; i++)
+                            {
+                                <div class="carousel-item @(i == 0 ? "active" : "")">
+                                    <div class="card home-card lighter-dark">
+                                        <div class="card-body lighter-dark">
+                                            <h5 class="card-title lighter-dark">@signedUpTrainings[i].Name</h5>
+                                            <p class="card-text lighter-dark">📅 Dátum: <b>@signedUpTrainings[i].TrainingStart.ToString("yyyy.MM.dd HH:mm")</b></p>
+                                            <p class="card-text lighter-dark">🏋️ Edző: <b>@signedUpTrainings[i].TrainerId</b></p>
+                                            <p class="card-text lighter-dark">📍 Helyszín: <b>@signedUpTrainings[i].Room</b></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="h-100 d-flex justify-content-center align-items-center">
+                <img class="w-50" src="icon.png" alt="Logo" />
+            </div>
+        }
+    </div>
+    <Navbar />
+</div>
+
+@code {
+    private PassModel validPass = null;
+    private List<TrainingModel> signedUpTrainings = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AccountModel.LoggedInUser != null)
+        {
+            //validPass = await DataService.GetAccountsPass(AccountModel.LoggedInUser.Id);
+            //signedUpTrainings = await DataService.GetSignedUpTrainings(AccountModel.LoggedInUser.Id); // TODO: modify backend to retrieve json array!!
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initializeCarousels");
+        }
+    }
+}
+
+
