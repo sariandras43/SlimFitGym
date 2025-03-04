@@ -43,7 +43,7 @@
     private List<EntryModel> lastEntriesOfAccount = new();
     protected override async Task OnInitializedAsync()
     {
-        lastEntriesOfAccount = await DataService.GetEntriesOfAccount(AccountModel.LoggedInUser.Id);
+        //lastEntriesOfAccount = await DataService.GetEntriesOfAccount(AccountModel.LoggedInUser.Id);
         CameraService.ErrorMessage = null;
         StateHasChanged();
     }

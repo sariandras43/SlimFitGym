@@ -102,7 +102,7 @@
         trainings = await DataService.GetTrainings();
         if (AccountModel.LoggedInUser != null)
         {
-            //signedUpTrainings = await DataService.GetSignedUpTrainings(AccountModel.LoggedInUser.Id);
+            signedUpTrainings = await DataService.GetSignedUpTrainings(AccountModel.LoggedInUser.Id);
         }
     }
 
@@ -143,14 +143,26 @@
             if (signedUpTrainings.Any(t => t.Id == selectedTrainingId))
             {
                 await DataService.DeleteSignUp(AccountModel.LoggedInUser.Id, selectedTrainingId);
+                var signedUpTraining = signedUpTrainings.FirstOrDefault(t => t.Id == selectedTrainingId);
+                if (signedUpTraining != null)
+                {
+                    signedUpTrainings.Remove(signedUpTraining);
+                }
             }
             else
             {
                 await DataService.SignUpTraining(AccountModel.LoggedInUser.Id, selectedTrainingId);
+                var training = trainings.FirstOrDefault(t => t.Id == selectedTrainingId);
+                if (training != null)
+                {
+                    signedUpTrainings.Add(training);
+                }
             }
         }
 
-        StateHasChanged();
         await JS.InvokeVoidAsync("closeModal", "confirmModal");
+        StateHasChanged();
+    }
+
     }
 }

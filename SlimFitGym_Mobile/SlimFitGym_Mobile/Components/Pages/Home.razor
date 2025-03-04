@@ -74,7 +74,7 @@
         if (AccountModel.LoggedInUser != null)
         {
             //validPass = await DataService.GetAccountsPass(AccountModel.LoggedInUser.Id);
-            //signedUpTrainings = await DataService.GetSignedUpTrainings(AccountModel.LoggedInUser.Id); // TODO: modify backend to retrieve json array!!
+            signedUpTrainings = await DataService.GetSignedUpTrainings(AccountModel.LoggedInUser.Id);
         }
     }
 

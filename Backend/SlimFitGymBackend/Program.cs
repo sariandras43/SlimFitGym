@@ -90,7 +90,7 @@ namespace SlimFitGymBackend
                 context.Database.EnsureCreated();
             }
 #if DEBUG
-            //app.Urls.Add("http://*:8080");
+            app.Urls.Add("http://*:8080");
 #endif
             app.Run();
         }
