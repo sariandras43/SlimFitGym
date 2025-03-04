@@ -27,7 +27,6 @@ namespace SlimFitGym.EFData
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
             DbPath = System.IO.Path.Join(path, configuration["DatabaseName"] ?? "slimfitgym.db");
-            //DbPath = System.IO.Path.Join(path, "slimfitgym.db");
 
         }
 
@@ -35,7 +34,6 @@ namespace SlimFitGym.EFData
         {
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
-            //DbPath = System.IO.Path.Join(path, "slimfitgym.db");
             DbPath = System.IO.Path.Join(path, configuration["DatabaseName"] ?? "slimfitgym.db");
         }
 
@@ -78,7 +76,7 @@ namespace SlimFitGym.EFData
 
             modelBuilder.Entity<Training>().HasData
             (
-                new Training() { Id=1, Name="TRX edzés",RoomId=1,TrainerId=2,MaxPeople=1,TrainingStart=new DateTime(2025,2,6,17,0,0),TrainingEnd= new DateTime(2025, 2, 6, 18, 0, 0) }
+                new Training() { Id=1, Name="TRX edzés",RoomId=1,TrainerId=2,MaxPeople=1,TrainingStart=DateTime.Now,TrainingEnd= DateTime.Now.AddHours(1) }
             );
 
             modelBuilder.Entity<Reservation>().HasData

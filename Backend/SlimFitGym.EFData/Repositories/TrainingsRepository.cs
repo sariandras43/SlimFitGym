@@ -43,7 +43,7 @@ namespace SlimFitGym.EFData.Repositories
         public List<TrainingResponse> GetActiveTrainings()
         {
 
-            return context.Set<Training>().Where(t=> t.IsActive).Select(t=>new TrainingResponse()
+            return context.Set<Training>().Where(t=> t.IsActive && t.TrainingStart > DateTime.Now).Select(t=>new TrainingResponse()
             {
                 Id=t.Id,
                 Name=t.Name,
@@ -78,7 +78,7 @@ namespace SlimFitGym.EFData.Repositories
             List<TrainingResponse> res = new List<TrainingResponse>();
             foreach (int trainingId in reservations)
             {
-                var traininRes = context.Set<Training>().Where(t => t.Id==trainingId).Select(t => new TrainingResponse()
+                var traininRes = context.Set<Training>().Where(t => t.Id==trainingId && t.TrainingStart > DateTime.Now).Select(t => new TrainingResponse()
                 {
                     Id = t.Id,
                     Name = t.Name,
@@ -126,6 +126,32 @@ namespace SlimFitGym.EFData.Repositories
             return null;
         }
 
+
+        public List<TrainingResponse>? GetActiveTrainingsByRoomId(int roomId)
+        {
+            if (roomId <= 0)
+                throw new Exception("Érvénytelen azonosító.");
+            Room? room = this.context.Set<Room>().SingleOrDefault(r=>r.Id == roomId && r.IsActive);
+            if (room == null)
+                return null;
+            List<TrainingResponse>? trainings = this.context.Set<Training>().Where(t=>t.RoomId== roomId && t.IsActive && t.TrainingStart>DateTime.Now).Select(t=>new TrainingResponse()
+            {
+                Id = t.Id,
+                Name = t.Name,
+                MaxPeople = t.MaxPeople,
+                IsActive = t.IsActive,
+                TrainingStart = t.TrainingStart,
+                TrainingEnd = t.TrainingEnd,
+                Trainer = accountRepository.GetAccountById(t.TrainerId)!.Name,
+                Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
+                FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
+                TrainerImageUrl = imagesRepository.GetImageUrlByAccountId(t.TrainerId),
+                RoomImageUrls = imagesRepository.GetImageUrlsByRoomId(t.RoomId),
+                TrainerId = t.TrainerId,
+                RoomId = t.RoomId
+            }).ToList();
+            return trainings;
+        }
         public Training? GetTrainingById(int id)
         {
             if (id <= 0)
@@ -175,7 +201,7 @@ namespace SlimFitGym.EFData.Repositories
             Room? room = roomsRepository.GetRoomById(training.RoomId);
             if (room == null)
                 throw new Exception("Ilyen terem nem létezik");
-            List<Training> trainingsInTheSpecificRoom = context.Set<Training>().Where(t=>t.RoomId==training.RoomId && t.IsActive).ToList();
+            List<Training> trainingsInTheSpecificRoom = context.Set<Training>().AsNoTracking().Where(t=>t.RoomId==training.RoomId && t.IsActive).ToList();
             foreach (Training t in trainingsInTheSpecificRoom)
             {
                 if (t.TrainingStart <= training.TrainingStart && t.TrainingEnd >= training.TrainingEnd)
