@@ -48,10 +48,19 @@ namespace SlimFitGym.EFData.Repositories
             return purchases;
         }
 
-        public Purchase? GetLatestPurchaseByAccountId(int accountId)
+        public Purchase? GetLatestPurchaseByAccountId(string token, int accountId)
         {
             if (accountId <= 0) return null;
-
+            Account? accountFromToken = accountRepository.GetAccountById(tokenGenerator.GetAccountIdFromToken(token));
+            if (accountFromToken == null)
+                throw new Exception("Érvénytelen token.");
+            Account? account = accountRepository.GetAccountById(accountId);
+            if (accountFromToken.Role == "admin" && account == null)
+                return null;
+            else if (accountFromToken.Role != "admin" && account == null)
+                throw new Exception("Nem lehet más vásárlásait lekérni.");
+            if (accountId != tokenGenerator.GetAccountIdFromToken(token) && accountFromToken.Role != "admin")
+                throw new Exception("Nem lehet más vásárlásait lekérni.");
             Purchase? purchase = context.Set<Purchase>().Where(p => p.AccountId == accountId).OrderByDescending(p=>p.Id).FirstOrDefault();
             if (purchase == null) return null;
             return purchase;
