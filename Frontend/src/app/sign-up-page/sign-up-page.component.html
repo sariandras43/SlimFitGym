@@ -1,0 +1,136 @@
+<div class="wrapperWrapper">
+  <div class="loginWrapper">
+    <img
+      class="logInImage"
+      [style.view-transition-name]="'log-in-image'"
+      src="mainHero.jpeg"
+      alt=""
+    />
+    <form class="content" [formGroup]="profileForm" unambiguousRole>
+      <div class="inputField">
+        <label class="input_title" for="singUpEmail">Email</label>
+        <input type="email" id="singUpEmail" formControlName="email" />
+        <div
+          *ngIf="email?.invalid && (false || email?.dirty || email?.touched)"
+          class="alert alert-danger errorField"
+        >
+          <div *ngIf="email?.hasError('required')">
+            Kérjük adja meg az email címét
+          </div>
+          <div *ngIf="email?.hasError('pattern')">
+            Kérjük adjon meg egy valós emailt
+          </div>
+        </div>
+      </div>
+      <div class="inputField">
+        <label class="input_title" for="singUpName">Név</label>
+        <input type="text" id="singUpName" formControlName="name" />
+        <div
+          *ngIf="name?.invalid && (false || name?.dirty || name?.touched)"
+          class="alert alert-danger errorField"
+        >
+          <div *ngIf="name?.hasError('required')">Kérjük adja meg a nevét.</div>
+          <div *ngIf="name?.hasError('minlength')">
+            A név mezőnek legalább 4 karakterből kell állnia
+          </div>
+        </div>
+      </div>
+      <div class="inputField">
+        <label class="input_title" for="singUpPhone">Telefonszám</label>
+        <input type="text" formControlName="phone" id="singUpPhone" />
+        <div
+          *ngIf="phone?.invalid && (false || phone?.dirty || phone?.touched)"
+          class="alert alert-danger errorField"
+        >
+          <div *ngIf="phone?.hasError('required')">
+            Kérjük adja meg a telefonszámát
+          </div>
+          <div *ngIf="phone?.hasError('pattern')">
+            Kérjük adjon meg egy rendes telefonszámot (pl.:+36301234567)
+          </div>
+        </div>
+      </div>
+
+      <div class="inputField">
+        <label class="input_title" for="singUpPassword">Jelszó</label>
+        <input type="password" id="singUpPassword" formControlName="password" />
+        <div
+          *ngIf="
+            password?.invalid && (false || password?.dirty || password?.touched)
+          "
+          class="alert alert-danger errorField"
+        >
+        @if (password?.hasError('required')) {
+          <div>
+            Kérjük adjon meg egy biztonságos jelszavat.
+          </div>
+
+        }
+        @else if (!password?.value?.match('^(?=.*[A-Z])')) {
+
+          <span class="block" 
+            >A jelszóban legyen legalább egy nagybetű.</span
+          >
+        }
+        @else if (!password?.value?.match('(?=.*[a-z])')) {
+
+          <span class="block" 
+            >A jelszóban legyen legalább egy kisbetű.</span
+          >
+        }
+        @else if (!password?.value?.match('(.*[0-9].*)')) {
+          
+          <span class="block"
+            >A jelszóban legyen legalább egy szám.</span
+          >
+        }
+        @else if (!password?.value?.match('(?=.*[!@#$%^&*])')) {
+
+          <span class="block" 
+            >A jelszóban legyen legalább egy speciális karakter.</span
+          >
+        }
+        @else if (!password?.value?.match('.{8,}')) {
+
+          <span class="block" 
+            >A jelszóban legyen legalább 8 karakter hosszú.</span
+          >
+        }
+        </div>
+      </div>
+      <div class="inputField">
+        <label class="input_title" for="singUpPasswordAgain">Jelszó újra</label>
+        <input
+          type="password"
+          id="singUpPasswordAgain"
+          formControlName="passwordAgain"
+        />
+        <div
+          *ngIf="
+            (passwordAgain?.invalid || profileForm.hasError('passwordMismatch') ) &&
+            (false || passwordAgain?.dirty || passwordAgain?.touched)
+          "
+          class="alert alert-danger errorField"
+        >
+        @if (passwordAgain?.hasError('required')) {
+
+          <div>
+            Kérjük adja meg újból a jelszavát!
+          </div>
+        }
+        @else if (profileForm.hasError('passwordMismatch') ) {
+
+          <div >
+            A két jelszó nem egyezik meg
+          </div>
+        }
+      </div>
+    </div>
+
+      <div class="links">
+        <a routerLink="/login">Bejelentkezés</a>
+      </div>
+      <input type="submit" value="Regisztráció" />
+    </form>
+  </div>
+</div>
