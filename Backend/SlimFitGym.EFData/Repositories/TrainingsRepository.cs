@@ -160,8 +160,6 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Nem lehet máshoz edzést felvenni.");
             if (training.Name== null || training.Name.Length == 0)
                 throw new Exception("A név mező kitöltése kötelező.");
-            if (training.Description == null || training.Description.Length == 0)
-                throw new Exception("A leírás mező kitöltése kötelező.");
             TimeSpan trainingSpan = training.TrainingEnd - training.TrainingStart; 
             if (trainingSpan.TotalMinutes<30)
                 throw new Exception("Érvénytelen időintervallum (minimum 30 perces edzés vehető fel).");
@@ -169,8 +167,6 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("A maximum résztvevők mező kitöltése kötelező");
             if (training.Name.Length > 100)
                 throw new Exception("A név maximum 100 karakter hosszú lehet.");
-            if (training.Description.Length > 500)
-                throw new Exception("A leírás maximum 500 karakter hosszú lehet.");
             Account? account = accountRepository.GetAccountById(training.TrainerId);
             if (account==null)
                 throw new Exception("Ilyen fiók nem létezik");
@@ -191,7 +187,6 @@ namespace SlimFitGym.EFData.Repositories
                 TrainingStart = training.TrainingStart,
                 TrainingEnd = training.TrainingEnd,
                 IsActive=true,
-                Description =training.Description,
                 Name = training.Name,
                 MaxPeople=training.MaxPeople,
                 RoomId = training.RoomId,
@@ -220,15 +215,11 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Nem lehet más edzését módosítani felvenni.");
             if (training.Name == null || training.Name.Length == 0)
                 throw new Exception("A név mező kitöltése kötelező.");
-            if (training.Description == null || training.Description.Length == 0)
-                throw new Exception("A leírás mező kitöltése kötelező.");
             TimeSpan trainingSpan = training.TrainingEnd - training.TrainingStart;
             if (trainingSpan.TotalMinutes < 30)
                 throw new Exception("Érvénytelen időintervallum (minimum 30 perces edzés vehető fel).");
             if (training.MaxPeople < 1)
                 throw new Exception("A maximum résztvevők mező kitöltése kötelező");
-            if (training.Description.Length > 500)
-                throw new Exception("A leírás maximum 500 karakter hosszú lehet.");
             if (training.Name.Length > 100)
                 throw new Exception("A név maximum 100 karakter hosszú lehet.");
             if (training.MaxPeople < 1)
@@ -260,7 +251,6 @@ namespace SlimFitGym.EFData.Repositories
                 Id = training.Id,
                 TrainingStart = training.TrainingStart,
                 TrainingEnd = training.TrainingEnd,
-                Description = training.Description,
                 IsActive = true,
                 Name = training.Name,
                 MaxPeople = training.MaxPeople,
