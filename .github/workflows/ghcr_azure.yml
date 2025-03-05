@@ -42,10 +42,4 @@ jobs:
             slot-name: 'production'
             publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0469E21E3B97450491DC70230A8D7FF2 }}
             images: ghcr.io/sariandras43/slimfitgymbackend:latest
-            app-settings: |
-              [
-                {"name": "Auth__Key", "value": "${{ secrets.AUTH_KEY }}", "slotSetting": false},
-                {"name": "CloudinarySettings__CloudName", "value": "${{ secrets.CLOUDINARY_CLOUDNAME }}", "slotSetting": false}
-                {"name": "CloudinarySettings__ApiKey", "value": "${{ secrets.CLOUDINARY_APIKEY }}", "slotSetting": false}
-                {"name": "CloudinarySettings__ApiSecret", "value": "${{ secrets.APISECRET }}", "slotSetting": false}
-              ]
+
