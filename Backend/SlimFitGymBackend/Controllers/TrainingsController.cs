@@ -83,6 +83,24 @@ namespace SlimFitGymBackend.Controllers
             });
         }
 
+        [HttpGet("room/{id}")]
+        public IActionResult GetActiveTrainingsByRoomId([FromRoute] string id)
+        {
+            return this.Execute(() =>
+            {
+                int idNum;
+                if (int.TryParse(id, out idNum))
+                {
+                    var res = trainingsRepository.GetActiveTrainingsByRoomId(idNum);
+                    if (res != null)
+                        return Ok(res);
+                    return NotFound(new { message = "Nem található a szoba." });
+
+                }
+                throw new Exception("Érvénytelen azonosító.");
+            });
+        }
+
         //TODO: something with the url, cause its messy
         //[HttpGet("/search/{limit}&{offset}.{trainingName?}")]
         //public IActionResult Filter([FromRoute] string? trainingName="" ,[FromRoute] string? limit ="1" ,[FromRoute] string? offset = "1")
