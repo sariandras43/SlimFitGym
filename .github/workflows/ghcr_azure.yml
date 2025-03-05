@@ -38,7 +38,7 @@ jobs:
           id: deploy-to-webapp
           uses: azure/webapps-deploy@v2
           with:
-            app-name: 'slimfitygym-backend'
+            app-name: 'SlimFitGymBackend'
             slot-name: 'production'
             publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0469E21E3B97450491DC70230A8D7FF2 }}
             images: ghcr.io/sariandras43/slimfitgymbackend:latest
