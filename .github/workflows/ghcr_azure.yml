@@ -22,9 +22,30 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: |
-        docker build --file ./Backend/Dockerfile --tag ghcr.io/sariandras43/slimfitgymbackend:0.1 ./Backend       
-        docker login ghcr.io -u sariandras43 -p ${{secrets.GHCR_TOKEN}}
-        docker push ghcr.io/sariandras43/slimfitgymbackend:0.1
+        - name: generate image tag
+          run: |
+            echo "IMAGE_TAG=$(date +%s)" >> $GITHUB_ENV
+            
+        - uses: actions/checkout@v4
+        - name: Build the Docker image
+          run: |
+            docker build --file ./Backend/Dockerfile --tag ghcr.io/sariandras43/slimfitgymbackend:$IMAGE_TAG --tag ghcr.io/sariandras43/slimfitgymbackend:latest ./Backend
+            docker login ghcr.io -u sariandras43 -p ${{secrets.GHCR_TOKEN}}
+            docker push ghcr.io/sariandras43/slimfitgymbackend:$IMAGE_TAG
+            docker push ghcr.io/sariandras43/slimfitgymbackend:latest
+    
+        - name: Deploy to Azure Web App
+          id: deploy-to-webapp
+          uses: azure/webapps-deploy@v2
+          with:
+            app-name: 'slimfitygym-backend'
+            slot-name: 'production'
+            publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0469E21E3B97450491DC70230A8D7FF2 }}
+            images: ghcr.io/sariandras43/slimfitgymbackend:latest
+            app-settings: |
+              [
+                {"name": "Auth__Key", "value": "${{ secrets.AUTH_KEY }}", "slotSetting": false},
+                {"name": "CloudinarySettings__CloudName", "value": "${{ secrets.CLOUDINARY_CLOUDNAME }}", "slotSetting": false}
+                {"name": "CloudinarySettings__ApiKey", "value": "${{ secrets.CLOUDINARY_APIKEY }}", "slotSetting": false}
+                {"name": "CloudinarySettings__ApiSecret", "value": "${{ secrets.APISECRET }}", "slotSetting": false}
+              ]
