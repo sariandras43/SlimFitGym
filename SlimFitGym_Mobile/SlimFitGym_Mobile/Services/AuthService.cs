@@ -13,7 +13,7 @@ namespace SlimFitGym_Mobile.Services
     public static class AuthService
     {
         private static HttpClient _httpClient = new();
-        private const string apiBaseURL = "http://10.0.2.2:8080/api/"; 
+        private const string apiBaseURL = "https://slimfitgymbackend-bdgbechedpcpaag4.westeurope-01.azurewebsites.net/api/";
 
         public static async Task<LoginResult> Login(string email, string password)
         {

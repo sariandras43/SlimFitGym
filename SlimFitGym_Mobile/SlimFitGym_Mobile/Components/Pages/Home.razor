@@ -24,13 +24,13 @@
                         <div class="card home-card lighter-dark">
                             <div class="card-body lighter-dark">
                                 <h5 class="card-title lighter-dark">@validPass.Name</h5>
-                                @if (validPass.MaxEntries != null)
+                                @if (validPass.RemainingEntries != null)
                                 {
-                                    <p class="card-text lighter-dark">🎟 Hátralévő belépések: <b>@validPass.MaxEntries</b></p>
+                                    <p class="card-text lighter-dark">🎟 Hátralévő belépések: <b>@validPass.RemainingEntries</b></p>
                                 }
-                                @if (validPass.Days != null)
+                                @if (validPass.ValidTo != null)
                                 {
-                                    <p class="card-text lighter-dark">📅 Érvényesség: <b>@(DateTime.Now.AddDays((double)validPass.Days).ToString("yyyy.MM.dd"))</b></p>
+                                    <p class="card-text lighter-dark">📅 Érvényesség: <b>@validPass.ValidTo</b></p>
                                 }
                             </div>
                         </div>
@@ -83,7 +83,7 @@
             signedUpTrainings = await DataService.GetSignedUpTrainings(AccountModel.LoggedInUser.Id);
             if (AccountModel.LoggedInUser.Role != "trainer")
             {
-                validPass = await DataService.GetAccountsPass(AccountModel.LoggedInUser.Id); // TODO: data structure change
+                validPass = await DataService.GetAccountsPass(AccountModel.LoggedInUser.Id);
             }
             StateHasChanged();
             await JS.InvokeVoidAsync("initializeCarousels");

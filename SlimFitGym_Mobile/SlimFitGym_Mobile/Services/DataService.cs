@@ -14,7 +14,7 @@ namespace SlimFitGym_Mobile.Services
     public static class DataService
     {
         private static HttpClient _httpClient = new();
-        public const string apiBaseURL = "http://10.0.2.2:8080/api/";
+        public const string apiBaseURL = "https://slimfitgymbackend-bdgbechedpcpaag4.westeurope-01.azurewebsites.net/api/";
 
         public static async Task<List<MachineModel>> GetMachines()
         {
