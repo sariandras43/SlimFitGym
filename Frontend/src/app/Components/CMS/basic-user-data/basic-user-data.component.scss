@@ -1,0 +1,66 @@
+.userData{
+    display: flex;
+    gap: 5em;
+    margin: 0 auto;
+    width: min(90em, 90%);
+    .imgWrap{
+        display: flex;
+        align-items: center;
+        height:  100%;
+    }
+    .profilePic{
+        margin-top: 5em;
+        border-radius: 50%;    
+        aspect-ratio: 1 / 1;
+        flex-grow: 1;
+        object-fit: cover;
+        max-width: 35em;
+
+    }
+    .basicData{
+        margin-top: 5em;
+        justify-content: center;
+        display: flex;
+        flex-direction: column;
+        gap: 3em;
+        font-size: 1.5em;
+        .pass{
+            color: var(--secondary-color);
+            font-weight: bold;
+            margin-left: 1em;
+            &:hover{
+                text-decoration: underline;
+                cursor: pointer;
+            }
+        }
+        input{
+            background-color: var(--bg-tertiary);
+            
+            border: var(--primary-color) 3px solid;
+            border-radius: var(--border-radius);
+            color: var(--secondary-text);
+            padding: .25em 1em;
+            margin-left: 1em;            
+        }
+        .buttons{
+            display: flex;
+            gap: 1em;
+            button{
+                border-radius: var(--border-radius);
+                padding: .25em 1em;
+                color: var(--primary-text);
+                border: none;
+                font-weight: bold;
+                &.edit{
+                    
+                    background-color: var(--primary-color);
+                }
+                &.delete{
+                    
+                    background-color: var(--danger);
+                }
+            }
+        }
+    }
+    
+}
