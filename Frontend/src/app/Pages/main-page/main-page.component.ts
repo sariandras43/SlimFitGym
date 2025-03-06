@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { HeroComponent } from "../hero/hero.component";
-import { CounterBubbleComponent } from "../counter-bubble/counter-bubble.component";
-import { SubscriptionsComponent } from "../subscriptions/subscriptions.component";
+import { HeroComponent } from "../../Components/hero/hero.component";
+import { CounterBubbleComponent } from "../../Components/counter-bubble/counter-bubble.component";
+import { SubscriptionsComponent } from "../../Components/subscriptions/subscriptions.component";
 
 @Component({
   selector: 'app-main-page',

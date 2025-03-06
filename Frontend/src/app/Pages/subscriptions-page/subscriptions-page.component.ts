@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { SubscriptionsComponent } from "../subscriptions/subscriptions.component";
-import { HeroComponent } from "../hero/hero.component";
+import { SubscriptionsComponent } from "../../Components/subscriptions/subscriptions.component";
+import { HeroComponent } from "../../Components/hero/hero.component";
 
 @Component({
   selector: 'app-subscriptions-page',

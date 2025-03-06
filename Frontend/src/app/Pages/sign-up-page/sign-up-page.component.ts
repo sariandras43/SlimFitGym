@@ -10,7 +10,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@angular/forms';
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { passwordValidator } from '../validators/passwordValidation';
+import { passwordValidator } from '../../validators/passwordValidation';
 @Component({
   selector: 'app-sign-up-page',
   imports: [RouterModule, ReactiveFormsModule, CommonModule],
