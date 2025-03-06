@@ -26,9 +26,9 @@ namespace SlimFitGym.EFData.Repositories
             this.imagesRepository = imagesRepository;   
         }
 
-        public List<Machine> GetAllMachine()
+        public List<MachineResponse> GetAllMachine()
         {
-            return context.Set<Machine>().ToList();
+            return context.Set<Machine>().Select(m=>new MachineResponse(m, imagesRepository.GetImageUrlsByMachineId(m.Id))).ToList();
         }
 
         public MachineResponse? GetMachineById(int id)

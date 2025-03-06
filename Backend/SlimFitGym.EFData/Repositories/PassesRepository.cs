@@ -1,6 +1,8 @@
-﻿using SlimFitGym.Models.Models;
+﻿using Microsoft.Extensions.DependencyInjection;
+using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
 using SlimFitGym.Models.Responses;
+using SlimFitGymBackend;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +16,20 @@ namespace SlimFitGym.EFData.Repositories
 
         readonly SlimFitGymContext context;
         readonly PurchasesRepository purchasesRepository;
-        public PassesRepository(SlimFitGymContext context,PurchasesRepository purchasesRepository)
+        readonly AccountRepository accountRepository;
+        readonly TokenGenerator tokenGenerator;
+        readonly IServiceProvider provider;
+        public PassesRepository(SlimFitGymContext context,PurchasesRepository purchasesRepository, AccountRepository accountRepository, TokenGenerator tokenGenerator, IServiceProvider provider)
         {
             this.context = context;
             this.purchasesRepository = purchasesRepository;
+            this.accountRepository = accountRepository;
+            this.tokenGenerator = tokenGenerator;
+            this.provider = provider;
         }
+
+        private EntriesRepository GetEntriesRepository()
+            => provider.GetRequiredService<EntriesRepository>();
 
         public List<PassResponse> GetAllActivePasses()
         {
@@ -91,6 +102,42 @@ namespace SlimFitGym.EFData.Repositories
             return pass;
         }
 
+
+        public LatestPassResponse? GetLatestPassByAccountId(string token, int accountId)
+        {
+            EntriesRepository entriesRepository = GetEntriesRepository();
+            if (accountId<=0)
+                throw new Exception("Érvénytelen azonosító.");
+            Account? accountFromToken = accountRepository.GetAccountById(tokenGenerator.GetAccountIdFromToken(token));
+            if (accountFromToken == null)
+                throw new Exception("Érvénytelen token.");
+            Account? account = accountRepository.GetAccountById(accountId);
+            if (accountFromToken.Role == "admin" && account == null)
+                return null;
+            else if (accountFromToken.Role != "admin" && account == null)
+                throw new Exception("Nem lehet más vásárlásait lekérni.");
+            if (accountId != tokenGenerator.GetAccountIdFromToken(token) && accountFromToken.Role != "admin")
+                throw new Exception("Nem lehet más vásárlásait lekérni.");
+            Purchase? latestPurchase =  purchasesRepository.GetLatestPurchaseByAccountId(token, accountId);
+            if (latestPurchase==null)
+                return null;
+            PassResponse? p = this.GetPassById(latestPurchase.PassId);
+            if (p == null)
+                return null;
+            string purchaseDateInString = latestPurchase.PurchaseDate.Year.ToString()
+                                            + '.' + latestPurchase.PurchaseDate.Month.ToString() 
+                                            + '.' + latestPurchase.PurchaseDate.Day.ToString();
+            List<Entry> entriesFromPurchase = entriesRepository.GetEntriesByAccountId(token, accountId, latestPurchase.PurchaseDate.ToString(),p.MaxEntries);
+            if (p.Days!=0 &&p.MaxEntries!=0)
+                return new LatestPassResponse(p,latestPurchase.PurchaseDate.AddDays(p.Days), p.MaxEntries-entriesFromPurchase.Count());          
+            else if(p.Days==0)
+                return new LatestPassResponse(p,null, p.MaxEntries - entriesFromPurchase.Count());
+            else
+                return new LatestPassResponse(p, latestPurchase.PurchaseDate.AddDays(p.Days), null);
+
+
+
+        }
         public PassResponse? NewPass(PassRequest pass)
         {
             if (pass==null)
