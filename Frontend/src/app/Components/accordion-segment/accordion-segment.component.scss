@@ -1,0 +1,13 @@
+
+button{
+    background-color: inherit;
+    border: none;
+    h2{
+        color: var(--secondary-color);
+        cursor: pointer;
+        font-size: 4rem;
+        &:hover{
+            text-decoration: underline;
+        }
+    }
+}
