@@ -60,6 +60,17 @@
         margin-top: 1em;
         font-size: 1.5rem;
     }
+    .errorField{
+        color: var(--danger);
+        font-weight: bold;
+        
+    }
+    &:has(.errorField){
+        button{
+            background-color: var(--danger);
+        }
+        
+    }
 }
 }
 .wrapperWrapper {
