@@ -20,25 +20,11 @@ namespace SlimFitGymBackend
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
             builder.Services.AddControllers();
             builder.Services.AddRepositories();
             builder.Services.AddJwtAuthorization(builder.Configuration["Auth:Key"]!, builder.Configuration["Auth:Issuer"]!, builder.Configuration["Auth:Audience"]!);
             builder.Services.AddValidationErrorHandler();
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
-
-
-
-            builder.Services.AddSingleton(serviceProvider =>
-            {
-                var cloudinarySettings = serviceProvider.GetRequiredService<IOptions<CloudinarySettings>>().Value;
-                var account = new Account(
-                    cloudinarySettings.CloudName,
-                    cloudinarySettings.ApiKey,
-                    cloudinarySettings.ApiSecret
-                );
-                return new Cloudinary(account);
-            });
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -90,7 +76,7 @@ namespace SlimFitGymBackend
                 context.Database.EnsureCreated();
             }
 #if DEBUG
-            //app.Urls.Add("http://*:8080");
+            app.Urls.Add("http://*:8080");
 #endif
             app.Run();
         }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
@@ -12,10 +14,11 @@ namespace SlimFitGym_Mobile.Services
     public static class DataService
     {
         private static HttpClient _httpClient = new();
-        public const string apiBaseURL = "http://10.0.2.2:8080/api/";
+        public const string apiBaseURL = "https://slimfitgymbackend-bdgbechedpcpaag4.westeurope-01.azurewebsites.net/api/";
 
         public static async Task<List<MachineModel>> GetMachines()
         {
+            SetBearerToken();
             try
             {
                 var machines = await _httpClient.GetFromJsonAsync<List<MachineModel>>($"{apiBaseURL}machines");
@@ -29,6 +32,7 @@ namespace SlimFitGym_Mobile.Services
 
         public static async Task<MachineModel> GetMachine(int machineId)
         {
+            SetBearerToken();
             try
             {
                 var machine = await _httpClient.GetFromJsonAsync<MachineModel>($"{apiBaseURL}machines/{machineId}");
@@ -42,6 +46,7 @@ namespace SlimFitGym_Mobile.Services
 
         public static async Task<List<TrainingModel>> GetTrainings()
         {
+            SetBearerToken();
             try
             {
                 var trainings = await _httpClient.GetFromJsonAsync<List<TrainingModel>>($"{apiBaseURL}trainings");
@@ -52,9 +57,10 @@ namespace SlimFitGym_Mobile.Services
                 throw new Exception(ex.Message);
             }
         }
-        
+
         public static async Task<TrainingModel> GetTraining(int trainingId)
         {
+            SetBearerToken();
             try
             {
                 var training = await _httpClient.GetFromJsonAsync<TrainingModel>($"{apiBaseURL}trainings/{trainingId}");
@@ -68,6 +74,7 @@ namespace SlimFitGym_Mobile.Services
 
         public static async Task<List<TrainingModel>> GetSignedUpTrainings(int accountId)
         {
+            SetBearerToken();
             try
             {
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
@@ -80,12 +87,27 @@ namespace SlimFitGym_Mobile.Services
             }
         }
 
-        public static async Task<TrainingModel> SignUpTraining(int accountId, int trainingId)
+        public static async Task SignUpTraining(int accountId, int trainingId)
         {
+            SetBearerToken();
             try
             {
-                var response = await _httpClient.PostAsync($"{apiBaseURL}trainings/...", null);
-                return await response.Content.ReadFromJsonAsync<TrainingModel>();
+                var newSignUp = new
+                {
+                    trainingId = trainingId,
+                    accountId = accountId
+                };
+                var json = JsonSerializer.Serialize(newSignUp);
+                var response = await _httpClient.PostAsync($"{apiBaseURL}trainings/signup",
+                    new StringContent(json, Encoding.UTF8, "application/json"));
+                if (response.IsSuccessStatusCode)
+                {
+                    return;
+                }
+                else
+                {
+                    throw new Exception("Hiba az edzésre jelentkezés során!");
+                }
             }
             catch (Exception ex)
             {
@@ -93,12 +115,27 @@ namespace SlimFitGym_Mobile.Services
             }
         }
 
-        public static async Task<TrainingModel> DeleteSignUp(int accountId, int trainingId)
+        public static async Task DeleteSignUp(int accountId, int trainingId)
         {
+            SetBearerToken();
             try
             {
-                var response = await _httpClient.DeleteAsync($"{apiBaseURL}trainings/...");
-                return await response.Content.ReadFromJsonAsync<TrainingModel>();
+                var signUp = new
+                {
+                    trainingId = trainingId,
+                    accountId = accountId
+                };
+                var json = JsonSerializer.Serialize(signUp);
+                var response = await _httpClient.PostAsync($"{apiBaseURL}trainings/signout",
+                    new StringContent(json, Encoding.UTF8, "application/json"));
+                if (response.IsSuccessStatusCode)
+                {
+                    return;
+                }
+                else
+                {
+                    throw new Exception("Hiba a leiratkozás során!");
+                }
             }
             catch (Exception ex)
             {
@@ -108,6 +145,7 @@ namespace SlimFitGym_Mobile.Services
 
         public static async Task<AddTrainingResult> CreateTraining(TrainingModel training)
         {
+            SetBearerToken();
             try
             {
                 var newTraining = new
@@ -116,7 +154,6 @@ namespace SlimFitGym_Mobile.Services
                     trainerId = training.TrainerId,
                     roomId = training.RoomId,
                     name = training.Name,
-                    description = training.Description,
                     trainingStart = training.TrainingStart,
                     trainingEnd = training.TrainingEnd,
                     maxPeople = training.MaxPeople
@@ -158,6 +195,7 @@ namespace SlimFitGym_Mobile.Services
 
         public static async Task<AddTrainingResult> UpdateTraining(TrainingModel training)
         {
+            SetBearerToken();
             try
             {
                 var updatedTraining = new
@@ -166,7 +204,6 @@ namespace SlimFitGym_Mobile.Services
                     trainerId = training.TrainerId,
                     roomId = training.RoomId,
                     name = training.Name,
-                    description = training.Description,
                     trainingStart = training.TrainingStart,
                     trainingEnd = training.TrainingEnd,
                     maxPeople = training.MaxPeople
@@ -208,6 +245,7 @@ namespace SlimFitGym_Mobile.Services
 
         public static async Task<TrainingModel> DeleteTraining(int trainingId)
         {
+            SetBearerToken();
             try
             {
                 var response = await _httpClient.DeleteAsync($"{apiBaseURL}trainings/{trainingId}");
@@ -221,6 +259,7 @@ namespace SlimFitGym_Mobile.Services
 
         public static async Task<List<RoomModel>> GetRooms()
         {
+            SetBearerToken();
             try
             {
                 var rooms = await _httpClient.GetFromJsonAsync<List<RoomModel>>($"{apiBaseURL}rooms");
@@ -234,6 +273,7 @@ namespace SlimFitGym_Mobile.Services
 
         public static async Task<List<PassModel>> GetPasses()
         {
+            SetBearerToken();
             try
             {
                 var passes = await _httpClient.GetFromJsonAsync<List<PassModel>>($"{apiBaseURL}passes");
@@ -247,9 +287,10 @@ namespace SlimFitGym_Mobile.Services
 
         public static async Task<PassModel> GetAccountsPass(int accountId)
         {
+            SetBearerToken();
             try
             {
-                var pass = await _httpClient.GetFromJsonAsync<PassModel>($"{apiBaseURL}passes/{accountId}");
+                var pass = await _httpClient.GetFromJsonAsync<PassModel>($"{apiBaseURL}passes/accounts/{accountId}/latest");
                 return pass ?? new PassModel();
             }
             catch (Exception ex)
@@ -260,9 +301,11 @@ namespace SlimFitGym_Mobile.Services
 
         public static async Task<List<EntryModel>> GetEntriesOfAccount(int accountId)
         {
+            SetBearerToken();
             try
             {
-                var entries = await _httpClient.GetFromJsonAsync<List<EntryModel>>($"{apiBaseURL}entries/{accountId}");
+                //wrong
+                var entries = await _httpClient.GetFromJsonAsync<List<EntryModel>>($"{apiBaseURL}entries/{accountId}/limit=5=/offset=0");
                 return entries ?? new List<EntryModel>();
             }
             catch (Exception ex)
@@ -273,6 +316,7 @@ namespace SlimFitGym_Mobile.Services
 
         public static async Task<EntryModel> PostEntry(EntryModel entry)
         {
+            SetBearerToken();
             try
             {
                 var newEntry = new
@@ -282,7 +326,7 @@ namespace SlimFitGym_Mobile.Services
                 };
                 var json = JsonSerializer.Serialize(newEntry);
                 var response = await _httpClient.PostAsync(
-                    $"{apiBaseURL}entries",
+                    $"{apiBaseURL}entries/{entry.AccountId}",
                     new StringContent(json, Encoding.UTF8, "application/json")
                 );
                 return await response.Content.ReadFromJsonAsync<EntryModel>();
@@ -291,6 +335,11 @@ namespace SlimFitGym_Mobile.Services
             {
                 throw new Exception(ex.Message);
             }
+        }
+
+        public static void SetBearerToken()
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccountModel.LoggedInUser.Token);
         }
     }
 }

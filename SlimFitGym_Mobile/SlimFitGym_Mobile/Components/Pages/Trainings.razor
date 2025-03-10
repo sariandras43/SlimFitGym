@@ -40,9 +40,11 @@
                             <p class="card-text lighter-dark">📅 Dátum: <b>@training.TrainingStart.ToString("yyyy.MM.dd HH:mm")</b></p>
                             <p class="card-text lighter-dark">📍 Terem: <b>@training.Room</b></p>
                             <p class="card-text lighter-dark">Férőhelyek: @training.MaxPeople</p>
+                            <p class="card-text lighter-dark">Szabad helyek száma: <b>@training.FreePlaces</b></p>
+
                             @if (AccountModel.LoggedInUser != null)
                             {
-                                if (AccountModel.LoggedInUser.Role == "trainer" && training.Trainer == AccountModel.LoggedInUser.Name)
+                                if (AccountModel.LoggedInUser.Role == "trainer" && training.TrainerId == AccountModel.LoggedInUser.Id)
                                 {
                                     <button class="btn btn-warning float-end me-2" @onclick="() => ModifyTraining(training.Id)">
                                         Módosítás
@@ -56,12 +58,15 @@
                                 }
                                 else
                                 {
-                                    <button class="btn @(isSignedUp ? "btn-danger" : "btn-primary") float-end"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#confirmModal"
-                                    @onclick="() => ShowConfirmation(training.Id, isSignedUp)">
-                                        @(isSignedUp ? "Visszavonás" : "Jelentkezés")
-                                    </button>
+                                    @if (isSignedUp || training.FreePlaces > 0)
+                                    {
+                                        <button class="btn @(isSignedUp ? "btn-danger" : "btn-primary") float-end"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#confirmModal"
+                                        @onclick="() => ShowConfirmation(training.Id, isSignedUp)">
+                                            @(isSignedUp ? "Visszavonás" : "Jelentkezés")
+                                        </button>
+                                    }
                                 }
                             }
                         </div>
@@ -102,7 +107,7 @@
         trainings = await DataService.GetTrainings();
         if (AccountModel.LoggedInUser != null)
         {
-            //signedUpTrainings = await DataService.GetSignedUpTrainings(AccountModel.LoggedInUser.Id);
+            signedUpTrainings = await DataService.GetSignedUpTrainings(AccountModel.LoggedInUser.Id);
         }
     }
 
@@ -143,14 +148,27 @@
             if (signedUpTrainings.Any(t => t.Id == selectedTrainingId))
             {
                 await DataService.DeleteSignUp(AccountModel.LoggedInUser.Id, selectedTrainingId);
+                var signedUpTraining = signedUpTrainings.FirstOrDefault(t => t.Id == selectedTrainingId);
+                if (signedUpTraining != null)
+                {
+                    signedUpTrainings.Remove(signedUpTraining);
+                    signedUpTraining.FreePlaces++;
+                }
             }
             else
             {
                 await DataService.SignUpTraining(AccountModel.LoggedInUser.Id, selectedTrainingId);
+                var training = trainings.FirstOrDefault(t => t.Id == selectedTrainingId);
+                if (training != null)
+                {
+                    signedUpTrainings.Add(training);
+                    training.FreePlaces--;
+                }
             }
         }
 
-        StateHasChanged();
         await JS.InvokeVoidAsync("closeModal", "confirmModal");
+        StateHasChanged();
     }
+
 }

@@ -14,7 +14,6 @@ namespace SlimFitGym.Models.Requests
         public int TrainerId { get; set; }
         public int RoomId { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
         public DateTime TrainingStart { get; set; }
         public DateTime TrainingEnd { get; set; }
         public int MaxPeople { get; set; }

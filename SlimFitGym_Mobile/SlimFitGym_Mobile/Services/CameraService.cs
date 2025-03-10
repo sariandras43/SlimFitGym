@@ -15,6 +15,7 @@ namespace SlimFitGym_Mobile.Services
 
         public async Task InitializeCameraAsync()
         {
+            // Jelenleg ez a nem működő fotózott képből dekódolás van
             if (MediaPicker.Default.IsCaptureSupported)
             {
                 try

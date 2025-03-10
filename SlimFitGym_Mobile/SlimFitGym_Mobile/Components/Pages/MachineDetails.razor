@@ -15,7 +15,7 @@
     <div class="card rounded text-decoration-none w-100 lighter-dark">
         <div id="machineCarousel" class="carousel slide lighter-dark" data-bs-touch="true" data-bs-interval="false">
             <div class="carousel-inner lighter-dark">
-                @* @if (machine.ImageUrls.Any())
+                @if (machine.ImageUrls != null && machine.ImageUrls.Any())
                 {
                     @for (int i = 0; i < machine.ImageUrls.Length; i++)
                     {
@@ -27,7 +27,7 @@
                             </div>
                         </div>
                     }
-                } *@
+                }
             </div>
         </div>
 

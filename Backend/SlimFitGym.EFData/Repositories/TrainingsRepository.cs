@@ -43,7 +43,7 @@ namespace SlimFitGym.EFData.Repositories
         public List<TrainingResponse> GetActiveTrainings()
         {
 
-            return context.Set<Training>().Where(t=> t.IsActive).Select(t=>new TrainingResponse()
+            return context.Set<Training>().Where(t=> t.IsActive && t.TrainingStart > DateTime.Now).Select(t=>new TrainingResponse()
             {
                 Id=t.Id,
                 Name=t.Name,
@@ -78,7 +78,7 @@ namespace SlimFitGym.EFData.Repositories
             List<TrainingResponse> res = new List<TrainingResponse>();
             foreach (int trainingId in reservations)
             {
-                var traininRes = context.Set<Training>().Where(t => t.Id==trainingId).Select(t => new TrainingResponse()
+                var traininRes = context.Set<Training>().Where(t => t.Id==trainingId && t.TrainingStart > DateTime.Now).Select(t => new TrainingResponse()
                 {
                     Id = t.Id,
                     Name = t.Name,
@@ -126,6 +126,32 @@ namespace SlimFitGym.EFData.Repositories
             return null;
         }
 
+
+        public List<TrainingResponse>? GetActiveTrainingsByRoomId(int roomId)
+        {
+            if (roomId <= 0)
+                throw new Exception("Érvénytelen azonosító.");
+            Room? room = this.context.Set<Room>().SingleOrDefault(r=>r.Id == roomId && r.IsActive);
+            if (room == null)
+                return null;
+            List<TrainingResponse>? trainings = this.context.Set<Training>().Where(t=>t.RoomId== roomId && t.IsActive && t.TrainingStart>DateTime.Now).Select(t=>new TrainingResponse()
+            {
+                Id = t.Id,
+                Name = t.Name,
+                MaxPeople = t.MaxPeople,
+                IsActive = t.IsActive,
+                TrainingStart = t.TrainingStart,
+                TrainingEnd = t.TrainingEnd,
+                Trainer = accountRepository.GetAccountById(t.TrainerId)!.Name,
+                Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
+                FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
+                TrainerImageUrl = imagesRepository.GetImageUrlByAccountId(t.TrainerId),
+                RoomImageUrls = imagesRepository.GetImageUrlsByRoomId(t.RoomId),
+                TrainerId = t.TrainerId,
+                RoomId = t.RoomId
+            }).ToList();
+            return trainings;
+        }
         public Training? GetTrainingById(int id)
         {
             if (id <= 0)
@@ -160,8 +186,6 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Nem lehet máshoz edzést felvenni.");
             if (training.Name== null || training.Name.Length == 0)
                 throw new Exception("A név mező kitöltése kötelező.");
-            if (training.Description == null || training.Description.Length == 0)
-                throw new Exception("A leírás mező kitöltése kötelező.");
             TimeSpan trainingSpan = training.TrainingEnd - training.TrainingStart; 
             if (trainingSpan.TotalMinutes<30)
                 throw new Exception("Érvénytelen időintervallum (minimum 30 perces edzés vehető fel).");
@@ -169,8 +193,6 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("A maximum résztvevők mező kitöltése kötelező");
             if (training.Name.Length > 100)
                 throw new Exception("A név maximum 100 karakter hosszú lehet.");
-            if (training.Description.Length > 500)
-                throw new Exception("A leírás maximum 500 karakter hosszú lehet.");
             Account? account = accountRepository.GetAccountById(training.TrainerId);
             if (account==null)
                 throw new Exception("Ilyen fiók nem létezik");
@@ -179,7 +201,7 @@ namespace SlimFitGym.EFData.Repositories
             Room? room = roomsRepository.GetRoomById(training.RoomId);
             if (room == null)
                 throw new Exception("Ilyen terem nem létezik");
-            List<Training> trainingsInTheSpecificRoom = context.Set<Training>().Where(t=>t.RoomId==training.RoomId && t.IsActive).ToList();
+            List<Training> trainingsInTheSpecificRoom = context.Set<Training>().AsNoTracking().Where(t=>t.RoomId==training.RoomId && t.IsActive).ToList();
             foreach (Training t in trainingsInTheSpecificRoom)
             {
                 if (t.TrainingStart <= training.TrainingStart && t.TrainingEnd >= training.TrainingEnd)
@@ -191,7 +213,6 @@ namespace SlimFitGym.EFData.Repositories
                 TrainingStart = training.TrainingStart,
                 TrainingEnd = training.TrainingEnd,
                 IsActive=true,
-                Description =training.Description,
                 Name = training.Name,
                 MaxPeople=training.MaxPeople,
                 RoomId = training.RoomId,
@@ -220,15 +241,11 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Nem lehet más edzését módosítani felvenni.");
             if (training.Name == null || training.Name.Length == 0)
                 throw new Exception("A név mező kitöltése kötelező.");
-            if (training.Description == null || training.Description.Length == 0)
-                throw new Exception("A leírás mező kitöltése kötelező.");
             TimeSpan trainingSpan = training.TrainingEnd - training.TrainingStart;
             if (trainingSpan.TotalMinutes < 30)
                 throw new Exception("Érvénytelen időintervallum (minimum 30 perces edzés vehető fel).");
             if (training.MaxPeople < 1)
                 throw new Exception("A maximum résztvevők mező kitöltése kötelező");
-            if (training.Description.Length > 500)
-                throw new Exception("A leírás maximum 500 karakter hosszú lehet.");
             if (training.Name.Length > 100)
                 throw new Exception("A név maximum 100 karakter hosszú lehet.");
             if (training.MaxPeople < 1)
@@ -260,7 +277,6 @@ namespace SlimFitGym.EFData.Repositories
                 Id = training.Id,
                 TrainingStart = training.TrainingStart,
                 TrainingEnd = training.TrainingEnd,
-                Description = training.Description,
                 IsActive = true,
                 Name = training.Name,
                 MaxPeople = training.MaxPeople,

@@ -24,7 +24,14 @@
                         <div class="card home-card lighter-dark">
                             <div class="card-body lighter-dark">
                                 <h5 class="card-title lighter-dark">@validPass.Name</h5>
-                                <p class="card-text lighter-dark">🎟 Hátralévő belépések: <b>@validPass.MaxEntries</b></p>
+                                @if (validPass.RemainingEntries != null)
+                                {
+                                    <p class="card-text lighter-dark">🎟 Hátralévő belépések: <b>@validPass.RemainingEntries</b></p>
+                                }
+                                @if (validPass.ValidTo != null)
+                                {
+                                    <p class="card-text lighter-dark">📅 Érvényesség: <b>@validPass.ValidTo</b></p>
+                                }
                             </div>
                         </div>
                     }
@@ -44,7 +51,7 @@
                                         <div class="card-body lighter-dark">
                                             <h5 class="card-title lighter-dark">@signedUpTrainings[i].Name</h5>
                                             <p class="card-text lighter-dark">📅 Dátum: <b>@signedUpTrainings[i].TrainingStart.ToString("yyyy.MM.dd HH:mm")</b></p>
-                                            <p class="card-text lighter-dark">🏋️ Edző: <b>@signedUpTrainings[i].TrainerId</b></p>
+                                            <p class="card-text lighter-dark">🏋️ Edző: <b>@signedUpTrainings[i].Trainer</b></p>
                                             <p class="card-text lighter-dark">📍 Helyszín: <b>@signedUpTrainings[i].Room</b></p>
                                         </div>
                                     </div>
@@ -73,15 +80,12 @@
     {
         if (AccountModel.LoggedInUser != null)
         {
-            //validPass = await DataService.GetAccountsPass(AccountModel.LoggedInUser.Id);
-            //signedUpTrainings = await DataService.GetSignedUpTrainings(AccountModel.LoggedInUser.Id); // TODO: modify backend to retrieve json array!!
-        }
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
+            signedUpTrainings = await DataService.GetSignedUpTrainings(AccountModel.LoggedInUser.Id);
+            if (AccountModel.LoggedInUser.Role != "trainer")
+            {
+                validPass = await DataService.GetAccountsPass(AccountModel.LoggedInUser.Id);
+            }
+            StateHasChanged();
             await JS.InvokeVoidAsync("initializeCarousels");
         }
     }

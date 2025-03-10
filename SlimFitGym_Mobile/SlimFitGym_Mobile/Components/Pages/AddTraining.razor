@@ -37,10 +37,6 @@
                             <input type="number" class="form-control w-25 text-center lighter-dark" maxlength="2" step="1" id="maxPeople" @bind="newTraining.MaxPeople" />
                         </div>
                         <div class="mb-3 lighter-dark">
-                            <label for="description" class="form-label lighter-dark">Leírás</label>
-                            <textarea class="form-control lighter-dark" id="description" placeholder="Leírás" @bind="newTraining.Description"></textarea>
-                        </div>
-                        <div class="mb-3 lighter-dark">
                             <label for="roomId" class="form-label lighter-dark">Terem</label>
                             <select class="form-select lighter-dark" id="roomId" @bind="newTraining.RoomId">
                                 <option selected disabled>Válassz termet</option>
@@ -91,7 +87,7 @@
 
         if (trainingId.HasValue)
         {
-            var training = await DataService.GetTraining(trainingId.Value); // post endpoint waits ids, get retrieves names... will be fix on backend
+            var training = await DataService.GetTraining(trainingId.Value);
             if (training != null)
             {
                 newTraining = training;

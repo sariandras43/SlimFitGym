@@ -43,7 +43,7 @@
     private List<EntryModel> lastEntriesOfAccount = new();
     protected override async Task OnInitializedAsync()
     {
-        lastEntriesOfAccount = await DataService.GetEntriesOfAccount(AccountModel.LoggedInUser.Id);
+        //lastEntriesOfAccount = await DataService.GetEntriesOfAccount(AccountModel.LoggedInUser.Id);
         CameraService.ErrorMessage = null;
         StateHasChanged();
     }
@@ -68,5 +68,6 @@
     }
 }
 
+@* Ez folytonos hibaüzenet, ha a blazor el akarja érni a kamerát *@
     @* Caused by: android.os.ServiceSpecificException: getCameraCharacteristics:851: Unable to retrieve camera characteristics for unknown device 0: No such file or directory *@
 
