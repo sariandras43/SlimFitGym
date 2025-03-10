@@ -1,4 +1,5 @@
-﻿using SlimFitGym.Models.Models;
+﻿using SlimFitGym.EFData.Interfaces;
+using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
 using SlimFitGym.Models.Responses;
 using SlimFitGymBackend;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SlimFitGym.EFData.Repositories
 {
-    public class ReservationRepository
+    public class ReservationRepository:IReservationRepository
     {
         readonly SlimFitGymContext context;
         readonly TokenGenerator tokenGenerator;
@@ -21,6 +22,12 @@ namespace SlimFitGym.EFData.Repositories
             this.context = context;
             this.tokenGenerator = tokenGenerator;
             this.accountRepository = accountRepository;
+        }
+
+        // For testing only
+        public ReservationRepository()
+        {
+            
         }
 
         public List<ReservationResponse> GetAllReservations()
