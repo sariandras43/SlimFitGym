@@ -13,19 +13,19 @@ using System.Threading.Tasks;
 
 namespace SlimFitGym.EFData.Repositories
 {
-    public class TrainingsRepository:ITrainingsRepository
+    public class TrainingsRepository: ITrainingsRepository
     {
         public readonly SlimFitGymContext context;
-        public readonly RoomsRepository roomsRepository;
-        public readonly AccountRepository accountRepository;
-        public readonly ReservationRepository reservationRepository;
-        public readonly ImagesRepository imagesRepository;
+        public readonly IRoomsRepository roomsRepository;
+        public readonly IAccountRepository accountRepository;
+        public readonly IReservationRepository reservationRepository;
+        public readonly IImagesRepository imagesRepository;
         public readonly TokenGenerator tokenGenerator;
         public TrainingsRepository(SlimFitGymContext slimFitGymContext,
-            RoomsRepository roomsRepository,
-            AccountRepository accountRepository,
-            ReservationRepository reservationRepository,
-            ImagesRepository imagesRepository,
+            IRoomsRepository roomsRepository,
+            IAccountRepository accountRepository,
+            IReservationRepository reservationRepository,
+            IImagesRepository imagesRepository,
             TokenGenerator tokenGenerator) 
         {
             this.context = slimFitGymContext;
@@ -36,11 +36,6 @@ namespace SlimFitGym.EFData.Repositories
             this.tokenGenerator = tokenGenerator;
         }
 
-        // For unit testing only
-        public TrainingsRepository()
-        {
-            
-        }
         public List<Training> GetAllTrainings()
         {
             return context.Set<Training>().ToList();

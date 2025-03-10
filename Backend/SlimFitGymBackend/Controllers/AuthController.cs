@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json.Linq;
+using SlimFitGym.EFData.Interfaces;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models.Requests;
 using SlimFitGym.Models.Responses;
@@ -14,8 +15,8 @@ namespace SlimFitGymBackend.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        readonly AccountRepository accountRepository;
-        public AuthController(AccountRepository accountRepository)
+        readonly IAccountRepository accountRepository;
+        public AuthController(IAccountRepository accountRepository)
         {
             this.accountRepository = accountRepository;
         }

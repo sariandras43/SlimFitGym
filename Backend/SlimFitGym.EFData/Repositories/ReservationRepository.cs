@@ -11,24 +11,19 @@ using System.Threading.Tasks;
 
 namespace SlimFitGym.EFData.Repositories
 {
-    public class ReservationRepository:IReservationRepository
+    public class ReservationRepository: IReservationRepository
     {
         readonly SlimFitGymContext context;
         readonly TokenGenerator tokenGenerator;
-        readonly AccountRepository accountRepository;
+        readonly IAccountRepository accountRepository;
 
-        public ReservationRepository(SlimFitGymContext context, TokenGenerator tokenGenerator, AccountRepository accountRepository)
+        public ReservationRepository(SlimFitGymContext context, TokenGenerator tokenGenerator, IAccountRepository accountRepository)
         {
             this.context = context;
             this.tokenGenerator = tokenGenerator;
             this.accountRepository = accountRepository;
         }
 
-        // For testing only
-        public ReservationRepository()
-        {
-            
-        }
 
         public List<ReservationResponse> GetAllReservations()
         {

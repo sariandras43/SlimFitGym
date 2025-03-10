@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json.Linq;
+using SlimFitGym.EFData.Interfaces;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models.Models;
 
@@ -13,8 +14,8 @@ namespace SlimFitGymBackend.Controllers
     [ApiController]
     public class TrainerApplicantsController : ControllerBase
     {
-        readonly TrainerApplicantsRepository trainerApplicantsRepository;
-        public TrainerApplicantsController(TrainerApplicantsRepository trainerApplicantsRepository)
+        readonly ITrainerApplicantsRepository trainerApplicantsRepository;
+        public TrainerApplicantsController(ITrainerApplicantsRepository trainerApplicantsRepository)
         {
             this.trainerApplicantsRepository = trainerApplicantsRepository;
         }
