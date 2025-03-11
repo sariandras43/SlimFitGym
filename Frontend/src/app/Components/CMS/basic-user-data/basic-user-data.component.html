@@ -1,41 +1,71 @@
-<div class="userData">
-    <div class="imgWrap"><img src="norbi.jpg" alt="" class="profilePic" /></div>
-    <div class="basicData">
-      <p>
-        <label for="name">Név: </label>
-        <input type="text" id="name"   [(ngModel)]="user.name" />
-      </p>
-      <p>
-        <label for="email">Email: </label>
-        <input type="email" id="email" value="tibor@tibor.com"  [(ngModel)]="user.email" />
-      </p>
-      <p>
-        <label for="phone">Telefonszám: </label>
-        <input type="tel" id="phone" value="+36303341322"  [(ngModel)]="user.phone" />
-      </p>
-      <p>
-        
-        @if (user.role == "admin") {
-          
-          <span>Jelenlegi szerep: </span>
-          <span class="pass admin">Admin</span>
-        }
-        @else if (user.role == "trainer") {
-          
-          <span>Jelenlegi szerep: </span>
-          <span class="pass admin">Admin</span>
-        }
-        
-      </p>
-      <p>
-        <span>Jelenlegi bérlet: </span>
-        <span class="pass">{{loggedInUserPass?.name}}</span>
-      </p>
-      <div class="buttons">
-        <button class="edit">Módosítás</button>
-        <button class="delete">Felhasználó törlése</button>
+<form class="userData">
+  <div class="imgWrap">
+    <div class="profilePic">
+      @if (user.imageUrl) {
+      <img [src]="user.imageUrl" alt="" class="" />
+
+      } @else {
+
+      <img src="muscleManOrange.svg" alt="" class="default" />
+      }
+      <div class="addHover">
+        <label for="file-upload" class="custom-file-upload">
+          +
+        </label>
+        <input id="file-upload" type="file" accept=".jpg,.jpeg,.gif,.avif"/>
       </div>
     </div>
-
-
   </div>
+  <div class="basicData">
+    <p>
+      <label for="name">Név: </label>
+      <input
+        type="text"
+        id="name"
+        [(ngModel)]="user.name"
+        [ngModelOptions]="{ standalone: true }"
+      />
+    </p>
+    <p>
+      <label for="email">Email: </label>
+      <input
+        type="email"
+        id="email"
+        value="tibor@tibor.com"
+        [(ngModel)]="user.email"
+        [ngModelOptions]="{ standalone: true }"
+      />
+    </p>
+    <p>
+      <label for="phone">Telefonszám: </label>
+      <input
+        type="tel"
+        id="phone"
+        value="+36303341322"
+        [(ngModel)]="user.phone"
+        [ngModelOptions]="{ standalone: true }"
+      />
+    </p>
+    <p>
+      @if (user.role == "admin") {
+
+      <span>Jelenlegi szerep: </span>
+      <span class="pass admin">Admin</span>
+      } @else if (user.role == "trainer") {
+
+      <span>Jelenlegi szerep: </span>
+      <span class="pass admin">Admin</span>
+      }
+    </p>
+    <p>
+      <span>Jelenlegi bérlet: </span>
+      <a class="pass" routerLink="/subscriptions">{{
+        loggedInUserPass?.name
+      }}</a>
+    </p>
+    <div class="buttons">
+      <input type="submit" class="edit" value="Módosítás" />
+      <button class="delete">Kijelentkezés</button>
+    </div>
+  </div>
+</form>
