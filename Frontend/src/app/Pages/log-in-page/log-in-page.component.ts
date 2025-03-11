@@ -21,7 +21,7 @@ export class LogInPageComponent {
   errorMessage = '';
 
   constructor(
-    private authService: UserService,
+    private userService: UserService,
     private router: Router
   ) { }
 
@@ -30,7 +30,7 @@ export class LogInPageComponent {
       this.errorMessage = "Email cím és jelszó megadása kötelező!";
       return;
     }
-    this.authService.login(this.model.email, this.model.password, this.model.rememberMe).subscribe({
+    this.userService.login(this.model.email, this.model.password, this.model.rememberMe).subscribe({
       next: (response) => {
         if (response) {
           this.router.navigate(['user']);
