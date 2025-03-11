@@ -40,6 +40,27 @@ export class UserService {
     this.loggedInUserSubject.next(undefined);
     localStorage.removeItem('loggedInUser');
   }
+  register(email: string, name:string, phone: string,  password: string, rememberMe:boolean): Observable<boolean> {
+    return this.http
+      .post<UserModel>(
+        `${this.config.apiUrl}/auth/register`,
+        { name, email, phone, password, rememberMe },
+      )
+      .pipe(
+        map((response: UserModel) => {
+          
+          this.loggedInUserSubject.next(response);
+          localStorage.setItem(
+            'loggedInUser',
+            JSON.stringify(response)
+          );
+          this.getPass();
+          return true;
+        })
+      );
+  }
+
+
   // checkUser() {
   //   const user = localStorage.getItem('loggedInUser');
   //   if (user) {
