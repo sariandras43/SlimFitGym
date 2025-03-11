@@ -3,23 +3,39 @@
     <div class="basicData">
       <p>
         <label for="name">Név: </label>
-        <input type="text" id="name" value="Tiborfalvi Tibor" />
+        <input type="text" id="name"   [(ngModel)]="user.name" />
       </p>
       <p>
         <label for="email">Email: </label>
-        <input type="email" id="email" value="tibor@tibor.com" />
+        <input type="email" id="email" value="tibor@tibor.com"  [(ngModel)]="user.email" />
       </p>
       <p>
         <label for="phone">Telefonszám: </label>
-        <input type="tel" id="phone" value="+36303341322" />
+        <input type="tel" id="phone" value="+36303341322"  [(ngModel)]="user.phone" />
       </p>
       <p>
-        <span>Jelenlegi Bérlet: </span>
-        <a class="pass">Alap</a>
+        
+        @if (user.role == "admin") {
+          
+          <span>Jelenlegi szerep: </span>
+          <span class="pass admin">Admin</span>
+        }
+        @else if (user.role == "trainer") {
+          
+          <span>Jelenlegi szerep: </span>
+          <span class="pass admin">Admin</span>
+        }
+        
+      </p>
+      <p>
+        <span>Jelenlegi bérlet: </span>
+        <span class="pass">{{loggedInUserPass?.name}}</span>
       </p>
       <div class="buttons">
         <button class="edit">Módosítás</button>
         <button class="delete">Felhasználó törlése</button>
       </div>
     </div>
+
+
   </div>

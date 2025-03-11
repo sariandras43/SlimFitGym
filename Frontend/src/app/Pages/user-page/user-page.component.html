@@ -1,6 +1,9 @@
 <div class="container mt5">
-  <app-basic-user-data></app-basic-user-data>
-  <div class="accordions mt5">
-    <app-new-password></app-new-password>
-  </div>
+  
+  @if (loggedInUser) {
+    <app-basic-user-data [user]="loggedInUser" [loggedInUserPass]="loggedInUserPass"></app-basic-user-data>
+    <div class="accordions mt5">
+      <app-new-password></app-new-password>
+    </div>
+  }
 </div>

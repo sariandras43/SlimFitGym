@@ -25,12 +25,16 @@
         gap: 3em;
         font-size: 1.5em;
         .pass{
-            color: var(--secondary-color);
+            color: var(--primary-color);
             font-weight: bold;
             margin-left: 1em;
             &:hover{
                 text-decoration: underline;
                 cursor: pointer;
+            }
+            &.admin{
+                color: var(--secondary-color);
+
             }
         }
         input{

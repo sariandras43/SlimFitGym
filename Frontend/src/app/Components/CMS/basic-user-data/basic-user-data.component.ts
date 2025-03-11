@@ -1,11 +1,32 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { UserModel } from '../../../Models/user.model';
+import { FormsModule } from '@angular/forms';
+import { PassModel } from '../../../Models/pass.model';
 
 @Component({
   selector: 'app-basic-user-data',
-  imports: [],
+  imports: [FormsModule],
   templateUrl: './basic-user-data.component.html',
-  styleUrl: './basic-user-data.component.scss'
+  styleUrl: './basic-user-data.component.scss',
 })
 export class BasicUserDataComponent {
+  @Input() user: UserModel ={
+    email: '',
+    id: 0,
+    imageUrl: '',
+    name: '',
+    phone: '',
+    role: '',
+    token: '',
+    validTo: '',
+  };
+  
+  @Input() loggedInUserPass: PassModel | undefined;
 
+  /**
+   *
+   */
+  constructor() {
+
+  }
 }

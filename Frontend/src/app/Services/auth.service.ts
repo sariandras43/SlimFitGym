@@ -3,12 +3,14 @@ import { UserModel } from '../Models/user.model';
 import { ConfigService } from './config.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
+import { PassModel } from '../Models/pass.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   loggedInUser: UserModel | undefined = undefined;
+  loggedInUserPass: PassModel |undefined = undefined;
 
   constructor(private config: ConfigService, private http: HttpClient) {}
 
@@ -25,6 +27,7 @@ export class AuthService {
             'loggedInUser',
             JSON.stringify(this.loggedInUser)
           );
+          this.getPass();
           return true;
         })
       );
@@ -52,4 +55,30 @@ export class AuthService {
   //     });
   //   }
   // }
+
+  getPass() : Observable<boolean>{
+    
+    const user = localStorage.getItem('loggedInUser');
+    let headers : HttpHeaders | undefined ;
+    if (user){
+      this.loggedInUser = JSON.parse(user);
+      
+      headers = new HttpHeaders().set('authorization', `Bearer ${this.loggedInUser?.token}`);
+    }
+    return this.http.get<PassModel>(
+        `${this.config.apiUrl}/passes/accounts/${this.loggedInUser?.id}/latest`,
+         { headers }
+      )
+      .pipe(
+        map((response: PassModel) => {
+          
+          this.loggedInUserPass = response;
+          localStorage.setItem(
+            'userPass',
+            JSON.stringify(this.loggedInUserPass)
+          );
+          return true;
+        })
+      );
+  }
 }
