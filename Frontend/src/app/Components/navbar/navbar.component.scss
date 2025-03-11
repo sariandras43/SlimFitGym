@@ -66,6 +66,25 @@ nav {
           font-size: 2rem;
         }
       }
+      .profilePic{
+        display: block;
+        border-radius: 50%;
+        width: 4em;
+        height: 4em;
+        background-color: var(--bg-tertiary);
+        overflow: hidden;
+        img{
+          border-radius: 50%;
+          width: 100%;
+          height: 100%;
+
+
+          object-fit: cover;
+          &.default{
+            object-position: -.40rem .5rem;
+          }
+        }
+      }
     }
   }
 }

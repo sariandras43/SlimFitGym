@@ -1,20 +1,41 @@
 <nav class="flex g1 vcenter" aria-label="Main Menu">
   <ul class="flex vcenter g1">
     <li>
-      <a  routerLink="" routerLinkActive="selected">
+      <a routerLink="" routerLinkActive="selected">
         <img src="Logo.svg" class="logo" alt="" />
       </a>
     </li>
     <li>
-      <a routerLink="" routerLinkActive="selected" ><h2>Főoldal</h2></a>
+      <a routerLink="" routerLinkActive="selected"><h2>Főoldal</h2></a>
     </li>
-    <li><a routerLink="subscriptions" routerLinkActive="selected">Bérletek</a></li>
+    <li>
+      <a routerLink="subscriptions" routerLinkActive="selected">Bérletek</a>
+    </li>
     <li><a routerLink="rooms" routerLinkActive="selected">Termek</a></li>
-    <li><a routerLink="training" >Edzésprogramok</a></li>
-    <li><a routerLink="machines" >Gépek</a></li>
+    <li><a routerLink="training">Edzésprogramok</a></li>
+    <li><a routerLink="machines">Gépek</a></li>
   </ul>
-  <ul class="flex g1 vcenter right" >
+  <ul class="flex g1 vcenter right">
+    @if (loggedInUser) {
+      <li>
+
+        <a routerLink="user" class="profilePic">
+          @if (loggedInUser.imageUrl) {
+
+            <img [src]="loggedInUser.imageUrl" alt="">
+          }
+          @else {
+            <img class="default" src="muscleManOrange.svg" alt="">
+
+          }
+        </a>
+      </li>
+
+     } @else {
+
     <li><a routerLink="login" class="btn full">Log in</a></li>
     <li><a routerLink="signup" class="btn">Sign up</a></li>
+
+    }
   </ul>
 </nav>
