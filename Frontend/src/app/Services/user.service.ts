@@ -2,15 +2,17 @@ import { Injectable } from '@angular/core';
 import { UserModel } from '../Models/user.model';
 import { ConfigService } from './config.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 import { PassModel } from '../Models/pass.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService {
-  loggedInUser: UserModel | undefined = undefined;
-  loggedInUserPass: PassModel |undefined = undefined;
+export class UserService {
+  private loggedInUserSubject = new BehaviorSubject<UserModel | undefined>(undefined);
+  loggedInUser$ = this.loggedInUserSubject.asObservable();
+  private loggedInUserPassSubject = new BehaviorSubject<PassModel | undefined>(undefined);
+  loggedInUserPass$ = this.loggedInUserPassSubject.asObservable();
 
   constructor(private config: ConfigService, private http: HttpClient) {}
 
@@ -22,10 +24,11 @@ export class AuthService {
       )
       .pipe(
         map((response: UserModel) => {
-          this.loggedInUser = response;
+          
+          this.loggedInUserSubject.next(response);
           localStorage.setItem(
             'loggedInUser',
-            JSON.stringify(this.loggedInUser)
+            JSON.stringify(response)
           );
           this.getPass();
           return true;
@@ -34,7 +37,7 @@ export class AuthService {
   }
 
   logout() {
-    this.loggedInUser = undefined;
+    this.loggedInUserSubject.next(undefined);
     localStorage.removeItem('loggedInUser');
 
     this.http.post(`${this.config.apiUrl}/auth/logout)`, {}).subscribe();
@@ -56,29 +59,43 @@ export class AuthService {
   //   }
   // }
 
-  getPass() : Observable<boolean>{
+  getPass() : void{
     
     const user = localStorage.getItem('loggedInUser');
+    let loggedInUser: UserModel | undefined;
     let headers : HttpHeaders | undefined ;
     if (user){
-      this.loggedInUser = JSON.parse(user);
+      loggedInUser = JSON.parse(user);
       
-      headers = new HttpHeaders().set('authorization', `Bearer ${this.loggedInUser?.token}`);
+      headers = new HttpHeaders().set('authorization', `Bearer ${loggedInUser?.token}`);
     }
-    return this.http.get<PassModel>(
-        `${this.config.apiUrl}/passes/accounts/${this.loggedInUser?.id}/latest`,
+    this.http.get<PassModel>(
+        `${this.config.apiUrl}/passes/accounts/${loggedInUser?.id}/latest`,
          { headers }
       )
       .pipe(
         map((response: PassModel) => {
-          
-          this.loggedInUserPass = response;
+          this.loggedInUserPass$
+          this.loggedInUserPassSubject.next(response)
           localStorage.setItem(
             'userPass',
-            JSON.stringify(this.loggedInUserPass)
+            JSON.stringify(response)
           );
           return true;
         })
-      );
+      ).subscribe({
+        next: (response) => {
+          if (response) {
+            const loggedInUserPass = localStorage.getItem('userPass');
+            if (loggedInUserPass) {
+              this.loggedInUserPassSubject.next(JSON.parse(loggedInUserPass));
+            } 
+          }
+          
+        },
+        error: (error) => {
+          console.log(error.error.message ?? error.message)
+        }
+      });
   }
 }
