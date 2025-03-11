@@ -14,12 +14,13 @@ namespace SlimFitGym_Mobile.Services
     {
         private static HttpClient _httpClient = new();
         private const string apiBaseURL = "https://slimfitgymbackend-bdgbechedpcpaag4.westeurope-01.azurewebsites.net/api/";
+        private static JsonSerializerOptions options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
         public static async Task<LoginResult> Login(string email, string password)
         {
             try
             {
-                var loginData = new { email = $"{email}", password = $"{password}" };
+                var loginData = new { email = $"{email}", password = $"{password}", rememberMe = true };
                 var response = await _httpClient.PostAsync($"{apiBaseURL}auth/login",
                     new StringContent(JsonSerializer.Serialize(loginData), Encoding.UTF8, "application/json")
                 );
@@ -27,10 +28,6 @@ namespace SlimFitGym_Mobile.Services
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
-                    var options = new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    };
                     var account = JsonSerializer.Deserialize<AccountModel>(json, options);
                     return new LoginResult
                     {
@@ -89,10 +86,6 @@ namespace SlimFitGym_Mobile.Services
                 else
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
-                    var options = new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    };
                     var error = JsonSerializer.Deserialize<ErrorResult>(errorContent, options);
                     return new RegisterResult
                     {
@@ -144,7 +137,6 @@ namespace SlimFitGym_Mobile.Services
                 AccountModel.LoggedInUser = user;
                 var serializedUser = JsonSerializer.Serialize(user);
                 await SecureStorage.SetAsync("LoggedInUser", serializedUser);
-                Debug.WriteLine($"saved: {user.Name}");
             }
             catch (Exception ex)
             {

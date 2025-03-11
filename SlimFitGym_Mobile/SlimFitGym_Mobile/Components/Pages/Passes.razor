@@ -10,42 +10,58 @@
     </div>
 
     <div class="overflow-auto flex-grow-1 mb-5 pb-5">
-        <div class="row row-cols-1 g-4">
-            @foreach (var pass in passes)
-            {
-                <div class="col d-flex justify-content-center">
-                    <div class="card p-3 w-100 rounded shadow-sm lighter-dark">
-                        <div class="card-body lighter-dark">
-                            <div class="d-flex justify-content-between align-items-center lighter-dark">
-                                <h5 class="fw-bold lighter-dark">@pass.Name</h5>
-                                <h4 class="fw-bold text-primary lighter-dark">@Math.Floor(pass.Price) Ft</h4>
-                            </div>
-                            <p class="text-muted lighter-dark">
-                                @foreach (var benefit in pass.Benefits)
+        @if (isLoading)
+        {
+            <div class="d-flex align-items-center justify-content-center">
+                <img src="loading.gif" class="invert" alt="Loading..." />
+            </div>
+        }
+        else if (!passes.Any())
+        {
+            <div class="d-flex align-items-center justify-content-center">
+                <p class="text-muted text-center">Nincs találat.</p>
+            </div>
+        }
+        else
+        {
+            <div class="row row-cols-1 g-4">
+                @foreach (var pass in passes)
+                {
+                    <div class="col d-flex justify-content-center">
+                        <div class="card p-3 w-100 rounded shadow-sm lighter-dark">
+                            <div class="card-body lighter-dark">
+                                <div class="d-flex justify-content-between align-items-center lighter-dark">
+                                    <h5 class="fw-bold lighter-dark">@pass.Name</h5>
+                                    <h4 class="fw-bold text-primary lighter-dark">@Math.Floor(pass.Price) Ft</h4>
+                                </div>
+                                <p class="text-muted lighter-dark">
+                                    @foreach (var benefit in pass.Benefits)
+                                    {
+                                        <span class="badge bg-secondary me-1">@benefit</span>
+                                    }
+                                </p>
+                                @if (AccountModel.LoggedInUser?.Role != "trainer")
                                 {
-                                    <span class="badge bg-secondary me-1">@benefit</span>
+                                    <NavLink href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="btn btn-primary w-100">Vásárlás</NavLink>
                                 }
-                            </p>
-                            @if (AccountModel.LoggedInUser?.Role != "trainer")
-                            {
-                                <NavLink href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="btn btn-primary w-100">Vásárlás</NavLink>
-                            }
+                            </div>
                         </div>
                     </div>
-                </div>
-            }
-        </div>
+                }
+            </div>
+        }
     </div>
 </div>
-
 
 <Navbar />
 
 @code {
-
     private List<PassModel> passes = new();
+    private bool isLoading = true;
+
     protected override async Task OnInitializedAsync()
     {
         passes = await DataService.GetPasses();
+        isLoading = false;
     }
 }

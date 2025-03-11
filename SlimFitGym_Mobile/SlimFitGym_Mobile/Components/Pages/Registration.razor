@@ -14,6 +14,12 @@
         <div class="col-md-6 col-lg-4">
             <div class="card shadow">
                 <div class="card-body lighter-dark">
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger mt-3">
+                            @((MarkupString)errorMessage.Replace("\n", "<br>"))
+                        </div>
+                    }
                     <h2 class="card-title text-center mb-4 lighter-dark">Regisztráció</h2>
                     <form @onsubmit="register">
                         <div class="mb-3 lighter-dark">
@@ -46,12 +52,6 @@
                             <NavLink href="/login" class="text-decoration-none lighter-dark">Már van fiókod? Jelentkezz be!</NavLink>
                         </div>
                     </form>
-                    @if (!string.IsNullOrEmpty(errorMessage))
-                    {
-                        <div class="alert alert-danger mt-3">
-                            @((MarkupString)errorMessage.Replace("\n", "<br>"))
-                        </div>
-                    }
                 </div>
             </div>
         </div>

@@ -212,6 +212,6 @@ div {
 
 /*Machines*/
 
-#machinesList img, #detailImage {
+#machineImg, #detailImage {
     object-fit: cover !important;
 }
