@@ -2,7 +2,8 @@ import { Component, Input } from '@angular/core';
 import { UserModel } from '../../../Models/user.model';
 import { FormsModule } from '@angular/forms';
 import { PassModel } from '../../../Models/pass.model';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { UserService } from '../../../Services/user.service';
 
 @Component({
   selector: 'app-basic-user-data',
@@ -27,7 +28,11 @@ export class BasicUserDataComponent {
   /**
    *
    */
-  constructor() {
+  constructor(private userService : UserService, private router: Router) {
 
+  }
+  logout(){
+    this.userService.logout();
+    this.router.navigate(['/']);
   }
 }
