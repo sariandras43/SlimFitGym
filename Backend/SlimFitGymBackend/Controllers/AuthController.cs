@@ -44,15 +44,16 @@ namespace SlimFitGymBackend.Controllers
 
         [HttpPut("modify/{id}")]
         [Authorize]
-        public IActionResult Modify([FromRoute] string id, [FromBody] ModifyAccountRequest accountInfo)
+        public IActionResult Modify([FromRoute] string id, [FromBody] dynamic accountInfo)
         {
             string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+            var account = Newtonsoft.Json.JsonConvert.DeserializeObject<ModifyAccountRequest>(accountInfo.ToString());
             return this.Execute(() =>
             {
                 int idNum;
                 if (int.TryParse(id, out idNum))
                 {
-                    var res = accountRepository.UpdateAccountPublic(token,idNum, accountInfo);
+                    var res = accountRepository.UpdateAccountPublic(token,idNum, account);
                     if (res != null) return Ok(res);
                     return NotFound("Nem található a felhasználó.");
 

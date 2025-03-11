@@ -10,7 +10,7 @@ namespace SlimFitGym.EFData.Interfaces
 {
     public interface IImagesRepository
     {
-        Image? UploadImageToAccount(string fileName, string imageUri, int accountId);
+        Image? UploadImageToAccount(string imageUri, int accountId);
         List<Image> UploadImagesToMachine(List<ImageRequest> images, int machineId);
         List<Image> UploadImagesToRoom(List<ImageRequest> images, int roomId);
         Image? DeleteImageByAccountId(int accountId);

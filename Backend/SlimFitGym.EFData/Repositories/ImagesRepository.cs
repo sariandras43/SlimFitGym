@@ -13,6 +13,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SlimFitGym.EFData.Interfaces;
+using System.Security.Cryptography;
 
 namespace SlimFitGym.EFData.Repositories
 {
@@ -34,16 +35,14 @@ namespace SlimFitGym.EFData.Repositories
             cloudinary = new Cloudinary(cloudinaryAccount);
         }
 
-        public Image? UploadImageToAccount(string fileName,string imageUri, int accountId) 
+        public Image? UploadImageToAccount(string imageUri, int accountId) 
         {
             string[] splitUri = imageUri.Split(',');
 
-            if (string.IsNullOrEmpty(fileName))
-                throw new Exception("Érvénytelen fájlnév.");
             if (!Base64.IsValid(splitUri[1]))
                 throw new Exception("Érvénytelen Base64.");
-
-            IFormFile file = ConvertBase64ToIFormFile(splitUri[1], fileName, splitUri[0].Split(':')[1]);
+            //TODO filesize
+            IFormFile file = ConvertBase64ToIFormFile(splitUri[1],"Asd", splitUri[0].Split(':')[1]);
 
             UploadResult? cloudinaryResult = UploadToCloudinary(file);
 
@@ -54,7 +53,8 @@ namespace SlimFitGym.EFData.Repositories
             {
                 CloudinaryId = cloudinaryResult.PublicId.ToString(),
                 AccountId = accountId,
-                Url = cloudinaryResult.SecureUrl.ToString()
+                Url = cloudinaryResult.SecureUrl.ToString(),
+                IsHighlighted = true
             };
             context.Set<Image>().Add(img);
             context.SaveChanges();
@@ -86,7 +86,9 @@ namespace SlimFitGym.EFData.Repositories
                 {
                     CloudinaryId = cloudinaryResult.PublicId.ToString(),
                     MachineId = machineId,
-                    Url = cloudinaryResult.SecureUrl.ToString()
+                    Url = cloudinaryResult.SecureUrl.ToString(),
+                    //TODO
+                    IsHighlighted = true
                 };
                 context.Set<Image>().Add(img);
                 context.SaveChanges();
@@ -119,7 +121,8 @@ namespace SlimFitGym.EFData.Repositories
                 {
                     CloudinaryId = cloudinaryResult.PublicId.ToString(),
                     RoomId = roomId,
-                    Url = cloudinaryResult.SecureUrl.ToString()
+                    Url = cloudinaryResult.SecureUrl.ToString(),
+                    IsHighlighted = true
                 };
 
                 context.Set<Image>().Add(img);
@@ -136,10 +139,14 @@ namespace SlimFitGym.EFData.Repositories
 
             if (imageToRemove!=null)
             {
-                DeleteImageByPublicId(imageToRemove.CloudinaryId);
-                context.Set<Image>().Remove(imageToRemove);
-                context.SaveChanges();                
-                return imageToRemove;
+                var res = DeleteImageByPublicId(imageToRemove.CloudinaryId);
+                if (res == true)
+                {
+                    context.Set<Image>().Remove(imageToRemove);
+                    context.SaveChanges();                
+                    return imageToRemove;
+                    
+                }
             }return null;
         }
 
@@ -225,12 +232,15 @@ namespace SlimFitGym.EFData.Repositories
         }
         private UploadResult? UploadToCloudinary(IFormFile file)
         {
+            //TODO
             using (var stream = file.OpenReadStream())
             {
                 var uploadParams = new ImageUploadParams
                 {
                     File = new FileDescription(file.FileName, stream),
-                    Folder = "SlimFitGym"
+                    Folder = "SlimFitGym",
+                    UseFilename = false, 
+                    UniqueFilename = true 
                 };
 
                 var uploadResult = cloudinary.Upload(uploadParams);
