@@ -39,8 +39,6 @@ export class UserService {
   logout() {
     this.loggedInUserSubject.next(undefined);
     localStorage.removeItem('loggedInUser');
-
-    this.http.post(`${this.config.apiUrl}/auth/logout)`, {}).subscribe();
   }
   // checkUser() {
   //   const user = localStorage.getItem('loggedInUser');
