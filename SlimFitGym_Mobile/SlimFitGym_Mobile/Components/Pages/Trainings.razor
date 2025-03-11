@@ -27,52 +27,67 @@
         }
 
         <div class="overflow-auto pb-5">
-            <div class="row row-cols-1 g-4 px-2">
-                @for (int i = 0; i < trainings.Count; i++)
-                {
-                    var training = trainings[i];
-                    bool isSignedUp = signedUpTrainings.Any(t => t.Id == training.Id);
+            @if (isLoading)
+            {
+                <div class="d-flex align-items-center justify-content-center">
+                    <img src="loading.gif" class="invert" alt="Loading..." />
+                </div>
+            }
+            else if (!trainings.Any())
+            {
+                <div class="d-flex align-items-center justify-content-center">
+                    <p class="text-muted text-center">Jelenleg nincs elérhető edzés</p>
+                </div>
+            }
+            else
+            {
+                <div class="row row-cols-1 g-4 px-2">
+                    @for (int i = 0; i < trainings.Count; i++)
+                    {
+                        var training = trainings[i];
+                        bool isSignedUp = signedUpTrainings.Any(t => t.Id == training.Id);
 
-                    <div class="card col d-flex m-2 me-3 ms-3 w-75 lighter-dark @(i % 2 == 0 ? "me-auto" : "ms-auto") @(i == 0 ? "mt-4" : "")">
-                        <div class="card-body lighter-dark">
-                            <h5 class="card-title lighter-dark">@training.Name</h5>
-                            <p class="card-text lighter-dark">🏋️ Edző: <b>@training.Trainer</b></p>
-                            <p class="card-text lighter-dark">📅 Dátum: <b>@training.TrainingStart.ToString("yyyy.MM.dd HH:mm")</b></p>
-                            <p class="card-text lighter-dark">📍 Terem: <b>@training.Room</b></p>
-                            <p class="card-text lighter-dark">Férőhelyek: @training.MaxPeople</p>
-                            <p class="card-text lighter-dark">Szabad helyek száma: <b>@training.FreePlaces</b></p>
+                        <div class="card col d-flex m-2 me-3 ms-3 w-75 lighter-dark @(i % 2 == 0 ? "me-auto" : "ms-auto") @(i == 0 ? "mt-4" : "")">
+                            <div class="card-body lighter-dark">
+                                <h5 class="card-title lighter-dark">@training.Name</h5>
+                                <p class="card-text lighter-dark">🏋️ Edző: <b>@training.Trainer</b></p>
+                                <p class="card-text lighter-dark">📅 Dátum: <b>@training.TrainingStart.ToString("yyyy.MM.dd HH:mm")</b></p>
+                                <p class="card-text lighter-dark">📍 Terem: <b>@training.Room</b></p>
+                                <p class="card-text lighter-dark">Férőhelyek: @training.MaxPeople</p>
+                                <p class="card-text lighter-dark">Szabad helyek száma: <b>@training.FreePlaces</b></p>
 
-                            @if (AccountModel.LoggedInUser != null)
-                            {
-                                if (AccountModel.LoggedInUser.Role == "trainer" && training.TrainerId == AccountModel.LoggedInUser.Id)
+                                @if (AccountModel.LoggedInUser != null)
                                 {
-                                    <button class="btn btn-warning float-end me-2" @onclick="() => ModifyTraining(training.Id)">
-                                        Módosítás
-                                    </button>
-                                    <button class="btn btn-danger float-start ms-2"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#confirmModal"
-                                    @onclick="() => ShowDeleteConfirmation(training.Id)">
-                                        Törlés
-                                    </button>
-                                }
-                                else
-                                {
-                                    @if (isSignedUp || training.FreePlaces > 0)
+                                    if (AccountModel.LoggedInUser.Role == "trainer" && training.TrainerId == AccountModel.LoggedInUser.Id)
                                     {
-                                        <button class="btn @(isSignedUp ? "btn-danger" : "btn-primary") float-end"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#confirmModal"
-                                        @onclick="() => ShowConfirmation(training.Id, isSignedUp)">
-                                            @(isSignedUp ? "Visszavonás" : "Jelentkezés")
+                                        <button class="btn btn-warning float-end me-2" @onclick="() => ModifyTraining(training.Id)">
+                                            Módosítás
+                                        </button>
+                                        <button class="btn btn-danger float-start ms-2"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#confirmModal"
+                                                @onclick="() => ShowDeleteConfirmation(training.Id)">
+                                            Törlés
                                         </button>
                                     }
+                                    else
+                                    {
+                                        @if (isSignedUp || training.FreePlaces > 0)
+                                        {
+                                            <button class="btn @(isSignedUp ? "btn-danger" : "btn-primary") float-end"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#confirmModal"
+                                                    @onclick="() => ShowConfirmation(training.Id, isSignedUp)">
+                                                @(isSignedUp ? "Visszavonás" : "Jelentkezés")
+                                            </button>
+                                        }
+                                    }
                                 }
-                            }
+                            </div>
                         </div>
-                    </div>
-                }
-            </div>
+                    }
+                </div>
+            }
         </div>
     </div>
 
@@ -95,10 +110,10 @@
 </div>
 
 @code {
-
     private List<TrainingModel> trainings = new();
     private List<TrainingModel> signedUpTrainings = new();
     private bool isDeleteMode = false;
+    private bool isLoading = true;
     private string modalTitle = "Biztosan szeretnél jelentkezni?";
     private int selectedTrainingId;
 
@@ -109,6 +124,7 @@
         {
             signedUpTrainings = await DataService.GetSignedUpTrainings(AccountModel.LoggedInUser.Id);
         }
+        isLoading = false;
     }
 
     private void ShowConfirmation(int trainingId, bool isSignedUp)
@@ -170,5 +186,4 @@
         await JS.InvokeVoidAsync("closeModal", "confirmModal");
         StateHasChanged();
     }
-
 }

@@ -20,17 +20,21 @@
                 {
                     @if (validPass != null)
                     {
-                        <h3 class="section-title">Érvényes bérleted</h3>
+                        <h3 class="section-title">Bérleted</h3>
                         <div class="card home-card lighter-dark">
                             <div class="card-body lighter-dark">
                                 <h5 class="card-title lighter-dark">@validPass.Name</h5>
                                 @if (validPass.RemainingEntries != null)
                                 {
-                                    <p class="card-text lighter-dark">🎟 Hátralévő belépések: <b>@validPass.RemainingEntries</b></p>
+                                    <p class="card-text @(validPass.RemainingEntries == 0 ? "text-danger" : "lighter-dark")">
+                                        🎟 Hátralévő belépések: <b>@validPass.RemainingEntries</b>
+                                    </p>
                                 }
                                 @if (validPass.ValidTo != null)
                                 {
-                                    <p class="card-text lighter-dark">📅 Érvényesség: <b>@validPass.ValidTo</b></p>
+                                    <p class="card-text @(DateTime.Parse(validPass.ValidTo) < DateTime.Today ? "text-danger" : "lighter-dark")">
+                                        📅 Érvényesség: <b>@DateTime.Parse(validPass.ValidTo).ToString("yyyy.MM.dd")</b>
+                                    </p>
                                 }
                             </div>
                         </div>
@@ -86,7 +90,10 @@
                 validPass = await DataService.GetAccountsPass(AccountModel.LoggedInUser.Id);
             }
             StateHasChanged();
-            await JS.InvokeVoidAsync("initializeCarousels");
+            if (signedUpTrainings.Any())
+            {
+                await JS.InvokeVoidAsync("initializeCarousels");
+            }
         }
     }
 }

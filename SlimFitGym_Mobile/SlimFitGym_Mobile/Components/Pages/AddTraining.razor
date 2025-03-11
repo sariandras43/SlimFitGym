@@ -16,51 +16,60 @@
         </NavLink>
     </div>
     <div class="row justify-content-center overflow-auto pb-5">
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow">
-                <div class="card-body lighter-dark">
-                    <form @onsubmit="HandleSubmit">
-                        <div class="mb-3 lighter-dark">
-                            <label for="name" class="form-label lighter-dark">Edzés neve</label>
-                            <input type="text" class="form-control lighter-dark" id="name" placeholder="Név" @bind="newTraining.Name" />
-                        </div>
-                        <div class="mb-3 lighter-dark">
-                            <label for="trainingStart" class="form-label lighter-dark">Kezdési idő</label>
-                            <input type="datetime-local" class="form-control lighter-dark" id="trainingStart" @bind="newTraining.TrainingStart" />
-                        </div>
-                        <div class="mb-3 lighter-dark">
-                            <label for="trainingEnd" class="form-label lighter-dark">Befejezési idő</label>
-                            <input type="datetime-local" class="form-control lighter-dark" id="trainingEnd" @bind="newTraining.TrainingEnd" />
-                        </div>
-                        <div class="mb-3 lighter-dark">
-                            <label for="maxPeople" class="form-label lighter-dark">Max. résztvevők</label>
-                            <input type="number" class="form-control w-25 text-center lighter-dark" maxlength="2" step="1" id="maxPeople" @bind="newTraining.MaxPeople" />
-                        </div>
-                        <div class="mb-3 lighter-dark">
-                            <label for="roomId" class="form-label lighter-dark">Terem</label>
-                            <select class="form-select lighter-dark" id="roomId" @bind="newTraining.RoomId">
-                                <option selected disabled>Válassz termet</option>
-                                @for (int i = 0; i < rooms.Count; i++)
-                                {
-                                    <option value="@rooms[i].Id">@rooms[i].Name</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="d-grid mb-3 lighter-dark">
-                            <button type="submit" class="btn btn-primary">
-                                @(isModify ? "Edzés módosítása" : "Edzés létrehozása")
-                            </button>
-                        </div>
-                    </form>
-                    @if (!string.IsNullOrEmpty(errorMessage))
-                    {
-                        <div class="alert alert-danger mt-3">
-                        @((MarkupString)errorMessage.Replace("\n", "<br>"))
-                        </div>
-                    }
+        @if (isLoading)
+        {
+            <div class="d-flex align-items-center justify-content-center">
+                <img src="loading.gif" class="invert" alt="Loading..." />
+            </div>
+        }
+        else
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow">
+                    <div class="card-body lighter-dark">
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="alert alert-danger mt-3">
+                                @((MarkupString)errorMessage.Replace("\n", "<br>"))
+                            </div>
+                        }
+                        <form @onsubmit="HandleSubmit">
+                            <div class="mb-3 lighter-dark">
+                                <label for="name" class="form-label lighter-dark">Edzés neve</label>
+                                <input type="text" class="form-control lighter-dark" id="name" placeholder="Név" @bind="newTraining.Name" />
+                            </div>
+                            <div class="mb-3 lighter-dark">
+                                <label for="trainingStart" class="form-label lighter-dark">Kezdési idő</label>
+                                <input type="datetime-local" class="form-control lighter-dark" id="trainingStart" @bind="newTraining.TrainingStart" />
+                            </div>
+                            <div class="mb-3 lighter-dark">
+                                <label for="trainingEnd" class="form-label lighter-dark">Befejezési idő</label>
+                                <input type="datetime-local" class="form-control lighter-dark" id="trainingEnd" @bind="newTraining.TrainingEnd" />
+                            </div>
+                            <div class="mb-3 lighter-dark">
+                                <label for="maxPeople" class="form-label lighter-dark">Max. résztvevők</label>
+                                <input type="number" class="form-control w-25 text-center lighter-dark" maxlength="2" step="1" id="maxPeople" @bind="newTraining.MaxPeople" />
+                            </div>
+                            <div class="mb-3 lighter-dark">
+                                <label for="roomId" class="form-label lighter-dark">Terem</label>
+                                <select class="form-select lighter-dark" id="roomId" @bind="newTraining.RoomId">
+                                    <option selected disabled>Válassz termet</option>
+                                    @for (int i = 0; i < rooms.Count; i++)
+                                    {
+                                        <option value="@rooms[i].Id">@rooms[i].Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="d-grid mb-3 lighter-dark">
+                                <button type="submit" class="btn btn-primary">
+                                    @(isModify ? "Edzés módosítása" : "Edzés létrehozása")
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
+        }
     </div>
 </div>
 
@@ -79,6 +88,7 @@
     private List<RoomModel> rooms = new();
     private string errorMessage;
     private bool isModify = false;
+    private bool isLoading = true;
     private string PageTitle = "Edzés létrehozása";
 
     protected override async Task OnInitializedAsync()
@@ -95,6 +105,7 @@
                 PageTitle = "Edzés módosítása";
             }
         }
+        isLoading = false;
     }
 
     private async Task HandleSubmit()
