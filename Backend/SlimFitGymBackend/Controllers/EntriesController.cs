@@ -22,9 +22,9 @@ namespace SlimFitGymBackend.Controllers
 
         
         //GET api/<EntriesController>/5
-        [HttpGet("{accountId}/limit={limit}/offset={offset}")]
+        [HttpGet("{accountId}")]
         [Authorize]
-        public IActionResult Get([FromRoute] string accountId, [FromRoute] string limit, [FromRoute] string offset)
+        public IActionResult Get([FromRoute] string accountId, [FromQuery] string limit="10", [FromQuery] string offset="0")
         {
             string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
 

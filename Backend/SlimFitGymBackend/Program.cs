@@ -25,6 +25,7 @@ namespace SlimFitGymBackend
             builder.Services.AddJwtAuthorization(builder.Configuration["Auth:Key"]!, builder.Configuration["Auth:Issuer"]!, builder.Configuration["Auth:Audience"]!);
             builder.Services.AddValidationErrorHandler();
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+            builder.Services.CorsAllowAllOrigins();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -62,6 +63,7 @@ namespace SlimFitGymBackend
             app.UseSwagger();
             app.UseSwaggerUI();
 
+            app.UseCors("AllowAllOrigins");
             app.UseAuthorization();
 
 
@@ -75,9 +77,7 @@ namespace SlimFitGymBackend
                 var context = services.GetRequiredService<SlimFitGym.EFData.SlimFitGymContext>();
                 context.Database.EnsureCreated();
             }
-#if DEBUG
-            //app.Urls.Add("http://*:8080");
-#endif
+
             app.Run();
         }
     }

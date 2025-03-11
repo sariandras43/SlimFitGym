@@ -78,5 +78,18 @@ namespace SlimFitGym.Data.Repository
                     };
                 });
         }
+        public static void CorsAllowAllOrigins(this IServiceCollection service)
+        {
+            service.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins", builder =>
+                {
+                    builder
+                        .AllowAnyOrigin() 
+                        .AllowAnyMethod() 
+                        .AllowAnyHeader(); 
+                });
+            });
+        }
     }
 }
