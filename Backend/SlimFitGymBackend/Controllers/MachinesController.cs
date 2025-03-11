@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using SlimFitGym.EFData.Interfaces;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
@@ -14,9 +15,9 @@ namespace SlimFitGymBackend.Controllers
     public class MachinesController : ControllerBase
     {
 
-        readonly MachinesRepository machinesRepository;
+        readonly IMachinesRepository machinesRepository;
 
-        public MachinesController(MachinesRepository machinesRepository)
+        public MachinesController(IMachinesRepository machinesRepository)
         {
             this.machinesRepository = machinesRepository;
         }

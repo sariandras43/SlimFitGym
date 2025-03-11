@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
+using SlimFitGym.EFData.Interfaces;
 using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
 using SlimFitGym.Models.Responses;
@@ -12,20 +13,20 @@ using System.Threading.Tasks;
 
 namespace SlimFitGym.EFData.Repositories
 {
-    public class TrainingsRepository
+    public class TrainingsRepository: ITrainingsRepository
     {
         public readonly SlimFitGymContext context;
-        public readonly RoomsRepository roomsRepository;
-        public readonly AccountRepository accountRepository;
-        public readonly ReservationRepository reservationRepository;
-        public readonly ImagesRepository imagesRepository;
+        public readonly IRoomsRepository roomsRepository;
+        public readonly IAccountRepository accountRepository;
+        public readonly IReservationRepository reservationRepository;
+        public readonly IImagesRepository imagesRepository;
         public readonly TokenGenerator tokenGenerator;
         public TrainingsRepository(SlimFitGymContext slimFitGymContext,
-            RoomsRepository roomsRepository,
-            AccountRepository accountRepository,
-            ReservationRepository reservationRepository,
-            ImagesRepository imagesRepository,
-            TokenGenerator tokenGenerator)
+            IRoomsRepository roomsRepository,
+            IAccountRepository accountRepository,
+            IReservationRepository reservationRepository,
+            IImagesRepository imagesRepository,
+            TokenGenerator tokenGenerator) 
         {
             this.context = slimFitGymContext;
             this.roomsRepository = roomsRepository;

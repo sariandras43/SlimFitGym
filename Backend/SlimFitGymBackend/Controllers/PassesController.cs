@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
+using SlimFitGym.EFData.Interfaces;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
@@ -15,8 +16,8 @@ namespace SlimFitGymBackend.Controllers
     public class PassesController : ControllerBase
     {
 
-        readonly PassesRepository passesRepository;
-        public PassesController(PassesRepository passesRepository)
+        readonly IPassesRepository passesRepository;
+        public PassesController(IPassesRepository passesRepository)
         {
             this.passesRepository = passesRepository;
         }

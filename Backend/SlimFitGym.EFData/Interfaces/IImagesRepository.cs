@@ -1,0 +1,24 @@
+﻿using SlimFitGym.Models.Requests;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using SlimFitGym.Models.Models;
+
+namespace SlimFitGym.EFData.Interfaces
+{
+    public interface IImagesRepository
+    {
+        Image? UploadImageToAccount(string fileName, string imageUri, int accountId);
+        List<Image> UploadImagesToMachine(List<ImageRequest> images, int machineId);
+        List<Image> UploadImagesToRoom(List<ImageRequest> images, int roomId);
+        Image? DeleteImageByAccountId(int accountId);
+        List<Image> DeleteImagesByMachineId(int machineId);
+        List<Image> DeleteImagesByRoomId(int roomId);
+        string GetImageUrlByAccountId(int accountId);
+        List<string> GetImageUrlsByMachineId(int machineId);
+        List<string> GetImageUrlsByRoomId(int roomId);
+        string GetImageByPublicId(string publicId);
+    }
+}
