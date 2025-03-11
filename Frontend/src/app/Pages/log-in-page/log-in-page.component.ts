@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../Services/auth.service';
 import { FormsModule } from '@angular/forms';
+import { UserModel } from '../../Models/user.model';
 
 @Component({
   selector: 'app-log-in-page',
