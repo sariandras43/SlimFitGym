@@ -309,14 +309,12 @@ namespace SlimFitGym_Mobile.Services
             }
         }
 
-
         public static async Task<List<EntryModel>> GetEntriesOfAccount(int accountId)
         {
             if (AccountModel.LoggedInUser != null) SetBearerToken();
             try
             {
-                //wrong
-                var entries = await _httpClient.GetFromJsonAsync<List<EntryModel>>($"{apiBaseURL}entries/{accountId}/limit=5=/offset=0");
+                var entries = await _httpClient.GetFromJsonAsync<List<EntryModel>>($"{apiBaseURL}entries/{accountId}?limit=10");
                 return entries ?? new List<EntryModel>();
             }
             catch (Exception ex)
