@@ -17,11 +17,9 @@ namespace SlimFitGym.Tests.IntegrationTests
     public class MachinesControllerIntegrationTests :IClassFixture<WebApplicationFactory<Program>>
     {
         private readonly HttpClient client;
-        private readonly WebApplicationFactory<Program> factory;
 
         public MachinesControllerIntegrationTests(WebApplicationFactory<Program> factory)
         {
-            this.factory = factory;
             this.client = factory.CreateClient();
         }
 

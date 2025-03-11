@@ -1,0 +1,50 @@
+[
+    {
+        "email": "notAnEmail",
+        "password": "Password_12345",
+        "name": "Kiss Béla",
+        "phone": "+36987654321"
+    },
+    {
+        "email": "",
+        "password": "Password_12345",
+        "name": "Kiss Béla",
+        "phone": "+36987654321"
+    },
+    {
+        "email": "email@email.com",
+        "password": "",
+        "name": "Kiss Béla",
+        "phone": "+36987654321"
+    },
+    {
+        "email": "email@email.com",
+        "password": "asd12345",
+        "name": "Kiss Béla",
+        "phone": "+36987654321"
+    },
+    {
+        "email": "email@email.com",
+        "password": "Asd12345",
+        "name": "Kiss Béla",
+        "phone": "+36987654321"
+    },
+    {
+        "email": "email@email.com",
+        "password": "Password_12345",
+        "name": "",
+        "phone": "+36987654321"
+    },
+    {
+        "email": "email@email.com",
+        "password": "Password_12345",
+        "name": "Kiss Béla",
+        "phone": "06987654321"
+    },
+    {
+        "email": "email@email.com",
+        "password": "Password_12345",
+        "name": "Kiss Béla",
+        "phone": "+36123456789"
+    }
+]

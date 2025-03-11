@@ -1,0 +1,18 @@
+[
+    {
+      "email": "thisemaildoesntexist@email.com",
+      "password": "Password12345",
+      "success": false
+    },
+    {
+      "email": "pista@email.com",
+      "password": "Thisisnotthepassword",
+      "success": false
+    },
+    {
+      "email": "pista@gmail.com",
+      "password": "pista",
+      "success": true
+    }
+
+]

@@ -49,14 +49,13 @@ namespace SlimFitGym.EFData.Repositories
 
         public AccountResponse? Register(RegistrationRequest registration)
         {
+            if (string.IsNullOrWhiteSpace(registration.Name))
+                throw new Exception("Név kitöltése kötelező.");
             if (registration.Name.Length > 100)
                 throw new Exception("Túl hosszú név.");
-
-            Regex newPasswordRegex = new Regex(@"/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_]).{8,}$/");
             if (string.IsNullOrEmpty(registration.Password))
                 throw new Exception("Jelszót kötelező megadni.");
-            Match newPassword = newPasswordRegex.Match(registration.Password);
-            if (!newPassword.Success)
+            if (!Regex.IsMatch(registration.Password, @"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[#?!@$%^&*_-]).{8,}$"))
                 throw new Exception("Nem megfelelő a jelszó: 8 karakter minimum, szám, kis- és nagybetűnek és egy speciális karakter kombinációjának kell lennie.");
             Regex emailRegex = new Regex(@"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|""(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*"")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])");
             Match email = emailRegex.Match(registration.Email);
@@ -132,7 +131,7 @@ namespace SlimFitGym.EFData.Repositories
 
 
 
-            Regex newPasswordRegex = new Regex(@"/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-_]).{8,}$/");
+            Regex newPasswordRegex = new Regex(@"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[#?!@$%^&*_-]).{8,}$");
             if (!string.IsNullOrEmpty(request.NewPassword))
             {
                 Match newPassword = newPasswordRegex.Match(request.NewPassword);

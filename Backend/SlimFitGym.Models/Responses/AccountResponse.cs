@@ -37,5 +37,10 @@ namespace SlimFitGym.Models.Responses
             Role = a.Role;
             ImageUrl = imageUrl;
         }
+
+        public AccountResponse()
+        {
+            
+        }
     }
 }
