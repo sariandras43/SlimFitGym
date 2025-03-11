@@ -1,0 +1,20 @@
+<app-hero
+  imgSrc="templateSzoba.jpg"
+  title="Termeink"
+  subtitle="Termeink között mindenki megtalálhatja a számára legmegfelelőbbet"
+/>
+<div class="counterContainer g5 mt5">
+  <app-counter-bubble [number]="5" title="hinnye" />
+  <app-counter-bubble [number]="12" title="valami" />
+  <app-counter-bubble [number]="32" title="cucc" />
+</div>
+
+<div class="container mt5" >
+  <div class="eventWrapper">
+  <app-events/>
+  </div>
+  <div class=" machines">
+    <h2>Terem gépei</h2>
+    <app-machines [machines]="machines"/>
+  </div>
+</div>

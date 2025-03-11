@@ -1,7 +1,6 @@
 ﻿@page "/machineDetails/{Id:int}"
 @using SlimFitGym_Mobile.Models
 @inject IJSRuntime JS
-@*@inject Machines Machines*@
 
 <Header />
 
@@ -12,30 +11,39 @@
 </div>
 
 <div class="container mt-4 d-flex flex-column overflow-auto mb-5 pb-5">
-    <h2 class="text-center fw-bold border-bottom">@machine.Name</h2>
-    <div class="card rounded text-decoration-none w-100 lighter-dark">
-        <div id="machineCarousel" class="carousel slide lighter-dark" data-bs-touch="true" data-bs-interval="false">
-            <div class="carousel-inner lighter-dark">
-                @if (machine.ImageUrls.Any())
-                {
-                    @for (int i = 0; i < machine.ImageUrls.Length; i++)
+    @if (isLoading)
+    {
+        <div class="d-flex align-items-center justify-content-center">
+            <img src="loading.gif" class="invert" alt="Loading..." />
+        </div>
+    }
+    else
+    {
+        <h2 class="text-center fw-bold border-bottom">@machine.Name</h2>
+        <div class="card rounded text-decoration-none w-100 lighter-dark">
+            <div id="machineCarousel" class="carousel slide lighter-dark" data-bs-touch="true" data-bs-interval="false">
+                <div class="carousel-inner lighter-dark">
+                    @if (machine.ImageUrls != null && machine.ImageUrls.Any())
                     {
+                        @for (int i = 0; i < machine.ImageUrls.Length; i++)
+                        {
                             <div class="carousel-item @(i == 0 ? "active" : "") lighter-dark">
                                 <div class="card home-card lighter-dark">
-                                <div class="card-body lighter-dark">
-                                    <img src="@machine.ImageUrls[i]" id="detailImage" class="card-img-top p-2" alt="@machine.Name">
+                                    <div class="card-body lighter-dark">
+                                        <img src="@machine.ImageUrls[i]" id="detailImage" class="card-img-top p-1" alt="@machine.Name">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        }
                     }
-                }
+                </div>
             </div>
-        </div>
 
-        <div class="card-body text-center p-2 lighter-dark">
-            <p class="fw-bold mb-0">@machine.Description</p>
-        </div>
-    </div>
+            <div class="card-body text-center p-2 lighter-dark">
+                <p class="fw-bold mb-0">@machine.Description</p>
+            </div>
+        </div> 
+    }
 </div>
 
 <Navbar />
@@ -43,13 +51,13 @@
 @code {
     [Parameter]
     public int Id { get; set; }
+    private MachineModel machine = new();
+    private bool isLoading = true;
 
-    private MachineModel machine;
-
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        machine = MachineModel.machines.FirstOrDefault(m => m.Id == Id);
-        //machine = Machines.machines.FirstOrDefault(m => m.Id == Id);
+        machine = await DataService.GetMachine(Id);
+        isLoading = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -1,0 +1,22 @@
+<div class="wrapperWrapper">
+    <div class="loginWrapper">
+        <div class="content">
+            <div class="inputField">
+                <label class="input_title" for="loginEmail" >Email</label>
+                <input type="text" id="loginEmail" [(ngModel)]="model.email"></div>
+            <div class="inputField">
+                <label class="input_title" for="loginEmail" >Jelszó</label>
+                <input type="password" id="logInPassword" [(ngModel)]="model.password"></div>
+            <div class="links">
+                <a href="">Elfelejett jelszó?</a>
+                <span>·</span>
+                <a routerLink="/signup">Regisztráció</a>
+            </div>
+            @if (errorMessage) {
+                <p class=" alert alert-danger errorField">{{errorMessage}}</p>
+            }
+            <button (click)="login()">Bejelentkezés</button>
+        </div>
+        <img class="logInImage" src="mainHero.jpeg" alt="">
+    </div>
+</div>

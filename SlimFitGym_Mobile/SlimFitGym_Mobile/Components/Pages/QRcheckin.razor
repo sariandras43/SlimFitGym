@@ -28,9 +28,9 @@
             </div>
 
             <h2 class="text-center mt-5">Legutóbbi belépések</h2>
-            @foreach (var item in entries)
+            @foreach (var item in lastEntriesOfAccount)
             {
-                <p class="text-center mt-1">@item.EntryDate</p>
+                <p class="text-center mt-1">@item.EntryDate.ToString("yyyy.MM.dd HH:mm")</p>
             }
         }
     }
@@ -40,14 +40,13 @@
 <Navbar />
 
 @code {
-    // private List<EntryModel> lastEntriesOfAccount;
+    private List<EntryModel> lastEntriesOfAccount = new();
     protected override async Task OnInitializedAsync()
     {
         //lastEntriesOfAccount = await DataService.GetEntriesOfAccount(AccountModel.LoggedInUser.Id);
         CameraService.ErrorMessage = null;
         StateHasChanged();
     }
-    private List<EntryModel> entries = EntryModel.lastEntriesOfAccount;
 
     private async Task Scan()
     {
@@ -69,5 +68,6 @@
     }
 }
 
+@* Ez folytonos hibaüzenet, ha a blazor el akarja érni a kamerát *@
     @* Caused by: android.os.ServiceSpecificException: getCameraCharacteristics:851: Unable to retrieve camera characteristics for unknown device 0: No such file or directory *@
 

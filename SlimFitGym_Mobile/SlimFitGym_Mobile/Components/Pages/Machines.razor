@@ -12,14 +12,20 @@
 
             <div class="mb-3 px-2">
                 <input type="text"
-                class="form-control border-secondary"
-                placeholder="Keresés"
-                @bind="searchText"
-                @bind:event="oninput" />
+                       class="form-control border-secondary"
+                       placeholder="Keresés"
+                       @bind="searchText"
+                       @bind:event="oninput" />
             </div>
         </div>
 
-        @if (!filteredMachines.Any())
+        @if (isLoading)
+        {
+            <div class="d-flex align-items-center justify-content-center">
+                <img src="loading.gif" class="invert" alt="Loading..." />
+            </div>
+        }
+        else if (!filteredMachines.Any())
         {
             <div class="d-flex align-items-center justify-content-center">
                 <p class="text-muted text-center">Nincs találat.</p>
@@ -34,7 +40,10 @@
                         <div class="col d-flex justify-content-center">
                             <NavLink href="@($"/machineDetails/{machine.Id}")" class="card rounded shadow-sm text-decoration-none w-100">
                                 <div class="card-body text-center p-1 lighter-dark">
-                                    <img src="@machine.ImageUrls[0]" class=" bg-white" alt="Alternate Text" />
+                                    @if (machine.ImageUrls != null && machine.ImageUrls.Any())
+                                    {
+                                        <img class="card-img-top p-1" src="@machine.ImageUrls[0]" alt="Alternate Text" />
+                                    }
                                     <p class="fw-bold mb-0 lighter-dark">@machine.Name</p>
                                 </div>
                             </NavLink>
@@ -50,14 +59,16 @@
 
 @code {
     private string searchText = string.Empty;
-    // public List<MachineModel> machines;
+    public List<MachineModel> machines = new();
+    private bool isLoading = true;
 
-    // protected override async Task OnInitializedAsync()
-    // {
-    //    machines = await DataService.GetMachines();
-    // }
+    protected override async Task OnInitializedAsync()
+    {
+        machines = await DataService.GetMachines();
+        isLoading = false;
+    }
 
-    private List<MachineModel> filteredMachines => MachineModel.machines
+    private List<MachineModel> filteredMachines => machines
         .Where(m => m.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase))
         .ToList();
 }
