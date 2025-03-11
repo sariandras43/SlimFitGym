@@ -85,7 +85,7 @@ namespace SlimFitGym.EFData.Repositories
 
             }
 
-            List<Image> images = imagesRepository.UploadImagesToRoom(newRoom.Images, savedRoom.Id);
+            Image images = imagesRepository.UploadImageToRoom(newRoom.Image, savedRoom.Id);
 
             return roomsAndMachinesRepository.GetRoomWithMachinesById(savedRoom.Id);
 
@@ -177,7 +177,8 @@ namespace SlimFitGym.EFData.Repositories
                 }
 
             }
-            List<Image> images = imagesRepository.UploadImagesToRoom(room.Images, modifiedRoom.Id);
+            imagesRepository.DeleteImageByRoomId(id);
+            Image image = imagesRepository.UploadImageToRoom(room.Image, modifiedRoom.Id);
 
             this.context.Entry(modifiedRoom).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             this.context.SaveChanges();

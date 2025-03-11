@@ -98,39 +98,31 @@ namespace SlimFitGym.EFData.Repositories
             return result;
         }
 
-        public List<Image> UploadImagesToRoom(List<ImageRequest> images, int roomId)
+        public Image UploadImageToRoom(string image, int roomId)
         {
-            List<Image> result = new List<Image>();
-            foreach (ImageRequest imageRequest in images)
+            string[] splitUri = image.Split(',');
+
+            if (!Base64.IsValid(splitUri[1]))
+                throw new Exception("Érvénytelen Base64.");
+            //TODO filesize
+            IFormFile file = ConvertBase64ToIFormFile(splitUri[1], "Asd", splitUri[0].Split(':')[1]);
+
+            UploadResult? cloudinaryResult = UploadToCloudinary(file);
+
+            if (cloudinaryResult == null)
+                throw new Exception("Hiba történt a kép feltöltése során.");
+
+            Image img = new Image()
             {
-                string[] splitUri = imageRequest.ImageInBase64.Split(',');
+                CloudinaryId = cloudinaryResult.PublicId.ToString(),
+                RoomId = roomId,
+                Url = cloudinaryResult.SecureUrl.ToString(),
+                IsHighlighted = true
+            };
+            context.Set<Image>().Add(img);
+            context.SaveChanges();
 
-                if (string.IsNullOrEmpty(imageRequest.FileName))
-                    throw new Exception("Érvénytelen fájlnév.");
-                if (!Base64.IsValid(splitUri[1]))
-                    throw new Exception("Érvénytelen Base64.");
-
-                IFormFile file = ConvertBase64ToIFormFile(splitUri[1], imageRequest.FileName, splitUri[0].Split(':')[1]);
-
-                UploadResult? cloudinaryResult = UploadToCloudinary(file);
-
-                if (cloudinaryResult == null)
-                    throw new Exception("Hiba történt a kép feltöltése során.");
-
-                Image img = new Image()
-                {
-                    CloudinaryId = cloudinaryResult.PublicId.ToString(),
-                    RoomId = roomId,
-                    Url = cloudinaryResult.SecureUrl.ToString(),
-                    IsHighlighted = true
-                };
-
-                context.Set<Image>().Add(img);
-                context.SaveChanges();
-                result.Add(img);
-
-            }
-            return result;
+            return img;
         }
 
         public Image? DeleteImageByAccountId(int accountId)
@@ -166,19 +158,16 @@ namespace SlimFitGym.EFData.Repositories
 
         }
 
-        public List<Image> DeleteImagesByRoomId(int roomId)
+        public Image DeleteImageByRoomId(int roomId)
         {
-            List<Image> imagesToRemove = context.Set<Image>().Where(i => i.RoomId == roomId).ToList();
-            if (imagesToRemove.Count > 0)
+            Image imageToRemove = context.Set<Image>().SingleOrDefault(i => i.RoomId == roomId);
+            if (imageToRemove!=null)
             {
-                foreach (Image image in imagesToRemove)
-                {
-                    DeleteImageByPublicId(image.CloudinaryId);
-                    context.Set<Image>().Remove(image);
+                    DeleteImageByPublicId(imageToRemove.CloudinaryId);
+                    context.Set<Image>().Remove(imageToRemove);
                     context.SaveChanges();
-                }
             }
-            return imagesToRemove;
+            return imageToRemove;
         }
 
         public string GetImageUrlByAccountId(int accountId)
