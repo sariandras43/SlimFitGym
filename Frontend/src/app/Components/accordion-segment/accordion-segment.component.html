@@ -1,0 +1,16 @@
+<button (click)="opened = !opened">
+  <h2>
+    {{ title() }}
+    @if (opened) {
+        &#10506;
+    } @else {
+             &#10507;
+             }
+  </h2>
+</button>
+@if (opened) {
+<div class="content">
+
+    <ng-content class="expanded"></ng-content>
+</div>
+}

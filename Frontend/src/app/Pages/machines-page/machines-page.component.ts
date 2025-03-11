@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { HeroComponent } from "../hero/hero.component";
-import { MachinesComponent } from "../machines/machines.component";
+import { HeroComponent } from "../../Components/hero/hero.component";
+import { MachinesComponent } from "../../Components/machines/machines.component";
 
 @Component({
   selector: 'app-machines-page',

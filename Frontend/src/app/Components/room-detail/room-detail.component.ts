@@ -7,7 +7,7 @@ import { MachinesComponent } from "../machines/machines.component";
 
 @Component({
   selector: 'app-room-detail',
-  imports: [HeroComponent, CounterBubbleComponent, CardComponent, EventsComponent, MachinesComponent],
+  imports: [HeroComponent, CounterBubbleComponent, EventsComponent, MachinesComponent],
   templateUrl: './room-detail.component.html',
   styleUrl: './room-detail.component.scss'
 })
