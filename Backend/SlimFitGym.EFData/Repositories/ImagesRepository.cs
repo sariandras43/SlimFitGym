@@ -12,10 +12,11 @@ using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using SlimFitGym.EFData.Interfaces;
 
 namespace SlimFitGym.EFData.Repositories
 {
-    public class ImagesRepository
+    public class ImagesRepository:IImagesRepository
     {
         private readonly SlimFitGymContext context;
         private readonly Cloudinary cloudinary;

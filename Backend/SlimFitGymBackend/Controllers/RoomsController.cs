@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SlimFitGym.EFData.Interfaces;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
@@ -11,10 +12,10 @@ namespace SlimFitGymBackend.Controllers
     [ApiController]
     public class RoomsController : ControllerBase
     {
-        readonly RoomsRepository roomsRepository;
-        readonly RoomsAndMachinesRepository roomsAndMachinesRepository;
+        readonly IRoomsRepository roomsRepository;
+        readonly IRoomsAndMachinesRepository roomsAndMachinesRepository;
 
-        public RoomsController(RoomsRepository roomsRepository, RoomsAndMachinesRepository roomsAndMachinesRepository)
+        public RoomsController(IRoomsRepository roomsRepository, IRoomsAndMachinesRepository roomsAndMachinesRepository)
         {
             this.roomsRepository = roomsRepository;
             this.roomsAndMachinesRepository = roomsAndMachinesRepository;

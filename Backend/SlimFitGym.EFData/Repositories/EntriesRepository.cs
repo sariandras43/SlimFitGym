@@ -8,20 +8,21 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json.Linq;
+using SlimFitGym.EFData.Interfaces;
 using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Responses;
 using SlimFitGymBackend;
 
 namespace SlimFitGym.EFData.Repositories
 {
-    public class EntriesRepository
+    public class EntriesRepository:IEntriesRepository
     {
         readonly SlimFitGymContext context;
-        readonly AccountRepository accountRepository;
-        readonly PurchasesRepository purchasesRepository;
-        readonly PassesRepository passesRepository;
+        readonly IAccountRepository accountRepository;
+        readonly IPurchasesRepository purchasesRepository;
+        readonly IPassesRepository passesRepository;
         readonly TokenGenerator tokenGenerator;
-        public EntriesRepository(SlimFitGymContext slimFitGymContext, AccountRepository accountRepository, PurchasesRepository purchasesRepository, PassesRepository passesRepository, TokenGenerator tokenGenerator)
+        public EntriesRepository(SlimFitGymContext slimFitGymContext, IAccountRepository accountRepository, IPurchasesRepository purchasesRepository, IPassesRepository passesRepository, TokenGenerator tokenGenerator)
         {
             this.context = slimFitGymContext;
             this.accountRepository = accountRepository;

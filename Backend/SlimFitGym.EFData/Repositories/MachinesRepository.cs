@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using SlimFitGym.EFData.Interfaces;
 using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
 using SlimFitGym.Models.Responses;
@@ -15,12 +16,12 @@ using Machine = SlimFitGym.Models.Models.Machine;
 
 namespace SlimFitGym.EFData.Repositories
 {
-    public class MachinesRepository
+    public class MachinesRepository:IMachinesRepository
     {
         readonly SlimFitGymContext context;
-        readonly ImagesRepository imagesRepository;
+        readonly IImagesRepository imagesRepository;
 
-        public MachinesRepository(SlimFitGymContext context, ImagesRepository imagesRepository)
+        public MachinesRepository(SlimFitGymContext context, IImagesRepository imagesRepository)
         {
             this.context = context;
             this.imagesRepository = imagesRepository;   

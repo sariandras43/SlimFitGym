@@ -26,7 +26,12 @@ namespace SlimFitGym.EFData
         {
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
+#if DEBUG
+            DbPath = System.IO.Path.Join(path, "test.db");
+
+#else
             DbPath = System.IO.Path.Join(path, configuration["DatabaseName"] ?? "slimfitgym.db");
+#endif
 
         }
 
@@ -34,7 +39,12 @@ namespace SlimFitGym.EFData
         {
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
+#if DEBUG
+            DbPath = System.IO.Path.Join(path, "test.db");
+
+#else
             DbPath = System.IO.Path.Join(path, configuration["DatabaseName"] ?? "slimfitgym.db");
+#endif
         }
 
 
@@ -49,6 +59,13 @@ namespace SlimFitGym.EFData
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //add-migration XYZ -Project SlimFitGym.EFData -StartupProject SlimFitGym.EFData
+            modelBuilder.Entity<Account>().HasData
+            (
+                new Account() { Id=1,Name="admin",Password= BCrypt.Net.BCrypt.EnhancedHashPassword("admin", 10), Email="admin@gmail.com",Phone="+36123456789",Role="admin"},
+                new Account() { Id = 2, Name = "kazmer", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("kazmer", 10), Email = "kazmer@gmail.com", Phone = "+36123456799", Role = "trainer" },
+                new Account() { Id = 3, Name = "pista", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("pista", 10), Email = "pista@gmail.com", Phone = "+36123456788", Role = "user" }
+            );
+#if DEBUG
 
             modelBuilder.Entity<Machine>().HasData
             (
@@ -67,12 +84,6 @@ namespace SlimFitGym.EFData
                 new { Id = 2, MachineId = 2, RoomId = 1, MachineCount = 4 }
             );
             
-            modelBuilder.Entity<Account>().HasData
-            (
-                new Account() { Id=1,Name="admin",Password= BCrypt.Net.BCrypt.EnhancedHashPassword("admin", 10), Email="admin@gmail.com",Phone="+36123456789",Role="admin"},
-                new Account() { Id = 2, Name = "kazmer", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("kazmer", 10), Email = "kazmer@gmail.com", Phone = "+36123456799", Role = "trainer" },
-                new Account() { Id = 3, Name = "pista", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("pista", 10), Email = "pista@gmail.com", Phone = "+36123456788", Role = "user" }
-            );
 
             modelBuilder.Entity<Training>().HasData
             (
@@ -102,13 +113,13 @@ namespace SlimFitGym.EFData
             (
                 new Purchase() {Id=1,AccountId=1,PassId=1,PurchaseDate= new DateTime(2025, 2, 6, 17, 0, 0) }
             );
+#endif
 
             modelBuilder.Entity<Benefit>().HasIndex(b => b.BenefitName).IsUnique();
             modelBuilder.Entity<Account>().HasIndex(a=>a.Email).IsUnique();
             modelBuilder.Entity<Machine>().HasIndex(m=>m.Name).IsUnique();
             modelBuilder.Entity<Room>().HasIndex(r=>r.Name).IsUnique();
 
-            modelBuilder.Entity<Entry>().HasData();
         }
 
 

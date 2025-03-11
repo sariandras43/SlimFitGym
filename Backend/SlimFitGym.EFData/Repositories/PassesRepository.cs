@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SlimFitGym.EFData.Interfaces;
 using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
 using SlimFitGym.Models.Responses;
@@ -11,15 +12,15 @@ using System.Threading.Tasks;
 
 namespace SlimFitGym.EFData.Repositories
 {
-    public class PassesRepository
+    public class PassesRepository:IPassesRepository
     {
 
         readonly SlimFitGymContext context;
-        readonly PurchasesRepository purchasesRepository;
-        readonly AccountRepository accountRepository;
+        readonly IPurchasesRepository purchasesRepository;
+        readonly IAccountRepository accountRepository;
         readonly TokenGenerator tokenGenerator;
         readonly IServiceProvider provider;
-        public PassesRepository(SlimFitGymContext context,PurchasesRepository purchasesRepository, AccountRepository accountRepository, TokenGenerator tokenGenerator, IServiceProvider provider)
+        public PassesRepository(SlimFitGymContext context,IPurchasesRepository purchasesRepository, IAccountRepository accountRepository, TokenGenerator tokenGenerator, IServiceProvider provider)
         {
             this.context = context;
             this.purchasesRepository = purchasesRepository;
@@ -28,8 +29,8 @@ namespace SlimFitGym.EFData.Repositories
             this.provider = provider;
         }
 
-        private EntriesRepository GetEntriesRepository()
-            => provider.GetRequiredService<EntriesRepository>();
+        private IEntriesRepository GetEntriesRepository()
+            => provider.GetRequiredService<IEntriesRepository>();
 
         public List<PassResponse> GetAllActivePasses()
         {
@@ -105,7 +106,7 @@ namespace SlimFitGym.EFData.Repositories
 
         public LatestPassResponse? GetLatestPassByAccountId(string token, int accountId)
         {
-            EntriesRepository entriesRepository = GetEntriesRepository();
+            IEntriesRepository entriesRepository = GetEntriesRepository();
             if (accountId<=0)
                 throw new Exception("Érvénytelen azonosító.");
             Account? accountFromToken = accountRepository.GetAccountById(tokenGenerator.GetAccountIdFromToken(token));
