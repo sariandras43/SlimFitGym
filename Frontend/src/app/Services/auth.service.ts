@@ -17,9 +17,6 @@ export class AuthService {
       .post<UserModel>(
         `${this.config.apiUrl}/auth/login`,
         { email, password, rememberMe },
-        {
-          headers: new HttpHeaders().set('Content-Type', 'application/json'),
-        }
       )
       .pipe(
         map((response: UserModel) => {
