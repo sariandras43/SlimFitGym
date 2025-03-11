@@ -34,7 +34,7 @@ namespace SlimFitGymBackend
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
-                    Description = "Kérlek adj meg egy JWT tokent!",
+                    Description = "KÃ©rlek adj meg egy JWT tokent!",
                     Name = "Authorization",
                     Type = SecuritySchemeType.Http,
                     BearerFormat = "JWT",

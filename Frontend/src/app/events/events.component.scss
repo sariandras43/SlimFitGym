@@ -1,0 +1,23 @@
+.eventContainer{
+    background-color: var(--bg-tertiary);
+    border-radius: var(--border-radius);
+    padding: 2em 4em 1em 3em;
+    border: 2px solid var(--tertiary-color);
+    min-width: 20em;
+    h2{
+        font-size: 2rem;
+    }
+
+
+    .subtitle{
+        color: var(--secondary-text);
+        margin-top: 0.25em;
+        
+    }
+    .title{
+        margin-top: 1em;
+        font-weight: bold;
+        font-size: 1.25rem ;
+    }
+    
+}

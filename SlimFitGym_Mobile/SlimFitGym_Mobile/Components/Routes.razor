@@ -1,0 +1,10 @@
+﻿<Router AppAssembly="@typeof(MauiProgram).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <h3>Page not found!</h3>
+    </NotFound>
+</Router>
+
