@@ -3,7 +3,7 @@ import { AccordionSegmentComponent } from '../../Components/accordion-segment/ac
 import { NewPasswordComponent } from '../../Components/CMS/new-password/new-password.component';
 import { BasicUserDataComponent } from '../../Components/CMS/basic-user-data/basic-user-data.component';
 import { UserModel } from '../../Models/user.model';
-import { AuthService } from '../../Services/auth.service';
+import {  UserService } from '../../Services/user.service';
 import { Router } from '@angular/router';
 import { PassModel } from '../../Models/pass.model';
 
@@ -23,7 +23,7 @@ export class UserPageComponent {
   /**
    *
    */
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: UserService, private router: Router) {
     const loggedInUser = localStorage.getItem('loggedInUser');
     const loggedInUserPass = localStorage.getItem('userPass');
     
@@ -35,21 +35,10 @@ export class UserPageComponent {
       
     } 
     
-    this.authService.getPass().subscribe({
-      next: (response) => {
-        if (response) {
-          const loggedInUserPass = localStorage.getItem('userPass');
-          if (loggedInUserPass) {
-            this.loggedInUserPass = JSON.parse(loggedInUserPass);
-            console.log(this.loggedInUserPass)
-          } 
-        }
-        
-      },
-      error: (error) => {
-        console.log(error.error.message ?? error.message)
-      }
-    })
+    this.authService.getPass()
+
+    authService.loggedInUser$.subscribe((res)=>{ this.loggedInUser = res})
+    authService.loggedInUserPass$.subscribe((res)=>{ this.loggedInUserPass = res})
   }
 
   

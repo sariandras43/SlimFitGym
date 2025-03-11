@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../Services/auth.service';
+import {  UserService } from '../../Services/user.service';
 import { FormsModule } from '@angular/forms';
 import { UserModel } from '../../Models/user.model';
 
@@ -21,7 +21,7 @@ export class LogInPageComponent {
   errorMessage = '';
 
   constructor(
-    private authService: AuthService,
+    private authService: UserService,
     private router: Router
   ) { }
 
