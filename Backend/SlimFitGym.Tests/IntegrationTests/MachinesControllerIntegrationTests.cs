@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
+using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
 using SlimFitGym.Models.Responses;
 using SlimFitGymBackend;
@@ -33,7 +34,7 @@ namespace SlimFitGym.Tests.IntegrationTests
             // Act
             var response = await client.GetAsync(request);
             string json = await response.Content.ReadAsStringAsync();
-            List<MachineResponse> content = JsonConvert.DeserializeObject<List<MachineResponse>>(json);
+            List<MachineResponse> machines = JsonConvert.DeserializeObject<List<MachineResponse>>(json);
 
             // Assert
             Assert.Multiple(() =>
@@ -41,7 +42,8 @@ namespace SlimFitGym.Tests.IntegrationTests
                 Assert.NotNull(response);
                 Assert.NotNull(response.Content);
                 Assert.Equal("OK", response.StatusCode.ToString());
-                Assert.IsType<List<MachineResponse>>(content);
+                Assert.IsType<List<MachineResponse>>(machines);
+                Assert.True(machines.Count > 0);
             });
         }
 

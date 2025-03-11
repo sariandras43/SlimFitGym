@@ -53,7 +53,7 @@ namespace SlimFitGym.Tests.IntegrationTests
 
         [Theory]
         [MemberData(nameof(GetLoginTestData))]
-        public async Task LoginWithDifferentAccountInfo(string email, string password, bool success)
+        public async Task LoginWithDifferentAccountInfoShouldReturnErrorOrCredentials(string email, string password, bool success)
         {
             // Arrange
             var request = "/api/auth/login";
