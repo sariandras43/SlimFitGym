@@ -56,7 +56,7 @@ namespace SlimFitGym.EFData.Repositories
                 Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
                 FreePlaces = t.MaxPeople-reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
                 TrainerImageUrl = imagesRepository.GetImageUrlByAccountId(t.TrainerId),
-                RoomImageUrls = imagesRepository.GetImageUrlsByRoomId(t.RoomId),
+                RoomImageUrl = imagesRepository.GetImageUrlByRoomId(t.RoomId),
                 TrainerId = t.TrainerId,
                 RoomId = t.RoomId
 
@@ -91,7 +91,7 @@ namespace SlimFitGym.EFData.Repositories
                     Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
                     FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
                     TrainerImageUrl = imagesRepository.GetImageUrlByAccountId(t.TrainerId),
-                    RoomImageUrls = imagesRepository.GetImageUrlsByRoomId(t.RoomId),
+                    RoomImageUrl = imagesRepository.GetImageUrlByRoomId(t.RoomId),
                     TrainerId = t.TrainerId,
                     RoomId = t.RoomId,
 
@@ -119,7 +119,7 @@ namespace SlimFitGym.EFData.Repositories
                     Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
                     FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
                     TrainerImageUrl = imagesRepository.GetImageUrlByAccountId(t.TrainerId),
-                    RoomImageUrls = imagesRepository.GetImageUrlsByRoomId(t.RoomId),
+                    RoomImageUrl = imagesRepository.GetImageUrlByRoomId(t.RoomId),
                     RoomId = t.RoomId,
                     TrainerId = t.TrainerId,
 
@@ -147,7 +147,7 @@ namespace SlimFitGym.EFData.Repositories
                 Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
                 FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
                 TrainerImageUrl = imagesRepository.GetImageUrlByAccountId(t.TrainerId),
-                RoomImageUrls = imagesRepository.GetImageUrlsByRoomId(t.RoomId),
+                RoomImageUrl = imagesRepository.GetImageUrlByRoomId(t.RoomId),
                 TrainerId = t.TrainerId,
                 RoomId = t.RoomId
             }).ToList();

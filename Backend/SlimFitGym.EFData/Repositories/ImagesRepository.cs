@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SlimFitGym.EFData.Interfaces;
 using System.Security.Cryptography;
+using Microsoft.EntityFrameworkCore;
 
 namespace SlimFitGym.EFData.Repositories
 {
@@ -62,40 +63,74 @@ namespace SlimFitGym.EFData.Repositories
             return img;
         }
 
-        public List<Image> UploadImagesToMachine(List<ImageRequest> images, int machineId)
+        public List<Image> UploadImagesToMachine(List<string> images, int machineId)
         {
+
             List<Image> result = new List<Image>();
-            foreach (ImageRequest imageRequest in images)
+            if (images.Count==0)
             {
-                string[] splitUri = imageRequest.ImageInBase64.Split(',');
-                if (splitUri.Length!=2)
-                    throw new Exception("Érvénytelen Base64.");
-                if (string.IsNullOrEmpty(imageRequest.FileName))
-                    throw new Exception("Érvénytelen fájlnév.");
-                if (!Base64.IsValid(splitUri[1]))
-                    throw new Exception("Érvénytelen Base64.");
-
-                IFormFile file = ConvertBase64ToIFormFile(splitUri[1], imageRequest.FileName, splitUri[0].Split(':')[1]);
-
-                UploadResult? cloudinaryResult = UploadToCloudinary(file);
-
-                if (cloudinaryResult == null)
-                    throw new Exception("Hiba történt a kép feltöltése során.");
-
-                Image img = new Image()
-                {
-                    CloudinaryId = cloudinaryResult.PublicId.ToString(),
-                    MachineId = machineId,
-                    Url = cloudinaryResult.SecureUrl.ToString(),
-                    //TODO
-                    IsHighlighted = true
-                };
-                context.Set<Image>().Add(img);
+                DeleteImagesByMachineId(machineId);
                 context.SaveChanges();
-                result.Add(img);
-
+                return result;
             }
-            return result;
+            if (images.Count != 2)
+                throw new Exception("Két kép állítható be gépekhez.");
+
+            for (int i = 0; i < images.Count; i++)
+            {
+                string image = images[i];
+                if (!image.StartsWith("https://res.cloudinary.com"))
+                {
+                    string[] splitUri = image.Split(',');
+                    if (splitUri.Length!=2)
+                        throw new Exception("Érvénytelen Base64.");
+                    if (!Base64.IsValid(splitUri[1]))
+                        throw new Exception("Érvénytelen Base64.");
+                    IFormFile file = ConvertBase64ToIFormFile(splitUri[1], "Asd", splitUri[0].Split(':')[1]);
+
+                    UploadResult? cloudinaryResult = UploadToCloudinary(file);
+                    
+                    if (cloudinaryResult == null)
+                        throw new Exception("Hiba történt a kép feltöltése során.");
+
+                    Image img = new Image()
+                    {
+                        CloudinaryId = cloudinaryResult.PublicId.ToString(),
+                        MachineId = machineId,
+                        Url = cloudinaryResult.SecureUrl.ToString(),
+                        IsHighlighted = false
+                    };
+                    context.Set<Image>().Add(img);
+
+                    result.Add(img);
+
+
+                }
+                else 
+                {
+                    Image? img = context.Set<Image>().SingleOrDefault(i => i.Url == image.Trim() && i.MachineId == machineId);
+                    if (img == null)
+                        throw new Exception("Érvénytelen url: külső url-ek nem elfogadottak.");
+                    result.Add(img);
+                }
+            }
+            //TODO id alapjan, mert full ugyanolyan nem lesz a highlight maitt
+            List<Image> allImageUrlsToAMachine = this.context.Set<Image>().Where(i=>i.MachineId==machineId).ToList();
+            foreach (Image img in allImageUrlsToAMachine)
+            {
+                if (!result.Contains(img))
+                {
+                    DeleteImageByPublicId(img.CloudinaryId);
+                    context.Set<Image>().Remove(img);
+
+                }
+            }
+            if (HighlightMachineImage(result[0].CloudinaryId, machineId))
+            {
+                context.SaveChanges();
+                return result;
+            }
+            throw new Exception("Hiba történt");
         }
 
         public Image UploadImageToRoom(string image, int roomId)
@@ -151,7 +186,6 @@ namespace SlimFitGym.EFData.Repositories
                 {
                     DeleteImageByPublicId(image.CloudinaryId);
                     context.Set<Image>().Remove(image);
-                    context.SaveChanges();
                 }              
             }
             return imagesToRemove;
@@ -181,13 +215,17 @@ namespace SlimFitGym.EFData.Repositories
 
         public List<string> GetImageUrlsByMachineId(int machineId)
         {
-            return context.Set<Image>().Where(i => i.MachineId == machineId).Select(i => i.Url).ToList();
-
+            return context.Set<Image>().Where(i => i.MachineId == machineId).OrderByDescending(i=>i.IsHighlighted).Select(i => i.Url).ToList();
         }
 
-        public List<string> GetImageUrlsByRoomId(int roomId)
+        public string GetImageUrlByRoomId(int roomId)
         {
-            return context.Set<Image>().Where(i => i.RoomId == roomId).Select(i => i.Url).ToList();
+            Image? image = context.Set<Image>().FirstOrDefault(i => i.RoomId == roomId);
+            if (image != null)
+            {
+                return image.Url;
+            }
+            return "";
         }
 
         public string GetImageByPublicId(string publicId)
@@ -244,6 +282,20 @@ namespace SlimFitGym.EFData.Repositories
 
             return deletionResult.Result == "ok"; 
 
+        }
+
+        private bool HighlightMachineImage(string publicId,int machineId)
+        {
+            this.context.Set<Image>().Where(i => i.MachineId == machineId).ExecuteUpdate<Image>(setters=>setters.SetProperty(i=>i.IsHighlighted,false));
+
+            Image? img = this.context.Set<Image>().SingleOrDefault(i => i.CloudinaryId == publicId);
+            if (img == null)
+                return false;
+            img.IsHighlighted=true;
+
+            this.context.Entry(img).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            //this.context.SaveChanges();
+            return true; // Can only return when no errors occur at modifying
         }
     }
 }

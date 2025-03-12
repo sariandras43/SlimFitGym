@@ -93,7 +93,7 @@ namespace SlimFitGym.EFData.Repositories
 
             this.context.Entry(m).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             this.context.SaveChanges();
-            imagesRepository.DeleteImagesByMachineId(id);
+            //imagesRepository.DeleteImagesByMachineId(id);
             imagesRepository.UploadImagesToMachine(machine.Images, id);
             return new MachineResponse(m,imagesRepository.GetImageUrlsByMachineId(id));
         }
