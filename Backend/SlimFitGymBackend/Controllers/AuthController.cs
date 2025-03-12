@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json.Linq;
+using SlimFitGym.EFData.Interfaces;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models.Requests;
 using SlimFitGym.Models.Responses;
@@ -14,8 +15,8 @@ namespace SlimFitGymBackend.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        readonly AccountRepository accountRepository;
-        public AuthController(AccountRepository accountRepository)
+        readonly IAccountRepository accountRepository;
+        public AuthController(IAccountRepository accountRepository)
         {
             this.accountRepository = accountRepository;
         }
@@ -27,7 +28,7 @@ namespace SlimFitGymBackend.Controllers
             {
                 AccountResponse? account = accountRepository.Login(loginInfo);
                 if (account == null)
-                    return NotFound(new {message="Nem található a felhasználó." });
+                    return NotFound(new { message = "Nem található a felhasználó." });
                 return Ok(account);
             });
         }
@@ -43,15 +44,16 @@ namespace SlimFitGymBackend.Controllers
 
         [HttpPut("modify/{id}")]
         [Authorize]
-        public IActionResult Modify([FromRoute] string id, [FromBody] ModifyAccountRequest accountInfo)
+        public IActionResult Modify([FromRoute] string id, [FromBody] dynamic accountInfo)
         {
             string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+            var account = Newtonsoft.Json.JsonConvert.DeserializeObject<ModifyAccountRequest>(accountInfo.ToString());
             return this.Execute(() =>
             {
                 int idNum;
                 if (int.TryParse(id, out idNum))
                 {
-                    var res = accountRepository.UpdateAccountPublic(token,idNum, accountInfo);
+                    var res = accountRepository.UpdateAccountPublic(token, idNum, account);
                     if (res != null) return Ok(res);
                     return NotFound("Nem található a felhasználó.");
 
@@ -70,13 +72,28 @@ namespace SlimFitGymBackend.Controllers
                 int idNum;
                 if (int.TryParse(id, out idNum))
                 {
-                    var res = accountRepository.DeleteAccount(token,idNum);
+                    var res = accountRepository.DeleteAccount(token, idNum);
                     if (res != null)
                         return Ok(res);
                     return NotFound(new { message = "Nem található a felhasználó.." });
 
                 }
                 throw new Exception("Nem érvényes azonosító.");
+            });
+        }
+        [HttpGet("me")]
+        [Authorize]
+        public IActionResult GetLoggedInUser()
+        {
+            string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+            return this.Execute(() =>
+            {
+
+                var res = accountRepository.GetLoggedInAccountFromToken(token);
+                if (res != null) return Ok(res);
+                return NotFound("Nem található a felhasználó.");
+
+                throw new Exception("Érvénytelen azonosító.");
             });
         }
     }

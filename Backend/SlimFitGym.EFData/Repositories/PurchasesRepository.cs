@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using SlimFitGym.EFData.Interfaces;
 using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
 using SlimFitGym.Models.Responses;
@@ -11,13 +12,13 @@ using System.Threading.Tasks;
 
 namespace SlimFitGym.EFData.Repositories
 {
-    public class PurchasesRepository
+    public class PurchasesRepository:IPurchasesRepository
     {
         readonly SlimFitGymContext context;
-        readonly AccountRepository accountRepository;
+        readonly IAccountRepository accountRepository;
         readonly TokenGenerator tokenGenerator;
 
-        public PurchasesRepository(SlimFitGymContext context, AccountRepository accountRepository, TokenGenerator tokenGenerator)
+        public PurchasesRepository(SlimFitGymContext context, IAccountRepository accountRepository, TokenGenerator tokenGenerator)
         {
             this.context = context;
             this.accountRepository = accountRepository;
@@ -89,11 +90,12 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Ilyen bérlet nem létezik.");
             if (!p.IsActive)
                 throw new Exception("Ilyen bérlet nem létezik.");
-            Account? a = context.Set<Account>().SingleOrDefault(a => a.Id == purchase.AccountId);
+            Account? a = context.Set<Account>().SingleOrDefault(a => a.Id == purchase.AccountId && a.isActive);
             if (a == null)
                 throw new Exception("Ilyen felhasználó nem létezik.");
-            if (!a.isActive)
-                throw new Exception("Ilyen felhasználó nem létezik.");
+            if (a.Role=="admin" || a.Role=="trainer")
+                throw new Exception("Edző és admin nem vehet bérletet.");
+
 
             Purchase savedPurchase = this.context.Set<Purchase>().Add(new Purchase() { AccountId=purchase.AccountId,PassId=purchase.PassId,PurchaseDate=DateTime.Now}).Entity;
 

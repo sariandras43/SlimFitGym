@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
+using SlimFitGym.EFData.Interfaces;
 using SlimFitGym.EFData.Repositories;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -11,8 +12,8 @@ namespace SlimFitGymBackend.Controllers
     [ApiController]
     public class EntriesController : ControllerBase
     {
-        readonly EntriesRepository entriesRepository;
-        public EntriesController(EntriesRepository entriesRepository)
+        readonly IEntriesRepository entriesRepository;
+        public EntriesController(IEntriesRepository entriesRepository)
         {
             this.entriesRepository = entriesRepository;
         }
@@ -21,9 +22,9 @@ namespace SlimFitGymBackend.Controllers
 
         
         //GET api/<EntriesController>/5
-        [HttpGet("{accountId}/limit={limit}/offset={offset}")]
+        [HttpGet("{accountId}")]
         [Authorize]
-        public IActionResult Get([FromRoute] string accountId, [FromRoute] string limit, [FromRoute] string offset)
+        public IActionResult Get([FromRoute] string accountId, [FromQuery] string limit="10", [FromQuery] string offset="0")
         {
             string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
 
@@ -36,7 +37,11 @@ namespace SlimFitGymBackend.Controllers
                 {
                     var res = entriesRepository.GetEntriesByAccountId(token,idNum, "2025.01.01", limitNum, offsetNum);
                     if (res != null)
+                    {
+                        Response.Headers.Add("X-Total-Count", entriesRepository.GetEntriesCountByUserId(token, idNum).ToString());
                         return Ok(res);
+
+                    }
                     return NotFound(new { message = "Nem található a felhasználó." });
 
                 }

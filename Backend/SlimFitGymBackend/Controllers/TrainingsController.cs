@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using SlimFitGym.EFData;
+using SlimFitGym.EFData.Interfaces;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
@@ -14,10 +15,10 @@ namespace SlimFitGymBackend.Controllers
     [ApiController]
     public class TrainingsController : ControllerBase
     {
-        public readonly TrainingsRepository trainingsRepository;
-        public readonly ReservationRepository reservationRepository;
+        public readonly ITrainingsRepository trainingsRepository;
+        public readonly IReservationRepository reservationRepository;
 
-        public TrainingsController(TrainingsRepository trainingsRepository, ReservationRepository reservationRepository)
+        public TrainingsController(ITrainingsRepository trainingsRepository, IReservationRepository reservationRepository)
         {
             this.trainingsRepository = trainingsRepository;
             this.reservationRepository = reservationRepository;
@@ -45,7 +46,7 @@ namespace SlimFitGymBackend.Controllers
 
         [HttpGet("account/{accountId}")]
         [Authorize]
-        public IActionResult GetActiveTrainings(string accountId)
+        public IActionResult GetTrainingsByAccountId(string accountId)
         {
             string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
 

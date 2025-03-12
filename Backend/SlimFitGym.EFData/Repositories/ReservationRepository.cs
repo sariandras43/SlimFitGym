@@ -1,4 +1,5 @@
-﻿using SlimFitGym.Models.Models;
+﻿using SlimFitGym.EFData.Interfaces;
+using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
 using SlimFitGym.Models.Responses;
 using SlimFitGymBackend;
@@ -10,18 +11,19 @@ using System.Threading.Tasks;
 
 namespace SlimFitGym.EFData.Repositories
 {
-    public class ReservationRepository
+    public class ReservationRepository: IReservationRepository
     {
         readonly SlimFitGymContext context;
         readonly TokenGenerator tokenGenerator;
-        readonly AccountRepository accountRepository;
+        readonly IAccountRepository accountRepository;
 
-        public ReservationRepository(SlimFitGymContext context, TokenGenerator tokenGenerator, AccountRepository accountRepository)
+        public ReservationRepository(SlimFitGymContext context, TokenGenerator tokenGenerator, IAccountRepository accountRepository)
         {
             this.context = context;
             this.tokenGenerator = tokenGenerator;
             this.accountRepository = accountRepository;
         }
+
 
         public List<ReservationResponse> GetAllReservations()
         {
@@ -46,14 +48,13 @@ namespace SlimFitGym.EFData.Repositories
                 return res;
             return null;
         }
-        public List<Reservation>? GetReservationsByAccountId(int accountId)
+        public List<Reservation> GetReservationsByAccountId(int accountId)
         {
             if (accountId <= 0)
                 throw new Exception("Érvénytelen azonosító.");
             var res = context.Set<Reservation>().Where(r => r.AccountId == accountId).ToList();
-            if (res != null)
-                return res;
-            return null;
+            return res;
+
         }
 
         public ReservationResponse? NewReservation(string token, ReservationRequest reservation)

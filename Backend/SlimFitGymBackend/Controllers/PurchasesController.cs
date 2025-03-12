@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json.Linq;
+using SlimFitGym.EFData.Interfaces;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
@@ -14,10 +15,10 @@ namespace SlimFitGymBackend.Controllers
     [ApiController]
     public class PurchasesController : ControllerBase
     {
-        readonly PurchasesRepository purchasesRepository;
-        public PurchasesController(PurchasesRepository pR)
+        readonly IPurchasesRepository purchasesRepository;
+        public PurchasesController(IPurchasesRepository purchasesRepository)
         {
-            this.purchasesRepository = pR;
+            this.purchasesRepository = purchasesRepository;
         }
         // GET: api/purchases
         [HttpGet]

@@ -1,0 +1,84 @@
+.loginWrapper {
+  display: grid;
+  grid-template-columns: 5fr 4fr;
+  width: 70%;
+  margin: 0 auto;
+  background-color: var(--bg-secondary);
+  border-radius: var(--border-radius);
+  min-height: 37em;
+  img {
+    border-radius: var(--border-radius);
+    height: 100%;
+    object-fit: cover;
+    view-transition-name: log-in-image;
+  }
+  .content{
+    padding: 2em;
+        display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1em;
+    position: relative;
+    
+    
+    .inputField{
+        display: flex;
+        flex-direction: column;
+        
+        input{
+            background-color: inherit;
+            border: 0;
+            border-bottom: 1px solid var(--secondary-text);
+            outline: rgba($color: #000000, $alpha: 0);
+            color: var(--primary-text);
+            &:focus{
+                border-bottom: 2px solid var(--primary-color);
+            }
+            
+        }
+        &+.inputField{
+            margin-top: 1em;
+        }
+        
+    }
+    .links{
+        display: flex;
+        gap: .25em;
+        a{
+        
+            color: var(--secondary-text);
+            text-decoration: none;
+            
+        }
+    }
+    button{
+        background-color: var(--primary-color);
+        border-radius: var(--border-radius);
+        border: none;
+        padding: .25em;
+        color: var(--primary-text);
+        margin-top: 1em;
+        font-size: 1.5rem;
+    }
+    .errorField{
+        color: var(--danger);
+        font-weight: bold;
+        
+    }
+    &:has(.errorField){
+        button{
+            background-color: var(--danger);
+        }
+        
+    }
+}
+}
+.wrapperWrapper {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding-top: 6rem;
+}

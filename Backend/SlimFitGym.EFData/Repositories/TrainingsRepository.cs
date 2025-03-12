@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
+using SlimFitGym.EFData.Interfaces;
 using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
 using SlimFitGym.Models.Responses;
@@ -12,20 +13,20 @@ using System.Threading.Tasks;
 
 namespace SlimFitGym.EFData.Repositories
 {
-    public class TrainingsRepository
+    public class TrainingsRepository: ITrainingsRepository
     {
         public readonly SlimFitGymContext context;
-        public readonly RoomsRepository roomsRepository;
-        public readonly AccountRepository accountRepository;
-        public readonly ReservationRepository reservationRepository;
-        public readonly ImagesRepository imagesRepository;
+        public readonly IRoomsRepository roomsRepository;
+        public readonly IAccountRepository accountRepository;
+        public readonly IReservationRepository reservationRepository;
+        public readonly IImagesRepository imagesRepository;
         public readonly TokenGenerator tokenGenerator;
         public TrainingsRepository(SlimFitGymContext slimFitGymContext,
-            RoomsRepository roomsRepository,
-            AccountRepository accountRepository,
-            ReservationRepository reservationRepository,
-            ImagesRepository imagesRepository,
-            TokenGenerator tokenGenerator)
+            IRoomsRepository roomsRepository,
+            IAccountRepository accountRepository,
+            IReservationRepository reservationRepository,
+            IImagesRepository imagesRepository,
+            TokenGenerator tokenGenerator) 
         {
             this.context = slimFitGymContext;
             this.roomsRepository = roomsRepository;
@@ -55,7 +56,7 @@ namespace SlimFitGym.EFData.Repositories
                 Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
                 FreePlaces = t.MaxPeople-reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
                 TrainerImageUrl = imagesRepository.GetImageUrlByAccountId(t.TrainerId),
-                RoomImageUrls = imagesRepository.GetImageUrlsByRoomId(t.RoomId),
+                RoomImageUrl = imagesRepository.GetImageUrlByRoomId(t.RoomId),
                 TrainerId = t.TrainerId,
                 RoomId = t.RoomId
 
@@ -74,7 +75,7 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Nem lehet más jelentkezéseit lekérni.");
             if (accountId != tokenGenerator.GetAccountIdFromToken(token) && accountFromToken.Role != "admin")
                 throw new Exception("Nem lehet más jelentkezéseit lekérni.");
-            var reservations = reservationRepository.GetReservationsByAccountId(accountId).Select(r=>r.TrainingId).ToList();
+            List<int> reservations = reservationRepository.GetReservationsByAccountId(accountId).Select(r=>r.TrainingId).ToList();
             List<TrainingResponse> res = new List<TrainingResponse>();
             foreach (int trainingId in reservations)
             {
@@ -90,13 +91,14 @@ namespace SlimFitGym.EFData.Repositories
                     Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
                     FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
                     TrainerImageUrl = imagesRepository.GetImageUrlByAccountId(t.TrainerId),
-                    RoomImageUrls = imagesRepository.GetImageUrlsByRoomId(t.RoomId),
+                    RoomImageUrl = imagesRepository.GetImageUrlByRoomId(t.RoomId),
                     TrainerId = t.TrainerId,
                     RoomId = t.RoomId,
 
                 }).SingleOrDefault();
-                res.Add(traininRes);
-            }
+                if (traininRes !=null)
+                    res.Add(traininRes);     
+            }             
             return res;
         }
 
@@ -118,7 +120,7 @@ namespace SlimFitGym.EFData.Repositories
                     Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
                     FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
                     TrainerImageUrl = imagesRepository.GetImageUrlByAccountId(t.TrainerId),
-                    RoomImageUrls = imagesRepository.GetImageUrlsByRoomId(t.RoomId),
+                    RoomImageUrl = imagesRepository.GetImageUrlByRoomId(t.RoomId),
                     RoomId = t.RoomId,
                     TrainerId = t.TrainerId,
 
@@ -146,7 +148,7 @@ namespace SlimFitGym.EFData.Repositories
                 Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
                 FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
                 TrainerImageUrl = imagesRepository.GetImageUrlByAccountId(t.TrainerId),
-                RoomImageUrls = imagesRepository.GetImageUrlsByRoomId(t.RoomId),
+                RoomImageUrl = imagesRepository.GetImageUrlByRoomId(t.RoomId),
                 TrainerId = t.TrainerId,
                 RoomId = t.RoomId
             }).ToList();

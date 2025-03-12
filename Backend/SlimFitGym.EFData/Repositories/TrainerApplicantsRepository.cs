@@ -1,4 +1,5 @@
-﻿using SlimFitGym.Models.Models;
+﻿using SlimFitGym.EFData.Interfaces;
+using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
 using SlimFitGym.Models.Responses;
 using SlimFitGymBackend;
@@ -11,12 +12,12 @@ using System.Threading.Tasks;
 
 namespace SlimFitGym.EFData.Repositories
 {
-    public class TrainerApplicantsRepository
+    public class TrainerApplicantsRepository:ITrainerApplicantsRepository
     {
         readonly SlimFitGymContext context;
-        readonly AccountRepository accountRepository;
+        readonly IAccountRepository accountRepository;
         readonly TokenGenerator tokenGenerator;
-        public TrainerApplicantsRepository(SlimFitGymContext slimFitGymContext, AccountRepository accountRepository, TokenGenerator tokenGenerator)
+        public TrainerApplicantsRepository(SlimFitGymContext slimFitGymContext, IAccountRepository accountRepository, TokenGenerator tokenGenerator)
         {
             context = slimFitGymContext;
             this.accountRepository = accountRepository;

@@ -33,9 +33,15 @@ namespace SlimFitGym.Models.Responses
         {
             Id = a.Id;
             Name = a.Name;
+            Phone = a.Phone;
             Email = a.Email;
             Role = a.Role;
             ImageUrl = imageUrl;
+        }
+
+        public AccountResponse()
+        {
+            
         }
     }
 }

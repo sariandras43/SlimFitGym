@@ -20,5 +20,9 @@ namespace SlimFitGym.Models.Responses
             Description = m.Description;
             ImageUrls = imageUrls;
         }
+        public MachineResponse()
+        {
+            
+        }
     }
 }

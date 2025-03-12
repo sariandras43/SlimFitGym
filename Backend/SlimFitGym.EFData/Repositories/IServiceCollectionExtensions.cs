@@ -13,6 +13,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using static System.Net.Mime.MediaTypeNames;
+using SlimFitGym.EFData.Interfaces;
+using Microsoft.OpenApi.Models;
 
 namespace SlimFitGym.Data.Repository
 {
@@ -20,17 +22,17 @@ namespace SlimFitGym.Data.Repository
     {
         public static void AddRepositories(this IServiceCollection service)
         {
-            service.AddScoped<MachinesRepository>();
-            service.AddScoped<RoomsRepository>();
-            service.AddScoped<RoomsAndMachinesRepository>();
-            service.AddScoped<TrainingsRepository>();
-            service.AddScoped<ReservationRepository>();
-            service.AddScoped<AccountRepository>();
-            service.AddScoped<PassesRepository>();
-            service.AddScoped<PurchasesRepository>();
-            service.AddScoped<TrainerApplicantsRepository>();
-            service.AddScoped<EntriesRepository>();
-            service.AddScoped<ImagesRepository>();
+            service.AddScoped<IMachinesRepository, MachinesRepository>();
+            service.AddScoped<IRoomsRepository, RoomsRepository>();
+            service.AddScoped<IRoomsAndMachinesRepository, RoomsAndMachinesRepository>();
+            service.AddScoped<ITrainingsRepository, TrainingsRepository>();
+            service.AddScoped<IReservationRepository, ReservationRepository>();
+            service.AddScoped<IAccountRepository, AccountRepository>();
+            service.AddScoped<IPassesRepository, PassesRepository>();
+            service.AddScoped<IPurchasesRepository, PurchasesRepository>();
+            service.AddScoped<ITrainerApplicantsRepository, TrainerApplicantsRepository>();
+            service.AddScoped<IEntriesRepository, EntriesRepository>();
+            service.AddScoped<IImagesRepository, ImagesRepository>();
             service.AddDbContext<SlimFitGymContext>();
         }
 
@@ -76,6 +78,50 @@ namespace SlimFitGym.Data.Repository
                         };
                     };
                 });
+        }
+        public static void CorsAllowAllOrigins(this IServiceCollection service)
+        {
+            service.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins", builder =>
+                {
+                    builder
+                        .AllowAnyOrigin() 
+                        .AllowAnyMethod() 
+                        .AllowAnyHeader(); 
+                });
+            });
+        }
+
+        public static void AddSwaggerWithCustomOptions(this IServiceCollection service) 
+        {
+            service.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Kérlek adj meg egy JWT tokent!",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    Scheme = "bearer"
+                });
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer"
+                                }
+                            },
+                            new string[] { }
+                        }
+                    });
+            });
         }
     }
 }

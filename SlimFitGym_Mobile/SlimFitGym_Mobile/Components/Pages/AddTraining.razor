@@ -1,0 +1,180 @@
+﻿@page "/addTraining/{trainingId:int?}"
+@using SlimFitGym_Mobile.Models
+@using SlimFitGym_Mobile.Services
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+
+<Header />
+<div class="sticky-top py-3">
+    <h2 class="text-center fw-bold">@PageTitle</h2>
+</div>
+
+<div class="container">
+    <div class="rounded-3 d-inline-block mb-3">
+        <NavLink href="/trainings" class="d-block p-1">
+            <img class="invert" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAeUlEQVR4nO3XQQrCMBCF4e8MWkrvErLw/oeRWlxXChHEVRd1hHT+C/zJ42WY0BEjrtHSigfukfKKBStmXCKkpd10kz5xS+mRZLw/pWR7u4t3+JAubSzqWvy3qN+kfM3YBVKy7c72zuvXejtEy+d2gO1HEcqIKVq6mxcYKlU4XwQ2VAAAAABJRU5ErkJggg==" alt="back">
+        </NavLink>
+    </div>
+    <div class="row justify-content-center overflow-auto pb-5">
+        @if (isLoading)
+        {
+            <div class="d-flex align-items-center justify-content-center">
+                <img src="loading.gif" class="invert" alt="Loading..." />
+            </div>
+        }
+        else
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow">
+                    <div class="card-body lighter-dark">
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="alert alert-danger mt-3">
+                                @((MarkupString)errorMessage.Replace("\n", "<br>"))
+                            </div>
+                        }
+                        <form @onsubmit="HandleSubmit">
+                            <div class="mb-3 lighter-dark">
+                                <label for="name" class="form-label lighter-dark">Edzés neve</label>
+                                <input type="text" class="form-control lighter-dark" id="name" placeholder="Név" @bind="newTraining.Name" />
+                            </div>
+                            <div class="mb-3 lighter-dark">
+                                <label for="trainingStart" class="form-label lighter-dark">Kezdési idő</label>
+                                <input type="datetime-local" class="form-control lighter-dark" id="trainingStart" @bind="newTraining.TrainingStart" />
+                            </div>
+                            <div class="mb-3 lighter-dark">
+                                <label for="trainingEnd" class="form-label lighter-dark">Befejezési idő</label>
+                                <input type="datetime-local" class="form-control lighter-dark" id="trainingEnd" @bind="newTraining.TrainingEnd" />
+                            </div>
+                            <div class="mb-3 lighter-dark">
+                                <label for="maxPeople" class="form-label lighter-dark">Max. résztvevők</label>
+                                <input type="number" class="form-control w-25 text-center lighter-dark" maxlength="2" step="1" id="maxPeople" @bind="newTraining.MaxPeople" />
+                            </div>
+                            <div class="mb-3 lighter-dark">
+                                <label for="roomId" class="form-label lighter-dark">Terem</label>
+                                <select class="form-select lighter-dark" id="roomId" @bind="newTraining.RoomId">
+                                    <option selected disabled>Válassz termet</option>
+                                    @for (int i = 0; i < rooms.Count; i++)
+                                    {
+                                        <option value="@rooms[i].Id">@rooms[i].Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="d-grid mb-3 lighter-dark">
+                                <button type="submit" class="btn btn-primary">
+                                    @(isModify ? "Edzés módosítása" : "Edzés létrehozása")
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<Navbar />
+
+@code {
+    [Parameter]
+    public int? trainingId { get; set; }
+
+    private TrainingModel newTraining = new()
+    {
+        TrainerId = AccountModel.LoggedInUser.Id,
+        TrainingStart = DateTime.Now,
+        TrainingEnd = DateTime.Now.AddMinutes(30)
+    };
+    private List<RoomModel> rooms = new();
+    private string errorMessage;
+    private bool isModify = false;
+    private bool isLoading = true;
+    private string PageTitle = "Edzés létrehozása";
+
+    protected override async Task OnInitializedAsync()
+    {
+        rooms = await DataService.GetRooms();
+
+        if (trainingId.HasValue)
+        {
+            var training = await DataService.GetTraining(trainingId.Value);
+            if (training != null)
+            {
+                newTraining = training;
+                isModify = true;
+                PageTitle = "Edzés módosítása";
+            }
+        }
+        isLoading = false;
+    }
+
+    private async Task HandleSubmit()
+    {
+        errorMessage = string.Empty;
+        try
+        {
+            if (string.IsNullOrEmpty(newTraining.Name) ||
+                newTraining.TrainingStart == null ||
+                newTraining.TrainingEnd == null ||
+                newTraining.MaxPeople == 0 ||
+                newTraining.RoomId == 0)
+            {
+                errorMessage = "Minden mező kitöltése kötelező";
+                return;
+            }
+            if (newTraining.TrainingStart >= newTraining.TrainingEnd)
+            {
+                errorMessage = "A kezdési időpontnak korábbinak kell lennie, mint a befejezés";
+                return;
+            }
+            if (newTraining.TrainingEnd.Subtract(newTraining.TrainingStart).TotalMinutes < 30)
+            {
+                errorMessage = "Az edzés legkisebb időtartama 30 perc";
+                return;
+            }
+            if (newTraining.MaxPeople < 1)
+            {
+                errorMessage = "Minimum résztvevő 1 fő";
+                return;
+            }
+            if (newTraining.MaxPeople > 50)
+            {
+                errorMessage = "A résztvevők felső korláta 50 fő";
+                return;
+            }
+
+            if (isModify)
+            {
+                var result = await DataService.UpdateTraining(newTraining);
+                if (result.Success)
+                {
+                    NavigationManager.NavigateTo("/trainings");
+                }
+                else
+                {
+                    errorMessage = string.IsNullOrEmpty(result.ErrorMessage)
+                        ? "Hiba történt az edzés módosítása közben"
+                        : result.ErrorMessage;
+                }
+            }
+            else
+            {
+                var result = await DataService.CreateTraining(newTraining);
+                if (result.Success)
+                {
+                    NavigationManager.NavigateTo("/trainings");
+                }
+                else
+                {
+                    errorMessage = string.IsNullOrEmpty(result.ErrorMessage)
+                        ? "Hiba történt az edzés létrehozása közben"
+                        : result.ErrorMessage;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Hiba: {ex.Message}";
+        }
+    }
+}
