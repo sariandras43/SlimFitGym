@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using static System.Net.Mime.MediaTypeNames;
 using SlimFitGym.EFData.Interfaces;
+using Microsoft.OpenApi.Models;
 
 namespace SlimFitGym.Data.Repository
 {
@@ -89,6 +90,37 @@ namespace SlimFitGym.Data.Repository
                         .AllowAnyMethod() 
                         .AllowAnyHeader(); 
                 });
+            });
+        }
+
+        public static void AddSwaggerWithCustomOptions(this IServiceCollection service) 
+        {
+            service.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Kérlek adj meg egy JWT tokent!",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    Scheme = "bearer"
+                });
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer"
+                                }
+                            },
+                            new string[] { }
+                        }
+                    });
             });
         }
     }

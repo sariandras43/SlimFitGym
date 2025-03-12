@@ -13,6 +13,6 @@ namespace SlimFitGym.Models.Requests
         public string? Description { get; set; }
         public int RecommendedPeople { get; set; }
         public List<MachineForRoom> Machines { get; set; }
-        public List<ImageRequest> Images { get; set; }
+        public string Image { get; set; }
     }
 }

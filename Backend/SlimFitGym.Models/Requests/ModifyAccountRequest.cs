@@ -13,16 +13,14 @@ namespace SlimFitGym.Models.Requests
         public string Name { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
         public string? NewPassword { get; set; }
-        public ImageRequest Image { get; set; }
+        public string Image { get; set; }
         public ModifyAccountRequest(Account a)
         {
             Id = a.Id;
             Name = a.Name;
             Phone = a.Phone;
             Email = a.Email;
-            Password = a.Password;
         }
         public ModifyAccountRequest()
         {

@@ -14,7 +14,7 @@ namespace SlimFitGym.EFData.Interfaces
         List<ReservationResponse> GetAllReservations();
         ReservationResponse? GetReservationById(int id);
         List<Reservation>? GetReservationsByTrainingId(int trainingId);
-        List<Reservation>? GetReservationsByAccountId(int accountId);
+        List<Reservation> GetReservationsByAccountId(int accountId);
         ReservationResponse? NewReservation(string token, ReservationRequest reservation);
         ReservationResponse? DeleteReservation(int id);
         ReservationResponse? DeleteReservationByTrainingAndAccountId(string token, int accountId, int trainingId);

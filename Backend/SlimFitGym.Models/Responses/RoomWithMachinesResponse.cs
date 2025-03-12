@@ -14,7 +14,7 @@ namespace SlimFitGym.Models.Responses
         public string Name { get; set; }
         public bool IsActive { get; set; }
         public List<MachineDetails> Machines { get; set; }
-        public List<string> ImageUrls { get; set; }
+        public string ImageUrl { get; set; }
     }
     public class MachineDetails
     {
