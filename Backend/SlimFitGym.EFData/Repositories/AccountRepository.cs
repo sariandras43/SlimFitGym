@@ -193,6 +193,13 @@ namespace SlimFitGym.EFData.Repositories
 
         }
 
+        public AccountResponse? GetLoggedInAccountFromToken(string token)
+        {
+            var account = this.context.Set<Account>().SingleOrDefault(a => a.Id == tokenGenerator.GetAccountIdFromToken(token));
+            if (account == null) return null;
+            return new AccountResponse(account,imagesRepository.GetImageUrlByAccountId(account.Id));
+        }
+
         public Account? GetAccountById(int id)
         {
             if (id <= 0)

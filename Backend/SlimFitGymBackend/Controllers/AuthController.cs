@@ -28,7 +28,7 @@ namespace SlimFitGymBackend.Controllers
             {
                 AccountResponse? account = accountRepository.Login(loginInfo);
                 if (account == null)
-                    return NotFound(new {message="Nem található a felhasználó." });
+                    return NotFound(new { message = "Nem található a felhasználó." });
                 return Ok(account);
             });
         }
@@ -53,7 +53,7 @@ namespace SlimFitGymBackend.Controllers
                 int idNum;
                 if (int.TryParse(id, out idNum))
                 {
-                    var res = accountRepository.UpdateAccountPublic(token,idNum, account);
+                    var res = accountRepository.UpdateAccountPublic(token, idNum, account);
                     if (res != null) return Ok(res);
                     return NotFound("Nem található a felhasználó.");
 
@@ -72,13 +72,28 @@ namespace SlimFitGymBackend.Controllers
                 int idNum;
                 if (int.TryParse(id, out idNum))
                 {
-                    var res = accountRepository.DeleteAccount(token,idNum);
+                    var res = accountRepository.DeleteAccount(token, idNum);
                     if (res != null)
                         return Ok(res);
                     return NotFound(new { message = "Nem található a felhasználó.." });
 
                 }
                 throw new Exception("Nem érvényes azonosító.");
+            });
+        }
+        [HttpGet("me")]
+        [Authorize]
+        public IActionResult GetLoggedInUser()
+        {
+            string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+            return this.Execute(() =>
+            {
+
+                var res = accountRepository.GetLoggedInAccountFromToken(token);
+                if (res != null) return Ok(res);
+                return NotFound("Nem található a felhasználó.");
+
+                throw new Exception("Érvénytelen azonosító.");
             });
         }
     }
