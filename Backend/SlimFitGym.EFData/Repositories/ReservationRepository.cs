@@ -48,14 +48,13 @@ namespace SlimFitGym.EFData.Repositories
                 return res;
             return null;
         }
-        public List<Reservation>? GetReservationsByAccountId(int accountId)
+        public List<Reservation> GetReservationsByAccountId(int accountId)
         {
             if (accountId <= 0)
                 throw new Exception("Érvénytelen azonosító.");
             var res = context.Set<Reservation>().Where(r => r.AccountId == accountId).ToList();
-            if (res != null)
-                return res;
-            return null;
+            return res;
+
         }
 
         public ReservationResponse? NewReservation(string token, ReservationRequest reservation)

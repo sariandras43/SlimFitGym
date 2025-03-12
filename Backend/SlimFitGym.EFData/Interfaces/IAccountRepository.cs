@@ -17,5 +17,6 @@ namespace SlimFitGym.EFData.Interfaces
         AccountResponse? DeleteAccount(string token, int id);
         Account? GetAccountById(int id);
         AccountResponse? BecomeATrainer(int id);
+        AccountResponse? GetLoggedInAccountFromToken(string token);
     }
 }

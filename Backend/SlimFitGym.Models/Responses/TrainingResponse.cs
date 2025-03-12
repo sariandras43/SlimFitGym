@@ -23,6 +23,6 @@ namespace SlimFitGym.Models.Responses
         public int FreePlaces { get; set; }
         public bool IsActive { get; set; } = true;
         public string TrainerImageUrl { get; set; }
-        public List<string> RoomImageUrls { get; set; }
+        public string RoomImageUrl { get; set; }
     }
 }

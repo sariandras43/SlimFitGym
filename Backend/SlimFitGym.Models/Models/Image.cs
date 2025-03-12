@@ -30,5 +30,8 @@ namespace SlimFitGym.Models.Models
         [Required, StringLength(255)]
         public required string CloudinaryId { get; set; }
 
+        [Required]
+        public required bool IsHighlighted { get; set; }
+
     }
 }
