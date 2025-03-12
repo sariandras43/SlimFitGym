@@ -75,7 +75,7 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Nem lehet más jelentkezéseit lekérni.");
             if (accountId != tokenGenerator.GetAccountIdFromToken(token) && accountFromToken.Role != "admin")
                 throw new Exception("Nem lehet más jelentkezéseit lekérni.");
-            var reservations = reservationRepository.GetReservationsByAccountId(accountId).Select(r=>r.TrainingId).ToList();
+            List<int> reservations = reservationRepository.GetReservationsByAccountId(accountId).Select(r=>r.TrainingId).ToList();
             List<TrainingResponse> res = new List<TrainingResponse>();
             foreach (int trainingId in reservations)
             {
@@ -96,8 +96,9 @@ namespace SlimFitGym.EFData.Repositories
                     RoomId = t.RoomId,
 
                 }).SingleOrDefault();
-                res.Add(traininRes);
-            }
+                if (traininRes !=null)
+                    res.Add(traininRes);     
+            }             
             return res;
         }
 
