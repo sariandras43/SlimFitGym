@@ -37,7 +37,11 @@ namespace SlimFitGymBackend.Controllers
                 {
                     var res = entriesRepository.GetEntriesByAccountId(token,idNum, "2025.01.01", limitNum, offsetNum);
                     if (res != null)
+                    {
+                        Response.Headers.Add("X-Total-Count", entriesRepository.GetEntriesCountByUserId(token, idNum).ToString());
                         return Ok(res);
+
+                    }
                     return NotFound(new { message = "Nem található a felhasználó." });
 
                 }

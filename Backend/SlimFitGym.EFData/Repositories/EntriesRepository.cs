@@ -35,9 +35,16 @@ namespace SlimFitGym.EFData.Repositories
         {
             if (tokenGenerator.GetAccountIdFromToken(token) != accountId)
                 throw new Exception("Nem lehet más bérletével belépni.");
-            if (accountId<=0) throw new Exception("Ez a felhasználó nem létezik.");
+            if (accountId<=0) throw new Exception("Érvénytelen azonosító.");
             Account? account = accountRepository.GetAccountById(accountId);
             if (account==null) throw new Exception("Ez a felhasználó nem létezik.");
+            if (account.Role=="trainer" || account.Role == "admin")
+            {
+                Entry entryToSave = new Entry() { AccountId=account.Id,EntryDate=DateTime.Now};
+                Entry newEntry = context.Set<Entry>().Add(entryToSave).Entity;
+                this.context.SaveChanges();
+                return newEntry;
+            }
             Purchase? latestPurchase = purchasesRepository.GetLatestPurchaseByAccountId(token, accountId);
             if (latestPurchase == null) throw new Exception("Ez a felhasználó nem vett még bérletet.");
             Pass? pass = passesRepository.GetPassModelById(latestPurchase.PassId);
@@ -110,6 +117,22 @@ namespace SlimFitGym.EFData.Repositories
             if (!DateTime.TryParseExact(fromDate, dateTimeFormats, CultureInfo.CurrentCulture, DateTimeStyles.AllowWhiteSpaces | DateTimeStyles.AssumeLocal, out from))
                 throw new Exception($"Érvénytelen dátum-idő formátum: {fromDate}");
             return context.Set<Entry>().Where(e => e.AccountId == accountId && e.EntryDate > from).OrderByDescending(e => e.EntryDate).Skip(offset).Take(limit).ToList();
+        }
+
+        public int GetEntriesCountByUserId(string token, int accountId)
+        {
+            Account? accountFromToken = accountRepository.GetAccountById(tokenGenerator.GetAccountIdFromToken(token));
+            if (accountFromToken == null)
+                throw new Exception("Érvénytelen token.");
+            Account? account = accountRepository.GetAccountById(accountId);
+            if (accountFromToken.Role == "admin" && account == null)
+                return 0;
+            else if (accountFromToken.Role != "admin" && account == null)
+                throw new Exception("Nem lehet más belépéseit lekérni.");
+            if (accountId != tokenGenerator.GetAccountIdFromToken(token) && accountFromToken.Role != "admin")
+                throw new Exception("Nem lehet más belépéseit lekérni.");
+
+            return context.Set<Entry>().Where(e => e.AccountId == accountId).Count();
         }
     }
 }
