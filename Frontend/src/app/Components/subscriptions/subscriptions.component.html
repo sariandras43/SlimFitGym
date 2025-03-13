@@ -4,10 +4,10 @@
     @for (pass of passes; track $index) {
       <app-card
       [btnText]="'Vásárlás'"
-      [benefits]="pass.benefits"
+      [benefits]="getBenefits(pass)"
       [title]="pass.name"
       [price]="pass.price.toString()"
-      unit="Ft/Hó"
+      unit="Ft"
 
       >
 

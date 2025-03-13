@@ -21,4 +21,19 @@ export class SubscriptionsComponent {
       this.passes = passes;
     });
   }
+
+  getBenefits(pass: PassModel): string[] {
+    const benefits: string[] = [...pass.benefits];
+
+    if (pass.days && pass.days > 0) {
+      benefits.push(`${pass.days} napig`)
+
+    }
+    if (pass.maxEntries && pass.maxEntries > 0) {
+      benefits.push(`${pass.maxEntries} belépés`)
+
+    }
+
+    return benefits;
+  }
 }
