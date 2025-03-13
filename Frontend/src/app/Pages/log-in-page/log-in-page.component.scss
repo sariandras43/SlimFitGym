@@ -39,7 +39,12 @@
         &+.inputField{
             margin-top: 1em;
         }
-        
+        &.rememberMe{
+            
+            flex-direction: row;
+            gap: 0.5em;
+            
+        }
     }
     .links{
         display: flex;

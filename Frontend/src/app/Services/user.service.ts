@@ -9,27 +9,50 @@ import { PassModel } from '../Models/pass.model';
   providedIn: 'root',
 })
 export class UserService {
-  private loggedInUserSubject = new BehaviorSubject<UserModel | undefined>(undefined);
+  private loggedInUserSubject = new BehaviorSubject<UserModel | undefined>(
+    undefined
+  );
   loggedInUser$ = this.loggedInUserSubject.asObservable();
-  private loggedInUserPassSubject = new BehaviorSubject<PassModel | undefined>(undefined);
+  private loggedInUserPassSubject = new BehaviorSubject<PassModel | undefined>(
+    undefined
+  );
   loggedInUserPass$ = this.loggedInUserPassSubject.asObservable();
 
-  constructor(private config: ConfigService, private http: HttpClient) {}
+  constructor(private config: ConfigService, private http: HttpClient) {
+    this.checkUser();
+  }
 
-  login(email: string, password: string, rememberMe: boolean): Observable<boolean> {
+  login(
+    email: string,
+    password: string,
+    rememberMe: boolean
+  ): Observable<boolean> {
+    // return this.http
+    //   .post<UserModel>(`${this.config.apiUrl}/auth/login`, {
+    //     email,
+    //     password,
+    //     rememberMe,
+    //   })
+    //   .pipe(
+    //     map((response: UserModel) => {
+    //       this.loggedInUserSubject.next(response);
+    //       localStorage.setItem('loggedInUser', JSON.stringify(response));
+    //       this.getPass();
+    //       return true;
+    //     })
+    //   );
     return this.http
-      .post<UserModel>(
-        `${this.config.apiUrl}/auth/login`,
-        { email, password, rememberMe },
-      )
+      .post<UserModel>(`${this.config.apiUrl}/auth/login`, {
+        email,
+        password,
+        rememberMe,
+      })
       .pipe(
         map((response: UserModel) => {
-          
           this.loggedInUserSubject.next(response);
-          localStorage.setItem(
-            'loggedInUser',
-            JSON.stringify(response)
-          );
+
+          const storage = rememberMe ? localStorage : sessionStorage;
+          storage.setItem('loggedInUser', JSON.stringify(response));
           this.getPass();
           return true;
         })
@@ -39,82 +62,94 @@ export class UserService {
   logout() {
     this.loggedInUserSubject.next(undefined);
     localStorage.removeItem('loggedInUser');
+    sessionStorage.removeItem('loggedInUser');
+    localStorage.removeItem('userPass');
+    sessionStorage.removeItem('userPass');
   }
-  register(email: string, name:string, phone: string,  password: string, rememberMe:boolean): Observable<boolean> {
+  register(
+    email: string,
+    name: string,
+    phone: string,
+    password: string,
+    rememberMe: boolean
+  ): Observable<boolean> {
     return this.http
-      .post<UserModel>(
-        `${this.config.apiUrl}/auth/register`,
-        { name, email, phone, password, rememberMe },
-      )
+      .post<UserModel>(`${this.config.apiUrl}/auth/register`, {
+        name,
+        email,
+        phone,
+        password,
+        rememberMe,
+      })
       .pipe(
         map((response: UserModel) => {
-          
           this.loggedInUserSubject.next(response);
-          localStorage.setItem(
-            'loggedInUser',
-            JSON.stringify(response)
-          );
+          localStorage.setItem('loggedInUser', JSON.stringify(response));
           this.getPass();
           return true;
         })
       );
   }
 
+  checkUser() {
+    const user =
+      localStorage.getItem('loggedInUser') ||
+      sessionStorage.getItem('loggedInUser');
+    if (user) {
+      const parsedUser: UserModel = JSON.parse(user);
 
-  // checkUser() {
-  //   const user = localStorage.getItem('loggedInUser');
-  //   if (user) {
-  //     const headers: HttpHeaders = new HttpHeaders().set('Authorization', `${JSON.parse(user).token}`);
-  //     this.http.get<UserModel>(`${this.config.apiUrl}/auth`, { headers }).subscribe({
-  //       next: (response: UserModel) => {
-  //         this.loggedInUser = response;
-  //         localStorage.setItem('loggedInUser', JSON.stringify(this.loggedInUser));
-  //       },
-  //       error: () => {
-  //         this.loggedInUser = undefined;
-  //         localStorage.removeItem('loggedInUser');
-  //       }
-  //     });
-  //   }
-  // }
+      if (
+        parsedUser.validTo &&
+        new Date().getTime() > Date.parse(parsedUser.validTo)
+      ) {
+        this.logout();
+        return;
+      }
 
-  getPass() : void{
-    
-    const user = localStorage.getItem('loggedInUser');
-    let loggedInUser: UserModel | undefined;
-    let headers : HttpHeaders | undefined ;
-    if (user){
-      loggedInUser = JSON.parse(user);
-      
-      headers = new HttpHeaders().set('authorization', `Bearer ${loggedInUser?.token}`);
+      this.loggedInUserSubject.next(parsedUser);
     }
-    this.http.get<PassModel>(
-        `${this.config.apiUrl}/passes/accounts/${loggedInUser?.id}/latest`,
-         { headers }
+  }
+  getPass(): void {
+    let storage = localStorage;
+    let user = localStorage.getItem('loggedInUser');
+    if(!user)
+    {
+
+      user = sessionStorage.getItem('loggedInUser');
+       storage = sessionStorage;
+    }
+    if (!user) {
+      console.warn('No logged-in user found.');
+      return;
+    }
+
+    const loggedInUser: UserModel = JSON.parse(user);
+    if (!loggedInUser?.id || !loggedInUser?.token) {
+      console.warn('Invalid user data.');
+      return;
+    }
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${loggedInUser.token}`
+    );
+
+    this.http
+      .get<PassModel>(
+        `${this.config.apiUrl}/passes/accounts/${loggedInUser.id}/latest`,
+        { headers }
       )
-      .pipe(
-        map((response: PassModel) => {
-          this.loggedInUserPass$
-          this.loggedInUserPassSubject.next(response)
-          localStorage.setItem(
-            'userPass',
-            JSON.stringify(response)
-          );
-          return true;
-        })
-      ).subscribe({
+      .subscribe({
         next: (response) => {
-          if (response) {
-            const loggedInUserPass = localStorage.getItem('userPass');
-            if (loggedInUserPass) {
-              this.loggedInUserPassSubject.next(JSON.parse(loggedInUserPass));
-            } 
-          }
-          
+          this.loggedInUserPassSubject.next(response);
+          storage.setItem('userPass', JSON.stringify(response));
         },
         error: (error) => {
-          console.log(error.error.message ?? error.message)
-        }
+          console.error(
+            'Failed to fetch pass:',
+            error.error?.message || error.message
+          );
+        },
       });
   }
 }
