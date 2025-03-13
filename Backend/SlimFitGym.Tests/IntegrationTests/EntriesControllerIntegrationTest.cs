@@ -16,16 +16,118 @@ namespace SlimFitGym.Tests.IntegrationTests
     {
 
         private readonly HttpClient client;
-        private string adminToken;
-        private string trainerToken;
-        public string userToken { get; set; }
 
-        public EntriesControllerIntegrationTest(WebApplicationFactory<Program> factory)
+        public EntriesControllerIntegrationTest(WebApplicationFactory<Program> factory) => this.client = factory.CreateClient();
+
+        [Theory]
+        [MemberData(nameof(GetEntriesGetTestData))]
+        public async Task GetEntriesShouldReturnOnlyLoggedInPersonsEntriesExpectAtAdminRole(int id, string email, string password, bool success)
         {
-            this.client = factory.CreateClient();
-            this.adminToken = Login("admin@gmail.com","admin").Result.Token;
-            this.trainerToken = Login("kazmer@gmail.com","kazmer").Result.Token;
-            this.userToken = Login("pista@gmail.com","pista").Result.Token;
+            // Arrange
+            string request = "/api/entries/" + id;
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {Login(email,password).Result}");
+
+            // Act
+            HttpResponseMessage response = await client.GetAsync(request);
+
+            // Assert
+            if (success)
+            {
+                List<Entry> entries = JsonConvert.DeserializeObject<List<Entry>>(await response.Content.ReadAsStringAsync())!;
+                Assert.Multiple(() =>
+                {
+                    Assert.NotNull(response);
+                    Assert.Equal("OK", response.StatusCode.ToString());
+                    Assert.IsType<List<Entry>>(entries);
+                });
+            }
+            else
+            {
+                ErrorModel error = JsonConvert.DeserializeObject<ErrorModel>(await response.Content.ReadAsStringAsync())!;
+                Assert.Multiple(() =>
+                {
+                    Assert.NotNull(response);
+                    Assert.Equal("BadRequest", response.StatusCode.ToString());
+                    Assert.IsType<ErrorModel>(error);
+                    Assert.Equal("Nem lehet más belépéseit lekérni.", error.Message);
+                });
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(GetEntriesPostTestData))]
+        public async Task PostEntryShouldReturnOkIfLoggedInPersonWantsToEntry(int id, string email, string password, bool success)
+        {
+            // Arrange
+            string request = "/api/entries/" + id;
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {Login(email, password).Result}");
+
+            Entry entryRequest = new Entry()
+            {
+                Id = 0,
+                AccountId = id
+            };
+
+            string jsonContent = JsonConvert.SerializeObject(entryRequest);
+            StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            // Act
+            HttpResponseMessage response = await client.PostAsync(request,content);
+
+            // Assert
+            if (success)
+            {
+                Entry entry = JsonConvert.DeserializeObject<Entry>(await response.Content.ReadAsStringAsync())!;
+                Assert.Multiple(() =>
+                {
+                    Assert.NotNull(response);
+                    Assert.Equal("OK", response.StatusCode.ToString());
+                    Assert.IsType<Entry>(entry);
+                });
+            }
+            else
+            {
+                ErrorModel error = JsonConvert.DeserializeObject<ErrorModel>(await response.Content.ReadAsStringAsync())!;
+                Assert.Multiple(() =>
+                {
+                    Assert.NotNull(response);
+                    Assert.Equal("BadRequest", response.StatusCode.ToString());
+                    Assert.IsType<ErrorModel>(error);
+                    Assert.Equal("Nem lehet más bérletével belépni.", error.Message);
+                });
+            }
+        }
+
+        [Fact]
+        public async Task PostEntryShouldReturnBadRequestWhenNoMoreEntriesLeftOnThePass()
+        {
+            // Arrange
+            string request = "/api/entries/3";
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {Login("pista@gmail.com", "pista").Result}");
+
+            Entry entryRequest = new Entry()
+            {
+                Id = 0,
+                AccountId = 3
+            };
+
+            string jsonContent = JsonConvert.SerializeObject(entryRequest);
+            StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+            // Act
+            HttpResponseMessage response= new HttpResponseMessage();
+            for (int counter = 0; counter < 30; counter++) 
+            {
+                response = await client.PostAsync(request, content);
+            }
+
+            ErrorModel error = JsonConvert.DeserializeObject<ErrorModel>(await response.Content.ReadAsStringAsync())!;
+            Assert.Multiple(() =>
+            {
+                Assert.NotNull(response);
+                Assert.Equal("BadRequest", response.StatusCode.ToString());
+                Assert.IsType<ErrorModel>(error);
+                Assert.Equal("Ezzel a bérlettel nem lehet többször belépni.", error.Message);
+            });
 
         }
 
@@ -33,65 +135,76 @@ namespace SlimFitGym.Tests.IntegrationTests
         [InlineData(1)]
         [InlineData(2)]
         [InlineData(3)]
-        public async Task AdminCanGetAnyonesEntriesShouldReturnArrayOfEntries(int id)
+        public async Task GetEntriesWithoutLoginShouldReturnUnauthorized(int id)
         {
             // Arrange
-            var request = "/api/entries/" + id;
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {adminToken}");
+            string request = "/api/entries/" + id;
 
             // Act
-            var response = await client.GetAsync(request);
+            HttpResponseMessage response = await client.GetAsync(request);
 
             // Assert
-            var entries = JsonConvert.DeserializeObject<List<Entry>>(await response.Content.ReadAsStringAsync());
-
+            ErrorModel error = JsonConvert.DeserializeObject<ErrorModel>(await response.Content.ReadAsStringAsync());
             Assert.Multiple(() =>
             {
                 Assert.NotNull(response);
-                Assert.Equal("OK", response.StatusCode.ToString());
-                Assert.IsType<List<Entry>>(entries);
+                Assert.Equal("Unauthorized", response.StatusCode.ToString());
             });
         }
 
-        [InlineData(1)]
-        [InlineData(2)]
-        [InlineData(3)]
-        public async Task TrainerAndUserCantGetEntriesMadeByOthersShouldReturnError(int id)
+        private async Task<string> Login(string email, string password)
         {
-            // Arrange
-            var request = "/api/entries/" + id;
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-
-            // Act
-            var response = await client.GetAsync(request);
-
-            // Assert
-            var entries = JsonConvert.DeserializeObject<ErrorModel>(await response.Content.ReadAsStringAsync());
-
-            Assert.Multiple(() =>
-            {
-                Assert.NotNull(response);
-                Assert.Equal("OK", response.StatusCode.ToString());
-                Assert.IsType<List<Entry>>(entries);
-            });
-        }
-        private async Task<AccountResponse> Login(string email, string password)
-        {
-            var request = "/api/auth/login";
+            string request = "/api/auth/login";
             LoginRequest loginRequest = new LoginRequest()
             {
                 Email = email,
                 Password = password,
                 RememberMe = false
             };
-            var jsonContent = JsonConvert.SerializeObject(loginRequest);
-            var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            string jsonContent = JsonConvert.SerializeObject(loginRequest);
+            StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
 
-            var response = await client.PostAsync(request, content);
+            HttpResponseMessage response = await client.PostAsync(request, content);
 
-            var login = JsonConvert.DeserializeObject<AccountResponse>(await response.Content.ReadAsStringAsync());
-            return login;
+            AccountResponse login = JsonConvert.DeserializeObject<AccountResponse>(await response.Content.ReadAsStringAsync())!;
+            return login.Token;
+        }
+
+        public static List<T> ReadTestData<T>(string filePath)
+        {
+            string json = File.ReadAllText(filePath);
+            return JsonConvert.DeserializeObject<List<T>>(json)!.ToList();
+        }
+
+        public static IEnumerable<object[]> GetEntriesGetTestData()
+        {
+            string filePath = "./Data/EntriesGetTestData.json";
+            var testCases = ReadTestData<EntryData>(filePath);
+
+            foreach (var testCase in testCases)
+            {
+                yield return new object[] {testCase.Id ,testCase.Email, testCase.Password, testCase.Success};
+            }
+        }
+
+        public static IEnumerable<object[]> GetEntriesPostTestData()
+        {
+            string filePath = "./Data/EntriesPostTestData.json";
+            var testCases = ReadTestData<EntryData>(filePath);
+
+            foreach (var testCase in testCases)
+            {
+                yield return new object[] { testCase.Id, testCase.Email, testCase.Password, testCase.Success };
+            }
+        }
+
+        class EntryData
+        {
+            public int Id { get; set; }
+            public required string Email { get; set; }
+            public required string Password { get; set; }
+            public bool Success { get; set; }
         }
     }
 }

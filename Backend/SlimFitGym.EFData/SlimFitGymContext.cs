@@ -13,7 +13,6 @@ namespace SlimFitGym.EFData
 {
     public class SlimFitGymContext : DbContext
     {
-        //public readonly IConfiguration config;
         public DbSet<RoomAndMachine> RoomsAndMachines { get; set; } = null!;
         public DbSet<Reservation> Reservations { get; set; } = null!;
         public DbSet<Purchase> Purchases { get; set; } = null!;
@@ -103,15 +102,17 @@ namespace SlimFitGym.EFData
 
             modelBuilder.Entity<Pass>().HasData
             (
-                new Pass() { Id=1,Days=30,Name="Havi",MaxEntries=0,Price=15000}
+                new Pass() { Id=1,Days=30,Name="Havi",MaxEntries=0,Price=15000},
+                new Pass() { Id=2,Days=0,Name="15 alkalmas bérlet",MaxEntries=15,Price=10000 }
             );
             modelBuilder.Entity<PassAndBenefit>().HasData
             (
-                new PassAndBenefit() { Id=1,BenefitId=1,PassId=1}
+                new PassAndBenefit() { Id=1,BenefitId=1,PassId=1},
+                new PassAndBenefit() { Id=2,BenefitId=1,PassId=1 }
             );
             modelBuilder.Entity<Purchase>().HasData
             (
-                new Purchase() {Id=1,AccountId=1,PassId=1,PurchaseDate= new DateTime(2025, 2, 6, 17, 0, 0) }
+                new Purchase() {Id=1,AccountId=3,PassId=2,PurchaseDate= DateTime.Now }
             );
 #endif
 
@@ -122,29 +123,5 @@ namespace SlimFitGym.EFData
 
         }
 
-
-        //Supposed to work, but doesn't
-        //public override int SaveChanges()
-        //{
-        //    IEnumerable<ValidationResult> validationErrors = ChangeTracker
-        //        .Entries<IValidatableObject>()
-        //        .SelectMany(e => e.Entity.Validate(null!))
-        //        .Where(r => r != ValidationResult.Success);
-
-        //    if (validationErrors.Any())
-        //    {
-        //        try
-        //        {
-
-        //        }
-
-        //        catch (DbUpdateException exception)
-        //        {
-        //            throw new Exception("Nem megfelelő formátumú");
-        //        }
-        //    }
-
-        //    return base.SaveChanges();
-        //}
     }
 }
