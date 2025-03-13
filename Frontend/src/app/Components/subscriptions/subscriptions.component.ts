@@ -15,7 +15,6 @@ export class SubscriptionsComponent {
   title = input<string>();
   passes: PassModel[] | undefined;
   constructor(passService: PassService) {
-    passService.getPasses();
     passService.allPasses$.subscribe((passes) => {
       this.passes = passes;
     });

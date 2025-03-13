@@ -2,16 +2,19 @@
   <h2 >{{title()}}</h2>
   <div class="subscriptions | g5">
     @for (pass of passes; track $index) {
-      <app-card
-      [btnText]="'Vásárlás'"
-      [benefits]="getBenefits(pass)"
-      [title]="pass.name"
-      [price]="pass.price.toString()"
-      unit="Ft"
+      @if (!highlightOnly() || pass.isHighlighted ) {
 
-      >
-
-      </app-card>
+        <app-card
+        [btnText]="'Vásárlás'"
+        [benefits]="getBenefits(pass)"
+        [title]="pass.name"
+        [price]="pass.price.toString()"
+        unit="Ft"
+  
+        >
+  
+        </app-card>
+      }
     }
     
 </div>

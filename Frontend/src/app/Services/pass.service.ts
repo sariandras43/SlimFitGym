@@ -14,25 +14,22 @@ export class PassService {
   allPasses$ = this.allPassesSubject.asObservable();
 
   constructor(private config: ConfigService, private http: HttpClient) {
+    const passes = localStorage.getItem('passes')
+    if(passes){
+      this.allPassesSubject.next(JSON.parse(passes));
+    }
     this.getPasses();
   }
 
-
-  getPasses(){
-    const user = localStorage.getItem('loggedInUser');
-      if (user) {
-        this.http.get<PassModel[]>(`${this.config.apiUrl}/passes`).subscribe({
-          next: (response: PassModel[]) => {
-            this.allPassesSubject.next( response);
-            localStorage.setItem(
-              'passes',
-              JSON.stringify(response)
-            );
-          },
-          error: (error) => {
-            console.log(error.error.message ?? error.message)
-          }
-        });
-      }
+  getPasses() {
+    this.http.get<PassModel[]>(`${this.config.apiUrl}/passes`).subscribe({
+      next: (response: PassModel[]) => {
+        this.allPassesSubject.next(response);
+        localStorage.setItem('passes', JSON.stringify(response));
+      },
+      error: (error) => {
+        console.log(error.error.message ?? error.message);
+      },
+    });
   }
 }
