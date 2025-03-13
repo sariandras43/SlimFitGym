@@ -50,16 +50,13 @@
             carousel.addEventListener("touchend", function () {
                 let swipeDistance = touchStartX - touchEndX;
 
-                if (swipeDistance > 50) { // Swipe left
+                if (swipeDistance > 50) {
                     bsCarousel.next();
-                } else if (swipeDistance < -50) { // Swipe right
+                } else if (swipeDistance < -50) {
                     bsCarousel.prev();
                 }
             });
         };
-
-
-
 
         window.closeModal = (modalId) => {
             let modal = bootstrap.Modal.getInstance(document.getElementById(modalId));
@@ -67,6 +64,31 @@
                 modal.hide();
             }
         };
+
+        window.adjustForKeyboard = (elementId) => {
+            const container = document.getElementById("container");
+            const input = document.getElementById(elementId);
+
+            if (container && input) {
+                setTimeout(() => {
+                    const inputRect = input.getBoundingClientRect();
+                    const viewportHeight = window.innerHeight;
+
+                    if (inputRect.bottom > viewportHeight * 0.5) {
+                        const offset = viewportHeight * 0.5 - inputRect.bottom;
+                        container.style.transform = `translateY(${offset}px)`;
+                    }
+                }, 300);
+            }
+        };
+
+        window.resetPosition = () => {
+            const container = document.getElementById("container");
+            if (container) {
+                container.style.transform = "translateY(0)";
+            }
+        };
+
     </script>
 
 

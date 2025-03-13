@@ -9,7 +9,7 @@
     <h2 class="text-center fw-bold">@PageTitle</h2>
 </div>
 
-<div class="container">
+<div class="container" id="container">
     <div class="rounded-3 d-inline-block mb-3">
         <NavLink href="/trainings" class="d-block p-1">
             <img class="invert" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAeUlEQVR4nO3XQQrCMBCF4e8MWkrvErLw/oeRWlxXChHEVRd1hHT+C/zJ42WY0BEjrtHSigfukfKKBStmXCKkpd10kz5xS+mRZLw/pWR7u4t3+JAubSzqWvy3qN+kfM3YBVKy7c72zuvXejtEy+d2gO1HEcqIKVq6mxcYKlU4XwQ2VAAAAABJRU5ErkJggg==" alt="back">
@@ -36,19 +36,31 @@
                         <form @onsubmit="HandleSubmit">
                             <div class="mb-3 lighter-dark">
                                 <label for="name" class="form-label lighter-dark">Edzés neve</label>
-                                <input type="text" class="form-control lighter-dark" id="name" placeholder="Név" @bind="newTraining.Name" />
+                                <input type="text" class="form-control lighter-dark" id="name" placeholder="Név"
+                                       @bind="newTraining.Name"
+                                       @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "name")'
+                                       @onblur='async () => await JS.InvokeVoidAsync("resetPosition")' />
                             </div>
                             <div class="mb-3 lighter-dark">
                                 <label for="trainingStart" class="form-label lighter-dark">Kezdési idő</label>
-                                <input type="datetime-local" class="form-control lighter-dark" id="trainingStart" @bind="newTraining.TrainingStart" />
+                                <input type="datetime-local" class="form-control lighter-dark" id="trainingStart"
+                                       @bind="newTraining.TrainingStart"
+                                       @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "trainingStart")'
+                                       @onblur='async () => await JS.InvokeVoidAsync("resetPosition")' />
                             </div>
                             <div class="mb-3 lighter-dark">
                                 <label for="trainingEnd" class="form-label lighter-dark">Befejezési idő</label>
-                                <input type="datetime-local" class="form-control lighter-dark" id="trainingEnd" @bind="newTraining.TrainingEnd" />
+                                <input type="datetime-local" class="form-control lighter-dark" id="trainingEnd"
+                                       @bind="newTraining.TrainingEnd"
+                                       @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "trainingEnd")'
+                                       @onblur='async () => await JS.InvokeVoidAsync("resetPosition")' />
                             </div>
                             <div class="mb-3 lighter-dark">
                                 <label for="maxPeople" class="form-label lighter-dark">Max. résztvevők</label>
-                                <input type="number" class="form-control w-25 text-center lighter-dark" maxlength="2" step="1" id="maxPeople" @bind="newTraining.MaxPeople" />
+                                <input type="number" class="form-control w-25 text-center lighter-dark" maxlength="2" step="1" id="maxPeople"
+                                       @bind="newTraining.MaxPeople"
+                                       @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "maxPeople")'
+                                       @onblur='async () => await JS.InvokeVoidAsync("resetPosition")' />
                             </div>
                             <div class="mb-3 lighter-dark">
                                 <label for="roomId" class="form-label lighter-dark">Terem</label>
@@ -80,11 +92,11 @@
     public int? trainingId { get; set; }
 
     private TrainingModel newTraining = new()
-    {
-        TrainerId = AccountModel.LoggedInUser.Id,
-        TrainingStart = DateTime.Now,
-        TrainingEnd = DateTime.Now.AddMinutes(30)
-    };
+        {
+            TrainerId = AccountModel.LoggedInUser.Id,
+            TrainingStart = DateTime.Now,
+            TrainingEnd = DateTime.Now.AddMinutes(30)
+        };
     private List<RoomModel> rooms = new();
     private string errorMessage;
     private bool isModify = false;

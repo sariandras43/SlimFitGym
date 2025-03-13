@@ -21,10 +21,10 @@
                         </div>
                     }
                     <h2 class="card-title text-center mb-4 lighter-dark">Bejelentkezés</h2>
-                    <form @onsubmit="login">
+                    <form @onsubmit="login" novalidate>
                         <div class="mb-3 lighter-dark">
                             <label for="email" class="form-label lighter-dark">Email</label>
-                            <input type="text" class="form-control lighter-dark" id="email" placeholder="Email" @bind="email">
+                            <input type="email" class="form-control lighter-dark" id="email" placeholder="Email" @bind="email">
                         </div>
                         <div class="mb-3 lighter-dark">
                             <label for="password" class="form-label lighter-dark">Jelszó</label>

@@ -9,6 +9,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using SlimFitGym_Mobile.Models;
 using System.Net;
+using SlimFitGym_Mobile.Components.Pages;
 
 namespace SlimFitGym_Mobile.Services
 {
@@ -323,22 +324,23 @@ namespace SlimFitGym_Mobile.Services
             }
         }
 
-        public static async Task<EntryModel> PostEntry(EntryModel entry)
+        public static async Task PostEntry(int accountId)
         {
             if (AccountModel.LoggedInUser != null) SetBearerToken();
             try
             {
-                var newEntry = new
-                {
-                    accountId = entry.AccountId,
-                    entryTime = entry.EntryDate
-                };
-                var json = JsonSerializer.Serialize(newEntry);
                 var response = await _httpClient.PostAsync(
-                    $"{apiBaseURL}entries/{entry.AccountId}",
-                    new StringContent(json, Encoding.UTF8, "application/json")
+                    $"{apiBaseURL}entries/{accountId}",
+                    new StringContent(null, Encoding.UTF8, "application/json")
                 );
-                return await response.Content.ReadFromJsonAsync<EntryModel>();
+                if (response.IsSuccessStatusCode)
+                    return;
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    var error = JsonSerializer.Deserialize<ErrorResult>(errorContent, options);
+                    throw new Exception(error?.Message ?? "Hiba a beléptetés során"); // display in error message
+                }
             }
             catch (Exception ex)
             {

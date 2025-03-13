@@ -215,3 +215,6 @@ div {
 #machineImg, #detailImage {
     object-fit: cover !important;
 }
+body.keyboard-open {
+    padding-bottom: 250px; /* Adjust space for keyboard */
+}
