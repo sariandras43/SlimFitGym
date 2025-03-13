@@ -13,9 +13,9 @@
                 <a routerLink="/signup">Regisztráció</a>
             </div>
             @if (errorMessage) {
-                <p class=" alert alert-danger errorField">{{errorMessage}}</p>
+                <p data-cy="errorMessage" class=" alert alert-danger errorField">{{errorMessage}}</p>
             }
-            <input class="submitButton" type="submit" value="Bejelentkezés" />
+            <input  data-cy="loginButton" class="submitButton" type="submit" value="Bejelentkezés" />
         </form>
         <img class="logInImage" src="mainHero.jpeg" alt="">
     </div>
