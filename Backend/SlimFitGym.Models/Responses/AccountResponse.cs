@@ -37,6 +37,7 @@ namespace SlimFitGym.Models.Responses
             Email = a.Email;
             Role = a.Role;
             ImageUrl = imageUrl;
+            Token = "";
         }
 
         public AccountResponse()

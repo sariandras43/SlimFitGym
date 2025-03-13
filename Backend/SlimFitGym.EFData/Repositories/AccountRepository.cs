@@ -184,7 +184,7 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("A felhasználó aki törölne, nem létezik");
             if (tokenGenerator.GetAccountIdFromToken(token)!=id && accountWhichDeletes.Role!="admin")
                 throw new Exception("Nem lehet másik felhasználó fiókját törölni.");
-            if (this.context.Set<Account>().Where(a=>a.Role=="admin" && a.isActive).Count()==1)
+            if (this.context.Set<Account>().Where(a=>a.Role=="admin" && a.isActive && a.Id==id).Count()==1)
                 throw new Exception("Utolsó adminisztrátor fiók nem törölhető.");
             accountToDelete.isActive = false;
             this.context.Entry(accountToDelete).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
@@ -218,6 +218,13 @@ namespace SlimFitGym.EFData.Repositories
             this.context.Entry(account).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             this.context.SaveChanges();
             return new AccountResponse(account);
+        }
+
+        public List<AccountResponse> GetAllAccounts(bool onlyActive = false)
+        {
+            if (onlyActive)
+                return this.context.Set<Account>().Where(a=>a.isActive).Select(a=>new AccountResponse(a,imagesRepository.GetImageUrlByAccountId(a.Id))).ToList();    
+            return this.context.Set<Account>().Select(a=>new AccountResponse(a,imagesRepository.GetImageUrlByAccountId(a.Id))).ToList();
         }
     }
 }
