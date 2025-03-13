@@ -17,7 +17,6 @@ export class SubscriptionsComponent {
   constructor(passService: PassService) {
     passService.getPasses();
     passService.allPasses$.subscribe((passes) => {
-      console.log(passes);
       this.passes = passes;
     });
   }
@@ -26,11 +25,15 @@ export class SubscriptionsComponent {
     const benefits: string[] = [...pass.benefits];
 
     if (pass.days && pass.days > 0) {
-      benefits.push(`${pass.days} napig`)
+      benefits.push(`${pass.days} napig érvényes`)
 
     }
     if (pass.maxEntries && pass.maxEntries > 0) {
       benefits.push(`${pass.maxEntries} belépés`)
+
+    }
+    else{
+      benefits.push(`Korlátlan belépés`)
 
     }
 
