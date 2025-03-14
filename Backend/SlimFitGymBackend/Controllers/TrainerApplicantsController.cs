@@ -85,9 +85,16 @@ namespace SlimFitGymBackend.Controllers
             {
                 if (int.TryParse(accountId, out idNum))
                 {
+                    try
+                    {
+                        return Ok(trainerApplicantsRepository.NewApplicant(token, idNum));
 
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
 
-                    return Ok(trainerApplicantsRepository.NewApplicant(token, idNum));
+                        return Forbid();
+                    }
                 }   
                 throw new Exception("Érvénytelen azonosító.");
             });

@@ -69,12 +69,9 @@ namespace SlimFitGym.EFData.Repositories
             if (accountFromToken == null)
                 throw new Exception("Érvénytelen token.");
             Account? account = accountRepository.GetAccountById(accountId);
-            if (accountFromToken.Role == "admin" && account == null)
-                return null;
-            else if (accountFromToken.Role != "admin" && account == null)
-                throw new Exception("Nem lehet más jelentkezéseit lekérni.");
             if (accountId != tokenGenerator.GetAccountIdFromToken(token) && accountFromToken.Role != "admin")
-                throw new Exception("Nem lehet más jelentkezéseit lekérni.");
+                throw new UnauthorizedAccessException();
+            if (account == null) return null;
             List<int> reservations = reservationRepository.GetReservationsByAccountId(accountId).Select(r=>r.TrainingId).ToList();
             List<TrainingResponse> res = new List<TrainingResponse>();
             foreach (int trainingId in reservations)

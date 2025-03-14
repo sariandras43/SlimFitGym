@@ -41,18 +41,16 @@ namespace SlimFitGym.EFData.Repositories
 
         public TrainerApplicant? NewApplicant(string token, int accountId)
         {
-            if (accountId <= 0)
-                throw new Exception("Nem létezik ez a felhasználó.");
-
-            Account? a = context.Set<Account>().SingleOrDefault(a => a.Id == accountId && a.isActive);
-            if (a == null)
-                throw new Exception("Nem lehet más felhasználóként jelentkezni edzőnek.");
             Account? accountFromToken = accountRepository.GetAccountById(tokenGenerator.GetAccountIdFromToken(token));
-            if (a.Id != tokenGenerator.GetAccountIdFromToken(token) || accountFromToken.Id != accountId)
-                throw new Exception("Nem lehet más felhasználóként jelentkezni edzőnek.");
             if (accountFromToken == null)
                 throw new Exception("Érvénytelen token.");
-
+            Account? a = context.Set<Account>().SingleOrDefault(a => a.Id == accountId && a.isActive);
+            if (a == null)
+                throw new UnauthorizedAccessException();
+            if (a.Id != tokenGenerator.GetAccountIdFromToken(token) || accountFromToken.Id != accountId)
+                throw new UnauthorizedAccessException();
+            if (accountId <= 0)
+                throw new Exception("Nem létezik ez a felhasználó.");
 
             if (context.Set<TrainerApplicant>().Any(ta => ta.AccountId == accountId))
                 throw new Exception("Ez a felhasználó már jelentkezett edzőnek");

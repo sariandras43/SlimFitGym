@@ -36,16 +36,11 @@ namespace SlimFitGym.EFData.Repositories
             Account? accountFromToken = accountRepository.GetAccountById(tokenGenerator.GetAccountIdFromToken(token));
             if (accountFromToken == null)
                 throw new Exception("Érvénytelen token.");
-            Account? account = accountRepository.GetAccountById(accountId);
-            if (accountFromToken.Role == "admin" && account == null)
-                return null;
-            else if (accountFromToken.Role != "admin" && account == null)
-                throw new Exception("Nem lehet más vásárlásait lekérni.");
             if (accountId != tokenGenerator.GetAccountIdFromToken(token) && accountFromToken.Role != "admin")
-                throw new Exception("Nem lehet más vásárlásait lekérni.");
-
-            List<Purchase>? purchases = context.Set<Purchase>().Where(p => p.AccountId == accountId).ToList();
-            if (purchases == null) return null;
+                throw new UnauthorizedAccessException();
+            Account? account = accountRepository.GetAccountById(accountId);
+            if (account == null) return null;
+            List<Purchase> purchases = context.Set<Purchase>().Where(p => p.AccountId == accountId).ToList();
             return purchases;
         }
 
@@ -56,12 +51,9 @@ namespace SlimFitGym.EFData.Repositories
             if (accountFromToken == null)
                 throw new Exception("Érvénytelen token.");
             Account? account = accountRepository.GetAccountById(accountId);
-            if (accountFromToken.Role == "admin" && account == null)
-                return null;
-            else if (accountFromToken.Role != "admin" && account == null)
-                throw new Exception("Nem lehet más vásárlásait lekérni.");
             if (accountId != tokenGenerator.GetAccountIdFromToken(token) && accountFromToken.Role != "admin")
-                throw new Exception("Nem lehet más vásárlásait lekérni.");
+                throw new UnauthorizedAccessException();
+            if (account == null) return null;
             Purchase? purchase = context.Set<Purchase>().Where(p => p.AccountId == accountId).OrderByDescending(p=>p.Id).FirstOrDefault();
             if (purchase == null) return null;
             return purchase;
@@ -80,7 +72,7 @@ namespace SlimFitGym.EFData.Repositories
         public PurchaseResponse? NewPurchase(string token, PurchaseRequest purchase)
         {
             if (tokenGenerator.GetAccountIdFromToken(token) != purchase.AccountId)
-                throw new Exception("Nem lehet más nevében vásárolni");
+                throw new UnauthorizedAccessException();
             if (purchase.PassId <= 0)
                 throw new Exception("Ilyen bérlet nem létezik.");
             if (purchase.AccountId <= 0)

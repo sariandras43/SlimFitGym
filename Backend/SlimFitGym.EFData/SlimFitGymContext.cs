@@ -111,10 +111,10 @@ namespace SlimFitGym.EFData
             modelBuilder.Entity<Training>().HasData
             (
                 new Training() { Id = 1, Name = "TRX edzés", RoomId = 1, TrainerId = 2, MaxPeople = 6, TrainingStart = DateTime.Now, TrainingEnd = DateTime.Now.AddHours(1) },
-                new Training() { Id = 2, Name = "Spinning", RoomId = 8, TrainerId = 3, MaxPeople = 10, TrainingStart = DateTime.Now.AddHours(2), TrainingEnd = DateTime.Now.AddHours(3) },
-                new Training() { Id = 3, Name = "Jóga", RoomId = 5, TrainerId = 4, MaxPeople = 8, TrainingStart = DateTime.Now.AddHours(1), TrainingEnd = DateTime.Now.AddHours(2) },
-                new Training() { Id = 4, Name = "CrossFit", RoomId = 4, TrainerId = 5, MaxPeople = 12, TrainingStart = DateTime.Now.AddHours(3), TrainingEnd = DateTime.Now.AddHours(4) },
-                new Training() { Id = 5, Name = "Aerobik", RoomId = 6, TrainerId = 6, MaxPeople = 18, TrainingStart = DateTime.Now.AddHours(5), TrainingEnd = DateTime.Now.AddHours(6) }
+                new Training() { Id = 2, Name = "Spinning", RoomId = 8, TrainerId = 2, MaxPeople = 10, TrainingStart = DateTime.Now.AddHours(2), TrainingEnd = DateTime.Now.AddHours(3) },
+                new Training() { Id = 3, Name = "Jóga", RoomId = 5, TrainerId = 2, MaxPeople = 8, TrainingStart = DateTime.Now.AddHours(1), TrainingEnd = DateTime.Now.AddHours(2) },
+                new Training() { Id = 4, Name = "CrossFit", RoomId = 4, TrainerId = 2, MaxPeople = 12, TrainingStart = DateTime.Now.AddHours(3), TrainingEnd = DateTime.Now.AddHours(4) },
+                new Training() { Id = 5, Name = "Aerobik", RoomId = 6, TrainerId = 2, MaxPeople = 18, TrainingStart = DateTime.Now.AddHours(5), TrainingEnd = DateTime.Now.AddHours(6) }
             );
 
             modelBuilder.Entity<Benefit>().HasData

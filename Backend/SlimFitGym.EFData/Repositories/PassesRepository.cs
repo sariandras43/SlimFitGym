@@ -107,34 +107,30 @@ namespace SlimFitGym.EFData.Repositories
         public LatestPassResponse? GetLatestPassByAccountId(string token, int accountId)
         {
             IEntriesRepository entriesRepository = GetEntriesRepository();
-            if (accountId<=0)
-                throw new Exception("Érvénytelen azonosító.");
             Account? accountFromToken = accountRepository.GetAccountById(tokenGenerator.GetAccountIdFromToken(token));
             if (accountFromToken == null)
                 throw new Exception("Érvénytelen token.");
-            Account? account = accountRepository.GetAccountById(accountId);
-            if (accountFromToken.Role == "admin" && account == null)
-                return null;
-            else if (accountFromToken.Role != "admin" && account == null)
-                throw new Exception("Nem lehet más vásárlásait lekérni.");
             if (accountId != tokenGenerator.GetAccountIdFromToken(token) && accountFromToken.Role != "admin")
-                throw new Exception("Nem lehet más vásárlásait lekérni.");
+                throw new UnauthorizedAccessException();
+            if (accountId<=0)
+                throw new Exception("Érvénytelen azonosító.");
+            Account? account = accountRepository.GetAccountById(accountId);
+            if (account == null) return null;
             Purchase? latestPurchase =  purchasesRepository.GetLatestPurchaseByAccountId(token, accountId);
-            if (latestPurchase==null)
-                return null;
-            PassResponse? p = this.GetPassById(latestPurchase.PassId);
-            if (p == null)
-                return null;
+            if (latestPurchase == null) return null;
+            Pass? p = this.GetPassModelById(latestPurchase.PassId);
+            // In theory this is unnecessary
+            //if (p == null) return null;
             string purchaseDateInString = latestPurchase.PurchaseDate.Year.ToString()
                                             + '.' + latestPurchase.PurchaseDate.Month.ToString() 
                                             + '.' + latestPurchase.PurchaseDate.Day.ToString();
             List<Entry> entriesFromPurchase = entriesRepository.GetEntriesByAccountId(token, accountId, latestPurchase.PurchaseDate.ToString(),p.MaxEntries);
             if (p.Days!=0 &&p.MaxEntries!=0)
-                return new LatestPassResponse(p,latestPurchase.PurchaseDate.AddDays(p.Days), p.MaxEntries-entriesFromPurchase.Count());          
+                return new LatestPassResponse(new PassResponse(p),latestPurchase.PurchaseDate.AddDays(p.Days), p.MaxEntries-entriesFromPurchase.Count());          
             else if(p.Days==0)
-                return new LatestPassResponse(p,null, p.MaxEntries - entriesFromPurchase.Count());
+                return new LatestPassResponse(new PassResponse(p), null, p.MaxEntries - entriesFromPurchase.Count());
             else
-                return new LatestPassResponse(p, latestPurchase.PurchaseDate.AddDays(p.Days), null);
+                return new LatestPassResponse(new PassResponse(p), latestPurchase.PurchaseDate.AddDays(p.Days), null);
 
 
 
