@@ -8,5 +8,6 @@ export interface UserModel {
     role?: string
     imageUrl?: string
     password?: string
+    image?: string
   }
   

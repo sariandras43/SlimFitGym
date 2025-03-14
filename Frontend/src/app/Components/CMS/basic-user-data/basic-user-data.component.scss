@@ -6,6 +6,8 @@
   .imgWrap {
     display: flex;
     align-items: center;
+    flex-direction: column;
+    gap: 2em;
     height: 100%;
   }
   .profilePic {
@@ -34,7 +36,7 @@
       text-align: center;
       font-size: 20rem;
       background-color: var(--bg-color-40);
-      label{
+      label {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -81,32 +83,48 @@
         color: var(--secondary-color);
       }
     }
-    input {
-      background-color: var(--bg-tertiary);
-
-      border: var(--primary-color) 3px solid;
-      border-radius: var(--border-radius);
-      color: var(--secondary-text);
-      padding: 0.25em 1em;
-      margin-left: 1em;
-    }
+   
     .buttons {
       display: flex;
       gap: 1em;
-      button,
-      input[type="submit"] {
-        border-radius: var(--border-radius);
-        padding: 0.25em 1em;
-        color: var(--primary-text);
-        border: none;
-        font-weight: bold;
-        &.edit {
-          background-color: var(--primary-color);
-        }
-        &.delete {
-          background-color: var(--danger);
-        }
-      }
     }
   }
+}
+button,
+.edit {
+  height: 2em;
+
+  margin-left: 0;
+  &.wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: 70px;
+  }
+  border-radius: var(--border-radius);
+  padding: 0.25em 1em;
+  color: var(--primary-text);
+  border: none;
+  font-weight: bold;
+
+  &.edit {
+    background-color: var(--primary-color);
+  }
+  &.delete {
+    background-color: var(--danger);
+  }
+}
+input {
+  background-color: var(--bg-tertiary);
+
+  border: var(--primary-color) 3px solid;
+  border-radius: var(--border-radius);
+  color: var(--secondary-text);
+  padding: 0.25em 1em;
+  margin-left: 1em;
+}
+.imgDelete{
+  font-size: 1.5rem;
+  width: 100%;
+  max-width: 20em;
 }
