@@ -4,88 +4,94 @@ import { FormsModule } from '@angular/forms';
 import { PassModel } from '../../../Models/pass.model';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../../Services/user.service';
-import { ButtonLoaderComponent } from "../../button-loader/button-loader.component";
+import { ButtonLoaderComponent } from '../../button-loader/button-loader.component';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-basic-user-data',
-  imports: [FormsModule, RouterLink, ButtonLoaderComponent],
+  imports: [FormsModule, RouterLink, ButtonLoaderComponent, NgClass],
   templateUrl: './basic-user-data.component.html',
   styleUrl: './basic-user-data.component.scss',
 })
 export class BasicUserDataComponent {
   @Input() user: UserModel = {
-    email: '',
     id: 0,
-    imageUrl: '',
-    name: '',
-    phone: '',
-    role: '',
-    token: '',
-    validTo: '',
   };
-  updateLoading:  Boolean = false;
+
+  inputChanged = false;
+  updateLoading: Boolean = false;
   deleteImageLoading: Boolean = false;
+  canModify: Boolean = false;
   @Input() loggedInUserPass: PassModel | undefined;
 
-  /**
-   *
-   */
+  public get currentUser() {
+    const user =
+      localStorage.getItem('loggedInUser') ||
+      sessionStorage.getItem('loggedInUser');
+    if (!user) {
+      return undefined;
+    }
+    return JSON.parse(user);
+  }
+
   constructor(private userService: UserService, private router: Router) {}
+
+  formChanged() {
+    this.canModify = this.changedUserValue !== null;
+  }
+  public get changedUserValue() {
+    let hasChanged = false;
+    let updateUserData: UserModel = { id: this.currentUser.id };
+
+    if (!(this.user.email == '' || this.user.email == this.currentUser.email)) {
+      updateUserData.email = this.user.email;
+      hasChanged = true;
+    }
+    if (this.user.image != undefined && this.user.image != '') {
+      updateUserData.image = this.user.image;
+      hasChanged = true;
+    }
+    if (!(this.user.name == '' || this.user.name == this.currentUser.name)) {
+      updateUserData.name = this.user.name;
+      hasChanged = true;
+    }
+    if (!(this.user.phone == '' || this.user.phone == this.currentUser.phone)) {
+      updateUserData.phone = this.user.phone;
+      hasChanged = true;
+    }
+
+    return hasChanged ? updateUserData : null;
+  }
+
   logout() {
     this.userService.logout();
     this.router.navigate(['/']);
   }
-  
   updateUser() {
-    this.updateLoading = true;
-    const user =
-      localStorage.getItem('loggedInUser') ||
-      sessionStorage.getItem('loggedInUser');
-    if (!user) {
-      return;
-    }
-    const parsedUser: UserModel = JSON.parse(user);
-    let updateUserData: UserModel = { id: parsedUser.id };
+    let updateUser = this.changedUserValue;
+    if (updateUser) {
+      this.updateLoading = true;
+      this.userService.updateUser(updateUser).subscribe({
+        next: (response) => {
+          this.updateLoading = false;
+          this.user = this.currentUser;
+          this.formChanged();
+        },
+        error: (error) => {
+          this.updateLoading = false;
 
-    if (!(this.user.email == '' || this.user.email == parsedUser.email)) {
-      updateUserData.email = this.user.email;
+          console.log(error.error.message ?? error.message);
+        },
+      });
     }
-    if (!(this.user.image == undefined)) {
-      updateUserData.image = this.user.image;
-    }
-    if (!(this.user.name == '' || this.user.name == parsedUser.name)) {
-      updateUserData.name = this.user.name;
-    }
-    if (!(this.user.phone == '' || this.user.phone == parsedUser.phone)) {
-      updateUserData.phone = this.user.phone;
-    }
-    this.userService.updateUser(updateUserData).subscribe({
-      next: (response) => {
-        this.updateLoading = false;
-        console.log(response);
-      },
-      error: (error) => {
-        this.updateLoading = false;
-
-        console.log(error.error.message ?? error.message);
-      },
-    });
   }
-  imgDelete(){
+  imgDelete() {
     this.deleteImageLoading = true;
-    const user =
-      localStorage.getItem('loggedInUser') ||
-      sessionStorage.getItem('loggedInUser');
-    if (!user) {
-      return;
-    }
-    
-    const parsedUser: UserModel = JSON.parse(user);
-    let updateUserData: UserModel = { id: parsedUser.id, image: '' };
+
+    let updateUserData: UserModel = { id: this.currentUser.id, image: '' };
     this.userService.updateUser(updateUserData).subscribe({
       next: (response) => {
         this.deleteImageLoading = false;
-        console.log(response);
       },
       error: (error) => {
         this.deleteImageLoading = false;
@@ -105,8 +111,8 @@ export class BasicUserDataComponent {
         const res = reader.result?.toString();
         if (res) {
           this.user.image = res;
+          this.formChanged()
         }
-        console.log(this.user.image);
       };
     }
   }

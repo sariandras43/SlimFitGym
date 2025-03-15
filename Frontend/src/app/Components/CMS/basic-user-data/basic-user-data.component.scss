@@ -11,6 +11,7 @@
     height: 100%;
   }
   .profilePic {
+    isolation: isolate;
     background-color: var(--bg-tertiary);
     margin-top: 5em;
     border-radius: 50%;
@@ -93,6 +94,7 @@
 button,
 .edit {
   height: 2em;
+  cursor: pointer;
 
   margin-left: 0;
   &.wrap {
@@ -127,4 +129,8 @@ input {
   font-size: 1.5rem;
   width: 100%;
   max-width: 20em;
+}
+.disabled{
+  opacity: 0.5;
+  cursor: default;
 }

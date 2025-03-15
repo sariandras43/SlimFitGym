@@ -1,4 +1,4 @@
-<form class="userData">
+<form class="userData" (input)="formChanged()">
   <div class="imgWrap">
 
     <div class="profilePic">
@@ -86,7 +86,7 @@
       }
       @else {
 
-        <input type="submit" class="edit" (click)="updateUser()" value="Módosítás" />
+        <input type="submit" class="edit" [ngClass]="{disabled: !canModify}" (click)="updateUser()" value="Módosítás" />
       }
       <button class="delete" (click)="logout()">Kijelentkezés</button>
     </div>
