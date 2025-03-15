@@ -1,13 +1,12 @@
 <div
-  [ngClass]="{ clickable: isClickable(), cardExpanded: expanded }"
+  [ngClass]="{ clickable: isClickable()}"
   class="card"
   routerLinkActive="router-link-active"
   [routerLink]="isClickable() ? linkTo() : []"
-  (click)="cardClicked()"
 >
   <div>
     @if (imgSrc()) {
-    <img [src]="imgSrc()" alt="" />
+    <img [src]="imgSrc()" alt="" loading="lazy" />
     }
     <div class="content">
       @if (title()) {
@@ -32,7 +31,7 @@
       } @if (btnText() || linkBtnText()) {
       <div class="flex buttonWrapper g1">
         @if (btnText()) {
-        <button (click)="cardClicked()" class="btn">{{ btnText() }}</button>
+        <button class="btn">{{ btnText() }}</button>
         } @if (linkBtnText()) {
         <a [routerLink]="linkTo()" class="btn">{{ linkBtnText() }}</a>
         }
@@ -40,9 +39,5 @@
       }
     </div>
   </div>
-  @if (expanded) {
-
-  <ng-content class="expanded" select="expanded-content"></ng-content>
-
-  }
+  
 </div>

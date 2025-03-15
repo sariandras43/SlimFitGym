@@ -13,15 +13,8 @@
   <div class="eventWrapper"></div>
   <div class="mt5 flex cardWrapper">
     @for (room of rooms; track $index) {
-
-      <app-card
-        [title]="room.name"
-        [linkTo]="room.id.toString()"
-        [isClickable]="true"
-        [imgSrc]=" room.imageUrl || 'templateSzoba.jpg'"
-        [description]="room.description"
-      >
-      </app-card>
+      <app-room-card [room]="room"></app-room-card>
+      
     }
   </div>
 </div>

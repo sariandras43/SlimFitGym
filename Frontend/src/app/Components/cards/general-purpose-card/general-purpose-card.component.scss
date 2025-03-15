@@ -1,44 +1,35 @@
 :host {
-    border-radius: var(--border-radius);
-    flex-grow: 0;
-    &:has(.cardExpanded){
-      max-width: none;
-      
-     
-      
-    }
-  }
+  background-color: inherit;
+}
 .card {
   background-color: inherit;
   border-radius: var(--border-radius);
-overflow: hidden;
+  overflow: hidden;
   img {
     width: 100%;
     height: 20em;
-    object-fit: cover; 
-    &+.content{
+    object-fit: cover;
+    & + .content {
       padding: 1em 3em;
     }
   }
-  
-  
+
   .content {
     padding: 2em 3em;
-      gap: 0.5em;
-      display: flex;
+    gap: 0.5em;
+    display: flex;
     //   min-width: 23em;
     //   min-height: 35em;
     flex-direction: column;
     align-items: center;
-    // flex-grow: 1;  
-    .description{
-        font-size: 1rem;
-        text-align: justify;
+    // flex-grow: 1;
+    .description {
+      font-size: 1rem;
+      text-align: justify;
     }
     .title {
       font-size: 2rem;
       text-align: center;
-     
     }
     .priceWrap {
       .price {
@@ -86,21 +77,9 @@ overflow: hidden;
     }
   }
 
-
-  &.clickable{
-    &:hover{
-        scale: 1.02;
+  &.clickable {
+    &:hover {
+      scale: 1.02;
     }
-  }
-}
-.cardExpanded{
-  display: flex;
-  margin: 0 auto;
-  .content{
-    width: 30em;
-  }
-  img{
-    width: 30em;
-
   }
 }

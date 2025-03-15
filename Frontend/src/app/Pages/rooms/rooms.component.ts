@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { HeroComponent } from '../../Components/hero/hero.component';
-import { CardComponent } from '../../Components/card/card.component';
 import { CounterBubbleComponent } from '../../Components/counter-bubble/counter-bubble.component';
 import { RoomService } from '../../Services/room.service';
 import { RoomModel } from '../../Models/room.model';
+import { RoomCardComponent } from "../../Components/cards/room-card/room-card.component";
 
 @Component({
   selector: 'app-rooms',
-  imports: [HeroComponent, CardComponent, CounterBubbleComponent],
+  imports: [HeroComponent, CounterBubbleComponent, RoomCardComponent],
   templateUrl: './rooms.component.html',
   styleUrl: './rooms.component.scss',
 })

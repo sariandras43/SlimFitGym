@@ -1,9 +1,9 @@
 import { Component, input } from '@angular/core';
-import { CardComponent } from "../card/card.component";
+import { MachineCardComponent } from "../cards/machine-card/machine-card.component";
 
 @Component({
   selector: 'app-machines',
-  imports: [CardComponent],
+  imports: [MachineCardComponent],
   templateUrl: './machines.component.html',
   styleUrl: './machines.component.scss'
 })

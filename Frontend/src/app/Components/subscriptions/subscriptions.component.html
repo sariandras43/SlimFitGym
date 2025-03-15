@@ -4,16 +4,7 @@
     @for (pass of passes; track $index) {
       @if (!highlightOnly() || pass.isHighlighted ) {
 
-        <app-card
-        [btnText]="'Vásárlás'"
-        [benefits]="getBenefits(pass)"
-        [title]="pass.name"
-        [price]="pass.price.toString()"
-        unit="Ft"
-  
-        >
-  
-        </app-card>
+        <app-pass-card [pass]='pass' ></app-pass-card>
       }
     }
     

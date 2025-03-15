@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { HeroComponent } from "../../Components/hero/hero.component";
 import { CounterBubbleComponent } from "../../Components/counter-bubble/counter-bubble.component";
-import { CardComponent } from "../../Components/card/card.component";
 import { EventsComponent } from "../../Components/events/events.component";
 import { MachinesComponent } from "../../Components/machines/machines.component";
 

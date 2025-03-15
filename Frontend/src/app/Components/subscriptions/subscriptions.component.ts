@@ -1,12 +1,12 @@
 import { Component, input } from '@angular/core';
-import { CardComponent } from '../card/card.component';
 import { NgClass } from '@angular/common';
 import { PassService } from '../../Services/pass.service';
 import { PassModel } from '../../Models/pass.model';
+import { PassCardComponent } from "../cards/pass-card/pass-card.component";
 
 @Component({
   selector: 'app-subscriptions',
-  imports: [CardComponent, NgClass],
+  imports: [NgClass, PassCardComponent],
   templateUrl: './subscriptions.component.html',
   styleUrl: './subscriptions.component.scss',
 })
@@ -20,22 +20,5 @@ export class SubscriptionsComponent {
     });
   }
 
-  getBenefits(pass: PassModel): string[] {
-    const benefits: string[] = [...pass.benefits];
-
-    if (pass.days && pass.days > 0) {
-      benefits.push(`${pass.days} napig érvényes`)
-
-    }
-    if (pass.maxEntries && pass.maxEntries > 0) {
-      benefits.push(`${pass.maxEntries} belépés`)
-
-    }
-    else{
-      benefits.push(`Korlátlan belépés`)
-
-    }
-
-    return benefits;
-  }
+  
 }
