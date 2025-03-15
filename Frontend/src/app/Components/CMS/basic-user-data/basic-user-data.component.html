@@ -1,6 +1,8 @@
 <form class="userData">
   <div class="imgWrap">
+
     <div class="profilePic">
+
       @if (user.imageUrl) {
       <img [src]="user.imageUrl" alt="" class="" />
 
@@ -8,13 +10,24 @@
 
       <img src="muscleManOrange.svg" alt="" class="default" />
       }
+
       <div class="addHover">
         <label for="file-upload" class="custom-file-upload">
           +
         </label>
-        <input id="file-upload" type="file" accept=".jpg,.jpeg,.gif,.avif"/>
+        <input id="file-upload" (change)="imageChanged($event)" type="file" accept=".jpg,.jpeg,.gif,.avif"/>
       </div>
     </div>
+    <button (click)="imgDelete()" class="delete imgDelete">
+      
+      
+    @if (deleteImageLoading) {
+      <app-button-loader></app-button-loader>
+    }
+    @else {
+      Kép törlése
+    }
+    </button>
   </div>
   <div class="basicData">
     <p>
@@ -64,7 +77,17 @@
       }}</a>
     </p>
     <div class="buttons">
-      <input type="submit" class="edit" (click)="updateUser()" value="Módosítás" />
+      @if (updateLoading) {
+        <div class="edit wrap">
+  
+          <app-button-loader></app-button-loader>
+        </div>
+        
+      }
+      @else {
+
+        <input type="submit" class="edit" (click)="updateUser()" value="Módosítás" />
+      }
       <button class="delete" (click)="logout()">Kijelentkezés</button>
     </div>
   </div>

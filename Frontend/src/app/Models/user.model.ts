@@ -9,5 +9,6 @@ export interface UserModel {
     imageUrl?: string
     password?: string
     newPassword?: string
+    image?: string
   }
   
