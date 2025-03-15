@@ -3,6 +3,7 @@ import { HeroComponent } from "../../Components/hero/hero.component";
 import { CounterBubbleComponent } from "../../Components/counter-bubble/counter-bubble.component";
 import { EventsComponent } from "../../Components/events/events.component";
 import { MachinesComponent } from "../../Components/machines/machines.component";
+import { MachineModel } from '../../Models/machine.model';
 
 @Component({
   selector: 'app-room-detail',
@@ -11,5 +12,5 @@ import { MachinesComponent } from "../../Components/machines/machines.component"
   styleUrl: './room-detail.component.scss'
 })
 export class RoomDetailComponent {
-  machines = Array<string>(10)
+  machines = Array<MachineModel>(10)
 }

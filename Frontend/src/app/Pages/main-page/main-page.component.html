@@ -6,7 +6,20 @@
 <app-counter-bubble [number]="32" title="cucc"/>
 
 </div>
+<section class="promotions-container mt5">
+  <app-promotion
+    imageUrl="mainHero.jpeg"
+    title="Modern Felszerelés"
+    description="Legújabb technológiájú edzőgépeinkkel garantáljuk a hatékony edzést. Minden szinthez megfelelő felszerelés!"
+  ></app-promotion>
 
+  <app-promotion
+    imageUrl="mainHero.jpeg"
+    [align]="'right'"
+    title="Szakértő Edzők"
+    description="Tapasztalt edzőink segítenek céljaid elérésében. Személyre szabott edzésterv és folyamatos támogatás!"
+  ></app-promotion>
+</section>
 <div class="mt5">
     <app-subscriptions title="Kiemelt ajánlataink" [highlightOnly]="true"/>
 </div>
