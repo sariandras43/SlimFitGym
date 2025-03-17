@@ -43,13 +43,10 @@ namespace SlimFitGym.Tests.IntegrationTests
             }
             else
             {
-                ErrorModel error = JsonConvert.DeserializeObject<ErrorModel>(await response.Content.ReadAsStringAsync())!;
                 Assert.Multiple(() =>
                 {
                     Assert.NotNull(response);
-                    Assert.Equal("BadRequest", response.StatusCode.ToString());
-                    Assert.IsType<ErrorModel>(error);
-                    Assert.Equal("Nem lehet más belépéseit lekérni.", error.Message);
+                    Assert.Equal("Forbidden", response.StatusCode.ToString());
                 });
             }
         }
@@ -62,16 +59,16 @@ namespace SlimFitGym.Tests.IntegrationTests
             string request = "/api/entries/" + id;
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {Login(email, password).Result}");
 
-            Entry entryRequest = new Entry()
-            {
-                Id = 0,
-                AccountId = id
-            };
+            //Entry entryRequest = new Entry()
+            //{
+            //    Id = 0,
+            //    AccountId = id
+            //};
 
-            string jsonContent = JsonConvert.SerializeObject(entryRequest);
-            StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            //string jsonContent = JsonConvert.SerializeObject(entryRequest);
+            //StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
             // Act
-            HttpResponseMessage response = await client.PostAsync(request,content);
+            HttpResponseMessage response = await client.PostAsync(request,null);
 
             // Assert
             if (success)
@@ -86,13 +83,10 @@ namespace SlimFitGym.Tests.IntegrationTests
             }
             else
             {
-                ErrorModel error = JsonConvert.DeserializeObject<ErrorModel>(await response.Content.ReadAsStringAsync())!;
                 Assert.Multiple(() =>
                 {
                     Assert.NotNull(response);
-                    Assert.Equal("BadRequest", response.StatusCode.ToString());
-                    Assert.IsType<ErrorModel>(error);
-                    Assert.Equal("Nem lehet más bérletével belépni.", error.Message);
+                    Assert.Equal("Forbidden", response.StatusCode.ToString());
                 });
             }
         }
