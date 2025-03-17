@@ -149,6 +149,7 @@ namespace SlimFitGym.Tests.IntegrationTests
             // Act
             HttpResponseMessage response = await client.PutAsync(request, content);
 
+            // Assert
             if (success)
             {
                 AccountResponse accountData = JsonConvert.DeserializeObject<AccountResponse>(await response.Content.ReadAsStringAsync())!;
@@ -166,6 +167,56 @@ namespace SlimFitGym.Tests.IntegrationTests
                 Assert.Equal("Forbidden", response.StatusCode.ToString());
             }
 
+        }
+
+        [Theory]
+        [InlineData("kazmer@gmail.com", "kazmer", 3, false)]
+        [InlineData("admin@gmail.com", "admin", 2, true)]
+        [InlineData("pista@gmail.com", "pista", 3, true)]
+        public async Task DeleteAccountShouldReturnForbiddenOrDeletesAccount(string email, string password, int accountIdToDelete, bool success)
+        {
+            // Arrange 
+            string request = "/api/auth/delete/" + accountIdToDelete;
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {Login(email, password).Result}");
+
+
+            // Act
+            HttpResponseMessage response = await client.DeleteAsync(request);
+
+            //Assert
+            if (success)
+            {
+                AccountResponse accountData = JsonConvert.DeserializeObject<AccountResponse>(await response.Content.ReadAsStringAsync())!;
+
+                Assert.NotNull(response);
+                Assert.IsType<AccountResponse>(accountData);
+                Assert.Equal("OK", response.StatusCode.ToString());
+
+            }
+            else
+            {
+                Assert.NotNull(response);
+                Assert.Equal("Forbidden", response.StatusCode.ToString());
+            }
+        }
+
+        [Fact]
+        public async Task DeleteLastAdminAccountShouldReturnError()
+        {
+            // Arrange 
+            string request = "/api/auth/delete/1";
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {Login("admin@gmail.com", "admin").Result}");
+
+
+            // Act
+            HttpResponseMessage response = await client.DeleteAsync(request);
+
+            // Assert
+            ErrorModel error = JsonConvert.DeserializeObject<ErrorModel>(await response.Content.ReadAsStringAsync())!;
+
+            Assert.NotNull(response);
+            Assert.Equal("BadRequest", response.StatusCode.ToString());
+            Assert.Equal("Utolsó adminisztrátor fiók nem törölhető.", error.Message);
         }
 
 
