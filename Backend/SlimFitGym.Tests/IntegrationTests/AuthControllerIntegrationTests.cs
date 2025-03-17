@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Newtonsoft.Json;
+using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
 using SlimFitGym.Models.Responses;
 using SlimFitGymBackend;
@@ -128,6 +129,64 @@ namespace SlimFitGym.Tests.IntegrationTests
             });
         }
 
+        [Theory]
+        [InlineData("admin@gmail.com","admin",2,false)]
+        [InlineData("admin@gmail.com","admin",1,true)]
+        [InlineData("admin@gmail.com","admin",3,false)]
+        [InlineData("pista@gmail.com","pista",3,true)]
+        [InlineData("kazmer@gmail.com","kazmer",3,false)]
+        public async Task ModifyAccountDetailsOnlyWorkToLoggedInPerson(string email, string password,int accountIdToModify, bool success)
+        {
+            // Arrange 
+            string request = "/api/auth/modify/" + accountIdToModify;
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {Login(email, password).Result}");
+
+            var requestBody = new {id=accountIdToModify ,name = "Kovács Béla" };
+
+            string jsonContent = JsonConvert.SerializeObject(requestBody);
+            StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+            // Act
+            HttpResponseMessage response = await client.PutAsync(request, content);
+
+            if (success)
+            {
+                AccountResponse accountData = JsonConvert.DeserializeObject<AccountResponse>(await response.Content.ReadAsStringAsync())!;
+
+                Assert.NotNull(response);
+                Assert.IsType<AccountResponse>(accountData);
+                Assert.Equal(email, accountData.Email);
+                Assert.Equal("Kovács Béla", accountData.Name);
+                Assert.Equal("OK", response.StatusCode.ToString());
+
+            }
+            else
+            {
+                Assert.NotNull(response);
+                Assert.Equal("Forbidden", response.StatusCode.ToString());
+            }
+
+        }
+
+
+        private async Task<string> Login(string email, string password)
+        {
+            string request = "/api/auth/login";
+            LoginRequest loginRequest = new LoginRequest()
+            {
+                Email = email,
+                Password = password,
+                RememberMe = false
+            };
+            string jsonContent = JsonConvert.SerializeObject(loginRequest);
+            StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+
+            HttpResponseMessage response = await client.PostAsync(request, content);
+
+            AccountResponse login = JsonConvert.DeserializeObject<AccountResponse>(await response.Content.ReadAsStringAsync())!;
+            return login.Token;
+        }
         public class LoginTestCase()
         {
             public string Email { get; set; }
