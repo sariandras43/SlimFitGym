@@ -1,0 +1,56 @@
+[
+  {
+    "id": 2,
+    "email": "pista@gmail.com",
+    "password": "pista",
+    "success": false
+  },
+  {
+    "id": 1,
+    "email": "pista@gmail.com",
+    "password": "pista",
+    "success": false
+  },
+  {
+    "id": 3,
+    "email": "kazmer@gmail.com",
+    "password": "kazmer",
+    "success": false
+  },
+  {
+    "id": 1,
+    "email": "kazmer@gmail.com",
+    "password": "kazmer",
+    "success": false
+  },
+  {
+    "id": 1,
+    "email": "admin@gmail.com",
+    "password": "admin",
+    "success": true
+  },
+  {
+    "id": 2,
+    "email": "admin@gmail.com",
+    "password": "admin",
+    "success": false
+  },
+  {
+    "id": 3,
+    "email": "admin@gmail.com",
+    "password": "admin",
+    "success": false
+  },
+  {
+    "id": 3,
+    "email": "pista@gmail.com",
+    "password": "pista",
+    "success": true
+  },
+  {
+    "id": 2,
+    "email": "kazmer@gmail.com",
+    "password": "kazmer",
+    "success": true
+  }
+]

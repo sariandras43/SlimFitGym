@@ -96,5 +96,26 @@ namespace SlimFitGymBackend.Controllers
                 throw new Exception("Érvénytelen azonosító.");
             });
         }
+        [HttpGet("accounts/all")]
+        [Authorize(Roles = "admin")]
+        public IActionResult GetAllUsers()
+        {
+            return this.Execute(() =>
+            {
+                var res = accountRepository.GetAllAccounts(false);
+                return Ok(res);
+            });
+        }
+
+        [HttpGet("accounts/active")]
+        [Authorize(Roles = "admin")]
+        public IActionResult GetAllActiveUser()
+        {
+            return this.Execute(() =>
+            {
+                var res = accountRepository.GetAllAccounts(true);
+                return Ok(res);
+            });
+        }
     }
 }

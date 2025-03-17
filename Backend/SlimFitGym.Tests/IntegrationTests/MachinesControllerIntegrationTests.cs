@@ -73,7 +73,7 @@ namespace SlimFitGym.Tests.IntegrationTests
                 Id=0,
                 Description="Teszt",
                 Name="Test",
-                Images = new List<ImageRequest>() { }
+                Images = new List<string>() { }
 
             };
 
@@ -102,7 +102,7 @@ namespace SlimFitGym.Tests.IntegrationTests
                 Id = 1,
                 Description = "Teszt",
                 Name = "Test",
-                Images = new List<ImageRequest>() { }
+                Images = new List<string>() { }
 
             };
 

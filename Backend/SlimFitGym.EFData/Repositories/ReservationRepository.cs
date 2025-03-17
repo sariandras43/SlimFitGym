@@ -70,7 +70,7 @@ namespace SlimFitGym.EFData.Repositories
             if (accountFromToken == null)
                 throw new Exception("Érvénytelen token.");
             if (reservation.AccountId != tokenGenerator.GetAccountIdFromToken(token))
-                throw new Exception("Nem lehet más felhasználóként jelentkezni.");
+                throw new UnauthorizedAccessException();
 
 
             Training? training = context.Set<Training>().SingleOrDefault(t=>t.Id == reservation.TrainingId && t.IsActive);
@@ -120,7 +120,7 @@ namespace SlimFitGym.EFData.Repositories
             //if (accountFromToken.Role != "admin" && account == null)
             //    return null;
             if (accountId != tokenGenerator.GetAccountIdFromToken(token))
-                throw new Exception("Nem lehet más jelentkezését törölni.");
+                throw new UnauthorizedAccessException();
 
             Reservation? reservationToDelete = this.context.Set<Reservation>().SingleOrDefault(r => r.TrainingId == trainingId && r.AccountId==accountId);
             if (reservationToDelete == null)
