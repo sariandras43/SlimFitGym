@@ -92,12 +92,12 @@ namespace SlimFitGym.EFData.Repositories
 
         public AccountResponse? UpdateAccountPublic(string token,int id, ModifyAccountRequest request)
         {
-            if (request.Id != id)
-                throw new Exception("Érvénytelen azonosító.");
-            if (tokenGenerator.GetAccountIdFromToken(token)!=id)
-                throw new Exception("Nem lehet másik felhasználó adatait módosítani");
+            if (tokenGenerator.GetAccountIdFromToken(token) != id)
+                throw new UnauthorizedAccessException();
             if (request == null)
                 throw new Exception("Érvénytelen kérés.");
+            if (request.Id != id)
+                throw new Exception("Érvénytelen azonosító.");
             Account? account = context.Set<Account>().SingleOrDefault(a => a.Id == request.Id && a.isActive);
             if (account == null)
                 return null;
@@ -174,20 +174,20 @@ namespace SlimFitGym.EFData.Repositories
 
         public AccountResponse? DeleteAccount(string token, int id)
         {
+            var accountWhichDeletes = this.context.Set<Account>().SingleOrDefault(a => a.Id == tokenGenerator.GetAccountIdFromToken(token) && a.isActive);
+            if (tokenGenerator.GetAccountIdFromToken(token) != id && accountWhichDeletes.Role != "admin")
+                throw new UnauthorizedAccessException();
+            if (accountWhichDeletes == null)
+                throw new Exception("A felhasználó aki törölne, nem létezik");
             if (id <= 0)
                 throw new Exception("Érvénytelen azonosító.");
             var accountToDelete = this.context.Set<Account>().SingleOrDefault(a => a.Id == id&&a.isActive);
-            if (accountToDelete == null)
-                return null;
-            var accountWhichDeletes = this.context.Set<Account>().SingleOrDefault(a => a.Id == tokenGenerator.GetAccountIdFromToken(token) && a.isActive);
-            if (accountWhichDeletes == null)
-                throw new Exception("A felhasználó aki törölne, nem létezik");
-            if (tokenGenerator.GetAccountIdFromToken(token)!=id && accountWhichDeletes.Role!="admin")
-                throw new Exception("Nem lehet másik felhasználó fiókját törölni.");
-            if (this.context.Set<Account>().Where(a=>a.Role=="admin" && a.isActive).Count()==1)
+            if (accountToDelete == null) return null;
+            if (this.context.Set<Account>().Where(a=>a.Role=="admin" && a.isActive && a.Id==id).Count()==1)
                 throw new Exception("Utolsó adminisztrátor fiók nem törölhető.");
             accountToDelete.isActive = false;
             this.context.Entry(accountToDelete).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            //TODO cascading delete at reservations and trainings, images
             this.context.SaveChanges();
             return new AccountResponse(accountToDelete);
 
@@ -218,6 +218,13 @@ namespace SlimFitGym.EFData.Repositories
             this.context.Entry(account).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             this.context.SaveChanges();
             return new AccountResponse(account);
+        }
+
+        public List<AccountResponse> GetAllAccounts(bool onlyActive = false)
+        {
+            if (onlyActive)
+                return this.context.Set<Account>().Where(a=>a.isActive).Select(a=>new AccountResponse(a,imagesRepository.GetImageUrlByAccountId(a.Id))).ToList();    
+            return this.context.Set<Account>().Select(a=>new AccountResponse(a,imagesRepository.GetImageUrlByAccountId(a.Id))).ToList();
         }
     }
 }

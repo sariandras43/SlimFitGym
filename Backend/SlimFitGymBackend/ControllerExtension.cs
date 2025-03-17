@@ -18,6 +18,10 @@ namespace SlimFitGymBackend
                 {
                     return controller.BadRequest(new { message = "Nem JSON formátumú a body." });
                 }
+                if (ex is UnauthorizedAccessException)
+                {
+                    return controller.Forbid();
+                }
                 return controller.BadRequest(new
                 {
                     message = ex.Message,

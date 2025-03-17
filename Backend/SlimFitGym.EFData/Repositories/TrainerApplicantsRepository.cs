@@ -39,25 +39,29 @@ namespace SlimFitGym.EFData.Repositories
             return null;
         }
 
-        public TrainerApplicant? NewApplicant(string token, TrainerApplicant applicant)
+        public TrainerApplicant? NewApplicant(string token, int accountId)
         {
-            if (applicant.AccountId <= 0)
-                throw new Exception("Nem létezik ez a felhasználó.");
-
-            Account? a = context.Set<Account>().SingleOrDefault(a => a.Id == applicant.AccountId);
-            if (a == null)
-                return null;
             Account? accountFromToken = accountRepository.GetAccountById(tokenGenerator.GetAccountIdFromToken(token));
             if (accountFromToken == null)
                 throw new Exception("Érvénytelen token.");
-            if (a.Id != tokenGenerator.GetAccountIdFromToken(token) || accountFromToken.Id != applicant.AccountId)
-                throw new Exception("Nem lehet más felhasználóként jelentkezni edzőnek.");
+            Account? a = context.Set<Account>().SingleOrDefault(a => a.Id == accountId && a.isActive);
+            if (a == null)
+                throw new UnauthorizedAccessException();
+            if (a.Id != tokenGenerator.GetAccountIdFromToken(token) || accountFromToken.Id != accountId)
+                throw new UnauthorizedAccessException();
+            if (accountId <= 0)
+                throw new Exception("Nem létezik ez a felhasználó.");
 
-
-            if (context.Set<TrainerApplicant>().Any(ta => ta.AccountId == applicant.AccountId))
+            if (context.Set<TrainerApplicant>().Any(ta => ta.AccountId == accountId))
                 throw new Exception("Ez a felhasználó már jelentkezett edzőnek");
             if (a.Role == "trainer" || a.Role == "admin")
                 throw new Exception("Ez a felhasználó már edző.");
+            TrainerApplicant applicant = new TrainerApplicant()
+            {
+                Id = 0,
+                AccountId = accountId,
+                AcceptedAt = null
+            }; 
             TrainerApplicant savedApplicant = this.context.Set<TrainerApplicant>().Add(applicant).Entity;
             this.context.SaveChanges();
             return savedApplicant;
@@ -69,13 +73,14 @@ namespace SlimFitGym.EFData.Repositories
                 return null;
 
             TrainerApplicant? tr = GetApplicantById(id);
-            if (tr == null)
+            if (tr == null || tr.AcceptedAt!=null)
                 return null;
 
             AccountResponse? newTrainer = accountRepository.BecomeATrainer(tr.AccountId);
             if (newTrainer == null)
                 return null;
-            this.context.Set<TrainerApplicant>().Remove(tr);
+            tr.AcceptedAt = DateTime.Now;
+            this.context.Entry(tr).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             this.context.SaveChanges();
             return newTrainer;
         }

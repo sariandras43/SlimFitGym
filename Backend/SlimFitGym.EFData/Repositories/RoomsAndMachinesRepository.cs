@@ -53,7 +53,12 @@ namespace SlimFitGym.EFData.Repositories
                                 Name = context.Set<Machine>()
                                     .Where(m => m.Id == rm.MachineId)
                                     .Select(m => m.Name)
-                                    .FirstOrDefault()!, 
+                                    .FirstOrDefault()!,
+                                Description = context.Set<Machine>()
+                                    .Where(m => m.Id == rm.MachineId)
+                                    .Select(m => m.Description)
+                                    .FirstOrDefault()!,
+                                ImageUrls = imagesRepository.GetImageUrlsByMachineId(rm.MachineId),
                                 MachineCount = rm.MachineCount
                             })
                             .ToList()
@@ -93,6 +98,11 @@ namespace SlimFitGym.EFData.Repositories
                                     .Where(m => m.Id == rm.MachineId)
                                     .Select(m => m.Name)
                                     .FirstOrDefault()!,
+                                Description = context.Set<Machine>()
+                                    .Where(m => m.Id == rm.MachineId)
+                                    .Select(m => m.Description)
+                                    .FirstOrDefault()!,
+                                ImageUrls = imagesRepository.GetImageUrlsByMachineId(rm.MachineId),
                                 MachineCount = rm.MachineCount
                             })
                             .ToList()
