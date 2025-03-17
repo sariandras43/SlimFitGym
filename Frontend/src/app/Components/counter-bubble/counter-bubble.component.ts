@@ -1,53 +1,70 @@
-import { Component, ElementRef, Input, AfterViewInit, OnDestroy } from '@angular/core';
-import { interval, take } from 'rxjs';
+import { Component, ElementRef, Input, AfterViewInit, OnDestroy, SimpleChanges, OnChanges } from '@angular/core';
+import { interval, take, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-counter-bubble',
   templateUrl: './counter-bubble.component.html',
   styleUrls: ['./counter-bubble.component.scss']
 })
-export class CounterBubbleComponent implements AfterViewInit, OnDestroy {
+export class CounterBubbleComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() number: number = 0;
   @Input() title: string = '';
 
   animatedNumber: number = 0;
+  private isVisible = false;
   private observer!: IntersectionObserver;
+  private animationSubscription?: Subscription;
 
   constructor(private elementRef: ElementRef) {}
 
   ngAfterViewInit() {
     this.observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
+        this.isVisible = entry.isIntersecting;
+        if (this.isVisible && this.animatedNumber !== this.number) {
           this.startAnimation();
-          this.observer.disconnect(); // Stop observing after first animation
         }
       });
-    }, { threshold: 0.5 }); // Start animation when at least 50% visible
+    }, { threshold: 0.5 });
 
     this.observer.observe(this.elementRef.nativeElement);
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['number'] && !changes['number'].isFirstChange()) {
+      if (this.isVisible) {
+        this.startAnimation();
+      }
+    }
+  }
+
   startAnimation() {
-    this.animatedNumber = 0; // Always start from 0
+    if (this.animationSubscription) {
+      this.animationSubscription.unsubscribe();
+    }
 
-    if (this.number === 0) return; // No need to animate if target is 0
+    this.animatedNumber = 0;
 
-    const duration = 1000; // Animation duration in ms
-    const steps = Math.min(this.number, 60); // Limit steps for smoothness
+    if (this.number === 0) return;
+
+    const duration = 1000;
+    const steps = Math.min(this.number, 60);
     const intervalTime = duration / steps;
 
-    interval(intervalTime)
+    this.animationSubscription = interval(intervalTime)
       .pipe(take(steps))
       .subscribe({
-        next: step => this.animatedNumber = Math.round((step + 1) * (this.number / steps)),
+        next: (step) => this.animatedNumber = Math.round((step + 1) * (this.number / steps)),
         complete: () => this.animatedNumber = this.number
       });
   }
 
   ngOnDestroy() {
+    if (this.animationSubscription) {
+      this.animationSubscription.unsubscribe();
+    }
     if (this.observer) {
-      this.observer.disconnect(); // Clean up observer when component is destroyed
+      this.observer.disconnect();
     }
   }
 }
