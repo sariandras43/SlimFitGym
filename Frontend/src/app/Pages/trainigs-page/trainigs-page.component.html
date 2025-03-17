@@ -28,12 +28,12 @@
     <div class="trainings">
         @for (training of trainings; track $index) {
             <div class="trainingSection">
-                <img src="norbi.jpg" class="trainerImage" alt="">
+                <img [src]="training.trainerImageUrl || 'norbi.jpg'" class="trainerImage" alt="">
                 <div class="trainingContent">
-                    <img src="templateSzoba.jpg" alt="">
-                    <h3 class="trainingName">Edzé he!</h3>
-                    <p class="date">2025.04.30 11:00 - 13 : 00</p>
-                    <p class="trainerName">Dr. Tiborfalvi Tibor</p>
+                    <img [src]=" training.roomImageUrl || ' templateSzoba.jpg'" alt="">
+                    <h3 class="trainingName">{{training.name}}</h3>
+                    <p class="date">{{training.trainingStart}} - {{training.trainingEnd}}</p>
+                    <p class="trainerName">{{training.trainer}}</p>
                     <button>Jelentkezés</button>
                 </div>
 

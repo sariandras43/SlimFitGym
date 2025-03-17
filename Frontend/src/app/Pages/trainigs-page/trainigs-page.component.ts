@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { HeroComponent } from "../../Components/hero/hero.component";
+import { TrainingModel } from '../../Models/training.model';
+import { TrainingService } from '../../Services/training.service';
 
 @Component({
   selector: 'app-trainigs-page',
@@ -8,5 +10,11 @@ import { HeroComponent } from "../../Components/hero/hero.component";
   styleUrl: './trainigs-page.component.scss'
 })
 export class TrainigsPageComponent {
-  trainings = Array<string>(10)
+  trainings: TrainingModel[] | undefined;
+  constructor(trainingservice: TrainingService) {
+    trainingservice.allTrainings$.subscribe((trainings)=>{
+      this.trainings = trainings;
+    })
+  }
+
 }
