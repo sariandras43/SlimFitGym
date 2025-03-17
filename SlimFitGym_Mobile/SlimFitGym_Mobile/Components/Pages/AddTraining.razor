@@ -37,30 +37,30 @@
                             <div class="mb-3 lighter-dark">
                                 <label for="name" class="form-label lighter-dark">Edzés neve</label>
                                 <input type="text" class="form-control lighter-dark" id="name" placeholder="Név"
-                                       @bind="newTraining.Name"
-                                       @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "name")'
-                                       @onblur='async () => await JS.InvokeVoidAsync("resetPosition")' />
+                                @bind="newTraining.Name"
+                                @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "name")'
+                                @onblur='async () => await JS.InvokeVoidAsync("resetPosition")' />
                             </div>
                             <div class="mb-3 lighter-dark">
                                 <label for="trainingStart" class="form-label lighter-dark">Kezdési idő</label>
                                 <input type="datetime-local" class="form-control lighter-dark" id="trainingStart"
-                                       @bind="newTraining.TrainingStart"
-                                       @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "trainingStart")'
-                                       @onblur='async () => await JS.InvokeVoidAsync("resetPosition")' />
+                                @bind="newTraining.TrainingStart"
+                                @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "trainingStart")'
+                                @onblur='async () => await JS.InvokeVoidAsync("resetPosition")' />
                             </div>
                             <div class="mb-3 lighter-dark">
                                 <label for="trainingEnd" class="form-label lighter-dark">Befejezési idő</label>
                                 <input type="datetime-local" class="form-control lighter-dark" id="trainingEnd"
-                                       @bind="newTraining.TrainingEnd"
-                                       @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "trainingEnd")'
-                                       @onblur='async () => await JS.InvokeVoidAsync("resetPosition")' />
+                                @bind="newTraining.TrainingEnd"
+                                @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "trainingEnd")'
+                                @onblur='async () => await JS.InvokeVoidAsync("resetPosition")' />
                             </div>
                             <div class="mb-3 lighter-dark">
                                 <label for="maxPeople" class="form-label lighter-dark">Max. résztvevők</label>
                                 <input type="number" class="form-control w-25 text-center lighter-dark" maxlength="2" step="1" id="maxPeople"
-                                       @bind="newTraining.MaxPeople"
-                                       @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "maxPeople")'
-                                       @onblur='async () => await JS.InvokeVoidAsync("resetPosition")' />
+                                @bind="newTraining.MaxPeople"
+                                @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "maxPeople")'
+                                @onblur='async () => await JS.InvokeVoidAsync("resetPosition")' />
                             </div>
                             <div class="mb-3 lighter-dark">
                                 <label for="roomId" class="form-label lighter-dark">Terem</label>
@@ -128,8 +128,7 @@
             if (string.IsNullOrEmpty(newTraining.Name) ||
                 newTraining.TrainingStart == null ||
                 newTraining.TrainingEnd == null ||
-                newTraining.MaxPeople == 0 ||
-                newTraining.RoomId == 0)
+                newTraining.MaxPeople == null)
             {
                 errorMessage = "Minden mező kitöltése kötelező";
                 return;
@@ -152,6 +151,11 @@
             if (newTraining.MaxPeople > 50)
             {
                 errorMessage = "A résztvevők felső korláta 50 fő";
+                return;
+            }
+            if (newTraining.RoomId == null)
+            {
+                errorMessage = "Kérjük válasszon termet!";
                 return;
             }
 

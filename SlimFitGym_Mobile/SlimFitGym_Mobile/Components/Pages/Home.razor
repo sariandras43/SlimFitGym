@@ -1,7 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @using SlimFitGym_Mobile.Models
 @using SlimFitGym_Mobile.Services
-@inject CameraService CameraService
 @inject IJSRuntime JS
 @page "/"
 
@@ -18,22 +17,22 @@
             <div class="container mt-4 carousel-container">
                 @if (AccountModel.LoggedInUser?.Role != "trainer")
                 {
-                    @if (validPass != null)
+                    @if (lastPass != null)
                     {
                         <h3 class="section-title">Bérleted</h3>
                         <div class="card home-card lighter-dark">
                             <div class="card-body lighter-dark">
-                                <h5 class="card-title lighter-dark">@validPass.Name</h5>
-                                @if (validPass.RemainingEntries != null)
+                                <h5 class="card-title lighter-dark">@lastPass.Name</h5>
+                                @if (lastPass.RemainingEntries != null)
                                 {
-                                    <p class="card-text @(validPass.RemainingEntries == 0 ? "text-danger" : "lighter-dark")">
-                                        🎟 Hátralévő belépések: <b>@validPass.RemainingEntries</b>
+                                    <p class="card-text @(lastPass.RemainingEntries == 0 ? "text-danger" : "lighter-dark")">
+                                        🎟 Hátralévő belépések: <b>@lastPass.RemainingEntries</b>
                                     </p>
                                 }
-                                @if (validPass.ValidTo != null)
+                                @if (lastPass.ValidTo != null)
                                 {
-                                    <p class="card-text @(DateTime.Parse(validPass.ValidTo) < DateTime.Today ? "text-danger" : "lighter-dark")">
-                                        📅 Érvényesség: <b>@DateTime.Parse(validPass.ValidTo).ToString("yyyy.MM.dd")</b>
+                                    <p class="card-text @(DateTime.Parse(lastPass.ValidTo) < DateTime.Today ? "text-danger" : "lighter-dark")">
+                                        📅 Érvényesség: <b>@DateTime.Parse(lastPass.ValidTo).ToString("yyyy.MM.dd")</b>
                                     </p>
                                 }
                             </div>
@@ -77,7 +76,7 @@
 </div>
 
 @code {
-    private PassModel validPass = null;
+    private PassModel lastPass = null;
     private List<TrainingModel> signedUpTrainings = new();
 
     protected override async Task OnInitializedAsync()
@@ -87,7 +86,7 @@
             signedUpTrainings = await DataService.GetSignedUpTrainings(AccountModel.LoggedInUser.Id);
             if (AccountModel.LoggedInUser.Role != "trainer")
             {
-                validPass = await DataService.GetAccountsPass(AccountModel.LoggedInUser.Id);
+                lastPass = await DataService.GetAccountsPass(AccountModel.LoggedInUser.Id);
             }
             StateHasChanged();
             if (signedUpTrainings.Any())

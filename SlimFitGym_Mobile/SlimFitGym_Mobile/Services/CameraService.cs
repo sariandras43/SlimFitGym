@@ -1,85 +1,45 @@
-﻿using System.Text;
-using System.Drawing;
+﻿using System.Runtime.InteropServices;
+using System.Text.Json;
 using SkiaSharp;
+using SlimFitGym_Mobile.Models;
 using ZXing;
-using ZXing.QrCode;
 using ZXing.Common;
+using ZXing.QrCode;
+using ZXing.QrCode.Internal;
 
 namespace SlimFitGym_Mobile.Services
 {
-    public class CameraService
-    { 
-
-        //public async Task InitializeCameraAsync()
-        //{
-        //    // Jelenleg ez a nem működő fotózott képből dekódolás van
-        //    if (MediaPicker.Default.IsCaptureSupported)
-        //    {
-        //        try
-        //        {
-        //            var photo = await MediaPicker.Default.CapturePhotoAsync();
-        //            if (photo == null)
-        //            {
-        //                ErrorMessage = "No photo captured.";
-        //                return;
-        //            }
-        //            using var stream = await photo.OpenReadAsync();
-        //            using var skBitmap = SKBitmap.Decode(stream);
-        //            if (skBitmap == null)
-        //            {
-        //                ErrorMessage = "Failed to load image.";
-        //                return;
-        //            }
-        //            int width = skBitmap.Width;
-        //            int height = skBitmap.Height;
-        //            byte[] luminanceData = ConvertBitmapToGrayscale(skBitmap);
-        //            var luminanceSource = new RGBLuminanceSource(luminanceData, width, height);
-        //            var binarizer = new HybridBinarizer(luminanceSource);
-        //            var binaryBitmap = new BinaryBitmap(binarizer);
-        //            var hints = new Dictionary<DecodeHintType, object>
-        //                                {
-        //                                    { DecodeHintType.TRY_HARDER, true },
-        //                                    { DecodeHintType.POSSIBLE_FORMATS, new List<BarcodeFormat> { BarcodeFormat.QR_CODE } }
-        //                                };
-        //            var reader = new QRCodeReader();
-        //            var result = reader.decode(binaryBitmap, hints);
-        //            if (result != null)
-        //            {
-        //                Url = result.Text;
-        //                ErrorMessage = Url;
-        //            }
-        //            else
-        //            {
-        //                ErrorMessage = "QR code not detected.";
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            ErrorMessage = ex.Message;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        ErrorMessage = "Camera is not supported on this device.";
-        //    }
-        //}
-
-        //private byte[] ConvertBitmapToGrayscale(SKBitmap bitmap)
-        //{
-        //    int width = bitmap.Width;
-        //    int height = bitmap.Height;
-        //    byte[] grayscaleData = new byte[width * height];
-
-        //    for (int y = 0; y < height; y++)
-        //    {
-        //        for (int x = 0; x < width; x++)
-        //        {
-        //            SKColor color = bitmap.GetPixel(x, y);
-        //            byte gray = (byte)((color.Red * 0.3) + (color.Green * 0.59) + (color.Blue * 0.11));
-        //            grayscaleData[y * width + x] = gray;
-        //        }
-        //    }
-        //    return grayscaleData;
-        //}
+    public static class CameraService
+    {
+        public static string GenerateQrCode()
+        {
+            var writer = new BarcodeWriterPixelData
+            {
+                Format = BarcodeFormat.QR_CODE,
+                Options = new QrCodeEncodingOptions
+                {
+                    Height = 300,
+                    Width = 300,
+                    Margin = 1,
+                    ErrorCorrection = ErrorCorrectionLevel.H
+                }
+            };
+            var json = JsonSerializer.Serialize(new
+            {
+                id = AccountModel.LoggedInUser.Id,
+                name = AccountModel.LoggedInUser.Name
+            });
+            var pixelData = writer.Write(json);
+            using (var bitmap = new SKBitmap(pixelData.Width, pixelData.Height, SKColorType.Bgra8888, SKAlphaType.Premul))
+            {
+                Marshal.Copy(pixelData.Pixels, 0, bitmap.GetPixels(), pixelData.Pixels.Length);
+                using (var image = SKImage.FromBitmap(bitmap))
+                using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
+                {
+                    var base64 = Convert.ToBase64String(data.ToArray());
+                    return $"data:image/png;base64,{base64}";
+                }
+            }
+        }
     }
 }
