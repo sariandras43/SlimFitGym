@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ConfigService } from './config.service';
 import { HttpClient } from '@angular/common/http';
 import { RoomModel } from '../Models/room.model';
@@ -31,5 +31,8 @@ export class RoomService {
         console.log(error.error.message ?? error.message);
       },
     });
+  }
+  getRoom(id:Number): Observable<RoomModel>{
+    return this.http.get<RoomModel>(`${this.config.apiUrl}/rooms/${id}`);
   }
 }

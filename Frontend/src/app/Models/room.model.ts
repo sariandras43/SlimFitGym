@@ -1,3 +1,5 @@
+import { MachineModel } from "./machine.model"
+
 export interface RoomModel {
     id: number
     description: string
@@ -5,4 +7,5 @@ export interface RoomModel {
     name: string
     isActive: boolean
     imageUrl: string
+    machines: MachineModel[]
 }

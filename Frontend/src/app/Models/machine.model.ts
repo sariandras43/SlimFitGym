@@ -1,6 +1,7 @@
 export interface MachineModel {
     id: number
     name: string
-    description: any
+    description: string,
+    machineCount: number
     imageUrls: string[]
   }

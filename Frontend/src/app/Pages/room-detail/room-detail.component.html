@@ -4,9 +4,9 @@
   subtitle="Termeink között mindenki megtalálhatja a számára legmegfelelőbbet"
 />
 <div class="counterContainer g5 mt5">
-  <app-counter-bubble [number]="5" title="hinnye" />
-  <app-counter-bubble [number]="12" title="valami" />
-  <app-counter-bubble [number]="32" title="cucc" />
+  <app-counter-bubble [number]="allMachineCount" title="gép" />
+  <app-counter-bubble [number]="room?.recommendedPeople || 0" title="ferőhely" />
+  <app-counter-bubble [number]="machineTypeCount" title="fajta gép" />
 </div>
 
 <div class="container mt5" >
@@ -15,6 +15,6 @@
   </div>
   <div class=" machines">
     <h2>Terem gépei</h2>
-    <app-machines [machines]="machines"/>
+    <app-machines [machines]="room?.machines"/>
   </div>
 </div>
