@@ -16,7 +16,7 @@ export class SubscriptionsComponent {
   passes: PassModel[] | undefined;
   constructor(passService: PassService) {
     passService.allPasses$.subscribe((passes) => {
-      this.passes = passes;
+      this.passes = passes?.sort((a,b)=> a.price-b.price);
     });
   }
 
