@@ -24,6 +24,13 @@ export class TrainingService {
   getTrainings() {
     this.http.get<TrainingModel[]>(`${this.config.apiUrl}/trainings`).subscribe({
       next: (response: TrainingModel[]) => {
+        const parsedTraining = response;
+        parsedTraining.map(d=>{
+          d.trainingStart = new Date(d.trainingStart)
+          d.trainingEnd = new Date(d.trainingEnd)
+        })
+
+
         this.allTrainingsSubject.next(response);
         localStorage.setItem('trainings', JSON.stringify(response));
       },

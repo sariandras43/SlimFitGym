@@ -5,8 +5,8 @@ export interface TrainingModel {
     room: string
     roomId: number
     name: string
-    trainingStart: string
-    trainingEnd: string
+    trainingStart: Date
+    trainingEnd: Date
     maxPeople: number
     freePlaces: number
     isActive: boolean
