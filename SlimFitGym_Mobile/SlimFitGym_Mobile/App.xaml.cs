@@ -31,7 +31,6 @@ namespace SlimFitGym_Mobile
         private async void OnStartAsync()
         {
             await AuthService.LoadUser();
-           
         }
     }
 }

@@ -9,7 +9,7 @@ using ZXing.QrCode.Internal;
 
 namespace SlimFitGym_Mobile.Services
 {
-    public static class CameraService
+    public static class QrService
     {
         public static string GenerateQrCode()
         {
