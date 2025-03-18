@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
@@ -105,11 +106,57 @@ namespace SlimFitGym_Mobile.Services
             }
         }
 
-        //public async Task<string> ResetPassword(string email, string newPassword, string newPasswordAgain)
-        //{
-        //    var response = await _httpClient.PostAsync($"{apiBaseURL}auth/resetpassword", new StringContent($"{{\"email\":\"{email}\", \"new password\":\"{newPassword}\", \"new password again\":\"{newPasswordAgain}\"}}", Encoding.UTF8, "application/json"));
-        //    return await response.Content.ReadAsStringAsync();
-        //}
+        public static async Task<RegisterResult> Modify(AccountModel user)
+        {
+            SetBearerToken();
+            try
+            {
+                var modifyData = new Dictionary<string, object>();
+                    modifyData.Add("id", AccountModel.LoggedInUser.Id);
+                if (user.Name != AccountModel.LoggedInUser.Name)
+                    modifyData.Add("name", user.Name);
+                if (user.Phone != AccountModel.LoggedInUser.Phone)
+                    modifyData.Add("phone", user.Phone);
+                if (user.Email != AccountModel.LoggedInUser.Email)
+                    modifyData.Add("email", user.Email);
+                if (user.Password != AccountModel.LoggedInUser.Password)
+                    modifyData.Add("newPassword", user.Password);
+                if (modifyData.Count == 0)
+                    return new RegisterResult { Success = false, ErrorMessage = "Nincs megváltozott adat" };
+
+                var json = JsonSerializer.Serialize(modifyData);
+                var response = await _httpClient.PutAsync($"{apiBaseURL}auth/modify/{AccountModel.LoggedInUser.Id}",
+                    new StringContent(json, Encoding.UTF8, "application/json"));
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return new RegisterResult
+                    {
+                        Success = true,
+                        ErrorMessage = string.Empty
+                    };
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    var error = JsonSerializer.Deserialize<ErrorResult>(errorContent, options);
+                    return new RegisterResult
+                    {
+                        Success = false,
+                        ErrorMessage = error.Message
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return new RegisterResult
+                {
+                    Success = false,
+                    ErrorMessage = ex.Message
+                };
+            }
+        }
 
         public static bool IsValidEmail(string email)
         {
@@ -123,20 +170,26 @@ namespace SlimFitGym_Mobile.Services
             return System.Text.RegularExpressions.Regex.IsMatch(phone, pattern);
         }
 
-
         public static bool IsValidPassword(string password)
         {
             string pattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\""\\|,.<>\/?]).{8,}$";
             return System.Text.RegularExpressions.Regex.IsMatch(password, pattern);
         }
 
-        public static async Task SaveUser(AccountModel user)
+        public static async Task SaveUser(AccountModel? oldUser, AccountModel newUser)
         {
             try
             {
-                AccountModel.LoggedInUser = user;
-                var serializedUser = JsonSerializer.Serialize(user);
-                await SecureStorage.SetAsync("LoggedInUser", serializedUser);
+                AccountModel.LoggedInUser = new AccountModel
+                {
+                    Id = newUser.Id,
+                    Name = newUser.Name,
+                    Email = newUser.Email,
+                    Phone = newUser.Phone,
+                    Role = newUser.Role,
+                    Token = (oldUser != null) ? oldUser.Token : newUser.Token
+                };
+                await SecureStorage.SetAsync("LoggedInUser", JsonSerializer.Serialize(AccountModel.LoggedInUser));
             }
             catch (Exception ex)
             {
@@ -144,23 +197,32 @@ namespace SlimFitGym_Mobile.Services
             }
         }
 
-        public static async Task<AccountModel> LoadUser()
+        public static async Task LoadUser()
         {
             try
             {
-                var userData = await SecureStorage.GetAsync("LoggedInUser");
-                if (!string.IsNullOrEmpty(userData))
+                var savedUser = await SecureStorage.GetAsync("LoggedInUser");
+                if (!string.IsNullOrEmpty(savedUser))
                 {
-                    Debug.WriteLine($"loaded: {userData}");
-                    return JsonSerializer.Deserialize<AccountModel>(userData);
+                    AccountModel.LoggedInUser = JsonSerializer.Deserialize<AccountModel>(savedUser);
+                    SetBearerToken();
+
+                    var account = await _httpClient.GetFromJsonAsync<AccountModel>($"{apiBaseURL}auth/me");
+                    if (account != null)
+                    {
+                        await SaveUser(AccountModel.LoggedInUser, account);
+                    }
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error loading user: {ex.Message}");
+                throw new Exception(ex.Message);
             }
+        }
 
-            return null;
+        public static void SetBearerToken()
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AccountModel.LoggedInUser.Token);
         }
     }
 }
