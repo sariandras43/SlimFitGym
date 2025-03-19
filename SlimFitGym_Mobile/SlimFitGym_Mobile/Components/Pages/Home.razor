@@ -15,52 +15,61 @@
                 </div>
             </div>
             <div class="container mt-4 carousel-container">
-                @if (AccountModel.LoggedInUser?.Role != "trainer")
+                @if (AccountModel.LoggedInUser != null && !isLoading)
                 {
-                    @if (lastPass != null)
+                    @if (AccountModel.LoggedInUser?.Role != "trainer")
                     {
-                        <h3 class="section-title">Bérleted</h3>
-                        <div class="card home-card lighter-dark">
-                            <div class="card-body lighter-dark">
-                                <h5 class="card-title lighter-dark">@lastPass.Name</h5>
-                                @if (lastPass.RemainingEntries != null)
+                        @if (lastPass != null)
+                        {
+                            <h3 class="section-title">Bérleted</h3>
+                            <div class="card home-card lighter-dark">
+                                <div class="card-body lighter-dark">
+                                    <h5 class="card-title lighter-dark">@lastPass.Name</h5>
+                                    @if (lastPass.RemainingEntries != null)
+                                    {
+                                        <p class="card-text @(lastPass.RemainingEntries == 0 ? "text-danger" : "lighter-dark")">
+                                            🎟 Hátralévő belépések: <b>@lastPass.RemainingEntries</b>
+                                        </p>
+                                    }
+                                    @if (lastPass.ValidTo != null)
+                                    {
+                                        <p class="card-text @(DateTime.Parse(lastPass.ValidTo) < DateTime.Today ? "text-danger" : "lighter-dark")">
+                                            📅 Érvényesség: <b>@DateTime.Parse(lastPass.ValidTo).ToString("yyyy.MM.dd")</b>
+                                        </p>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+
+
+
+                    @if (signedUpTrainings.Any())
+                    {
+                        <h3 class="section-title mt-4">Edzéseid</h3>
+                        <div id="trainingsCarousel" class="carousel slide lighter-dark" data-bs-touch="true" data-bs-interval="false">
+                            <div class="carousel-inner lighter-dark rounded">
+                                @for (int i = 0; i < signedUpTrainings.Count; i++)
                                 {
-                                    <p class="card-text @(lastPass.RemainingEntries == 0 ? "text-danger" : "lighter-dark")">
-                                        🎟 Hátralévő belépések: <b>@lastPass.RemainingEntries</b>
-                                    </p>
-                                }
-                                @if (lastPass.ValidTo != null)
-                                {
-                                    <p class="card-text @(DateTime.Parse(lastPass.ValidTo) < DateTime.Today ? "text-danger" : "lighter-dark")">
-                                        📅 Érvényesség: <b>@DateTime.Parse(lastPass.ValidTo).ToString("yyyy.MM.dd")</b>
-                                    </p>
+                                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                                        <div class="card home-card lighter-dark">
+                                            <div class="card-body lighter-dark">
+                                                <h5 class="card-title lighter-dark">@signedUpTrainings[i].Name</h5>
+                                                <p class="card-text lighter-dark">📅 Dátum: <b>@signedUpTrainings[i].TrainingStart.ToString("yyyy.MM.dd HH:mm")</b></p>
+                                                <p class="card-text lighter-dark">🏋️ Edző: <b>@signedUpTrainings[i].Trainer</b></p>
+                                                <p class="card-text lighter-dark">📍 Helyszín: <b>@signedUpTrainings[i].Room</b></p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 }
                             </div>
                         </div>
                     }
                 }
-
-
-
-                @if (signedUpTrainings.Any())
+                else
                 {
-                    <h3 class="section-title mt-4">Edzéseid</h3>
-                    <div id="trainingsCarousel" class="carousel slide lighter-dark" data-bs-touch="true" data-bs-interval="false">
-                        <div class="carousel-inner lighter-dark rounded">
-                            @for (int i = 0; i < signedUpTrainings.Count; i++)
-                            {
-                                <div class="carousel-item @(i == 0 ? "active" : "")">
-                                    <div class="card home-card lighter-dark">
-                                        <div class="card-body lighter-dark">
-                                            <h5 class="card-title lighter-dark">@signedUpTrainings[i].Name</h5>
-                                            <p class="card-text lighter-dark">📅 Dátum: <b>@signedUpTrainings[i].TrainingStart.ToString("yyyy.MM.dd HH:mm")</b></p>
-                                            <p class="card-text lighter-dark">🏋️ Edző: <b>@signedUpTrainings[i].Trainer</b></p>
-                                            <p class="card-text lighter-dark">📍 Helyszín: <b>@signedUpTrainings[i].Room</b></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        </div>
+                    <div class="d-flex align-items-center justify-content-center">
+                        <img src="loading.gif" class="invert" alt="Loading..." />
                     </div>
                 }
             </div>
@@ -76,6 +85,7 @@
 </div>
 
 @code {
+    private bool isLoading = true;
     private PassModel lastPass = null;
     private List<TrainingModel> signedUpTrainings = new();
 
@@ -88,6 +98,7 @@
             {
                 lastPass = await DataService.GetAccountsPass(AccountModel.LoggedInUser.Id);
             }
+            isLoading = false;
             StateHasChanged();
             if (signedUpTrainings.Any())
             {

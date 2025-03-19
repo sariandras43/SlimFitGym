@@ -315,7 +315,7 @@ namespace SlimFitGym_Mobile.Services
             if (AccountModel.LoggedInUser != null) SetBearerToken();
             try
             {
-                var entries = await _httpClient.GetFromJsonAsync<List<EntryModel>>($"{apiBaseURL}entries/{accountId}?limit=10");
+                var entries = await _httpClient.GetFromJsonAsync<List<EntryModel>>($"{apiBaseURL}entries/{accountId}?limit=6");
                 return entries ?? new List<EntryModel>();
             }
             catch (Exception ex)

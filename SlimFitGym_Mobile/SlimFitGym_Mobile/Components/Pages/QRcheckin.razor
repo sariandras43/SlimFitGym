@@ -9,16 +9,16 @@
     <div class="sticky-top py-3 text-center">
         <h2 class="fw-bold">QR kód belépés</h2>
     </div>
-    @if (true)//lastPass != null && (lastPass.RemainingEntries > 0 || DateTime.Parse(lastPass.ValidTo) < DateTime.Today)
+    @if (lastPass != null && (lastPass.RemainingEntries > 0 ||(lastPass.ValidTo != null && DateTime.Parse(lastPass.ValidTo) < DateTime.Today)))
     {
         <div class="d-flex justify-content-center mt-3">
             <img class="invert" @onclick="DisplayQrCode" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAAB8UlEQVR4nO2XQY4DIQwE+f+new+5REibEcHGbVIlcRrFY7swTMYAAAAAAADwQ4fXadrV1y7h2+trl/Dt9bVL+Pb6shv2FF/JBVfXVx9wMb4QgpBImJBmJ4DdkZL93L2+dgkLIQh5hwmZYEKCGxL9XJurOv9tqhMWQhDyDhMywYQkN2w1/hNuR+Zq/GXcExZCECIm5H+YkGDcj6xdjt8h1fGFkLNCVPzHMLu++oCL8YWQ3Ibs7mCZx199//YORshAiBLvgOoN1y5hbT53r68dShYCCOmNmBAvhJCcRt6y2lLdOCEEIdZU72QxIZ+FRImdyT7jr71DsuIIIQhpCRNymFOXphafR7036/1pIOQFQiaYkOBGcGQFEfU5WvVZq0P5ld0h3yaCkCBuE6KiIzetoG8TQUgQUZ97VZ+Nun1CEDIQcoLdHc6E/KqQX0EI8QIhZiDEDDshWd/r2f8zqvJPr69dwhPVAhAyUS0AIRPXC4nGPb6S87uuYU8gZBGEXNawJ35uQnYvteiGyXxtg5CBkBWqdzwTMlHdYHsh0c+fqI6f/fvlgAj5DELMdjhCzBpaLmT1UosuWMGXavXvlwMi5DMIGUwIR5bThLjH36XdHeIefxeEmIEQM+yFZC837OpDyECIE0yIGXZCAAAAAAAARiB/pioDtOrCLmwAAAAASUVORK5CYII=" alt="qr-code--v1">
         </div>
     }
     <h2 class="text-center mt-5">Legutóbbi belépések</h2>
-    @foreach (var item in lastEntriesOfAccount)
+    @for (int i = 0; i < lastEntriesOfAccount.Count; i++)
     {
-        <p class="text-center mt-1">@item.EntryDate.ToString("yyyy.MM.dd HH:mm")</p>
+        <p class="text-center @(i == 0 ? "mt-3" : "")">@lastEntriesOfAccount[i].EntryDate.ToString("yyyy.MM.dd HH:mm")</p>
     }
 </div>
 <Navbar />
