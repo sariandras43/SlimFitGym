@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using CloudinaryDotNet;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -9,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SlimFitGym.Data.Repository;
 using System.Runtime.CompilerServices;
+using System.Threading.RateLimiting;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace SlimFitGymBackend
@@ -27,6 +29,7 @@ namespace SlimFitGymBackend
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
             builder.Services.CorsAllowAllOrigins();
             builder.Services.AddSwaggerWithCustomOptions();
+            builder.Services.AddRateLimit(builder.Configuration);
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -39,7 +42,7 @@ namespace SlimFitGymBackend
 
             app.UseCors("AllowAllOrigins");
             app.UseAuthorization();
-
+            app.UseIpRateLimiting();
 
             app.MapControllers();
 
