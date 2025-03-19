@@ -64,7 +64,6 @@ namespace SlimFitGym.EFData
                 new Account() { Id = 2, Name = "kazmer", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("kazmer", 10), Email = "kazmer@gmail.com", Phone = "+36123456799", Role = "trainer" },
                 new Account() { Id = 3, Name = "pista", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("pista", 10), Email = "pista@gmail.com", Phone = "+36123456788", Role = "user" }
             );
-#if DEBUG
 
             modelBuilder.Entity<Machine>().HasData
             (
@@ -154,7 +153,6 @@ namespace SlimFitGym.EFData
             (
                 new Purchase() {Id=1,AccountId=3,PassId=2,PurchaseDate= DateTime.Now }
             );
-#endif
 
             modelBuilder.Entity<Benefit>().HasIndex(b => b.BenefitName).IsUnique();
             modelBuilder.Entity<Account>().HasIndex(a=>a.Email).IsUnique();
