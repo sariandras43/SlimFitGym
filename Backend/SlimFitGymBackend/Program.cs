@@ -52,6 +52,9 @@ namespace SlimFitGymBackend
                 var services = scope.ServiceProvider;
 
                 var context = services.GetRequiredService<SlimFitGym.EFData.SlimFitGymContext>();
+                //TODO: removing when we dont need it anymore
+                context.Database.EnsureDeleted();
+                //
                 context.Database.EnsureCreated();
             }
 
