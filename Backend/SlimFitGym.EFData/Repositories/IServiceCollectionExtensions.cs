@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using static System.Net.Mime.MediaTypeNames;
 using SlimFitGym.EFData.Interfaces;
 using Microsoft.OpenApi.Models;
+using AspNetCoreRateLimit;
 
 namespace SlimFitGym.Data.Repository
 {
@@ -121,6 +122,30 @@ namespace SlimFitGym.Data.Repository
                             new string[] { }
                         }
                     });
+            });
+        }
+
+        public static void AddRateLimit(this IServiceCollection service, IConfiguration config)
+        {
+            service.AddMemoryCache();
+            service.AddInMemoryRateLimiting();
+            service.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+            service.Configure<IpRateLimitOptions>(config);
+
+            service.Configure<IpRateLimitOptions>(options =>
+            {
+                var generalRules = config.GetSection("IpRateLimiting:GeneralRules").Get<List<RateLimitRule>>();
+
+                options.GeneralRules = generalRules ?? new List<RateLimitRule>
+                {
+                    new RateLimitRule
+                    {
+                        Endpoint = "*",
+                        Limit = 1000,
+                        Period = "1m",
+                        QuotaExceededResponse = new QuotaExceededResponse(){StatusCode=429,ContentType="application/json", Content="Túl sok kérés."}
+                    }
+                };
             });
         }
     }

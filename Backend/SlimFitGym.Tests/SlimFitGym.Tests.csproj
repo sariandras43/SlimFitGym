@@ -28,6 +28,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Data\EntriesGetTestData.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\EntriesPostTestData.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Data\LoginTestData.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

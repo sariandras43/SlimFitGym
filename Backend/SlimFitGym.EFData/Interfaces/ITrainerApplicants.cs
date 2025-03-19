@@ -12,7 +12,7 @@ namespace SlimFitGym.EFData.Interfaces
     {
         List<TrainerApplicant> GetAllApplicants();
         TrainerApplicant? GetApplicantById(int id);
-        TrainerApplicant? NewApplicant(string token, TrainerApplicant applicant);
+        TrainerApplicant? NewApplicant(string token, int accountId);
         AccountResponse? AcceptAsTrainer(int id);
         AccountResponse? Reject(int id);
     }

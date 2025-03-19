@@ -74,17 +74,31 @@ namespace SlimFitGymBackend.Controllers
             });
         }
 
-        [HttpPost]
+        [HttpPost("{accountId}")]
         [Authorize]
-
-        public IActionResult Post([FromBody] TrainerApplicant applicant)
+        public IActionResult Post([FromRoute] string accountId)
         {
             string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
 
+            int idNum;
             return this.Execute(() =>
             {
-                return Ok(trainerApplicantsRepository.NewApplicant(token, applicant));
+                if (int.TryParse(accountId, out idNum))
+                {
+                    try
+                    {
+                        return Ok(trainerApplicantsRepository.NewApplicant(token, idNum));
+
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+
+                        return Forbid();
+                    }
+                }   
+                throw new Exception("Érvénytelen azonosító.");
             });
+
         }
 
         // DELETE api/<TrainerApplicantsController>/5

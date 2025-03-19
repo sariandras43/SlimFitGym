@@ -37,7 +37,7 @@ namespace SlimFitGym.Tests.UnitTests
                     RoomId = 1,
                     TrainingEnd = DateTime.Now.AddHours(1),
                     TrainingStart = DateTime.Now,
-                    RoomImageUrls = new List<string>(),
+                    RoomImageUrl = "",
                     TrainerId = 1,
                     TrainerImageUrl=""
                 }
@@ -73,7 +73,7 @@ namespace SlimFitGym.Tests.UnitTests
                 RoomId = 1,
                 TrainingEnd = DateTime.Now.AddHours(1),
                 TrainingStart = DateTime.Now,
-                RoomImageUrls = new List<string>(),
+                RoomImageUrl = "",
                 TrainerId = 1,
                 TrainerImageUrl = ""
             };
@@ -118,7 +118,7 @@ namespace SlimFitGym.Tests.UnitTests
                 RoomId = 1,
                 TrainingEnd = DateTime.Now.AddHours(1),
                 TrainingStart = DateTime.Now,
-                RoomImageUrls = new List<string>(),
+                RoomImageUrl = "",
                 TrainerId = 1,
                 TrainerImageUrl = ""
             };

@@ -34,7 +34,7 @@ namespace SlimFitGym.EFData.Repositories
         public Entry NewEntry(string token,int accountId)
         {
             if (tokenGenerator.GetAccountIdFromToken(token) != accountId)
-                throw new Exception("Nem lehet más bérletével belépni.");
+                throw new UnauthorizedAccessException();
             if (accountId<=0) throw new Exception("Érvénytelen azonosító.");
             Account? account = accountRepository.GetAccountById(accountId);
             if (account==null) throw new Exception("Ez a felhasználó nem létezik.");
@@ -104,9 +104,9 @@ namespace SlimFitGym.EFData.Repositories
             if (accountFromToken.Role == "admin" && account == null)
                 return null;
             else if (accountFromToken.Role != "admin" && account == null)
-                throw new Exception("Nem lehet más belépéseit lekérni.");
-            if (accountId != tokenGenerator.GetAccountIdFromToken(token) && accountFromToken.Role!="admin")
-                throw new Exception("Nem lehet más belépéseit lekérni.");
+                throw new UnauthorizedAccessException();
+            if (accountId != tokenGenerator.GetAccountIdFromToken(token) && accountFromToken.Role != "admin")
+                throw new UnauthorizedAccessException();
             DateTime from;
             string[] dateTimeFormats = {
                 "yyyy.MM.dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss", "MM/dd/yyyy HH:mm:ss", "dd/MM/yyyy HH:mm:ss",
