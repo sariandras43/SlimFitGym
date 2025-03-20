@@ -50,9 +50,11 @@ h2 {
     flex-flow: column;
     gap: 3em;
     align-items: center;
+
   }
   .trainingSection{
-    width: 70em;
+    height: 20rem;
+    width: min(90%, 70em);
     display: flex;
     border-radius: calc(var(--border-radius)*2);
     overflow: hidden;
@@ -60,10 +62,13 @@ h2 {
     .trainerImage{
         border-top-left-radius: var(--border-radius);
         border-bottom-left-radius: var(--border-radius);
-        max-height: 100%;
         max-width: 30em;
         width: 30%;
-        object-fit: cover;
+        img{
+          height: 100%;
+          width: 100%;
+          object-fit: cover;
+        }
     }
     .trainingContent{
         position: relative;
