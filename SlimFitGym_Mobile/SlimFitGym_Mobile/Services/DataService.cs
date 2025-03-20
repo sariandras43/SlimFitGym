@@ -18,6 +18,7 @@ namespace SlimFitGym_Mobile.Services
         private static HttpClient _httpClient = new();
         public const string apiBaseURL = "https://slimfitgymbackend-bdgbechedpcpaag4.westeurope-01.azurewebsites.net/api/";
         private static JsonSerializerOptions options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        public static bool isLoading;
 
         public static async Task<List<MachineModel>> GetMachines()
         {

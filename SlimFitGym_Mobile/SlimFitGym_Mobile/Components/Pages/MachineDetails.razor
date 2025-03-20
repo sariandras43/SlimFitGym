@@ -11,7 +11,7 @@
 </div>
 
 <div class="container mt-4 d-flex flex-column overflow-auto mb-5 pb-5">
-    @if (isLoading)
+    @if (DataService.isLoading)
     {
         <div class="d-flex align-items-center justify-content-center">
             <img src="loading.gif" class="invert" alt="Loading..." />
@@ -52,12 +52,12 @@
     [Parameter]
     public int Id { get; set; }
     private MachineModel machine = new();
-    private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
+        DataService.isLoading = true;
         machine = await DataService.GetMachine(Id);
-        isLoading = false;
+        DataService.isLoading = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

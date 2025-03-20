@@ -10,7 +10,7 @@
     </div>
 
     <div class="overflow-auto flex-grow-1 mb-5 pb-5">
-        @if (isLoading)
+        @if (DataService.isLoading)
         {
             <div class="d-flex align-items-center justify-content-center">
                 <img src="loading.gif" class="invert" alt="Loading..." />
@@ -57,11 +57,11 @@
 
 @code {
     private List<PassModel> passes = new();
-    private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
+        DataService.isLoading = true;
         passes = await DataService.GetPasses();
-        isLoading = false;
+        DataService.isLoading = false;
     }
 }

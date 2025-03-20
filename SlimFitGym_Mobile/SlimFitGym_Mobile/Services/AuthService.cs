@@ -119,9 +119,9 @@ namespace SlimFitGym_Mobile.Services
                     modifyData.Add("phone", user.Phone);
                 if (user.Email != AccountModel.LoggedInUser.Email)
                     modifyData.Add("email", user.Email);
-                if (user.Password != AccountModel.LoggedInUser.Password)
+                if (user.Password != null)
                     modifyData.Add("newPassword", user.Password);
-                if (modifyData.Count == 0)
+                if (modifyData.Count == 1)
                     return new RegisterResult { Success = false, ErrorMessage = "Nincs megváltozott adat" };
 
                 var json = JsonSerializer.Serialize(modifyData);

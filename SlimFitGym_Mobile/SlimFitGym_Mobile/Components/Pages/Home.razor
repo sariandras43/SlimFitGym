@@ -11,39 +11,39 @@
         {
             <div class="d-flex justify-content-center">
                 <div class="d-flex justify-content-center">
-                    <img id="logo" class="w-50" src="icon.png" alt="Logo"/>
+                    <img id="logo" class="w-50" src="icon.png" alt="Logo" />
                 </div>
             </div>
             <div class="container mt-4 carousel-container">
-                @if (AccountModel.LoggedInUser != null && !isLoading)
+                @if (DataService.isLoading)
                 {
-                    @if (AccountModel.LoggedInUser?.Role != "trainer")
+                    <div class="d-flex align-items-center justify-content-center">
+                        <img src="loading.gif" class="invert" alt="Loading..." />
+                    </div>
+                }
+                else
+                {
+                    @if (AccountModel.LoggedInUser?.Role != "trainer" && lastPass != null)
                     {
-                        @if (lastPass != null)
-                        {
-                            <h3 class="section-title">Bérleted</h3>
-                            <div class="card home-card lighter-dark">
-                                <div class="card-body lighter-dark">
-                                    <h5 class="card-title lighter-dark">@lastPass.Name</h5>
-                                    @if (lastPass.RemainingEntries != null)
-                                    {
-                                        <p class="card-text @(lastPass.RemainingEntries == 0 ? "text-danger" : "lighter-dark")">
-                                            🎟 Hátralévő belépések: <b>@lastPass.RemainingEntries</b>
-                                        </p>
-                                    }
-                                    @if (lastPass.ValidTo != null)
-                                    {
-                                        <p class="card-text @(DateTime.Parse(lastPass.ValidTo) < DateTime.Today ? "text-danger" : "lighter-dark")">
-                                            📅 Érvényesség: <b>@DateTime.Parse(lastPass.ValidTo).ToString("yyyy.MM.dd")</b>
-                                        </p>
-                                    }
-                                </div>
+                        <h3 class="section-title">Bérleted</h3>
+                        <div class="card home-card lighter-dark">
+                            <div class="card-body lighter-dark">
+                                <h5 class="card-title lighter-dark">@lastPass.Name</h5>
+                                @if (lastPass.RemainingEntries != null)
+                                {
+                                    <p class="card-text @(lastPass.RemainingEntries == 0 ? "text-danger" : "lighter-dark")">
+                                        🎟 Hátralévő belépések: <b>@lastPass.RemainingEntries</b>
+                                    </p>
+                                }
+                                @if (lastPass.ValidTo != null)
+                                {
+                                    <p class="card-text @(DateTime.Parse(lastPass.ValidTo) < DateTime.Today ? "text-danger" : "lighter-dark")">
+                                        📅 Érvényesség: <b>@DateTime.Parse(lastPass.ValidTo).ToString("yyyy.MM.dd")</b>
+                                    </p>
+                                }
                             </div>
-                        }
+                        </div>
                     }
-
-
-
                     @if (signedUpTrainings.Any())
                     {
                         <h3 class="section-title mt-4">Edzéseid</h3>
@@ -66,12 +66,6 @@
                         </div>
                     }
                 }
-                else
-                {
-                    <div class="d-flex align-items-center justify-content-center">
-                        <img src="loading.gif" class="invert" alt="Loading..." />
-                    </div>
-                }
             </div>
         }
         else
@@ -80,12 +74,12 @@
                 <img class="w-50" src="icon.png" alt="Logo" />
             </div>
         }
+
     </div>
     <Navbar />
 </div>
 
 @code {
-    private bool isLoading = true;
     private PassModel lastPass = null;
     private List<TrainingModel> signedUpTrainings = new();
 
@@ -93,12 +87,13 @@
     {
         if (AccountModel.LoggedInUser != null)
         {
+            DataService.isLoading = true;
             signedUpTrainings = await DataService.GetSignedUpTrainings(AccountModel.LoggedInUser.Id);
             if (AccountModel.LoggedInUser.Role != "trainer")
             {
                 lastPass = await DataService.GetAccountsPass(AccountModel.LoggedInUser.Id);
             }
-            isLoading = false;
+            DataService.isLoading = false;
             StateHasChanged();
             if (signedUpTrainings.Any())
             {

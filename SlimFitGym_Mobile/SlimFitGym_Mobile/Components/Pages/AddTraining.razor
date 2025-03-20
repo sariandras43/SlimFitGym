@@ -16,7 +16,7 @@
         </NavLink>
     </div>
     <div class="row justify-content-center overflow-auto pb-5">
-        @if (isLoading)
+        @if (DataService.isLoading)
         {
             <div class="d-flex align-items-center justify-content-center">
                 <img src="loading.gif" class="invert" alt="Loading..." />
@@ -100,11 +100,11 @@
     private List<RoomModel> rooms = new();
     private string errorMessage;
     private bool isModify = false;
-    private bool isLoading = true;
     private string PageTitle = "Edzés létrehozása";
 
     protected override async Task OnInitializedAsync()
     {
+        DataService.isLoading = true;
         rooms = await DataService.GetRooms();
 
         if (trainingId.HasValue)
@@ -117,7 +117,7 @@
                 PageTitle = "Edzés módosítása";
             }
         }
-        isLoading = false;
+        DataService.isLoading = false;
     }
 
     private async Task HandleSubmit()

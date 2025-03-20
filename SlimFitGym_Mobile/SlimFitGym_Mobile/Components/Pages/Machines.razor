@@ -12,14 +12,14 @@
 
             <div class="mb-3 px-2">
                 <input type="text"
-                       class="form-control border-secondary"
-                       placeholder="Keresés"
-                       @bind="searchText"
-                       @bind:event="oninput" />
+                class="form-control border-secondary"
+                placeholder="Keresés"
+                @bind="searchText"
+                @bind:event="oninput" />
             </div>
         </div>
 
-        @if (isLoading)
+        @if (DataService.isLoading)
         {
             <div class="d-flex align-items-center justify-content-center">
                 <img src="loading.gif" class="invert" alt="Loading..." />
@@ -60,12 +60,12 @@
 @code {
     private string searchText = string.Empty;
     public List<MachineModel> machines = new();
-    private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
+        DataService.isLoading = true;
         machines = await DataService.GetMachines();
-        isLoading = false;
+        DataService.isLoading = false;
     }
 
     private List<MachineModel> filteredMachines => machines

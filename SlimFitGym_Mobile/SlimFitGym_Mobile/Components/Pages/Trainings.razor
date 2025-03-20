@@ -27,7 +27,7 @@
         }
 
         <div class="overflow-auto pb-5">
-            @if (isLoading)
+            @if (DataService.isLoading)
             {
                 <div class="d-flex align-items-center justify-content-center">
                     <img src="loading.gif" class="invert" alt="Loading..." />
@@ -64,9 +64,9 @@
                                             Módosítás
                                         </button>
                                         <button class="btn btn-danger float-start ms-2"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#confirmModal"
-                                                @onclick="() => ShowDeleteConfirmation(training.Id)">
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#confirmModal"
+                                        @onclick="() => ShowDeleteConfirmation(training.Id)">
                                             Törlés
                                         </button>
                                     }
@@ -75,9 +75,9 @@
                                         @if (isSignedUp || training.FreePlaces > 0)
                                         {
                                             <button class="btn @(isSignedUp ? "btn-danger" : "btn-primary") float-end"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#confirmModal"
-                                                    @onclick="() => ShowConfirmation(training.Id, isSignedUp)">
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#confirmModal"
+                                            @onclick="() => ShowConfirmation(training.Id, isSignedUp)">
                                                 @(isSignedUp ? "Visszavonás" : "Jelentkezés")
                                             </button>
                                         }
@@ -113,18 +113,18 @@
     private List<TrainingModel> trainings = new();
     private List<TrainingModel> signedUpTrainings = new();
     private bool isDeleteMode = false;
-    private bool isLoading = true;
     private string modalTitle = "Biztosan szeretnél jelentkezni?";
     private int selectedTrainingId;
 
     protected override async Task OnInitializedAsync()
     {
+        DataService.isLoading = true;
         trainings = await DataService.GetTrainings();
         if (AccountModel.LoggedInUser != null)
         {
             signedUpTrainings = await DataService.GetSignedUpTrainings(AccountModel.LoggedInUser.Id);
         }
-        isLoading = false;
+        DataService.isLoading = false;
     }
 
     private void ShowConfirmation(int trainingId, bool isSignedUp)

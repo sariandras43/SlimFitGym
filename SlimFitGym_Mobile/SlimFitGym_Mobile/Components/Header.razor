@@ -1,12 +1,12 @@
 ﻿@inject NavigationManager NavigationManager
 @using SlimFitGym_Mobile.Models
 
-<div class="container position-relative d-flex align-items-center py-2 mb-3">
-    <div class="w-100 text-center">
-        <h1 class="fw-bolder display-4 m-0">Slim Fit Gym</h1>
-    </div>
+    <div class="container position-relative d-flex align-items-center py-2 mb-3">
+        <div class="w-100 text-center">
+            <h1 class="fw-bolder display-4 m-0">Slim Fit Gym</h1>
+        </div>
 
-    @if (AccountModel.LoggedInUser != null)
+        @if (AccountModel.LoggedInUser != null)
     {
         <div class="dropdown position-absolute end-0 me-1">
             <button class="btn p-0 border-0 bg-transparent" type="button" id="logoutDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -14,8 +14,11 @@
             </button>
             <ul class="dropdown-menu lighter-dark" aria-labelledby="logoutDropdown">
                 <NavLink href="/modifydata" class="dropdown-item lighter-dark fw-bold">@AccountModel.LoggedInUser.Name</NavLink>
-                <li><a class="dropdown-item lighter-dark" @onclick="Logout">Kijelentkezés</a></li>
+                <li class="@(DataService.isLoading ? "disabled" : "")">
+                    <a class="dropdown-item lighter-dark" href="#" @onclick="@(DataService.isLoading ? null : Logout)">Kijelentkezés</a>
+                </li>
             </ul>
+
         </div>
     }
     else
