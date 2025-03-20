@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 import { ConfigService } from './config.service';
 import { HttpClient } from '@angular/common/http';
 import { RoomModel } from '../Models/room.model';
+import { TrainingModel } from '../Models/training.model';
 
 @Injectable({
   providedIn: 'root',
@@ -34,5 +35,17 @@ export class RoomService {
   }
   getRoom(id:Number): Observable<RoomModel>{
     return this.http.get<RoomModel>(`${this.config.apiUrl}/rooms/${id}`);
+  }
+  getTrainingsInRoom(id: Number): Observable<TrainingModel[]>{
+    return this.http.get<TrainingModel[]>(`${this.config.apiUrl}/trainings/room/${id}`).pipe(
+      map((response: TrainingModel[]) => {
+        const parsedTraining = response;
+        parsedTraining.map(d=>{
+          d.trainingStart = new Date(d.trainingStart)
+          d.trainingEnd = new Date(d.trainingEnd)
+        })
+        return parsedTraining;
+      })
+    );
   }
 }

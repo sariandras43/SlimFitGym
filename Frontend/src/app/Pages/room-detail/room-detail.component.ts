@@ -7,6 +7,7 @@ import { MachineModel } from '../../Models/machine.model';
 import { RoomService } from '../../Services/room.service';
 import { RoomModel } from '../../Models/room.model';
 import { ActivatedRoute } from '@angular/router';
+import { TrainingModel } from '../../Models/training.model';
 
 @Component({
   selector: 'app-room-detail',
@@ -22,6 +23,7 @@ import { ActivatedRoute } from '@angular/router';
 export class RoomDetailComponent {
   id: number = 0;
   room: RoomModel | undefined;
+  trainings: TrainingModel[] = [];
   allMachineCount: number = 0;
   machineTypeCount: number = 0;
   constructor(private route: ActivatedRoute, roomService: RoomService) {
@@ -41,5 +43,17 @@ export class RoomDetailComponent {
         console.log(error.error.message ?? error.message);
       },
     });
+
+    roomService.getTrainingsInRoom(this.id).subscribe({
+      next: (response: TrainingModel[]) => {
+        this.trainings = response;
+
+      },
+      error: (error) => {
+        console.log(error.error.message ?? error.message);
+      },
+    });
   }
+
+
 }

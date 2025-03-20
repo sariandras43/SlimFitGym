@@ -11,7 +11,10 @@
 
 <div class="container mt5" >
   <div class="eventWrapper">
-  <app-events/>
+    @if (trainings.length > 0) {
+
+      <app-events [events]="trainings"/>
+    }
   </div>
   <div class=" machines">
     <h2>Terem gépei</h2>
