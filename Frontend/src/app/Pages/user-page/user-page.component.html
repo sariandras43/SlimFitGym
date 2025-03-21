@@ -1,9 +1,11 @@
 <div class="container mt5">
   
-  @if (loggedInUser) {
+  <!-- @if (loggedInUser) {
     <app-basic-user-data [user]="loggedInUser" [loggedInUserPass]="loggedInUserPass"></app-basic-user-data>
     <div class="accordions mt5">
       <app-new-password [user]="loggedInUser"></app-new-password>
     </div>
-  }
+  } -->
+
+  <router-outlet></router-outlet>
 </div>

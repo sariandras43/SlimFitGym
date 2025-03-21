@@ -34,8 +34,28 @@ export class BasicUserDataComponent {
     return JSON.parse(user);
   }
 
-  constructor(private userService: UserService, private router: Router) {}
+  constructor(private userService: UserService, private router: Router) {
+    const loggedInUser = localStorage.getItem('loggedInUser');
+    const loggedInUserPass = localStorage.getItem('userPass');
 
+    if (loggedInUser) {
+      this.user = JSON.parse(loggedInUser);
+    }
+    if (loggedInUserPass) {
+      this.loggedInUserPass = JSON.parse(loggedInUserPass);
+    }
+
+    this.userService.getPass();
+
+    userService.loggedInUser$.subscribe((res) => {
+      if (res) {
+        this.user = res;
+      }
+    });
+    userService.loggedInUserPass$.subscribe((res) => {
+      this.loggedInUserPass = res;
+    });
+  }
   formChanged() {
     this.canModify = this.changedUserValue !== null;
   }
@@ -65,6 +85,8 @@ export class BasicUserDataComponent {
 
   logout() {
     this.userService.logout();
+    this.userService.logout();
+
     this.router.navigate(['/']);
   }
   updateUser() {
@@ -111,7 +133,7 @@ export class BasicUserDataComponent {
         const res = reader.result?.toString();
         if (res) {
           this.user.image = res;
-          this.formChanged()
+          this.formChanged();
         }
       };
     }

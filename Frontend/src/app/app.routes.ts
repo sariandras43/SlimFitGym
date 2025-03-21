@@ -8,16 +8,24 @@ import { RoomDetailComponent } from './Pages/room-detail/room-detail.component';
 import { MachinesPageComponent } from './Pages/machines-page/machines-page.component';
 import { TrainigsPageComponent } from './Pages/trainigs-page/trainigs-page.component';
 import { UserPageComponent } from './Pages/user-page/user-page.component';
+import { BasicUserDataComponent } from './Components/CMS/basic-user-data/basic-user-data.component';
 
 export const routes: Routes = [
-    { path: '', component: MainPageComponent },
-    { path: 'subscriptions', component: SubscriptionsPageComponent },
-    { path: 'rooms', component: RoomsComponent },
-    {path: 'rooms/:id', component: RoomDetailComponent},
-    {path: 'machines', component: MachinesPageComponent},
-    {path: 'training', component: TrainigsPageComponent},
-    {path: 'user', component: UserPageComponent},
-    
-    {path: 'login', component: LogInPageComponent},
-    {path: 'signup', component: SignUpPageComponent}
+  { path: '', component: MainPageComponent },
+  { path: 'subscriptions', component: SubscriptionsPageComponent },
+  { path: 'rooms', component: RoomsComponent },
+  { path: 'rooms/:id', component: RoomDetailComponent },
+  { path: 'machines', component: MachinesPageComponent },
+  { path: 'training', component: TrainigsPageComponent },
+  {
+    path: 'user',
+    component: UserPageComponent,
+    children: [
+      { path: 'overview', component: BasicUserDataComponent },
+      { path: '', redirectTo: 'overview', pathMatch: 'full' },
+    ],
+  },
+
+  { path: 'login', component: LogInPageComponent },
+  { path: 'signup', component: SignUpPageComponent },
 ];

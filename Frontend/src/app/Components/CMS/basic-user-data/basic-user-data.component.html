@@ -1,8 +1,6 @@
 <form class="userData" (input)="formChanged()">
   <div class="imgWrap">
-
     <div class="profilePic">
-
       @if (user.imageUrl) {
       <img [src]="user.imageUrl" alt="" class="" />
 
@@ -12,21 +10,19 @@
       }
 
       <div class="addHover">
-        <label for="file-upload" class="custom-file-upload">
-          +
-        </label>
-        <input id="file-upload" (change)="imageChanged($event)" type="file" accept=".jpg,.jpeg,.gif,.avif"/>
+        <label for="file-upload" class="custom-file-upload"> + </label>
+        <input
+          id="file-upload"
+          (change)="imageChanged($event)"
+          type="file"
+          accept=".jpg,.jpeg,.gif,.avif"
+        />
       </div>
     </div>
     <button (click)="imgDelete()" class="delete imgDelete">
-      
-      
-    @if (deleteImageLoading) {
+      @if (deleteImageLoading) {
       <app-button-loader></app-button-loader>
-    }
-    @else {
-      Kép törlése
-    }
+      } @else { Kép törlése }
     </button>
   </div>
   <div class="basicData">
@@ -59,34 +55,41 @@
         [ngModelOptions]="{ standalone: true }"
       />
     </p>
+
+    @if (user.role == "admin") {
     <p>
-      @if (user.role == "admin") {
-
       <span>Jelenlegi szerep: </span>
       <span class="pass admin">Admin</span>
-      } @else if (user.role == "trainer") {
-
-      <span>Jelenlegi szerep: </span>
-      <span class="pass admin">Admin</span>
-      }
     </p>
+    } @else if (user.role == "trainer") {
+    <p>
+      <span>Jelenlegi szerep: </span>
+      <span class="pass admin">Edző</span>
+    </p>
+    } @if (loggedInUserPass) {
     <p>
       <span>Jelenlegi bérlet: </span>
       <a class="pass" routerLink="/subscriptions">{{
-        loggedInUserPass?.name
+        loggedInUserPass.name
       }}</a>
     </p>
+
+    }
     <div class="buttons">
       @if (updateLoading) {
-        <div class="edit wrap">
-  
-          <app-button-loader></app-button-loader>
-        </div>
-        
-      }
-      @else {
+      <div class="edit wrap">
+        <app-button-loader></app-button-loader>
+      </div>
 
-        <input type="submit" class="edit" [ngClass]="{disabled: !canModify}" (click)="updateUser()" value="Módosítás" />
+      } @else {
+
+      <input
+        type="submit"
+        class="edit"
+        [ngClass]="{ disabled: !canModify }"
+        (click)="updateUser()"
+        value="Módosítás"
+      />
       }
       <button class="delete" (click)="logout()">Kijelentkezés</button>
     </div>

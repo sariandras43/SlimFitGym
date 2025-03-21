@@ -4,15 +4,15 @@ import { NewPasswordComponent } from '../../Components/CMS/new-password/new-pass
 import { BasicUserDataComponent } from '../../Components/CMS/basic-user-data/basic-user-data.component';
 import { UserModel } from '../../Models/user.model';
 import {  UserService } from '../../Services/user.service';
-import { Router } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { PassModel } from '../../Models/pass.model';
 
 @Component({
   selector: 'app-user-page',
   imports: [
-    AccordionSegmentComponent,
     NewPasswordComponent,
     BasicUserDataComponent,
+    RouterOutlet
   ],
   templateUrl: './user-page.component.html',
   styleUrl: './user-page.component.scss',
