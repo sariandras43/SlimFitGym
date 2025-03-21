@@ -1,21 +1,48 @@
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, HostListener } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { UserModel } from '../../Models/user.model';
-import {  UserService } from '../../Services/user.service';
+import { UserService } from '../../Services/user.service';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterModule],
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.scss',
+  styleUrls: ['./navbar.component.scss'],
+  imports:[RouterLink]
 })
 export class NavbarComponent {
   loggedInUser: UserModel | undefined;
-  
-  constructor(authService: UserService) {
-    
-    authService.loggedInUser$.subscribe((user) => {
+  isMenuOpen = false;
+
+  constructor(
+    private authService: UserService,
+    private router: Router
+  ) {
+    this.authService.loggedInUser$.subscribe(user => {
       this.loggedInUser = user;
     });
+
+    // Close menu on navigation
+    this.router.events.subscribe(() => {
+      this.isMenuOpen = false;
+    });
+  }
+
+  toggleMenu(): void {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    if (window.innerWidth > 768) {
+      this.isMenuOpen = false;
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.nav-section') && !target.closest('.menu-toggle')) {
+      this.isMenuOpen = false;
+    }
   }
 }
