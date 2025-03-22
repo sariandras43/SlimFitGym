@@ -1,4 +1,4 @@
-$berakpoint: 70em;
+$breakpoint: 70em;
 
 .navbar {
   position: fixed;
@@ -9,10 +9,12 @@ $berakpoint: 70em;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 2px solid rgba(var(--tertiary-color-rgb), 0.7);
+
 }
 
 .nav-container {
   display: flex;
+  height: var(--navbar-height);
 
   align-items: center;
 
@@ -38,7 +40,7 @@ $berakpoint: 70em;
   gap: 3rem;
   flex-grow: 1;
   margin-left: 1rem;
-  @media (max-width: $berakpoint) {
+  @media (max-width: $breakpoint) {
   margin-left: 0;
 
     position: fixed;
@@ -69,7 +71,7 @@ $berakpoint: 70em;
   margin: 0;
   padding: 0;
 
-  @media (max-width: $berakpoint) {
+  @media (max-width: $breakpoint) {
     flex-direction: column;
     gap: 2.5rem;
     text-align: center;
@@ -81,6 +83,7 @@ $berakpoint: 70em;
 }
 
 .nav-link {
+
   color: var(--main-text);
   text-decoration: none;
   font-weight: 500;
@@ -90,6 +93,41 @@ $berakpoint: 70em;
   font-size: 1.25rem;
   &:hover {
     color: var(--primary-color);
+    &::after{
+      width: 90%;
+    }
+    h2::after{
+      width: 90%;
+
+    }
+  }
+
+  h2{
+    position: relative;
+    &::after{
+      bottom: 0;
+      left: 50%;
+      transform: translate(-50%, 0);
+      position: absolute;
+      content: '';
+      background-color:  var(--primary-color);
+      width: 0;
+      height: 0.15rem;
+      transition: width 300ms ease-in-out;
+    }
+
+  }
+  
+  &:not(:has(h2)):after{
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 0);
+    position: absolute;
+    content: '';
+    background-color:  var(--primary-color);
+    width: 0;
+    height: 0.15rem;
+    transition: width 300ms ease-in-out;
   }
   
   h2 {
@@ -109,7 +147,7 @@ $berakpoint: 70em;
   align-items: center;
   gap: 1.5rem;
   margin-left: auto;
-  @media (max-width: $berakpoint) {
+  @media (max-width: $breakpoint) {
   margin-left: 0;
 
     flex-direction: column;
@@ -186,7 +224,7 @@ $berakpoint: 70em;
     }
   }
 
-  @media (max-width: $berakpoint) {
+  @media (max-width: $breakpoint) {
     display: block;
   }
   

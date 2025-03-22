@@ -6,14 +6,16 @@ import { UserModel } from '../../Models/user.model';
 import {  UserService } from '../../Services/user.service';
 import { Router, RouterOutlet } from '@angular/router';
 import { PassModel } from '../../Models/pass.model';
+import { SidenavComponent } from "../../Components/sidenav/sidenav.component";
 
 @Component({
   selector: 'app-user-page',
   imports: [
     NewPasswordComponent,
     BasicUserDataComponent,
-    RouterOutlet
-  ],
+    RouterOutlet,
+    SidenavComponent
+],
   templateUrl: './user-page.component.html',
   styleUrl: './user-page.component.scss',
 })
