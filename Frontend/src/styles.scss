@@ -12,6 +12,9 @@
     --danger: hsl(0, 85%, 65%);
     --border-radius: 1.5em;
     
+    --main-text-rgb: 250, 255, 253;
+    --secondary-rgb: 212, 219, 216;
+
     --bg-color-rgb: 52, 46, 55;
     --bg-secondary-rgb: 43, 39, 45;
     --bg-tertiary-rgb: 15, 15, 16;
@@ -96,7 +99,8 @@ body{
     font-family: "Roboto", serif;
 }
 .container{
-  width: 90%;
+  width: 95%;
+  max-width: 90rem;
   margin:  0 auto;
 }
 .flex {
