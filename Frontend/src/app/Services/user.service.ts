@@ -77,19 +77,19 @@ export class UserService {
       );
   }
 
-  updateUser(user: UserModel): Observable<boolean>{
+  updateUser(user: UserModel): Observable<boolean> {
     const headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${this.loggedInUserSubject.getValue()?.token}`
     );
     return this.http
-      .put<UserModel>(`${this.config.apiUrl}/auth/modify/${user.id}`, 
-        user,  {headers}
-      )
+      .put<UserModel>(`${this.config.apiUrl}/auth/modify/${user.id}`, user, {
+        headers,
+      })
       .pipe(
         map((response: UserModel) => {
-          response.token = this.loggedInUserSubject.getValue()?.token
-          response.validTo = this.loggedInUserSubject.getValue()?.validTo
+          response.token = this.loggedInUserSubject.getValue()?.token;
+          response.validTo = this.loggedInUserSubject.getValue()?.validTo;
           this.loggedInUserSubject.next(response);
           localStorage.setItem('loggedInUser', JSON.stringify(response));
           this.getPass();
@@ -97,7 +97,6 @@ export class UserService {
         })
       );
   }
-
 
   checkUser() {
     const user =
@@ -118,15 +117,24 @@ export class UserService {
     }
   }
 
+  deleteUser(user: UserModel): Observable<UserModel> {
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.loggedInUserSubject.getValue()?.token}`
+    );
+    return this.http
+      .delete<UserModel>(`${this.config.apiUrl}/auth/delete/${user.id}`, {
+        headers
+      })
+      
+  }
 
   getPass(): void {
     let storage = localStorage;
     let user = localStorage.getItem('loggedInUser');
-    if(!user)
-    {
-
+    if (!user) {
       user = sessionStorage.getItem('loggedInUser');
-       storage = sessionStorage;
+      storage = sessionStorage;
     }
     if (!user) {
       console.warn('No logged-in user found.');
