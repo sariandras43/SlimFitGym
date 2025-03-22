@@ -1,8 +1,20 @@
+.container{
+
+  padding: 3em 1em 5em 1em;
+  border-bottom-left-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+  background-color: var(--bg-secondary);
+
+}
 .userData {
   display: flex;
   gap: 5em;
   margin: 0 auto;
-  width: min(90em, 90%);
+  justify-content: center;
+
+  @media (max-width: 70em) {
+    flex-direction: column;
+  }
   .imgWrap {
     display: flex;
     align-items: center;
@@ -13,7 +25,7 @@
   .profilePic {
     isolation: isolate;
     background-color: var(--bg-tertiary);
-    margin-top: 5em;
+
     border-radius: 50%;
     overflow: hidden;
     aspect-ratio: 1 / 1;
@@ -62,7 +74,6 @@
     }
   }
   .basicData {
-    margin-top: 5em;
     justify-content: center;
     display: flex;
     flex-direction: column;
@@ -87,7 +98,16 @@
    
     .buttons {
       display: flex;
+      flex-wrap: wrap;
       gap: 1em;
+    }
+
+    p{
+      width: 100%;
+      display: flex;
+      input{
+        flex-grow: 1;
+      }
     }
   }
 }
@@ -95,7 +115,8 @@ button,
 .edit {
   height: 2em;
   cursor: pointer;
-
+  max-width: 100%;
+  width: auto;
   margin-left: 0;
   &.wrap {
     display: flex;
@@ -117,13 +138,18 @@ button,
   }
 }
 input {
-  background-color: var(--bg-tertiary);
-
-  border: var(--primary-color) 3px solid;
-  border-radius: var(--border-radius);
+  background-color: inherit;
+  outline: transparent;
+  border: none;
+  width: 100%;
   color: var(--secondary-text);
-  padding: 0.25em 1em;
+  border-bottom: var(--secondary-text) 1px solid;
+
   margin-left: 1em;
+  &:focus-visible{
+    border-bottom: var(--primary-color) 2px solid;
+
+  }
 }
 .imgDelete{
   font-size: 1.5rem;

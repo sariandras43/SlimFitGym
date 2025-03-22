@@ -6,15 +6,17 @@ import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../../Services/user.service';
 import { ButtonLoaderComponent } from '../../button-loader/button-loader.component';
 import { NgClass } from '@angular/common';
+import { NewPasswordComponent } from "../new-password/new-password.component";
+import { DeleteUserComponent } from "../delete-user/delete-user.component";
 
 @Component({
   selector: 'app-basic-user-data',
-  imports: [FormsModule, RouterLink, ButtonLoaderComponent, NgClass],
+  imports: [FormsModule, RouterLink, ButtonLoaderComponent, NgClass, NewPasswordComponent, DeleteUserComponent],
   templateUrl: './basic-user-data.component.html',
   styleUrl: './basic-user-data.component.scss',
 })
 export class BasicUserDataComponent {
-  @Input() user: UserModel = {
+  user: UserModel = {
     id: 0,
   };
 
@@ -84,7 +86,6 @@ export class BasicUserDataComponent {
   }
 
   logout() {
-    this.userService.logout();
     this.userService.logout();
 
     this.router.navigate(['/']);
