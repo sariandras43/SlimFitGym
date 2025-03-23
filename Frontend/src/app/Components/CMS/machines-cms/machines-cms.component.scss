@@ -1,0 +1,79 @@
+table{
+    width: 100%;
+    background-color: var(--bg-secondary);
+    padding: 1rem;
+    margin: 0 auto;
+    border-collapse: collapse;
+}
+th,td{
+    padding: 1rem;
+}
+th{
+    text-align: left;
+    background: rgb(var(--bg-tertiary-rgb), 0.5);
+}
+tr:nth-of-type(2n){
+    background: rgb(var(--bg-tertiary-rgb), 0.2);
+
+}
+.buttons{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    button{
+        background-color: inherit;
+        border: none;
+        &:hover,&:focus-visible{
+            
+            svg{
+                transform: scale(1.1);
+                path{
+    
+                    stroke: var(--primary-color);
+                }
+            }
+        }
+        &:hover{
+            cursor: pointer;
+        }
+        svg{
+            path{
+
+                stroke: var(--main-text);
+            }
+            width: 2em;
+            height: 2em;
+        }
+    }
+}
+
+@media(max-width: 40em){
+    th{
+        display: none;
+    }
+td{
+    display: block;
+    padding: 0.75rem 1rem;
+    &:first-child{
+        padding-top: 2rem;
+    }
+    &:last-child{
+        padding-bottom: 2rem;
+    }
+}
+td.buttons{
+    display: flex;
+    justify-content: start;
+    gap: 3em;
+    &::before{
+        display: none;
+    }
+}
+
+td::before{
+    content: attr(data-cell) ": ";
+    font-weight: 700;
+    text-transform: capitalize;
+    margin-right: 1rem;
+}
+}

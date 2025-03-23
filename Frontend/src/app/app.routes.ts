@@ -9,6 +9,7 @@ import { MachinesPageComponent } from './Pages/machines-page/machines-page.compo
 import { TrainigsPageComponent } from './Pages/trainigs-page/trainigs-page.component';
 import { UserPageComponent } from './Pages/user-page/user-page.component';
 import { BasicUserDataComponent } from './Components/CMS/basic-user-data/basic-user-data.component';
+import { MachinesCMSComponent } from './Components/CMS/machines-cms/machines-cms.component';
 
 export const routes: Routes = [
   { path: '', component: MainPageComponent },
@@ -21,8 +22,9 @@ export const routes: Routes = [
     path: 'user',
     component: UserPageComponent,
     children: [
-      { path: 'overview', component: BasicUserDataComponent },
-      { path: '', redirectTo: 'overview', pathMatch: 'full' },
+      { path: 'userData', component: BasicUserDataComponent },
+      { path: 'machines', component: MachinesCMSComponent },
+      { path: '', redirectTo: 'userData', pathMatch: 'full' },
     ],
   },
 
