@@ -29,7 +29,7 @@ namespace SlimFitGym.Models.Models
         public bool IsActive { get; set; } = true;
 
         [Required, DefaultValue(false)]
-        public bool IsHighlighted { get; set; } = false;
+        public bool? IsHighlighted { get; set; } = false;
 
     }
 }
