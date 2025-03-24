@@ -1,46 +1,69 @@
 <div class="container">
-  <div class="controlButtons"><button class="newButton">Új gép</button></div>
-  <form class="machineForm">
-    <label for="machineNameInput">Név</label>
-    <input type="text" id="machineNameInput">
+  <div class="controlButtons"><button (click)="modalOpen()" class="newButton">Új gép</button></div>
+  @if (selectedMachine) {
 
-    <label for="machineDescriptionInput">Leírás</label>
-    <textarea  id="machineDescriptionInput" ></textarea>
-
-
-    <div class="imgWrap">
-      <div class="mainImage imgUpload">
-          @if (selectedMachine.imageUrls[0]) {
-          <img [src]="selectedMachine.imageUrls[0]" alt="" class="" />
-          }
-          <div class="addHover">
-            <label for="file-upload" class="custom-file-upload"> + </label>
-            <input
-              id="file-upload"
-              (change)="imageChanged($event, 0)"
-              type="file"
-              accept=".jpg,.jpeg,.gif,.avif"
-            />
+    <div class="modalWrapper">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>{{ selectedMachine.id != -1 ? "Gép szerkesztése" : "Új gép" }}</h2>
+          <div class="modal-actions">
+            <button class="cancel-button" (click)="selectedMachine = undefined">Mégse</button>
+            <button class="save-button" (click)="save()">Mentés</button>
           </div>
         </div>
-    </div>
-      <div class="imgWrap">
-        <div class="secondaryImage imgUpload">
-          @if (selectedMachine.imageUrls[1]) {
-          <img [src]="selectedMachine.imageUrls[1]" alt="" class="" />
-          }
-          <div class="addHover">
-            <label for="file-upload" class="custom-file-upload"> + </label>
-            <input
-              id="file-upload"
-              (change)="imageChanged($event, 1)"
-              type="file"
-              accept=".jpg,.jpeg,.gif,.avif"
-            />
+        <form class="machineForm">
+          <p class="inputField">
+            <label for="machineNameInput">Név</label>
+            <input type="text" id="machineNameInput" [(ngModel)]="selectedMachine.name" [ngModelOptions]="{ standalone: true }" required/>
+          </p>
+          <p class="inputField">
+            <label for="machineDescriptionInput">Leírás</label>
+            <textarea id="machineDescriptionInput" [(ngModel)]="selectedMachine.description" [ngModelOptions]="{ standalone: true }" required></textarea>
+          </p>
+          <div class="uploadImages">
+            <div class="imgWrap">
+              <p>Fő kép</p>
+              <div class="mainImage imgUpload">
+                @if (selectedMachine.imageUrls[0]) {
+                <img [src]="selectedMachine.imageUrls[0]" alt="" class="" />
+                }
+                <div class="addHover">
+                  <label for="mainImage-upload" class="custom-file-upload">
+                    +
+                  </label>
+                  <input
+                    id="mainImage-upload"
+                    (change)="imageChanged($event, 0)"
+                    type="file"
+                    accept=".jpg,.jpeg,.gif,.avif"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="imgWrap">
+              <p>Segédleti kép</p>
+              <div class="secondaryImage imgUpload">
+                @if (selectedMachine.imageUrls[1]) {
+                <img [src]="selectedMachine.imageUrls[1]" alt="" class="" />
+                }
+                <div class="addHover">
+                  <label for="secondaryImage-upload" class="custom-file-upload">
+                    +
+                  </label>
+                  <input
+                    id="secondaryImage-upload"
+                    (change)="imageChanged($event, 1)"
+                    type="file"
+                    accept=".jpg,.jpeg,.gif,.avif"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </form>
       </div>
-  </form>
+    </div>
+  }
   <table>
     <tr>
       <th (click)="sortBy('name')">Név {{ getSortIndicator("name") }}</th>
@@ -55,10 +78,10 @@
     <tr>
       <td data-cell="Név">{{ item.name }}</td>
       <td data-cell="Leírás">{{ item.description }}</td>
-      <td data-cell="Fő kép">{{ item.imageUrls[0] }}</td>
-      <td data-cell="Segédleti kép">{{ item.imageUrls[1] }}</td>
+      <td data-cell="Fő kép"><img [src]="item.imageUrls[0]" alt="" class="" /></td>
+      <td data-cell="Segédleti kép"><img [src]="item.imageUrls[1]" alt="" class="" /></td>
       <td class="itemButtons">
-        <button>
+        <button (click)="modalOpen(item)">
           <svg
             width="800px"
             height="800px"
