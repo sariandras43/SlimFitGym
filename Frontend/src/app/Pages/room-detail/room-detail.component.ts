@@ -34,7 +34,7 @@ export class RoomDetailComponent {
       next: (response: RoomModel) => {
         this.room = response;
         response.machines.forEach((m) => {
-          this.allMachineCount += m.machineCount;
+          this.allMachineCount += m.machineCount || 0;
           this.machineTypeCount++;
         });
         console.log(this.machineTypeCount)

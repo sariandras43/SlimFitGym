@@ -1,10 +1,52 @@
 <div class="container">
+  <div class="controlButtons"><button class="newButton">Új gép</button></div>
+  <form class="machineForm">
+    <label for="machineNameInput">Név</label>
+    <input type="text" id="machineNameInput">
+
+    <label for="machineDescriptionInput">Leírás</label>
+    <textarea  id="machineDescriptionInput" ></textarea>
 
 
+    <div class="imgWrap">
+      <div class="mainImage imgUpload">
+          @if (selectedMachine.imageUrls[0]) {
+          <img [src]="selectedMachine.imageUrls[0]" alt="" class="" />
+          }
+          <div class="addHover">
+            <label for="file-upload" class="custom-file-upload"> + </label>
+            <input
+              id="file-upload"
+              (change)="imageChanged($event, 0)"
+              type="file"
+              accept=".jpg,.jpeg,.gif,.avif"
+            />
+          </div>
+        </div>
+    </div>
+      <div class="imgWrap">
+        <div class="secondaryImage imgUpload">
+          @if (selectedMachine.imageUrls[1]) {
+          <img [src]="selectedMachine.imageUrls[1]" alt="" class="" />
+          }
+          <div class="addHover">
+            <label for="file-upload" class="custom-file-upload"> + </label>
+            <input
+              id="file-upload"
+              (change)="imageChanged($event, 1)"
+              type="file"
+              accept=".jpg,.jpeg,.gif,.avif"
+            />
+          </div>
+        </div>
+      </div>
+  </form>
   <table>
     <tr>
-      <th>Név</th>
-      <th>Leírás</th>
+      <th (click)="sortBy('name')">Név {{ getSortIndicator("name") }}</th>
+      <th (click)="sortBy('description')">
+        Leírás {{ getSortIndicator("description") }}
+      </th>
       <th>Fő kép</th>
       <th>Segédleti kép</th>
       <th></th>
@@ -15,7 +57,7 @@
       <td data-cell="Leírás">{{ item.description }}</td>
       <td data-cell="Fő kép">{{ item.imageUrls[0] }}</td>
       <td data-cell="Segédleti kép">{{ item.imageUrls[1] }}</td>
-      <td class="buttons">
+      <td class="itemButtons">
         <button>
           <svg
             width="800px"
