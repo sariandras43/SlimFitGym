@@ -125,6 +125,7 @@ namespace SlimFitGym.EFData.Repositories
 
                 }
             }
+            context.SaveChanges();
             if (HighlightMachineImage(result[0].CloudinaryId, machineId))
             {
                 context.SaveChanges();
