@@ -14,11 +14,11 @@
         <form class="machineForm">
           <p class="inputField">
             <label for="machineNameInput">Név</label>
-            <input type="text" id="machineNameInput" [(ngModel)]="selectedMachine.name" [ngModelOptions]="{ standalone: true }" required/>
+            <input type="text" id="machineNameInput" [(ngModel)]="selectedMachine.name" [ngModelOptions]="{ standalone: true }"/>
           </p>
           <p class="inputField">
             <label for="machineDescriptionInput">Leírás</label>
-            <textarea id="machineDescriptionInput" [(ngModel)]="selectedMachine.description" [ngModelOptions]="{ standalone: true }" required></textarea>
+            <textarea id="machineDescriptionInput" [(ngModel)]="selectedMachine.description" [ngModelOptions]="{ standalone: true }"></textarea>
           </p>
           <div class="uploadImages">
             <div class="imgWrap">
@@ -105,7 +105,7 @@
             />
           </svg>
         </button>
-        <button>
+        <button (click)="delete(item)">
           <svg
             width="800px"
             height="800px"

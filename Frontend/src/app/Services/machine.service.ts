@@ -51,4 +51,11 @@ export class MachineService {
 
     }
   }
+  deleteMachine(machine: MachineModel) : Observable<MachineModel>{
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.loggedInUser?.token}`
+    );
+    return this.http.delete<MachineModel>(`${this.config.apiUrl}/machines/${machine.id}`, {headers});
+  }
 }

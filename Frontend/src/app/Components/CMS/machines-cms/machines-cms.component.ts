@@ -19,11 +19,36 @@ type SortableProperty = keyof Pick<MachineModel, 'name' | 'description'>;
   styleUrl: './machines-cms.component.scss',
 })
 export class MachinesCMSComponent {
+  delete(machine: MachineModel) {
+    this.machineService.deleteMachine(machine).subscribe({
+      next: (deletedMachine) => {
+        this.machines = this.machines.filter((m) => m.id != deletedMachine.id);
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
+  }
   save() {
     if (this.selectedMachine) {
-      this.machineService
-        .saveMachine(this.selectedMachine)
-        .subscribe({ next: () => {}, error: () => {} });
+      this.machineService.saveMachine(this.selectedMachine).subscribe({
+        next: (updateMachine) => {
+          let machine = this.machines.find((m) => m.id == updateMachine.id);
+          if (machine) {
+            machine.description = updateMachine.description;
+            machine.imageUrls = updateMachine.imageUrls;
+            machine.name = updateMachine.name;
+            machine.id = updateMachine.id;
+          } else {
+            this.machines.unshift(updateMachine);
+          }
+          
+          this.selectedMachine = undefined;
+        },
+        error: () => {
+          this.selectedMachine = undefined;
+        },
+      });
     }
   }
   machines: MachineModel[] = [];
