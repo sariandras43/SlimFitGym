@@ -143,7 +143,7 @@ namespace SlimFitGym.Data.Repository
                         Endpoint = "*",
                         Limit = 1000,
                         Period = "1m",
-                        QuotaExceededResponse = new QuotaExceededResponse(){StatusCode=429,ContentType="application/json", Content="Túl sok kérés."}
+                        QuotaExceededResponse = new QuotaExceededResponse(){StatusCode=429,ContentType="application/json", Content=""}
                     }
                 };
             });

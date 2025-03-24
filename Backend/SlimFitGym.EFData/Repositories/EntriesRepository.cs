@@ -33,12 +33,17 @@ namespace SlimFitGym.EFData.Repositories
 
         public Entry NewEntry(string token,int accountId)
         {
-            if (tokenGenerator.GetAccountIdFromToken(token) != accountId)
+            Account? accountFromToken = accountRepository.GetAccountById(tokenGenerator.GetAccountIdFromToken(token));
+            if (accountFromToken == null)
+            {
+                throw new Exception("Ércénytelen token.");
+            }
+            if (accountFromToken.Role=="user" || accountFromToken.Role=="trainer")
                 throw new UnauthorizedAccessException();
             if (accountId<=0) throw new Exception("Érvénytelen azonosító.");
             Account? account = accountRepository.GetAccountById(accountId);
             if (account==null) throw new Exception("Ez a felhasználó nem létezik.");
-            if (account.Role=="trainer" || account.Role == "admin")
+            if (account.Role=="trainer" || account.Role == "admin" || account.Role == "employee")
             {
                 Entry entryToSave = new Entry() { AccountId=account.Id,EntryDate=DateTime.Now};
                 Entry newEntry = context.Set<Entry>().Add(entryToSave).Entity;
@@ -81,10 +86,6 @@ namespace SlimFitGym.EFData.Repositories
                 return newEntry;
 
             }
-
-
-
-
         }
 
         private List<Entry> GetEntriesByAccountId(int accountId, string fromDate = "2025.01.01")
@@ -95,7 +96,7 @@ namespace SlimFitGym.EFData.Repositories
             return context.Set<Entry>().Where(e=>e.AccountId==accountId && e.EntryDate>from).OrderByDescending(e=>e.EntryDate).Take(10).ToList();
         }
 
-        public List<Entry> GetEntriesByAccountId(string token, int accountId, string fromDate = "2025.01.01 00:00:00", int limit = 10, int offset = 0)
+        public List<Entry> GetEntriesByAccountId(string token, int accountId, string fromDate = "2025.01.01 00:00:00", int limit = 10, int offset = 0, string orderDirection = "desc")
         {
             Account? accountFromToken = accountRepository.GetAccountById(tokenGenerator.GetAccountIdFromToken(token));
             if (accountFromToken == null)
@@ -116,7 +117,43 @@ namespace SlimFitGym.EFData.Repositories
 
             if (!DateTime.TryParseExact(fromDate, dateTimeFormats, CultureInfo.CurrentCulture, DateTimeStyles.AllowWhiteSpaces | DateTimeStyles.AssumeLocal, out from))
                 throw new Exception($"Érvénytelen dátum-idő formátum: {fromDate}");
+            if (orderDirection == "asc")
+                return context.Set<Entry>().Where(e => e.AccountId == accountId && e.EntryDate > from).OrderBy(e => e.EntryDate).Skip(offset).Take(limit).ToList();
             return context.Set<Entry>().Where(e => e.AccountId == accountId && e.EntryDate > from).OrderByDescending(e => e.EntryDate).Skip(offset).Take(limit).ToList();
+        }
+
+        public List<EntryResponse> GetAllEntries(string fromDate = "2025.01.01 00:00:00", int limit, int offset, string orderField,string orderDirection)
+        {
+            DateTime from;
+            string[] dateTimeFormats = {
+                "yyyy.MM.dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss", "MM/dd/yyyy HH:mm:ss", "dd/MM/yyyy HH:mm:ss",
+                "yyyy/MM/dd HH:mm:ss", "dd.MM.yyyy HH:mm:ss", "yyyy.MM.dd", "yyyy-MM-dd", "MM/dd/yyyy", "dd/MM/yyyy",
+                "yyyy/MM/dd", "dd.MM.yyyy", "G", "F", "O"
+            };
+
+            if (!DateTime.TryParseExact(fromDate, dateTimeFormats, CultureInfo.CurrentCulture, DateTimeStyles.AllowWhiteSpaces | DateTimeStyles.AssumeLocal, out from))
+                throw new Exception($"Érvénytelen dátum-idő formátum: {fromDate}");
+            List<EntryResponse> result = new List<EntryResponse>();
+                var entries = context.Set<Entry>().Where(e => e.EntryDate > from).ToList();
+                foreach (Entry e in entries)
+                {
+                    result.Add(new EntryResponse(accountRepository.GetAccountByIdEvenDeletedOne(e.AccountId)!, e));
+                }
+            if (orderField=="name")
+            {
+                if (orderDirection=="asc")
+                {
+                    return result.OrderBy(e => e.Name).Skip(offset).Take(limit).ToList();
+                }
+                return result.OrderByDescending(e => e.Name).Skip(offset).Take(limit).ToList();
+
+            }
+            if (orderDirection == "asc")
+            {
+                return result.OrderBy(e => e.EntryDate).Skip(offset).Take(limit).ToList();
+            }
+            return result.OrderByDescending(e => e.EntryDate).Skip(offset).Take(limit).ToList();
+
         }
 
         public int GetEntriesCountByUserId(string token, int accountId)
@@ -133,6 +170,11 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Nem lehet más belépéseit lekérni.");
 
             return context.Set<Entry>().Where(e => e.AccountId == accountId).Count();
+        }
+
+        public int GetAllEntriesCount()
+        {
+            return context.Set<Entry>().Count();
         }
     }
 }
