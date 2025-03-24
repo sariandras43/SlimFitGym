@@ -60,9 +60,10 @@ namespace SlimFitGym.EFData
             //add-migration XYZ -Project SlimFitGym.EFData -StartupProject SlimFitGym.EFData
             modelBuilder.Entity<Account>().HasData
             (
-                new Account() { Id=1,Name="admin",Password= BCrypt.Net.BCrypt.EnhancedHashPassword("admin", 10), Email="admin@gmail.com",Phone="+36123456789",Role="admin"},
+                new Account() { Id = 1,Name="admin",Password= BCrypt.Net.BCrypt.EnhancedHashPassword("admin", 10), Email="admin@gmail.com",Phone="+36123456789",Role="admin"},
                 new Account() { Id = 2, Name = "kazmer", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("kazmer", 10), Email = "kazmer@gmail.com", Phone = "+36123456799", Role = "trainer" },
-                new Account() { Id = 3, Name = "pista", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("pista", 10), Email = "pista@gmail.com", Phone = "+36123456788", Role = "user" }
+                new Account() { Id = 3, Name = "pista", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("pista", 10), Email = "pista@gmail.com", Phone = "+36123456788", Role = "user" },
+                new Account() { Id = 4, Name = "ica", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("ica", 10), Email = "ica@gmail.com", Phone = "+36126456788", Role = "employee" }
             );
 
             modelBuilder.Entity<Machine>().HasData
