@@ -143,7 +143,7 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Érvénytelen ár.");
             if (pass.Name.Length > 100)
                 throw new Exception("Túl hosszú név.");
-            if (pass.MaxEntries < 1 && pass.Days<1)
+            if (pass.MaxEntries!=null && pass.Days!=null && pass.MaxEntries < 1 && pass.Days<1)
                 throw new Exception("Kötelező megadni legalább a maximum belépések számát vagy a felhasználható napok értékét.");
             if (context.Set<Pass>().Any(p=>p.Name==pass.Name&&p.IsActive))
                 throw new Exception("Ilyen névvel létezik már aktív bérlet.");
@@ -159,6 +159,8 @@ namespace SlimFitGym.EFData.Repositories
                 Price = pass.Price
                 
             };
+            if (pass.isHighlighted==null)
+                passToSave.IsHighlighted = false;
             Pass savedPass = this.context.Set<Pass>().Add(passToSave).Entity;
 
             this.context.SaveChanges();
@@ -199,62 +201,83 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Érvénytelen azonosító.");
             if (pass == null)
                 throw new Exception("Hibás kérés.");
-            if (context.Set<Pass>().Any(p => p.Name == pass.Name && p.IsActive && pass.Name!=p.Name))
-                throw new Exception("Ilyen névvel létezik már aktív bérlet.");
-            if (pass.Price < 0)
-                throw new Exception("Érvénytelen ár.");
-            if (pass.Name.Length > 100)
-                throw new Exception("Túl hosszú név.");
-            if (pass.MaxEntries < 1 && pass.Days < 1)
-                throw new Exception("Kötelező megadni legalább a maximum belépések számát vagy a felhasználható napok értékét.");
-
             Pass? p = context.Set<Pass>().SingleOrDefault(p=>p.Id == id && p.IsActive);
             if (p == null)
                 throw new Exception("Nem található ilyen bérlet.");
+            if (pass.Name!=null)
+            {
+                if (context.Set<Pass>().Any(p => p.Name == pass.Name && p.IsActive && pass.Name!=p.Name))
+                    throw new Exception("Ilyen névvel létezik már aktív bérlet.");
+                if (pass.Name.Length > 100 || pass.Name.Length<4)
+                    throw new Exception("A név maximum 100, minimum 4 karakter lehet.");
+                p.Name = pass.Name;
+            }
+            if (pass.Price!=0)
+            {
+                if (pass.Price < 0)
+                    throw new Exception("Érvénytelen ár.");
+                p.Price = pass.Price;
+                
+            }
+            if (pass.isHighlighted!=null)
+            {
+                if (p.IsHighlighted!=pass.isHighlighted)
+                    p.IsHighlighted = !p.IsHighlighted;      
+            }
+            if (pass.MaxEntries!=0 || pass.Days!=0)
+            {
+                if (pass.MaxEntries<1&& pass.Days<1)
+                        throw new Exception("Kötelező megadni legalább a maximum belépések számát vagy a felhasználható napok értékét.");
+                p.Days = pass.Days;
+                p.MaxEntries = pass.MaxEntries;
+                
+            }
+                
+            
+            
+
             if (this.purchasesRepository.GetAllPurchases().Any(purchase=>purchase.PassId==id))
             {
                 DeleteOrMakePassInactive(id);
                 return NewPass(pass);
             }
-            p.Name = pass.Name;
-            p.Days = pass.Days;
-            p.Price = pass.Price;
-            p.MaxEntries = pass.MaxEntries;
             this.context.Entry(p).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             this.context.SaveChanges();
-
-            pass.Benefits.RemoveAll(s => string.IsNullOrWhiteSpace(s));
-            foreach (string bName in pass.Benefits)
+            if (pass.Benefits!=null && pass.Benefits.Count>0)
             {
-                Benefit? b = context.Set<Benefit>().SingleOrDefault(b => b.BenefitName == bName);
-                if (b == null)
+                pass.Benefits.RemoveAll(s => string.IsNullOrWhiteSpace(s));
+                foreach (string bName in pass.Benefits)
                 {
-                    Benefit savedBenefit = this.context.Set<Benefit>().Add(new Benefit() { BenefitName = bName }).Entity;
-                    this.context.SaveChanges();
-                    PassAndBenefit newPb = this.context.Set<PassAndBenefit>().Add(new PassAndBenefit() { BenefitId = savedBenefit.Id, PassId = pass.Id }).Entity;
-                    this.context.SaveChanges();
-                }
-                else
-                {
-                    PassAndBenefit? pb = this.context.Set<PassAndBenefit>().SingleOrDefault(pb => pb.PassId == pass.Id && pb.BenefitId == b.Id);
-                    if (pb==null)
+                    Benefit? b = context.Set<Benefit>().SingleOrDefault(b => b.BenefitName == bName);
+                    if (b == null)
                     {
-                        PassAndBenefit newPb = this.context.Set<PassAndBenefit>().Add(new PassAndBenefit() { BenefitId = b.Id, PassId = pass.Id }).Entity;
+                        Benefit savedBenefit = this.context.Set<Benefit>().Add(new Benefit() { BenefitName = bName }).Entity;
                         this.context.SaveChanges();
-         
+                        PassAndBenefit newPb = this.context.Set<PassAndBenefit>().Add(new PassAndBenefit() { BenefitId = savedBenefit.Id, PassId = pass.Id }).Entity;
+                        this.context.SaveChanges();
                     }
+                    else
+                    {
+                        PassAndBenefit? pb = this.context.Set<PassAndBenefit>().SingleOrDefault(pb => pb.PassId == pass.Id && pb.BenefitId == b.Id);
+                        if (pb==null)
+                        {
+                            PassAndBenefit newPb = this.context.Set<PassAndBenefit>().Add(new PassAndBenefit() { BenefitId = b.Id, PassId = pass.Id }).Entity;
+                            this.context.SaveChanges();
+         
+                        }
 
+                    }
                 }
-            }
-            List<PassAndBenefit> passAndBenefits = context.Set<PassAndBenefit>().Where(pb=>pb.PassId==id).ToList();
-            foreach (PassAndBenefit pb in passAndBenefits)
-            {
-                Benefit? b = context.Set<Benefit>().SingleOrDefault(b => b.Id == pb.BenefitId);
-                if (!pass.Benefits.Contains(b.BenefitName))
+                List<PassAndBenefit> passAndBenefits = context.Set<PassAndBenefit>().Where(pb=>pb.PassId==id).ToList();
+                foreach (PassAndBenefit pb in passAndBenefits)
                 {
-                    this.context.Set<PassAndBenefit>().Remove(pb);
-                    this.context.SaveChanges();
+                    Benefit? b = context.Set<Benefit>().SingleOrDefault(b => b.Id == pb.BenefitId);
+                    if (!pass.Benefits.Contains(b.BenefitName))
+                    {
+                        this.context.Set<PassAndBenefit>().Remove(pb);
+                        this.context.SaveChanges();
                     
+                    }
                 }
             }
             return GetPassById(id);

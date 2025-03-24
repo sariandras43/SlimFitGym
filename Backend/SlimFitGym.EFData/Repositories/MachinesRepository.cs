@@ -46,10 +46,10 @@ namespace SlimFitGym.EFData.Repositories
 
             if (newMachine == null)
                 throw new Exception("Hibás kérés.");
-            if (newMachine.Name == null || newMachine.Name.Length == 0)
-                throw new Exception("Kötelező kitölteni a név mezőt.");
-            if (newMachine.Name.Length > 100)
-                throw new Exception("A név maximum 100 karakter hosszú lehet");
+            if (newMachine.Name == null)
+                throw new Exception("Név kitöltése kötelező.");
+            if (newMachine.Name != null &&(newMachine.Name.Length < 4 || newMachine.Name.Length>100))
+                throw new Exception("A név minimum 4, maximum 100 karakter hosszú lehet.");
             if (newMachine.Description!=null && newMachine.Description!.Length > 500)
                 throw new Exception("A leírás maximum 500 karakter hosszú lehet");
             if (context.Set<Machine>().Any(m => m.Name == newMachine.Name))
@@ -60,11 +60,13 @@ namespace SlimFitGym.EFData.Repositories
                 Name = newMachine.Name,
                 Description = newMachine.Description,
             };
+            if (string.IsNullOrWhiteSpace(newMachine.Description))
+                machineToAdd.Description = null;
             Machine savedMachine = this.context.Set<Machine>().Add(machineToAdd).Entity;
-
+            List<Image> images;
+            if (newMachine.Images!=null && newMachine.Images.Count==2)
+               images = imagesRepository.UploadImagesToMachine(newMachine.Images,savedMachine.Id);
             this.context.SaveChanges();
-
-            List<Image> images= imagesRepository.UploadImagesToMachine(newMachine.Images,savedMachine.Id);
 
             return new MachineResponse(savedMachine,imagesRepository.GetImageUrlsByMachineId(savedMachine.Id));
         }
@@ -80,21 +82,29 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Hibás kérés.");
             if (machine.Description != null && machine.Description!.Length > 500)
                 throw new Exception("A leírás maximum 500 karakter hosszú lehet");
-            if (machine.Name == null || machine.Name.Length == 0)
-                throw new Exception("Kötelező kitölteni a név mezőt.");
-            if (machine.Name.Length > 100)
-                throw new Exception("A név maximum 100 karakter hosszú lehet");
-            if (m.Name!=machine.Name && context.Set<Machine>().Any(m => m.Name == machine.Name))
-                throw new Exception("Ilyen nevű gép már létezik.");
-            m.Name = machine.Name;
-           
-            m.Description = machine.Description;
+            if (machine.Name != null)
+            {
+                if (machine.Name.Length < 4 || machine.Name.Length > 100)
+                    throw new Exception("A név minimum 4, maximum 100 karakter hosszú lehet.");
+                if (m.Name!=machine.Name && context.Set<Machine>().Any(m => m.Name == machine.Name))
+                    throw new Exception("Ilyen nevű gép már létezik.");
+                    m.Name = machine.Name;
+            }
+            if (machine.Description != null) 
+            {
+                if (machine.Description.Length>500)
+                    throw new Exception("A leírás maximum 500 karakter hosszú lehet.");
+                m.Description = machine.Description;
+                if (string.IsNullOrWhiteSpace(machine.Description))
+                    m.Description = null;
+            }
 
-
+            if (machine.Images!=null)
+            {
+                imagesRepository.UploadImagesToMachine(machine.Images, id);     
+            }
             this.context.Entry(m).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             this.context.SaveChanges();
-            //imagesRepository.DeleteImagesByMachineId(id);
-            imagesRepository.UploadImagesToMachine(machine.Images, id);
             return new MachineResponse(m,imagesRepository.GetImageUrlsByMachineId(id));
         }
 

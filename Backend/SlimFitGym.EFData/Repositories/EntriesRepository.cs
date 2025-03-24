@@ -122,7 +122,7 @@ namespace SlimFitGym.EFData.Repositories
             return context.Set<Entry>().Where(e => e.AccountId == accountId && e.EntryDate > from).OrderByDescending(e => e.EntryDate).Skip(offset).Take(limit).ToList();
         }
 
-        public List<EntryResponse> GetAllEntries(string fromDate = "2025.01.01 00:00:00", int limit, int offset, string orderField,string orderDirection)
+        public List<EntryResponse> GetAllEntries(string fromDate = "2025.01.01 00:00:00", int limit=10, int offset=0, string orderField="date",string orderDirection = "desc")
         {
             DateTime from;
             string[] dateTimeFormats = {
