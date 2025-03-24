@@ -1,8 +1,6 @@
-import { Component, OnDestroy } from '@angular/core';
-import { GeneralPurposeCardComponent } from '../../cards/general-purpose-card/general-purpose-card.component';
+import { Component } from '@angular/core';
 import { MachineModel } from '../../../Models/machine.model';
 import { MachineService } from '../../../Services/machine.service';
-import { Subject, takeUntil } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 
 enum SortDirection {
@@ -19,16 +17,90 @@ type SortableProperty = keyof Pick<MachineModel, 'name' | 'description'>;
   styleUrl: './machines-cms.component.scss',
 })
 export class MachinesCMSComponent {
+  machines: MachineModel[] = [];
+  displayMachines: MachineModel[] = [];
+  selectedMachine: MachineModel | undefined;
+  searchTerm: string = '';
+  
+  sortState: { property: SortableProperty | null; direction: SortDirection } = {
+    property: null,
+    direction: SortDirection.Asc,
+  };
+
+  constructor(private machineService: MachineService) {
+    this.machineService.allMachines$.subscribe({
+      next: (machines) => {
+        if (machines) {
+          this.machines = [...machines];
+          this.updateDisplayMachines();
+        }
+      },
+      error: (err) => console.error('Failed to load machines:', err),
+    });
+  }
+
+  search($event: Event) {
+    const input = $event.target as HTMLInputElement;
+    this.searchTerm = input.value.toLowerCase();
+    this.updateDisplayMachines();
+  }
+
+  sortBy(property: SortableProperty): void {
+    if (this.sortState.property === property) {
+      this.sortState.direction =
+        this.sortState.direction === SortDirection.Asc
+          ? SortDirection.Desc
+          : SortDirection.Asc;
+    } else {
+      this.sortState = {
+        property: property,
+        direction: SortDirection.Asc,
+      };
+    }
+    this.updateDisplayMachines();
+  }
+
+  private updateDisplayMachines() {
+
+    let filteredMachines = this.machines.filter(machine => 
+      machine.name.toLowerCase().includes(this.searchTerm) ||
+      machine.description.toLowerCase().includes(this.searchTerm)
+    );
+
+    if (this.sortState.property) {
+      filteredMachines = this.sortMachines(
+        filteredMachines,
+        this.sortState.property,
+        this.sortState.direction
+      );
+    }
+
+    this.displayMachines = filteredMachines;
+  }
+
+  private sortMachines(machines: MachineModel[], property: SortableProperty, direction: SortDirection): MachineModel[] {
+    return [...machines].sort((a, b) => {
+      const valueA = String(a[property] ?? '').toLowerCase();
+      const valueB = String(b[property] ?? '').toLowerCase();
+      return direction === SortDirection.Asc 
+        ? valueA.localeCompare(valueB) 
+        : valueB.localeCompare(valueA);
+    });
+  }
+
+  // Existing methods below (unchanged from original)
   delete(machine: MachineModel) {
     this.machineService.deleteMachine(machine).subscribe({
       next: (deletedMachine) => {
         this.machines = this.machines.filter((m) => m.id != deletedMachine.id);
+        this.displayMachines = [...this.machines];
       },
       error: (err) => {
         console.log(err);
       },
     });
   }
+
   save() {
     if (this.selectedMachine) {
       this.machineService.saveMachine(this.selectedMachine).subscribe({
@@ -39,10 +111,12 @@ export class MachinesCMSComponent {
             machine.imageUrls = updateMachine.imageUrls;
             machine.name = updateMachine.name;
             machine.id = updateMachine.id;
+          
+
           } else {
             this.machines.unshift(updateMachine);
+            this.displayMachines.unshift(updateMachine);
           }
-          
           this.selectedMachine = undefined;
         },
         error: () => {
@@ -51,12 +125,7 @@ export class MachinesCMSComponent {
       });
     }
   }
-  machines: MachineModel[] = [];
-  selectedMachine: MachineModel | undefined;
-  sortState: { property: SortableProperty | null; direction: SortDirection } = {
-    property: null,
-    direction: SortDirection.Asc,
-  };
+
   modalOpen(machine?: MachineModel) {
     if (machine) {
       this.selectedMachine = {
@@ -94,39 +163,6 @@ export class MachinesCMSComponent {
     }
   }
 
-  constructor(private machineService: MachineService) {
-    this.machineService.allMachines$.subscribe({
-      next: (machines) => {
-        if (machines) {
-          this.machines = [...machines];
-        }
-      },
-      error: (err) => console.error('Failed to load machines:', err),
-    });
-  }
-
-  sortBy(property: SortableProperty): void {
-    if (this.sortState.property === property) {
-      this.sortState.direction =
-        this.sortState.direction === SortDirection.Asc
-          ? SortDirection.Desc
-          : SortDirection.Asc;
-    } else {
-      this.sortState = {
-        property: property,
-        direction: SortDirection.Asc,
-      };
-    }
-
-    this.machines = [...this.machines].sort((a, b) => {
-      const valueA = String(a[property] ?? '').toLowerCase();
-      const valueB = String(b[property] ?? '').toLowerCase();
-
-      return this.sortState.direction === SortDirection.Asc
-        ? valueA.localeCompare(valueB)
-        : valueB.localeCompare(valueA);
-    });
-  }
   getSortIndicator(property: SortableProperty): string {
     if (this.sortState.property !== property) return '';
     return this.sortState.direction === SortDirection.Asc ? '⬆' : '⬇ ';
