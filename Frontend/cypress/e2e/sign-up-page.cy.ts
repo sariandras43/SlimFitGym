@@ -119,7 +119,24 @@ describe('Signup Form Validation (Tab off/Input)', () => {
     });
   
     
+    it('should successfully sign up with valid credentials', () => {
+      
+      cy.get('#singUpName').clear().type('John Doe');
+      cy.get('#singUpEmail').clear().type('johndoe@example.com');
+      cy.get('#singUpPhone').clear().type('+36301234567');
+      cy.get('#singUpPassword').clear().type('StrongPassword1!');
+      cy.get('#singUpPasswordAgain').clear().type('StrongPassword1!');
+  
+      cy.get('[type="submit"]').click();
+  
+      cy.url().should('eq', 'http://localhost:4200/user/userData');
+
+
+    });
   });
+ 
+
+  
   
   
 });
