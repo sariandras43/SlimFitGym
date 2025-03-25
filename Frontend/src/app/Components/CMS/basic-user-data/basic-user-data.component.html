@@ -22,7 +22,7 @@
       </div>
       <button (click)="imgDelete()" class="delete imgDelete">
         @if (deleteImageLoading) {
-        <app-button-loader></app-button-loader>
+        <app-button-loader [size]="0.6"></app-button-loader>
         } @else { Kép törlése }
       </button>
     </div>
@@ -79,7 +79,7 @@
       <div class="buttons">
         @if (updateLoading) {
         <div class="edit wrap">
-          <app-button-loader></app-button-loader>
+          <app-button-loader [size]="0.55"></app-button-loader>
         </div>
   
         } @else {
