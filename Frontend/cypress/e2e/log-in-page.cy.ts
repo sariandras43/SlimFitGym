@@ -8,7 +8,7 @@ describe('Signup Form Validation (Tab off/Input)', () => {
       cy.get('#loginEmail').clear().type('admin@gmail.com'); 
       cy.get('#logInPassword').clear().type('admin'); 
       cy.get('[data-cy="loginButton"]').click();
-      cy.url().should('eq', 'http://localhost:4200/user');
+      cy.url().should('eq', 'http://localhost:4200/user/userData');
 
     });
     it('error should be thrown if email or password not added', () => {
