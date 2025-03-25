@@ -7,4 +7,5 @@ import { Component, Input } from '@angular/core';
   styleUrl: './button-loader.component.scss'
 })
 export class ButtonLoaderComponent {
+  @Input() size: number = 1;
 }
