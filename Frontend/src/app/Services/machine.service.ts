@@ -22,7 +22,7 @@ export class MachineService {
       this.allMachinesSubject.next(JSON.parse(machines));
     }
     this.getMachines();
-    userService.loggedInUser$.subscribe(s=> {console.log(s),this.loggedInUser = s})
+    userService.loggedInUser$.subscribe(s=> {this.loggedInUser = s})
   }
 
   getMachines() {
