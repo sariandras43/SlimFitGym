@@ -192,7 +192,7 @@ namespace SlimFitGym.EFData.Repositories
             return GetPassById(savedPass.Id);
         }
 
-        public dynamic? UpdatePass(int id, PassRequest pass)
+        public PassResponse? UpdatePass(int id, PassRequest pass)
         {
 
             if (pass.Id <= 0)

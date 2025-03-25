@@ -12,7 +12,7 @@ namespace SlimFitGym.Models.Requests
         public required string Name { get; set; }
         public string? Description { get; set; }
         public int RecommendedPeople { get; set; }
-        public List<MachineForRoom> Machines { get; set; }
+        public List<MachineForRoom>? Machines { get; set; }
         public string Image { get; set; }
     }
 }
