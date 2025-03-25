@@ -4,10 +4,10 @@ export interface PassModel {
     maxEntries: number |undefined
     days: number |undefined
     price: number
-    isActive: boolean
+    isActive?: boolean
     isHighlighted: boolean
     benefits: string[]
-    validTo: string
+    validTo?: string
     remainingEntries: number |undefined
   }
   
