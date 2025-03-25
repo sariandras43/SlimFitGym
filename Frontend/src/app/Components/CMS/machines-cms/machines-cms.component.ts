@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MachineModel } from '../../../Models/machine.model';
 import { MachineService } from '../../../Services/machine.service';
 import { FormsModule } from '@angular/forms';
+import { ButtonLoaderComponent } from "../../button-loader/button-loader.component";
 
 enum SortDirection {
   Asc = 'asc',
@@ -12,7 +13,7 @@ type SortableProperty = keyof Pick<MachineModel, 'name' | 'description'>;
 
 @Component({
   selector: 'app-machines-cms',
-  imports: [FormsModule],
+  imports: [FormsModule, ButtonLoaderComponent],
   templateUrl: './machines-cms.component.html',
   styleUrl: './machines-cms.component.scss',
 })
@@ -21,7 +22,11 @@ export class MachinesCMSComponent {
   displayMachines: MachineModel[] = [];
   selectedMachine: MachineModel | undefined;
   searchTerm: string = '';
-  
+  bottomError: string = '';
+  formSubmitted = false;
+  nameError = false;
+  isSubmitting = false;
+
   sortState: { property: SortableProperty | null; direction: SortDirection } = {
     property: null,
     direction: SortDirection.Asc,
@@ -58,13 +63,14 @@ export class MachinesCMSComponent {
       };
     }
     this.updateDisplayMachines();
+    
   }
 
   private updateDisplayMachines() {
-
-    let filteredMachines = this.machines.filter(machine => 
-      machine.name.toLowerCase().includes(this.searchTerm) ||
-      machine.description.toLowerCase().includes(this.searchTerm)
+    let filteredMachines = this.machines.filter(
+      (machine) =>
+        machine.name.toLowerCase().includes(this.searchTerm) ||
+        machine.description.toLowerCase().includes(this.searchTerm)
     );
 
     if (this.sortState.property) {
@@ -78,12 +84,16 @@ export class MachinesCMSComponent {
     this.displayMachines = filteredMachines;
   }
 
-  private sortMachines(machines: MachineModel[], property: SortableProperty, direction: SortDirection): MachineModel[] {
+  private sortMachines(
+    machines: MachineModel[],
+    property: SortableProperty,
+    direction: SortDirection
+  ): MachineModel[] {
     return [...machines].sort((a, b) => {
       const valueA = String(a[property] ?? '').toLowerCase();
       const valueB = String(b[property] ?? '').toLowerCase();
-      return direction === SortDirection.Asc 
-        ? valueA.localeCompare(valueB) 
+      return direction === SortDirection.Asc
+        ? valueA.localeCompare(valueB)
         : valueB.localeCompare(valueA);
     });
   }
@@ -93,7 +103,7 @@ export class MachinesCMSComponent {
     this.machineService.deleteMachine(machine).subscribe({
       next: (deletedMachine) => {
         this.machines = this.machines.filter((m) => m.id != deletedMachine.id);
-        this.displayMachines = [...this.machines];
+        this.displayMachines = this.displayMachines.filter((m) => m.id != deletedMachine.id);
       },
       error: (err) => {
         console.log(err);
@@ -102,7 +112,25 @@ export class MachinesCMSComponent {
   }
 
   save() {
+    if(this.isSubmitting) return;
     if (this.selectedMachine) {
+      if (!this.selectedMachine) return;
+
+      this.formSubmitted = true;
+      this.nameError = !this.selectedMachine.name.trim();
+
+      // Image pair validation
+      const hasMain = !!this.selectedMachine.imageUrls[0];
+      const hasSecondary = !!this.selectedMachine.imageUrls[1];
+      console.log(!hasMain && hasSecondary)
+      let imagePairError = !hasMain && hasSecondary;
+
+      if (this.nameError ) return;
+      if (imagePairError) {
+        this.bottomError = 'Segédleti kép feltöltése csak fő képpel együtt lehetséges!'
+        return;
+      }
+      this.isSubmitting = true;
       this.machineService.saveMachine(this.selectedMachine).subscribe({
         next: (updateMachine) => {
           let machine = this.machines.find((m) => m.id == updateMachine.id);
@@ -111,16 +139,16 @@ export class MachinesCMSComponent {
             machine.imageUrls = updateMachine.imageUrls;
             machine.name = updateMachine.name;
             machine.id = updateMachine.id;
-          
-
           } else {
             this.machines.unshift(updateMachine);
             this.displayMachines.unshift(updateMachine);
           }
           this.selectedMachine = undefined;
+          this.isSubmitting = false;
         },
-        error: () => {
-          this.selectedMachine = undefined;
+        error: (error) => {
+          this.bottomError = error.error.message ?? error.message;
+          this.isSubmitting = false;
         },
       });
     }

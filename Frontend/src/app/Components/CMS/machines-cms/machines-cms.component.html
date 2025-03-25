@@ -27,13 +27,19 @@
           <h2>{{ selectedMachine.id != -1 ? "Gép szerkesztése" : "Új gép" }}</h2>
           <div class="modal-actions">
             <button class="cancel-button" (click)="selectedMachine = undefined">Mégse</button>
-            <button class="save-button" (click)="save()">Mentés</button>
+            <button class="save-button" (click)="save()"> @if (isSubmitting) {
+              <app-button-loader [size]="0.7"></app-button-loader>
+              } @else { Mentés }</button>
           </div>
         </div>
         <form class="machineForm">
           <p class="inputField">
             <label for="machineNameInput">Név</label>
             <input type="text" id="machineNameInput" [(ngModel)]="selectedMachine.name" [ngModelOptions]="{ standalone: true }"/>
+            @if(formSubmitted && nameError){
+
+              <span class="error-message">A név kötelező!</span>
+            }
           </p>
           <p class="inputField">
             <label for="machineDescriptionInput">Leírás</label>
@@ -79,6 +85,12 @@
               </div>
             </div>
           </div>
+          @if(formSubmitted && bottomError){
+
+            <div  class="error-message image-error">
+              {{bottomError}}
+            </div>
+          }
         </form>
       </div>
     </div>
