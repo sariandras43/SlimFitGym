@@ -110,11 +110,11 @@ namespace SlimFitGym.EFData
 
             modelBuilder.Entity<Training>().HasData
             (
-                new Training() { Id = 1, Name = "TRX edzés", RoomId = 1, TrainerId = 2, MaxPeople = 6, TrainingStart = new DateTime(2024, 5, 1, 10, 0, 0), TrainingEnd = new DateTime(2024, 5, 1, 11, 0, 0) },
-                new Training() { Id = 2, Name = "Spinning", RoomId = 8, TrainerId = 2, MaxPeople = 10, TrainingStart = new DateTime(2024, 5, 2, 14, 0, 0), TrainingEnd = new DateTime(2024, 5, 2, 15, 0, 0) },
-                new Training() { Id = 3, Name = "Jóga", RoomId = 5, TrainerId = 2, MaxPeople = 8, TrainingStart = new DateTime(2024, 5, 3, 9, 0, 0), TrainingEnd = new DateTime(2024, 5, 3, 10, 0, 0) },
-                new Training() { Id = 4, Name = "CrossFit", RoomId = 4, TrainerId = 2, MaxPeople = 12, TrainingStart = new DateTime(2024, 5, 4, 16, 0, 0), TrainingEnd = new DateTime(2024, 5, 4, 17, 0, 0) },
-                new Training() { Id = 5, Name = "Aerobik", RoomId = 6, TrainerId = 2, MaxPeople = 18, TrainingStart = new DateTime(2024, 5, 5, 18, 0, 0), TrainingEnd = new DateTime(2024, 5, 5, 19, 0, 0) }
+                new Training() { Id = 1, Name = "TRX edzés", RoomId = 1, TrainerId = 2, MaxPeople = 6, TrainingStart = new DateTime(2025, 5, 1, 10, 0, 0), TrainingEnd = new DateTime(2024, 5, 1, 11, 0, 0) , IsActive=true },
+                new Training() { Id = 2, Name = "Spinning", RoomId = 8, TrainerId = 2, MaxPeople = 10, TrainingStart = new DateTime(2025, 5, 2, 14, 0, 0), TrainingEnd = new DateTime(2024, 5, 2, 15, 0, 0), IsActive = true },
+                new Training() { Id = 3, Name = "Jóga", RoomId = 5, TrainerId = 2, MaxPeople = 8, TrainingStart = new DateTime(2025, 5, 3, 9, 0, 0), TrainingEnd = new DateTime(2024, 5, 3, 10, 0, 0) , IsActive = true },
+                new Training() { Id = 4, Name = "CrossFit", RoomId = 4, TrainerId = 2, MaxPeople = 12, TrainingStart = new DateTime(2025, 5, 4, 16, 0, 0), TrainingEnd = new DateTime(2024, 5, 4, 17, 0, 0) , IsActive = true },
+                new Training() { Id = 5, Name = "Aerobik", RoomId = 6, TrainerId = 2, MaxPeople = 18, TrainingStart = new DateTime(2025, 5, 5, 18, 0, 0), TrainingEnd = new DateTime(2024, 5, 5, 19, 0, 0) , IsActive = true }
 
             );
 

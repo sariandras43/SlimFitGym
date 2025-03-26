@@ -102,30 +102,6 @@ namespace SlimFitGymBackend.Controllers
             });
         }
 
-        //TODO: something with the url, cause its messy
-        //[HttpGet("/search/{limit}&{offset}.{trainingName?}")]
-        //public IActionResult Filter([FromRoute] string? trainingName="" ,[FromRoute] string? limit ="1" ,[FromRoute] string? offset = "1")
-        //{
-        //    return this.Execute(() =>
-        //    {
-        //        int limitNum;
-        //        int offsetNum;
-
-        //        if (trainingName.StartsWith("%20"))
-        //            throw new Exception("Érvénytelen paraméterek.");
-        //        if (!int.TryParse(limit,out limitNum))
-        //            throw new Exception("Érvénytelen paraméterek.");
-        //        if (!int.TryParse(offset, out offsetNum))
-        //            throw new Exception("Érvénytelen paraméterek.");
-        //        List<Training> res = trainingsRepository.FilterTrainings(trainingName.Trim(),limitNum,offsetNum);
-        //        if (res == null||res.Count==0)
-        //            return NotFound(new { message = "Nem találhatók edzések ilyen paraméterek mellett." });
-        //        return Ok(res);
-
-        //    });
-        //}
-
-
         [HttpPost]
         [Authorize(Roles = "admin,trainer")]
         public IActionResult Post([FromBody] TrainingRequest training)
@@ -141,16 +117,17 @@ namespace SlimFitGymBackend.Controllers
         // PUT api/<TrainingsController>/5
         [HttpPut("{id}")]
         [Authorize(Roles = "admin,trainer")]
-        public IActionResult Put([FromRoute]string id, [FromBody] TrainingRequest training)
+        public IActionResult Put([FromRoute]string id, [FromBody] dynamic training)
         {
             string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
 
             return this.Execute(() =>
             {
                 int idNum;
+                TrainingRequest trainingToUpdate = Newtonsoft.Json.JsonConvert.DeserializeObject<TrainingRequest>(training.ToString());
                 if (int.TryParse(id, out idNum))
                 {
-                    var res = trainingsRepository.UpdateTraining(token, idNum, training);
+                    var res = trainingsRepository.UpdateTraining(token, idNum, trainingToUpdate);
                     if (res != null) return Ok(res);
                     return NotFound(new { message = "Nem található az edzés." });
 
