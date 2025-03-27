@@ -63,14 +63,16 @@ namespace SlimFitGymBackend.Controllers
         // PUT api/<MachinesController>/5
         [HttpPut("{id}")]
         [Authorize(Roles = "admin")]
-        public IActionResult Put([FromRoute]string id, MachineRequest machine)
+        public IActionResult Put([FromRoute]string id, [FromBody] dynamic machine)
         {
             return this.Execute(() =>
             {
+                var machineToModify = Newtonsoft.Json.JsonConvert.DeserializeObject<MachineRequest>(machine.ToString());
+
                 int idNum;
                 if (int.TryParse(id,out idNum))
                 {
-                    var res = machinesRepository.UpdateMachine(idNum, machine);
+                    var res = machinesRepository.UpdateMachine(idNum, machineToModify);
                     if (res!=null) return Ok(res);
                     return NotFound("Nem található a gép.");
                     

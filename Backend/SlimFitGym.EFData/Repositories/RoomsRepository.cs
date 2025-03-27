@@ -94,96 +94,113 @@ namespace SlimFitGym.EFData.Repositories
         public RoomWithMachinesResponse? UpdateRoom(int id,RoomRequest room)
         {
 
-            if (id != room.Id)
-                throw new Exception("Érvénytelen azonosító.");
-            if (!this.context.Set<Room>().Any(r => r.Id == id))
-                return null;
             if (room == null)
                 throw new Exception("Hibás kérés.");
-            if (room.Name == null || room.Name.Length == 0)
-                throw new Exception("A név mező kitöltése kötelező.");
-            if (room.Description == null || room.Description.Length == 0)
-                throw new Exception("A leírás mező kitöltése kötelező.");
-            if (room.RecommendedPeople == 0)
-                throw new Exception("A javasolt befogadóképesség mező kitöltése kötelező");
-            if (room.Name.Length > 100)
-                throw new Exception("A név maximum 100 karakter hosszú lehet.");
-            if (room.Description != null && room.Description!.Length > 500)
-                throw new Exception("A leírás maximum 500 karakter hosszú lehet.");
-            if (context.Set<Room>().Any(r => r.Name == room.Name && r.IsActive))
-                throw new Exception("Ilyen terem már létezik.");
-            Room modifiedRoom = new Room
+            if (id != room.Id)
+                throw new Exception("Érvénytelen azonosító.");
+            if (!this.context.Set<Room>().Any(r => r.Id == id && r.IsActive))
+                return null;
+            Room roomToModify = this.context.Set<Room>().SingleOrDefault(r=>r.Id == id)!;
+            if (room.Name!=null)
             {
-                Id = room.Id,
-                Name = room.Name,
-                Description = room.Description,
-                RecommendedPeople = room.RecommendedPeople,
-                IsActive = true
-            };
-
-
-            if (room.Machines.Count==0)
-            {
-
-                List<RoomAndMachine> roomsAndMachines = roomsAndMachinesRepository.GetRoomsAndMachinesByRoomId(room.Id);
-                foreach (RoomAndMachine rm in roomsAndMachines)
-                {
-                    roomsAndMachinesRepository.DeleteConnection(rm.Id);
-                }
+                if (room.Name.Length < 4 || room.Name.Length>100)
+                    throw new Exception("A név minimum 4, maximum 100 karakter hosszú lehet.");
+                if (context.Set<Room>().Any(r => r.Name == room.Name && r.IsActive))
+                    throw new Exception("Ilyen terem már létezik.");
+                roomToModify.Name = room.Name;
+                
             }
-            else
+            if (room.Description!=null)
             {
-                foreach (MachineForRoom mr in room.Machines)
+
+                if (room.Description.Length>500)
+                    throw new Exception("A leírás mező maximum 500 karakter hosszú lehet.");
+                roomToModify.Description = room.Description;
+                
+            }
+            if (room.RecommendedPeople!=0)
+            {
+                if (room.RecommendedPeople < 1)
+                    throw new Exception("A javasolt befogadóképesség mező pozitív egész szám lehet csak.");
+                roomToModify.RecommendedPeople = room.RecommendedPeople;
+                
+            }
+
+            if (room.Machines!=null)
+            {
+                if (room.Machines.Count==0)
                 {
-                    
-                    if (!context.Set<Machine>().Any(m => m.Id == mr.Id))
-                        throw new Exception($"Az {mr.Id} azonosítójú gép nem létezik.");
-                }
 
-                List<RoomAndMachine>? roomsAndMachines = roomsAndMachinesRepository.GetRoomsAndMachinesByRoomId(room.Id);
-                List<MachineForRoom> machines = room.Machines;
-                if (roomsAndMachines!=null || roomsAndMachines!.Count>0)
-                {
-                    foreach (MachineForRoom mr in machines)
-                    {
-                        RoomAndMachine? roomAndMachine = roomsAndMachines.SingleOrDefault(rm => rm.MachineId == mr.Id && rm.RoomId==room.Id);
-                        if (roomAndMachine == null)
-                        {
-                            RoomAndMachine newRm = new RoomAndMachine() { MachineCount = mr.Count, MachineId = mr.Id, RoomId = room.Id };
-                            roomsAndMachinesRepository.ConnectRoomAndMachine(newRm);
-                        }
-                        else
-                        {
-                            if (roomAndMachine.MachineCount!=mr.Count)
-                            {
-                                roomsAndMachinesRepository.DeleteConnection(roomAndMachine.Id);
-                                var newConnection = roomsAndMachinesRepository.ConnectRoomAndMachine(new RoomAndMachine() {MachineId=mr.Id,RoomId=id,MachineCount=mr.Count });
-                                //RoomAndMachine toRemove = roomsAndMachines.Single(rm => rm.MachineId == newConnection.MachineId);
-                                //roomsAndMachines.Remove(toRemove);
-                            }
-                            RoomAndMachine toRemove = roomsAndMachines.Single(rm => rm.MachineId == mr.Id);
-                            roomsAndMachines.Remove(toRemove);
-
-                            //var res = roomsAndMachinesRepository.UpdateRoomAndMachineConnection(roomAndMachine.Id, new RoomAndMachineRequest() { Id = roomAndMachine.Id, MachineId = mr.Id, MachineCount=mr.Count,RoomId=room.Id });
-
-                        }
-
-                    }
+                    List<RoomAndMachine> roomsAndMachines = roomsAndMachinesRepository.GetRoomsAndMachinesByRoomId(room.Id);
                     foreach (RoomAndMachine rm in roomsAndMachines)
                     {
                         roomsAndMachinesRepository.DeleteConnection(rm.Id);
                     }
+                }
+                else
+                {
+                    foreach (MachineForRoom mr in room.Machines)
+                    {
+                    
+                        if (!context.Set<Machine>().Any(m => m.Id == mr.Id))
+                            throw new Exception($"Az {mr.Id} azonosítójú gép nem létezik.");
+                    }
+
+                    List<RoomAndMachine>? roomsAndMachines = roomsAndMachinesRepository.GetRoomsAndMachinesByRoomId(room.Id);
+                    List<MachineForRoom> machines = room.Machines;
+                    if (roomsAndMachines!=null || roomsAndMachines!.Count>0)
+                    {
+                        foreach (MachineForRoom mr in machines)
+                        {
+                            RoomAndMachine? roomAndMachine = roomsAndMachines.SingleOrDefault(rm => rm.MachineId == mr.Id && rm.RoomId==room.Id);
+                            if (roomAndMachine == null)
+                            {
+                                RoomAndMachine newRm = new RoomAndMachine() { MachineCount = mr.Count, MachineId = mr.Id, RoomId = room.Id };
+                                roomsAndMachinesRepository.ConnectRoomAndMachine(newRm);
+                            }
+                            else
+                            {
+                                if (roomAndMachine.MachineCount!=mr.Count)
+                                {
+                                    roomsAndMachinesRepository.DeleteConnection(roomAndMachine.Id);
+                                    var newConnection = roomsAndMachinesRepository.ConnectRoomAndMachine(new RoomAndMachine() {MachineId=mr.Id,RoomId=id,MachineCount=mr.Count });
+                                    //RoomAndMachine toRemove = roomsAndMachines.Single(rm => rm.MachineId == newConnection.MachineId);
+                                    //roomsAndMachines.Remove(toRemove);
+                                }
+                                RoomAndMachine toRemove = roomsAndMachines.Single(rm => rm.MachineId == mr.Id);
+                                roomsAndMachines.Remove(toRemove);
+
+                                //var res = roomsAndMachinesRepository.UpdateRoomAndMachineConnection(roomAndMachine.Id, new RoomAndMachineRequest() { Id = roomAndMachine.Id, MachineId = mr.Id, MachineCount=mr.Count,RoomId=room.Id });
+
+                            }
+
+                        }
+                        foreach (RoomAndMachine rm in roomsAndMachines)
+                        {
+                            roomsAndMachinesRepository.DeleteConnection(rm.Id);
+                        }
+
+                    }
 
                 }
-
+                
             }
-            imagesRepository.DeleteImageByRoomId(id);
-            Image image = imagesRepository.UploadImageToRoom(room.Image, modifiedRoom.Id);
 
-            this.context.Entry(modifiedRoom).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            if (room.Image!=null)
+            {
+                if (room.Image=="")
+                {
+                    imagesRepository.DeleteImageByRoomId(id);
+                }
+                else
+                {
+                    Image image = imagesRepository.UploadImageToRoom(room.Image, roomToModify.Id);
+                }
+            }
+            this.context.Entry(roomToModify).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             this.context.SaveChanges();
 
-            return roomsAndMachinesRepository.GetRoomWithMachinesById(modifiedRoom.Id);
+            return roomsAndMachinesRepository.GetRoomWithMachinesById(roomToModify.Id);
         }
 
         public Room? DeleteRoom(int id)

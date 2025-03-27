@@ -18,7 +18,7 @@ namespace SlimFitGym.EFData.Interfaces
         Pass? GetPassModelById(int id);
         LatestPassResponse? GetLatestPassByAccountId(string token, int accountId);
         PassResponse? NewPass(PassRequest pass);
-        dynamic? UpdatePass(int id, PassRequest pass);
+        PassResponse? UpdatePass(int id, PassRequest pass);
         PassResponse? DeleteOrMakePassInactive(int id);
     }
 }

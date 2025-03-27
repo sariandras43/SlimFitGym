@@ -78,16 +78,15 @@ namespace SlimFitGymBackend.Controllers
         [HttpPut("{id}")]
         //[Authorize(Roles = "admin")]
 
-        public IActionResult Put([FromRoute] string id, [FromBody] RoomRequest value)
+        public IActionResult Put([FromRoute] string id, [FromBody] dynamic room)
         {
             return this.Execute(() =>
             {
                 int idNum;
                 if (int.TryParse(id,out idNum))
                 {
-                    //TODO: JSON parse error!!!
-                    //Room room = Newtonsoft.Json.JsonConvert.DeserializeObject<Room>(value.ToString());
-                    var res = roomsRepository.UpdateRoom(idNum, value);
+                    RoomRequest roomToModify = Newtonsoft.Json.JsonConvert.DeserializeObject<RoomRequest>(room.ToString());
+                    var res = roomsRepository.UpdateRoom(idNum, roomToModify);
                     if (res!=null)
                         return Ok(res);
                     return NotFound(new { message = "Szoba nem található" });

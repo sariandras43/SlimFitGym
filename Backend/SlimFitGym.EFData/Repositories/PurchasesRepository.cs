@@ -85,8 +85,8 @@ namespace SlimFitGym.EFData.Repositories
             Account? a = context.Set<Account>().SingleOrDefault(a => a.Id == purchase.AccountId && a.isActive);
             if (a == null)
                 throw new Exception("Ilyen felhasználó nem létezik.");
-            if (a.Role=="admin" || a.Role=="trainer")
-                throw new Exception("Edző és admin nem vehet bérletet.");
+            if (a.Role=="admin" || a.Role=="trainer" || a.Role=="employee")
+                throw new Exception("Edző, admin és dolgozó nem vehet bérletet.");
 
 
             Purchase savedPurchase = this.context.Set<Purchase>().Add(new Purchase() { AccountId=purchase.AccountId,PassId=purchase.PassId,PurchaseDate=DateTime.Now}).Entity;
