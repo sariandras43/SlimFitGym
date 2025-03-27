@@ -9,7 +9,7 @@ enum SortDirection {
   Desc = 'desc',
 }
 
-type SortableProperty = keyof Pick<PassModel, 'name' | 'price'>;
+type SortableProperty = keyof Pick<PassModel, 'name' | 'price' | 'days' |'maxEntries'| 'isActive' | 'isHighlighted'>;
 
 @Component({
   selector: 'app-passes-cms',
@@ -28,6 +28,8 @@ export class PassesCMSComponent {
   priceError = false;
   isSubmitting = false;
   showDeleted = false;
+  deletingPassId: number | null = null;
+  bottomError: string | null = null;
 
   sortState: { property: SortableProperty | null; direction: SortDirection } = {
     property: null,
@@ -106,13 +108,17 @@ export class PassesCMSComponent {
 
   delete(pass: PassModel) {
     if (!pass.isActive) return;
-
+    this.deletingPassId = pass.id;
     this.passService.deletePass(pass).subscribe({
       next: () => {
         pass.isActive = false;
+        this.deletingPassId = null;
         this.updateDisplayPasses();
       },
-      error: (err) => console.error('Delete failed:', err),
+      error: (err) => {console.error('Delete failed:', err)
+
+        this.deletingPassId = null;
+      },
     });
   }
 
@@ -124,6 +130,11 @@ export class PassesCMSComponent {
     this.priceError = !this.selectedPass.price;
 
     if (this.nameError || this.priceError) return;
+    if(this.selectedPass.maxEntries == 0 && this.selectedPass.days == 0)
+    {
+      this.bottomError = "vagy napot vagy maximum belépést meg kell adni!"
+      return;
+    }
 
     this.isSubmitting = true;
     const { isActive, ...payload } = this.selectedPass;
@@ -144,6 +155,7 @@ export class PassesCMSComponent {
       error: (err) => {
         console.error(err);
         this.isSubmitting = false;
+        this.bottomError = err.error?.message || 'Hiba történt a mentés során';
       },
     });
   }
@@ -163,6 +175,8 @@ export class PassesCMSComponent {
   }
 
   modalOpen(pass?: PassModel) {
+    
+    this.bottomError = null;
     this.selectedPass = pass
       ? { ...pass, benefits: [...pass.benefits] }
       : {
