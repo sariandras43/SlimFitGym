@@ -11,6 +11,7 @@ import { UserPageComponent } from './Pages/user-page/user-page.component';
 import { BasicUserDataComponent } from './Components/CMS/basic-user-data/basic-user-data.component';
 import { MachinesCMSComponent } from './Components/CMS/machines-cms/machines-cms.component';
 import { PassesCMSComponent } from './Components/CMS/passes-cms/passes-cms.component';
+import { RoomCMSComponent } from './Components/CMS/room-cms/room-cms.component';
 
 export const routes: Routes = [
   { path: '', component: MainPageComponent },
@@ -26,6 +27,7 @@ export const routes: Routes = [
       { path: 'userData', component: BasicUserDataComponent },
       { path: 'machines', component: MachinesCMSComponent },
       { path: 'passes', component: PassesCMSComponent },
+      { path: 'rooms', component: RoomCMSComponent },
       { path: '', redirectTo: 'userData', pathMatch: 'full' },
     ],
   },
