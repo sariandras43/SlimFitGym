@@ -26,7 +26,7 @@ export class MachinesCMSComponent {
   formSubmitted = false;
   nameError = false;
   isSubmitting = false;
-
+  deletingMachineId: number | null = null;
   sortState: { property: SortableProperty | null; direction: SortDirection } = {
     property: null,
     direction: SortDirection.Asc,
@@ -100,13 +100,17 @@ export class MachinesCMSComponent {
 
   // Existing methods below (unchanged from original)
   delete(machine: MachineModel) {
+    if (this.deletingMachineId !== null) return;
+    this.deletingMachineId = machine.id;
     this.machineService.deleteMachine(machine).subscribe({
       next: (deletedMachine) => {
         this.machines = this.machines.filter((m) => m.id != deletedMachine.id);
         this.displayMachines = this.displayMachines.filter((m) => m.id != deletedMachine.id);
+        this.deletingMachineId = null;
       },
       error: (err) => {
         console.log(err);
+        this.deletingMachineId = null;
       },
     });
   }
