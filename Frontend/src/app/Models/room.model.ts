@@ -5,7 +5,8 @@ export interface RoomModel {
     description: string
     recommendedPeople: number
     name: string
-    isActive: boolean
-    imageUrl: string
+    isActive?: boolean
+    imageUrl?: string
     machines: MachineModel[]
+    image?: string
 }

@@ -16,20 +16,20 @@ table {
     }
   }
   
-//   td[data-cell="Előnyök"] {
-//     display: flex;
-//     gap: 0.5rem;
-//     flex-wrap: wrap;
-//     max-width: 50ch;
-//     .machine-item {
-//       &:not(:last-child)::after {
-//         content: ";";
-//         margin-left: 0.3rem;
-//         font-weight: 900;
-//         color: var(--secondary-color);
-//       }
-//     }
-//   }
+  td[data-cell="Gépek"] {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    max-width: 50ch;
+    .machine-item {
+      &:not(:last-child)::after {
+        content: ";";
+        margin-left: 0.3rem;
+        font-weight: 900;
+        color: var(--secondary-color);
+      }
+    }
+  }
   th {
     text-align: left;
     background: rgb(var(--bg-tertiary-rgb), 0.5);
@@ -403,7 +403,7 @@ table {
       margin-right: 1rem;
     }
   
-    td[data-cell="Előnyök"] {
+    td[data-cell="Gépek"] {
       display: block;
   
       .machine-item {

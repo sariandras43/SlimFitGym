@@ -71,21 +71,24 @@
           <span class="error-message">A név kötelező!</span>
           }
         </div>
+        <div class="inputField">
+          <label for="roomDescriptionInput">Leírás</label>
+          <textarea id="roomDescriptionInput" [(ngModel)]="selectedRoom.description" [ngModelOptions]="{ standalone: true }"></textarea>
+        </div>
 
-        <!-- <div class="price-duration">
             <div class="inputField">
-              <label for="priceInput">Ár (HUF) *</label>
+              <label for="priceInput">Ajánlott létszám*</label>
               <input
                 type="number"
                 id="priceInput"
-                [(ngModel)]="selectedRoom.price"
+                [(ngModel)]="selectedRoom.recommendedPeople"
                 [ngModelOptions]="{ standalone: true }"
               />
               @if(formSubmitted && priceError){
-              <span class="error-message">Az ár kötelező!</span>
+              <span class="error-message">Ajánlott létszám nem lehet nulla</span>
               }
-            </div> -->
-
+            </div>
+        
         <!-- <div class="inputField">
               <label for="maxEntriesInput">Max. belépések</label>
               <input
@@ -119,22 +122,21 @@
             </label>
           </div> -->
 
-        <!-- <div class="machines">
+        <div class="machines">
           <label>Előnyök</label>
           <div class="machine-list">
             @for (machine of selectedRoom.machines; track $index; let i =
             $index) {
             <div class="machine-item">
-              <input
-                type="text"
-                [(ngModel)]="selectedRoom.machines[i]"
-                [ngModelOptions]="{ standalone: true }"
-              />
+              <div>
+                <span>{{machine.name}}</span>
+                <input type="number" [(ngModel)]="machine.machineCount" [ngModelOptions]="{ standalone: true }">
+              </div>
               <button type="button" (click)="removeBenefit(i)">×</button>
             </div>
             }
           </div>
-        </div> -->
+        </div>
         @if (bottomError) {
         <div class="bottom-error">
           {{ bottomError }}
@@ -160,11 +162,11 @@
       <td data-cell="Név">{{ room.name }}</td>
       <td data-cell="Leírás">{{ room.description }}</td>
       <td data-cell="Javasolt max létszám">{{ room.recommendedPeople }}</td>
-      <td data-cell="Státusz">{{ room.isActive ? "Aktív" : "Törölt" }}</td>
-      <td data-cell="Kép"><img [src]="room.imageUrl" alt=""></td>
-     <td data-cell="Gépek"> @for (machine of room.machines; track $index) {
+      <td data-cell="Gépek"> @for (machine of room.machines; track $index) {
         <span class="machine-item">{{ machine.name }}</span>
-        } @empty { - }</td>
+      } @empty { - }</td>
+      <td data-cell="Kép"><img [src]="room.imageUrl" alt=""></td>
+      <td data-cell="Státusz">{{ room.isActive ? "Aktív" : "Törölt" }}</td>
       <td class="itemButtons">
         @if (room.isActive) {
 

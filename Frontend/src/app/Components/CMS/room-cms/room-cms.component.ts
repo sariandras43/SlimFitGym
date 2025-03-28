@@ -5,6 +5,8 @@ import { RoomService } from '../../../Services/room.service';
 import { FormsModule } from '@angular/forms';
 import { ButtonLoaderComponent } from '../../button-loader/button-loader.component';
 import { MachineModel } from '../../../Models/machine.model';
+import { MachinesCMSComponent } from '../machines-cms/machines-cms.component';
+import { MachineService } from '../../../Services/machine.service';
 
 enum SortDirection {
   Asc = 'asc',
@@ -32,18 +34,27 @@ export class RoomCMSComponent {
     showDeleted = false;
     deletingRoomId: number | null = null;
     bottomError: string | null = null;
+    machines: MachineModel[] = [];
   
     sortState: { property: SortableProperty | null; direction: SortDirection } = {
       property: null,
       direction: SortDirection.Asc,
     };
   
-    constructor(private roomService: RoomService) {
+    constructor(private roomService: RoomService, private machineService: MachineService) {
       this.loadRooms();
+      this.loadMachines();
     }
-  
+    private loadMachines() {
+      this.machineService.allMachines$.subscribe({
+        next: (machines) => {
+          this.machines = machines || [];
+        },
+        error: (err) => console.error('Failed to load rooms:', err),
+      });
+    }
     private loadRooms() {
-      this.roomService.getRoomsAll().subscribe({
+      this.roomService.rooms$.subscribe({
           next: (rooms) => {
             this.rooms = rooms || [];
             this.updateDisplayRooms();
@@ -175,9 +186,8 @@ export class RoomCMSComponent {
         : {
             id: -1,
             name: '',
-            isActive: true,
             description: '',
-            imageUrl: '',
+            image: '',
             machines: [],
             recommendedPeople: 0
           };
