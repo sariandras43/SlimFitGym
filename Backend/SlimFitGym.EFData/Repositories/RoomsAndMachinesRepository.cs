@@ -69,6 +69,50 @@ namespace SlimFitGym.EFData.Repositories
             return result;
         }
 
+
+        public List<RoomWithMachinesResponse>? GetAllRoomsWithMachines()
+        {
+            var result = context.Set<Room>()
+                .Select(room => new
+                {
+                    room,
+                    RoomAndMachines = context.RoomsAndMachines
+                        .Where(rm => rm.RoomId == room.Id)
+                        .ToList()
+                })
+                .AsEnumerable()
+                .Select(x => new RoomWithMachinesResponse
+                {
+                    Id = x.room.Id,
+                    Name = x.room.Name,
+                    Description = x.room.Description!,
+                    RecommendedPeople = x.room.RecommendedPeople,
+                    IsActive = x.room.IsActive,
+                    ImageUrl = imagesRepository.GetImageUrlByRoomId(x.room.Id),
+                    Machines = x.RoomAndMachines == null || !x.RoomAndMachines.Any()
+                        ? new List<MachineDetails>()
+                        : x.RoomAndMachines
+                            .Select(rm => new MachineDetails
+                            {
+                                Id = rm.MachineId,
+                                Name = context.Set<Machine>()
+                                    .Where(m => m.Id == rm.MachineId)
+                                    .Select(m => m.Name)
+                                    .FirstOrDefault()!,
+                                Description = context.Set<Machine>()
+                                    .Where(m => m.Id == rm.MachineId)
+                                    .Select(m => m.Description)
+                                    .FirstOrDefault()!,
+                                ImageUrls = imagesRepository.GetImageUrlsByMachineId(rm.MachineId),
+                                MachineCount = rm.MachineCount
+                            })
+                            .ToList()
+                })
+                .ToList();
+
+            return result;
+        }
+
         public RoomWithMachinesResponse? GetRoomWithMachinesById(int id)
         {
             var result = context.Set<Room>()
