@@ -9,6 +9,15 @@ import { PassModel } from '../Models/pass.model';
   providedIn: 'root',
 })
 export class UserService {
+  getAllUsers(): Observable<UserModel[]> {
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.loggedInUserSubject.getValue()?.token}`
+    );
+    return this.http.get<UserModel[]>(
+      `${this.config.apiUrl}/auth/accounts/all`, {headers}
+    );
+  }
   private loggedInUserSubject = new BehaviorSubject<UserModel | undefined>(
     undefined
   );
@@ -122,11 +131,12 @@ export class UserService {
       'Authorization',
       `Bearer ${this.loggedInUserSubject.getValue()?.token}`
     );
-    return this.http
-      .delete<UserModel>(`${this.config.apiUrl}/auth/delete/${user.id}`, {
-        headers
-      })
-      
+    return this.http.delete<UserModel>(
+      `${this.config.apiUrl}/auth/delete/${user.id}`,
+      {
+        headers,
+      }
+    );
   }
 
   getPass(): void {

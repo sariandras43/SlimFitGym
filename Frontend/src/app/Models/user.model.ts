@@ -10,5 +10,6 @@ export interface UserModel {
     password?: string
     newPassword?: string
     image?: string
+    appliedForTraining?: boolean;
   }
   
