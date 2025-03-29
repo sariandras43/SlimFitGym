@@ -3,9 +3,12 @@
     <div class="pass-details-container">
       <header class="pass-header">
         <h1 class="page-title">Bérletem részletei</h1>
-        <a routerLink="/subscriptions" class="btn upgrade">
-          Bérlet frissítése
-        </a>
+        @if (pass) {
+
+            <a routerLink="/subscriptions" class="btn upgrade">
+                Másik bérlet vásárlása
+            </a>
+        }
       </header>
   
       @if (isLoading) {
@@ -29,7 +32,7 @@
             @if (!pass.isActive) {
 
                 <p class="status-badge inactive">
-                  Kifutó
+                  Kifutó bérlet
                 </p>
             }
           </div>
@@ -44,7 +47,7 @@
                 </div>
                 <div class="detail-item">
                   <span class="label">Összes belépés</span>
-                  <span class="value">{{ pass.maxEntries ?? 'Korlátlan' }}</span>
+                  <span class="value">{{ pass.maxEntries || 'Korlátlan' }}</span>
                 </div>
                 <div class="detail-item">
                   <span class="label">Lejárat</span>
