@@ -1,8 +1,35 @@
-<app-general-purpose-card
-    [title]="machine?.name"
-    [isClickable]="true"
-    [imgSrc]="(machine && machine.imageUrls[0]) || 'templateMachine.webp'"
+<!-- machine-card.component.html -->
+<div 
+  class="card"
+  [ngClass]="{
+    'clickable': machine && machine.imageUrls[1],
+    'flipped': flipped
+  }"
+  (click)="flipCard()"
+>
+  <div class="card-inner">
+    <div class="card-face card-front">
+      <!-- Front content -->
+      <div>
+        @if (machine?.imageUrls && machine!.imageUrls[0]) {
+          <img [src]="machine!.imageUrls[0]" alt="" loading="lazy" />
+        } @else {
+          <img src="templateMachine.webp" alt="" loading="lazy" />
+        }
+        <div class="content">
+          @if (machine?.name) {
+            <h3 class="title">{{ machine?.name }}</h3>
+          }
+          @if (machine?.description) {
+            <p class="description">{{ machine?.description }}</p>
+          }
+        </div>
+      </div>
+    </div>
     
-    [description]="machine?.description"
-  >
-  </app-general-purpose-card>
+    <div class="card-face card-back">
+      <!-- Back content -->
+      <img class="helper-image" [src]="machine && machine.imageUrls[1]" alt="" />
+    </div>
+  </div>
+</div>

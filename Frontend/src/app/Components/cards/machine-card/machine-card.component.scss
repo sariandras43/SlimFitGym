@@ -1,5 +1,191 @@
 :host {
-    border-radius: var(--border-radius);
-    flex-grow: 0;
-    background-color: inherit;
+  background-color: transparent;
+  border-radius: var(--border-radius);
+  flex-grow: 0;
+  height: fit-content;
+}
+
+// Card container styles
+.card {
+  width: 20em;
+  perspective: 1000px;
+  isolation: isolate;
+  position: relative;
+  min-height: 30em;
+  
+  &.clickable {
+    &:hover{
+
+      cursor: pointer;
+      opacity: 0.9;
+      .title{
+        color: var(--primary-color);
+      }
+    }
+   
   }
+
+  // Flip animation container
+  .card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 30em;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+  background-color: var(--bg-dark);
+  border-radius: var(--border-radius);
+    
+
+  }
+
+  // Flipped state
+  &.flipped .card-inner {
+    transform: rotateY(180deg);
+  }
+
+  // Card faces (front/back)
+  .card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    overflow: hidden;
+
+    // Back face specific styles
+    &.card-back {
+      transform: rotateY(180deg);
+    }
+  }
+
+  // Image styles
+  img {
+    width: 100%;
+    height: 20em;
+    object-fit: cover;
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+
+    &.helper-image {
+      border-radius: var(--border-radius);
+      flex-grow: 1;
+      height: 100%;
+      min-height: 30em;
+      position: relative;
+      
+      
+    }
+
+    // Content spacing when following image
+    & + .content {
+      padding: 1em 3em;
+    }
+  }
+
+  // Content container
+  .content {
+    padding: 2em 3em;
+    gap: 0.5em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    flex: 1;
+    min-height: 0;
+
+    // Text elements
+    .title {
+      font-size: 2rem;
+      text-align: center;
+    }
+
+    .description {
+      font-size: 1rem;
+      text-align: justify;
+      margin: 0;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      transition: all 0.3s ease;
+
+      // Truncated state
+      &.truncated {
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+      }
+    }
+
+    // Price styling
+    .priceWrap {
+      .price {
+        font-weight: bold;
+        font-size: 3.5rem;
+      }
+      .unit {
+        font-size: 1.5rem;
+        color: var(--secondary-text);
+      }
+    }
+
+    // Benefits list
+    .benefits {
+      list-style: none;
+
+      li {
+        font-size: 1.5rem;
+        text-align: center;
+
+        &::before {
+          content: "✓";
+          color: var(--secondary-color);
+          font-weight: bolder;
+        }
+      }
+    }
+
+    // Buttons
+    .btn {
+      width: 100%;
+      background-color: var(--primary-color);
+      border: none;
+      color: var(--primary-text);
+      font-size: 1.5rem;
+      font-weight: 600;
+      border-radius: 30em;
+      padding: 0.25em;
+      margin-bottom: 2em;
+      flex-grow: 1;
+      text-align: center;
+
+      &-wrapper {
+        margin-top: 5em;
+        width: 100%;
+      }
+    }
+  }
+}
+
+// Description container
+.description-container {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+// Read more/less toggle
+.toggle-description {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(90deg, transparent 0%, var(--background-color) 30%);
+  border: none;
+  color: var(--primary-color);
+  font-weight: bold;
+  padding-left: 2em;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
