@@ -38,6 +38,15 @@ export class PassService {
     
         }
   }
+
+  buyPass(buy:{passId:number, accountId:number}) : Observable<{passId:number, accountId:number}> {
+    const headers = new HttpHeaders().set(
+              'Authorization',
+              `Bearer ${this.loggedInUser?.token}`
+            );
+          return this.http.post<{passId:number, accountId:number}>(`${this.config.apiUrl}/purchases`, buy, {headers});
+        
+  }
   
   deletePass(pass: PassModel) : Observable<PassModel> {
     const headers = new HttpHeaders().set(

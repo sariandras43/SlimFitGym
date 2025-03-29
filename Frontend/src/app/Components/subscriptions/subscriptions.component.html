@@ -4,7 +4,7 @@
     @for (pass of passes; track $index) {
       @if (!highlightOnly() || pass.isHighlighted ) {
 
-        <app-pass-card [pass]='pass' ></app-pass-card>
+        <app-pass-card (boughtPass)="handlePassPurchase($event)" [isRoleUser]="user?.role == 'user'"  [pass]='pass' ></app-pass-card>
       }
     }
     

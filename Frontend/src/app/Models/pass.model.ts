@@ -5,9 +5,14 @@ export interface PassModel {
     days: number |undefined
     price: number
     isActive?: boolean
-    isHighlighted: boolean
     benefits: string[]
     validTo?: string
     remainingEntries: number |undefined
+    isHighlighted: boolean
+    
+    
+    //bonus for better display
+    passOfUser?: boolean;
+    isLoading?: boolean;
   }
   

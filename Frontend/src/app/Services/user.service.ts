@@ -29,6 +29,7 @@ export class UserService {
 
   constructor(private config: ConfigService, private http: HttpClient) {
     this.checkUser();
+    
   }
 
   login(
@@ -56,10 +57,12 @@ export class UserService {
 
   logout() {
     this.loggedInUserSubject.next(undefined);
+    this.loggedInUserPassSubject.next(undefined);
     localStorage.removeItem('loggedInUser');
     sessionStorage.removeItem('loggedInUser');
     localStorage.removeItem('userPass');
     sessionStorage.removeItem('userPass');
+
   }
   register(
     email: string,
@@ -123,6 +126,7 @@ export class UserService {
       }
 
       this.loggedInUserSubject.next(parsedUser);
+      this.getPass();
     }
   }
 
@@ -141,30 +145,21 @@ export class UserService {
 
   getPass(): void {
     let storage = localStorage;
-    let user = localStorage.getItem('loggedInUser');
-    if (!user) {
-      user = sessionStorage.getItem('loggedInUser');
-      storage = sessionStorage;
-    }
+    let user = this.loggedInUserSubject.getValue();
     if (!user) {
       console.warn('No logged-in user found.');
       return;
     }
 
-    const loggedInUser: UserModel = JSON.parse(user);
-    if (!loggedInUser?.id || !loggedInUser?.token) {
-      console.warn('Invalid user data.');
-      return;
-    }
 
     const headers = new HttpHeaders().set(
       'Authorization',
-      `Bearer ${loggedInUser.token}`
+      `Bearer ${user.token}`
     );
 
     this.http
       .get<PassModel>(
-        `${this.config.apiUrl}/passes/accounts/${loggedInUser.id}/latest`,
+        `${this.config.apiUrl}/passes/accounts/${user.id}/latest`,
         { headers }
       )
       .subscribe({
