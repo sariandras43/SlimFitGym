@@ -1,0 +1,85 @@
+<!-- pass-details-page.component.html -->
+<div class="container">
+    <div class="pass-details-container">
+      <header class="pass-header">
+        <h1 class="page-title">Bérletem részletei</h1>
+        <a routerLink="/subscriptions" class="btn upgrade">
+          Bérlet frissítése
+        </a>
+      </header>
+  
+      @if (isLoading) {
+        <div class="loading">
+          <app-button-loader [size]="1.2"></app-button-loader>
+        </div>
+      }
+      
+      @if (pass && !isLoading) {
+        <div class="pass-content">
+          <div class="primary-info">
+            <div class="pass-metadata">
+              <h2 class="pass-name">{{ pass.name }}</h2>
+              <div class="price-duration">
+                <span class="price">{{ pass.price | currency:'HUF':'symbol':'1.0-0' }}</span>
+                @if (pass.days) {
+                  <span class="duration">{{ pass.days }} napos</span>
+                }
+              </div>
+            </div>
+            @if (!pass.isActive) {
+
+                <p class="status-badge inactive">
+                  Kifutó
+                </p>
+            }
+          </div>
+  
+          <div class="detail-sections">
+            <section class="usage-section">
+              <h3>Bérlet részletei</h3>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="label">Felhasználható belépések</span>
+                  <span class="value">{{ pass.remainingEntries ?? 'Korlátlan' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Összes belépés</span>
+                  <span class="value">{{ pass.maxEntries ?? 'Korlátlan' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Lejárat</span>
+                  <span class="value">{{ pass.validTo ? (pass.validTo | date:'yyyy. MM. dd.') : 'Nem jár le' }}</span>
+                </div>
+              </div>
+            </section>
+  
+            @if (pass.benefits && pass.benefits.length > 0) {
+              <section class="benefits-section">
+                <h3>Bérlet előnyei</h3>
+                <ul class="benefits-list">
+                  @for (benefit of pass.benefits; track $index) {
+                    <li class="benefit-item">
+                      <span class="check-icon">✓</span>
+                      {{ benefit }}
+                    </li>
+                  }
+                </ul>
+              </section>
+            }
+          </div>
+        </div>
+      }
+      
+      @if (!pass && !isLoading) {
+        <div class="no-pass">
+          <div class="no-pass-content">
+            <h2>Nincs aktív bérlet</h2>
+            <p>Jelenleg nincs aktív bérleted. Válassz egyet ajánlataink közül!</p>
+            <a routerLink="/subscriptions" class="btn primary">
+              Bérletek megtekintése
+            </a>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
