@@ -13,6 +13,7 @@ import { MachinesCMSComponent } from './Components/CMS/machines-cms/machines-cms
 import { PassesCMSComponent } from './Components/CMS/passes-cms/passes-cms.component';
 import { RoomCMSComponent } from './Components/CMS/room-cms/room-cms.component';
 import { UserCMSComponent } from './Components/CMS/user-cms/user-cms.component';
+import { MyPassComponent } from './Components/CMS/my-pass/my-pass.component';
 
 export const routes: Routes = [
   { path: '', component: MainPageComponent },
@@ -30,6 +31,7 @@ export const routes: Routes = [
       { path: 'passes', component: PassesCMSComponent },
       { path: 'rooms', component: RoomCMSComponent },
       { path: 'users', component: UserCMSComponent },
+      { path: 'myPass', component: MyPassComponent },
       { path: '', redirectTo: 'userData', pathMatch: 'full' },
     ],
   },

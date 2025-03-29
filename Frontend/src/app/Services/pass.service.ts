@@ -21,7 +21,7 @@ export class PassService {
       this.allPassesSubject.next(JSON.parse(passes));
     }
     this.getPasses();
-    userService.loggedInUser$.subscribe(s=> {console.log(s),this.loggedInUser = s})
+    userService.loggedInUser$.subscribe(s=> {this.loggedInUser = s})
   }
   savePass(pass: PassModel) : Observable<PassModel> {
     const headers = new HttpHeaders().set(
