@@ -21,6 +21,7 @@ export class MachinesCMSComponent {
   machines: MachineModel[] = [];
   displayMachines: MachineModel[] = [];
   selectedMachine: MachineModel | undefined;
+  originalMachine: MachineModel | undefined;
   searchTerm: string = '';
   bottomError: string = '';
   formSubmitted = false;
@@ -70,7 +71,7 @@ export class MachinesCMSComponent {
     let filteredMachines = this.machines.filter(
       (machine) =>
         machine.name.toLowerCase().includes(this.searchTerm) ||
-        machine.description.toLowerCase().includes(this.searchTerm)
+        machine.description?.toLowerCase().includes(this.searchTerm)
     );
 
     if (this.sortState.property) {
@@ -98,7 +99,6 @@ export class MachinesCMSComponent {
     });
   }
 
-  // Existing methods below (unchanged from original)
   delete(machine: MachineModel) {
     if (this.deletingMachineId !== null) return;
     this.deletingMachineId = machine.id;
@@ -116,57 +116,94 @@ export class MachinesCMSComponent {
   }
 
   save() {
-    if(this.isSubmitting) return;
-    if (this.selectedMachine) {
-      if (!this.selectedMachine) return;
-
-      this.formSubmitted = true;
-      this.nameError = !this.selectedMachine.name.trim();
-
-      // Image pair validation
-      const hasMain = !!this.selectedMachine.imageUrls[0];
-      const hasSecondary = !!this.selectedMachine.imageUrls[1];
-      console.log(!hasMain && hasSecondary)
-      let imagePairError = !hasMain && hasSecondary;
-
-      if (this.nameError ) return;
-      if (imagePairError) {
-        this.bottomError = 'Segédleti kép feltöltése csak fő képpel együtt lehetséges!'
+    if (this.isSubmitting || !this.selectedMachine) return;
+  
+    this.formSubmitted = true;
+    this.nameError = !this.selectedMachine.name.trim();
+  
+    const hasMain = !!this.selectedMachine.imageUrls[0];
+    const hasSecondary = !!this.selectedMachine.imageUrls[1];
+    const imagePairError = !hasMain && hasSecondary;
+  
+    if (this.nameError) return;
+    if (imagePairError) {
+      this.bottomError = 'Segédleti kép feltöltése csak fő képpel együtt lehetséges!';
+      return;
+    }
+  
+    this.isSubmitting = true;
+  
+    const payload: Partial<MachineModel> = { id: this.selectedMachine.id };
+  
+    if (this.selectedMachine.id === -1) {
+      payload.name = this.selectedMachine.name;
+      payload.description = this.selectedMachine.description;
+      payload.imageUrls = this.selectedMachine.imageUrls;
+    } else {
+      if (!this.originalMachine) {
+        this.isSubmitting = false;
+        this.bottomError = 'Nem található az eredeti gép.';
         return;
       }
-      this.isSubmitting = true;
-      this.machineService.saveMachine(this.selectedMachine).subscribe({
-        next: (updateMachine) => {
-          let machine = this.machines.find((m) => m.id == updateMachine.id);
-          if (machine) {
-            machine.description = updateMachine.description;
-            machine.imageUrls = updateMachine.imageUrls;
-            machine.name = updateMachine.name;
-            machine.id = updateMachine.id;
-          } else {
-            this.machines.unshift(updateMachine);
-            this.displayMachines.unshift(updateMachine);
-          }
-          this.selectedMachine = undefined;
-          this.isSubmitting = false;
-        },
-        error: (error) => {
-          this.bottomError = error.error.message ?? error.message;
-          this.isSubmitting = false;
-        },
-      });
+  
+      if (this.selectedMachine.name !== this.originalMachine.name) {
+        payload.name = this.selectedMachine.name;
+      }
+      if (this.selectedMachine.description !== this.originalMachine.description) {
+        payload.description = this.selectedMachine.description;
+      }
+      if (!this.arraysEqual(this.selectedMachine.imageUrls, this.originalMachine.imageUrls)) {
+        payload.imageUrls = this.selectedMachine.imageUrls;
+      }
     }
+  
+    if (Object.keys(payload).length === 1 && this.selectedMachine.id !== -1) {
+      this.selectedMachine = undefined;
+      this.isSubmitting = false;
+      return;
+    }
+  
+    this.machineService.saveMachine(payload as MachineModel).subscribe({
+      next: (updatedMachine) => {
+        const index = this.machines.findIndex(m => m.id === updatedMachine.id);
+        if (index > -1) {
+          this.machines[index] = updatedMachine;
+        } else {
+          this.machines.unshift(updatedMachine);
+        }
+        this.selectedMachine = undefined;
+        this.isSubmitting = false;
+        this.updateDisplayMachines();
+      },
+      error: (error) => {
+        this.bottomError = error.error?.message || error.message;
+        this.isSubmitting = false;
+      },
+    });
+  }
+  
+  private arraysEqual(a: string[], b: string[]): boolean {
+    if (a === b) return true;
+    if (a.length !== b.length) return false;
+    return a.every((val, index) => val === b[index]);
   }
 
   modalOpen(machine?: MachineModel) {
+    this.bottomError = '';
     if (machine) {
-      this.selectedMachine = {
-        description: machine.description,
-        imageUrls: [...machine.imageUrls],
-        name: machine.name,
-        id: machine.id,
-      };
+      const original = this.machines.find(m => m.id === machine.id);
+      if (original) {
+        this.originalMachine = { 
+          ...original, 
+          imageUrls: [...original.imageUrls] 
+        };
+        this.selectedMachine = { 
+          ...original, 
+          imageUrls: [...original.imageUrls] 
+        };
+      }
     } else {
+      this.originalMachine = undefined;
       this.selectedMachine = {
         description: '',
         imageUrls: [],
