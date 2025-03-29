@@ -13,7 +13,7 @@ enum SortDirection {
   Desc = 'desc',
 }
 
-type SortableProperty = keyof Pick<RoomModel, 'name' | 'recommendedPeople'>;
+type SortableProperty = keyof Pick<RoomModel, 'name' | 'description' | 'recommendedPeople' | 'isActive'>;
 
 @Component({
   selector: 'app-room-cms',
@@ -26,6 +26,7 @@ export class RoomCMSComponent {
   rooms: RoomModel[] = [];
     displayRooms: RoomModel[] = [];
     selectedRoom: RoomModel | undefined;
+    originalRoom: RoomModel | undefined;
     searchTerm: string = '';
     formSubmitted = false;
     nameError = false;
@@ -35,12 +36,24 @@ export class RoomCMSComponent {
     deletingRoomId: number | null = null;
     bottomError: string | null = null;
     machines: MachineModel[] = [];
+    selectedMachineId: number | null = null;
   
     sortState: { property: SortableProperty | null; direction: SortDirection } = {
       property: null,
       direction: SortDirection.Asc,
     };
-  
+    addSelectedMachine() {
+      if (!this.selectedMachineId || !this.selectedRoom) return;
+      const machine = this.machines.find(m => m.id == this.selectedMachineId);
+      console.log(this.selectedMachineId)
+      if (machine) {
+        this.selectedRoom.machines = [
+          ...this.selectedRoom.machines, 
+          { ...machine, machineCount: 1 }
+        ];
+        this.selectedMachineId = null;
+      }
+    }
     constructor(private roomService: RoomService, private machineService: MachineService) {
       this.loadRooms();
       this.loadMachines();
@@ -53,6 +66,21 @@ export class RoomCMSComponent {
         error: (err) => console.error('Failed to load rooms:', err),
       });
     }
+
+    imageChanged(event: Event) {
+      const input = event.target as HTMLInputElement;
+      if (input.files && input.files.length > 0) {
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (e: any) => {
+          if (!this.selectedRoom) return;
+          this.selectedRoom.imageUrl = e.target.result;
+        };
+      }
+    }
+    
+
     private loadRooms() {
       this.roomService.rooms$.subscribe({
           next: (rooms) => {
@@ -134,35 +162,91 @@ export class RoomCMSComponent {
         },
       });
     }
-  
-    save() {
-      if (this.isSubmitting || !this.selectedRoom) return;
-  
-      this.formSubmitted = true;
-     
-  
-      this.isSubmitting = true;
-  
-  
-      this.roomService.saveRoom(this.selectedRoom).subscribe({
-        next: (updated) => {
-          const index = this.rooms.findIndex((p) => p.id === updated.id);
-          if (index > -1) {
-            this.rooms[index] = updated;
-          } else {
-            this.rooms.unshift(updated);
-          }
-          this.selectedRoom = undefined;
-          this.isSubmitting = false;
-          this.updateDisplayRooms();
-        },
-        error: (err) => {
-          console.error(err);
-          this.isSubmitting = false;
-          this.bottomError = err.error?.message || 'Hiba történt a mentés során';
-        },
-      });
+    private arraysEqual(a: MachineModel[], b: MachineModel[]): boolean {
+      if (a === b) return true;
+      if (a == null || b == null) return false;
+      if (a.length !== b.length) return false;
+    
+      for (let i = 0; i < a.length; ++i) {
+        console.log(a[i].machineCount, b[i].machineCount)
+        if (a[i].id !== b[i].id) return false;
+        if (a[i].machineCount !== b[i].machineCount) return false;
+      }
+      return true;
     }
+
+
+
+save() {
+  if (this.isSubmitting || !this.selectedRoom) return;
+
+  this.formSubmitted = true;
+
+  this.isSubmitting = true;
+
+  if (this.selectedRoom.id === -1) {
+    this.roomService.saveRoom(this.selectedRoom).subscribe({
+      next: (updated) => {
+        this.rooms.unshift(updated);
+        this.selectedRoom = undefined;
+        this.isSubmitting = false;
+        this.updateDisplayRooms();
+      },
+      error: (err) => {
+        console.error(err);
+        this.isSubmitting = false;
+        this.bottomError = err.error?.message || 'Hiba történt mentés közben.';
+      }
+    });
+  } else {
+    if (!this.originalRoom) {
+      this.isSubmitting = false;
+      this.bottomError = 'Nem található az eredeti szoba.';
+      return;
+    }
+
+    const payload: Partial<RoomModel> = { id: this.originalRoom.id };
+
+    if (this.selectedRoom.name !== this.originalRoom.name) payload.name = this.selectedRoom.name;
+    if (this.selectedRoom.description !== this.originalRoom.description) payload.description = this.selectedRoom.description;
+    if (this.selectedRoom.image !== this.originalRoom.image) payload.image = this.selectedRoom.image;
+    if (this.selectedRoom.recommendedPeople !== this.originalRoom.recommendedPeople) payload.recommendedPeople = this.selectedRoom.recommendedPeople;
+    
+    if (this.selectedRoom?.imageUrl !== this.originalRoom?.imageUrl) {
+      payload.image = this.selectedRoom.imageUrl;
+    }
+    const originalMachines = this.originalRoom.machines.sort();
+    const selectedMachines = this.selectedRoom.machines.sort();
+    if (!this.arraysEqual(originalMachines, selectedMachines)) {
+      payload.machines = this.selectedRoom.machines;
+    }
+
+    if (Object.keys(payload).length === 1) {
+      this.selectedRoom = undefined;
+      this.isSubmitting = false;
+      return;
+    }
+
+    this.roomService.saveRoom(payload as RoomModel).subscribe({
+      next: (updated) => {
+        const index = this.rooms.findIndex(p => p.id === updated.id);
+        if (index > -1) {
+          this.rooms[index] = updated;
+        } else {
+          this.rooms.unshift(updated);
+        }
+        this.selectedRoom = undefined;
+        this.isSubmitting = false;
+        this.updateDisplayRooms();
+      },
+      error: (err) => {
+        console.error(err);
+        this.isSubmitting = false;
+        this.bottomError = err.error?.message || 'Hiba mentés közben.';
+      }
+    });
+  }
+}
   
     addMachine(machine: MachineModel) {
       if (this.selectedRoom) {
@@ -179,19 +263,26 @@ export class RoomCMSComponent {
     }
   
     modalOpen(room?: RoomModel) {
-      
       this.bottomError = null;
-      this.selectedRoom = room
-        ? { ...room, machines: [...room.machines] }
-        : {
-            id: -1,
-            name: '',
-            description: '',
-            image: '',
-            machines: [],
-            recommendedPeople: 0
-          };
+      if (room) {
+        const original = this.rooms.find(r => r.id === room.id);
+        if (original) {
+          this.originalRoom = { ...original, machines:  original.machines.map(m => ({...m}))  };
+          this.selectedRoom = { ...original, machines: original.machines.map(m => ({...m})) };
+        }
+      } else {
+        this.originalRoom = undefined;
+        this.selectedRoom = {
+          id: -1,
+          name: '',
+          description: '',
+          image: '',
+          machines: [],
+          recommendedPeople: 0
+        };
+      }
     }
+    
   
     toggleShowDeleted() {
       this.showDeleted = !this.showDeleted;

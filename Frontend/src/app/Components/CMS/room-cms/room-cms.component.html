@@ -24,7 +24,7 @@
       </div>
 
       <div class="filter-controls">
-        <button (click)="modalOpen()" class="newButton">Új bérlet</button>
+        <button (click)="modalOpen()" class="newButton">Új terem</button>
       </div>
     </div>
     <label class="toggle-deleted toggle fields">
@@ -35,7 +35,7 @@
       />
       <span class="toggle-slider"></span>
 
-      Törölt bérletek mutatása
+      Törölt termek mutatása
     </label>
   </div>
 
@@ -45,7 +45,7 @@
     <div class="modal">
       <div class="modal-header">
         <h2>
-          {{ selectedRoom.id !== -1 ? "Bérlet szerkesztése" : "Új bérlet" }}
+          {{ selectedRoom.id !== -1 ? "Terem szerkesztése" : "Új terem" }}
         </h2>
         <div class="modal-actions">
           <button class="cancel-button" (click)="selectedRoom = undefined">
@@ -73,68 +73,82 @@
         </div>
         <div class="inputField">
           <label for="roomDescriptionInput">Leírás</label>
-          <textarea id="roomDescriptionInput" [(ngModel)]="selectedRoom.description" [ngModelOptions]="{ standalone: true }"></textarea>
+          <textarea
+            id="roomDescriptionInput"
+            [(ngModel)]="selectedRoom.description"
+            [ngModelOptions]="{ standalone: true }"
+          ></textarea>
         </div>
 
-            <div class="inputField">
-              <label for="priceInput">Ajánlott létszám*</label>
-              <input
-                type="number"
-                id="priceInput"
-                [(ngModel)]="selectedRoom.recommendedPeople"
-                [ngModelOptions]="{ standalone: true }"
-              />
-              @if(formSubmitted && priceError){
-              <span class="error-message">Ajánlott létszám nem lehet nulla</span>
+        <div class="inputField">
+          <label for="priceInput">Ajánlott létszám*</label>
+          <input
+            type="number"
+            id="priceInput"
+            [(ngModel)]="selectedRoom.recommendedPeople"
+            [ngModelOptions]="{ standalone: true }"
+          />
+          @if(formSubmitted && priceError){
+          <span class="error-message">Ajánlott létszám nem lehet nulla</span>
+          }
+        </div>
+        <div class="uploadImages">
+          <div class="imgWrap">
+            <p>Terem képe</p>
+            <div class="imgUpload">
+              @if (selectedRoom.imageUrl) {
+                <img [src]="selectedRoom.imageUrl" alt="" />
               }
+              <div class="addHover">
+                <label for="roomImage-upload" class="custom-file-upload">
+                  +
+                </label>
+                <input
+                  id="roomImage-upload"
+                  (change)="imageChanged($event)"
+                  type="file"
+                  accept=".jpg,.jpeg,.gif,.avif"
+                />
+              </div>
             </div>
+          </div>
+        </div>
         
-        <!-- <div class="inputField">
-              <label for="maxEntriesInput">Max. belépések</label>
-              <input
-                type="number"
-                id="maxEntriesInput"
-                [(ngModel)]="selectedRoom.maxEntries"
-                [ngModelOptions]="{ standalone: true }"
-              />
-            </div> -->
-
-        <!-- <div class="inputField">
-              <label for="daysInput">Érvényesség (nap)</label>
-              <input
-                type="number"
-                id="daysInput"
-                [(ngModel)]="selectedRoom.days"
-                [ngModelOptions]="{ standalone: true }"
-              />
-            </div>
-          </div> -->
-
-        <!-- <div class="toggleFields">
-            <label class="toggle">
-              <input
-                type="checkbox"
-                [(ngModel)]="selectedRoom.isHighlighted"
-                [ngModelOptions]="{ standalone: true }"
-              />
-              <span class="toggle-slider"></span>
-              Kiemelt bérlet
-            </label>
-          </div> -->
-
+        
         <div class="machines">
-          <label>Előnyök</label>
+          <label>Gépek</label>
           <div class="machine-list">
             @for (machine of selectedRoom.machines; track $index; let i =
             $index) {
-            <div class="machine-item">
-              <div>
-                <span>{{machine.name}}</span>
-                <input type="number" [(ngModel)]="machine.machineCount" [ngModelOptions]="{ standalone: true }">
+              <div class="machine-item">
+                <span>{{ machine.name }}</span>
+                <input
+                  type="number"
+                  [(ngModel)]="machine.machineCount"
+                  [ngModelOptions]="{ standalone: true }"
+                />
+                <button type="button" (click)="removeBenefit(i)">×</button>
               </div>
-              <button type="button" (click)="removeBenefit(i)">×</button>
-            </div>
             }
+          </div>
+          <div class="add-machine-controls">
+            <select 
+              [(ngModel)]="selectedMachineId" 
+              class="machine-select"
+              [ngModelOptions]="{ standalone: true }"
+            >
+              <option value="" disabled selected>Válassz gépet...</option>
+              @for (machine of machines; track machine.id) {
+                <option [value]="machine.id">{{ machine.name }}</option>
+              }
+            </select>
+            <button 
+              type="button" 
+              (click)="addSelectedMachine()" 
+              class="add-button"
+            >
+              Hozzáadás
+            </button>
           </div>
         </div>
         @if (bottomError) {
@@ -149,12 +163,12 @@
 
   <table>
     <tr>
-      <th>Név</th>
-      <th>Leírás</th>
-      <th>Javasolt max létszám</th>
-      <th>Státusz</th>
-      <th>Kép</th>
+      <th (click)="sortBy('name')">Név {{ getSortIndicator("name") }}</th>
+      <th (click)="sortBy('description')">Leírás {{ getSortIndicator("description") }}</th>
+      <th (click)="sortBy('recommendedPeople')">Javasolt max létszám {{ getSortIndicator("recommendedPeople") }}</th>
       <th>Gépek</th>
+      <th>Kép</th>
+      <th (click)="sortBy('isActive')">Státusz {{ getSortIndicator("isActive") }}</th>
       <th></th>
     </tr>
     @for (room of displayRooms; track $index) {
@@ -162,10 +176,12 @@
       <td data-cell="Név">{{ room.name }}</td>
       <td data-cell="Leírás">{{ room.description }}</td>
       <td data-cell="Javasolt max létszám">{{ room.recommendedPeople }}</td>
-      <td data-cell="Gépek"> @for (machine of room.machines; track $index) {
+      <td data-cell="Gépek">
+        @for (machine of room.machines; track $index) {
         <span class="machine-item">{{ machine.name }}</span>
-      } @empty { - }</td>
-      <td data-cell="Kép"><img [src]="room.imageUrl" alt=""></td>
+        } @empty { - }
+      </td>
+      <td data-cell="Kép"><img [src]="room.imageUrl" alt="" /></td>
       <td data-cell="Státusz">{{ room.isActive ? "Aktív" : "Törölt" }}</td>
       <td class="itemButtons">
         @if (room.isActive) {

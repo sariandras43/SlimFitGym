@@ -12,7 +12,9 @@ import { map } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class RoomService {
-  private roomsSubject = new BehaviorSubject<RoomModel[] | undefined>(undefined);
+  private roomsSubject = new BehaviorSubject<RoomModel[] | undefined>(
+    undefined
+  );
   rooms$ = this.roomsSubject.asObservable();
   loggedInUser: UserModel | undefined;
 
@@ -26,24 +28,29 @@ export class RoomService {
       this.roomsSubject.next(JSON.parse(rooms));
     }
     this.getRooms();
-    this.userService.loggedInUser$.subscribe(user => {
+    this.userService.loggedInUser$.subscribe((user) => {
       this.loggedInUser = user;
     });
   }
 
-  saveRoom(room: RoomModel): Observable<RoomModel> {
+  saveRoom(room: Partial<RoomModel>): Observable<RoomModel> {
     const headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${this.loggedInUser?.token}`
     );
-     
-    const payload = {
-      ...room,
-      machines: room.machines.map((m) => ({
-        id: m.id,
-        count: m.machineCount || 0,
-      })),
-    };
+
+    let payload;
+    if (room.machines) {
+      payload = {
+        ...room,
+        machines: room.machines?.map((m) => ({
+          id: m.id,
+          count: m.machineCount || 0,
+        })),
+      };
+    } else {
+      payload = room;
+    }
     if (payload.id === -1) {
       const { id, ...postRoom } = payload;
       return this.http.post<RoomModel>(
@@ -88,7 +95,9 @@ export class RoomService {
       'Authorization',
       `Bearer ${this.loggedInUser?.token}`
     );
-    return this.http.get<RoomModel[]>(`${this.config.apiUrl}/rooms/all`, { headers });
+    return this.http.get<RoomModel[]>(`${this.config.apiUrl}/rooms/all`, {
+      headers,
+    });
   }
 
   getRoom(id: number): Observable<RoomModel> {
@@ -96,14 +105,16 @@ export class RoomService {
   }
 
   getTrainingsInRoom(id: number): Observable<TrainingModel[]> {
-    return this.http.get<TrainingModel[]>(`${this.config.apiUrl}/trainings/room/${id}`).pipe(
-      map((response) => {
-        return response.map(d => ({
-          ...d,
-          trainingStart: new Date(d.trainingStart),
-          trainingEnd: new Date(d.trainingEnd)
-        }));
-      })
-    );
+    return this.http
+      .get<TrainingModel[]>(`${this.config.apiUrl}/trainings/room/${id}`)
+      .pipe(
+        map((response) => {
+          return response.map((d) => ({
+            ...d,
+            trainingStart: new Date(d.trainingStart),
+            trainingEnd: new Date(d.trainingEnd),
+          }));
+        })
+      );
   }
 }
