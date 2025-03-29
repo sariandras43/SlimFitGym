@@ -8,10 +8,11 @@ import { ButtonLoaderComponent } from '../../button-loader/button-loader.compone
 import { NgClass } from '@angular/common';
 import { NewPasswordComponent } from "../new-password/new-password.component";
 import { DeleteUserComponent } from "../delete-user/delete-user.component";
+import { ApplyForTrainerComponent } from "../apply-for-trainer/apply-for-trainer.component";
 
 @Component({
   selector: 'app-basic-user-data',
-  imports: [FormsModule, RouterLink, ButtonLoaderComponent, NgClass, NewPasswordComponent, DeleteUserComponent],
+  imports: [FormsModule, RouterLink, ButtonLoaderComponent, NgClass, NewPasswordComponent, DeleteUserComponent, ApplyForTrainerComponent],
   templateUrl: './basic-user-data.component.html',
   styleUrl: './basic-user-data.component.scss',
 })
