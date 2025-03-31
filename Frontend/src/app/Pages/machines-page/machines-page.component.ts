@@ -11,8 +11,20 @@ import { MachineModel } from '../../Models/machine.model';
   styleUrl: './machines-page.component.scss',
 })
 export class MachinesPageComponent {
-  machines: MachineModel[] | undefined;
-  constructor(machineService: MachineService) {
-    machineService.allMachines$.subscribe((res)=>{ this.machines = res});
+  SearchTerm: string = '';
+search($event: Event) {
+  const input = $event.target as HTMLInputElement;
+  this.SearchTerm = input.value.toLowerCase();
+  this.updateMachines();
+}
+machines: MachineModel[] | undefined;
+displayMachines: MachineModel[] | undefined;
+constructor(machineService: MachineService) {
+  machineService.allMachines$.subscribe((res)=>{ this.machines = res});
+  this.updateMachines();
+}
+updateMachines(){
+   this.displayMachines = this.machines?.filter(s=> s.description?.toLocaleLowerCase().includes(this.SearchTerm) || s.name.toLocaleLowerCase().includes(this.SearchTerm))
+
   }
 }
