@@ -1,5 +1,5 @@
 <app-hero
-  imgSrc="templateSzoba.jpg"
+  [imgSrc]="room?.imageUrl || 'templateSzoba.jpg' "
   title="Termeink"
   subtitle="Termeink között mindenki megtalálhatja a számára legmegfelelőbbet"
 />
@@ -13,7 +13,7 @@
   <div class="eventWrapper">
     @if (trainings.length > 0) {
 
-      <app-events [events]="trainings"/>
+      <app-events  [events]="trainings" [user]="user"/>
     }
   </div>
   <div class=" machines">

@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { TrainingModel } from '../../Models/training.model';
+import { UserModel } from '../../Models/user.model';
 
 @Component({
   selector: 'app-events',
@@ -8,7 +9,16 @@ import { TrainingModel } from '../../Models/training.model';
   styleUrl: './events.component.scss'
 })
 export class EventsComponent {
-  @Input() events : Array<TrainingModel> = Array<TrainingModel>(10)
+subscribe(training: TrainingModel) {
+this.subscribed.emit(training);
+}
+unsubscribe(training: TrainingModel) {
+this.unsubscribed.emit(training)
+}
+  @Input() events : Array<TrainingModel> | undefined;
+  @Input() user : UserModel |undefined;
+  @Output() subscribed = new EventEmitter<TrainingModel>;
+  @Output() unsubscribed = new EventEmitter<TrainingModel>;
   displayDate(training: TrainingModel) {
     const {trainingStart,trainingEnd } = training;
     const startString = `${trainingStart.getFullYear()}.${trainingStart.getDate()}.${trainingStart.getDay()} ${trainingStart.getHours()}:${trainingStart.getHours()} - `;

@@ -3,8 +3,23 @@
         <h2>Események</h2>
 
     
-    @for (item of events; track $index) {
-        <p class="title">{{item.name}} - {{item.trainer}}</p>
-        <p class="subtitle">{{displayDate(item)}}</p>
+    @for (training of events; track $index) {
+
+        <div class="event">
+            <p class="title">{{training.name}} - {{training.trainer}}</p>
+            <p class="subtitle">{{displayDate(training)}}</p>
+            @if(user && training.trainerId != user.id)
+              {
+                @if (training.userApplied) {
+                  <button class="applied" (click)="unsubscribe(training)" >Jelentkezve</button>
+                }
+                @else if (training.freePlaces == 0) {
+                  <button class="full">betelt</button>
+                }
+                @else {
+                  <button class="apply" (click)="subscribe(training)">Jelentkezés</button>
+                }
+              }
+        </div>
     }
 </div>

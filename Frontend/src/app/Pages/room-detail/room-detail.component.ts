@@ -8,6 +8,9 @@ import { RoomService } from '../../Services/room.service';
 import { RoomModel } from '../../Models/room.model';
 import { ActivatedRoute } from '@angular/router';
 import { TrainingModel } from '../../Models/training.model';
+import { UserService } from '../../Services/user.service';
+import { UserModel } from '../../Models/user.model';
+import { TrainingService } from '../../Services/training.service';
 
 @Component({
   selector: 'app-room-detail',
@@ -26,10 +29,13 @@ export class RoomDetailComponent {
   trainings: TrainingModel[] = [];
   allMachineCount: number = 0;
   machineTypeCount: number = 0;
-  constructor(private route: ActivatedRoute, roomService: RoomService) {
+  user: UserModel | undefined;
+  constructor(private route: ActivatedRoute, roomService: RoomService, userService: UserService, trainingService: TrainingService) {
     this.route.paramMap.subscribe((params) => {
       this.id = Number(params.get('id'));
     });
+    userService.loggedInUser$.subscribe(usr=> this.user = usr);
+
     roomService.getRoom(this.id).subscribe({
       next: (response: RoomModel) => {
         this.room = response;
@@ -44,7 +50,7 @@ export class RoomDetailComponent {
       },
     });
 
-    roomService.getTrainingsInRoom(this.id).subscribe({
+    trainingService.getTrainingsInRoom(this.id).subscribe({
       next: (response: TrainingModel[]) => {
         this.trainings = response;
 

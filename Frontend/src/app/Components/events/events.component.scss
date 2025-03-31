@@ -19,5 +19,33 @@
         font-weight: bold;
         font-size: 1.25rem ;
     }
-    
+    button{
+        flex-grow: 0;
+        border: none;
+        color: var(--text-color);
+        font-weight: bold;
+        padding:  .1em 1em;
+        border-radius: var(--border-radius);
+        margin-top: .5em;
+        font-size: 1.5rem;
+        &:hover{
+          opacity: 0.9;
+        }
+        cursor: pointer;
+        &.applied{
+          background-color: var(--tertiary-color);
+          
+        }
+        &.full{
+          background-color: var(--danger);
+          cursor: default;
+          &:hover{
+            opacity: 1;
+          }
+        }
+        &.apply{
+          background-color: var(--primary-color);
+
+        }
+    }
 }
