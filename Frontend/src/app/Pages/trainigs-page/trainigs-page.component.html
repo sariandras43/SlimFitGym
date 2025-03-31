@@ -43,7 +43,20 @@
             }}
           </p>
           <p class="date">{{ displayDate(training) }}</p>
-          <button>Jelentkezés</button>
+          @if(user && training.trainerId != user.id)
+          {
+            @if (training.userApplied) {
+              <button class="applied" (click)="unsubscribe(training)" >Jelentkezve</button>
+  
+            }
+            @else if (training.freePlaces == 0) {
+              <button class="full">betelt</button>
+            }
+            @else {
+  
+              <button class="apply" (click)="subscribe(training)">Jelentkezés</button>
+            }
+          }
         </div>
       </div>
     </div>

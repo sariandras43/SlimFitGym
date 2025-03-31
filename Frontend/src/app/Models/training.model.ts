@@ -12,5 +12,9 @@ export interface TrainingModel {
     isActive: boolean
     trainerImageUrl: string
     roomImageUrl: string
+
+
+    //for the display
+    userApplied: boolean;
   }
   

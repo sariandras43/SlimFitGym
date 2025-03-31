@@ -104,17 +104,5 @@ export class RoomService {
     return this.http.get<RoomModel>(`${this.config.apiUrl}/rooms/${id}`);
   }
 
-  getTrainingsInRoom(id: number): Observable<TrainingModel[]> {
-    return this.http
-      .get<TrainingModel[]>(`${this.config.apiUrl}/trainings/room/${id}`)
-      .pipe(
-        map((response) => {
-          return response.map((d) => ({
-            ...d,
-            trainingStart: new Date(d.trainingStart),
-            trainingEnd: new Date(d.trainingEnd),
-          }));
-        })
-      );
-  }
+  
 }
