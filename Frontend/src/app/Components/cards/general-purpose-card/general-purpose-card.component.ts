@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -9,16 +9,20 @@ import { RouterLink } from '@angular/router';
   styleUrl: './general-purpose-card.component.scss'
 })
 export class GeneralPurposeCardComponent {
-title = input<string>();
-   benefits = input<string[]>();
-   price = input<string>();
-   unit = input<string>();
-   btnText = input<string>();
-   linkBtnText = input<string>()
-   linkTo = input<string>()
-   imgSrc = input<string>()
-   description = input<string>()
-   isClickable = input<boolean>()
-   viewTransition= input<string>()
+cardClicked() {
+  this.cardClickedEvent.emit(this);
+}
+  @Input() title?: string;
+  @Input() benefits?: string[];
+  @Input() price?: string;
+  @Input() unit?: string;
+  @Input() btnText?: string;
+  @Input() linkBtnText?: string;
+  @Input() linkTo?: string;
+  @Input() imgSrc?: string;
+  @Input() description?: string;
+  @Input() isClickable?: boolean;
+  @Input() viewTransition?: string;
+  @Output() cardClickedEvent = new EventEmitter<typeof this>;
    
 }

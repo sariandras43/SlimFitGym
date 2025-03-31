@@ -1,39 +1,40 @@
 <div
-  [ngClass]="{ clickable: isClickable()}"
+  [ngClass]="{ clickable: isClickable}"
   class="card"
   routerLinkActive="router-link-active"
-  [routerLink]="isClickable() ? linkTo() : []"
+  [routerLink]="isClickable ? linkTo : []"
+  (click)="cardClicked()"
 >
   <div>
-    @if (imgSrc()) {
-    <img [src]="imgSrc()" alt="" loading="lazy" />
+    @if (imgSrc) {
+    <img [src]="imgSrc" alt="" loading="lazy" />
     }
     <div class="content">
-      @if (title()) {
+      @if (title) {
       <h3 class="title">
-        {{ title() }}
+        {{ title }}
       </h3>
-      } @if (price()) {
+      } @if (price) {
       <p class="priceWrap">
-        <span class="price">{{ price() }}</span>
-        <span class="unit">{{ unit() }}</span>
+        <span class="price">{{ price }}</span>
+        <span class="unit">{{ unit }}</span>
       </p>
-      } @if (benefits()) {
+      } @if (benefits) {
       <ul class="benefits">
-        @for (benefit of benefits(); track $index) {
+        @for (benefit of benefits; track $index) {
         <li class="">{{ benefit }}</li>
         }
       </ul>
-      } @if (description()) {
+      } @if (description) {
       <p class="description">
-        {{ description() }}
+        {{ description }}
       </p>
-      } @if (btnText() || linkBtnText()) {
+      } @if (btnText || linkBtnText) {
       <div class="flex buttonWrapper g1">
-        @if (btnText()) {
-        <button class="btn">{{ btnText() }}</button>
-        } @if (linkBtnText()) {
-        <a [routerLink]="linkTo()" class="btn">{{ linkBtnText() }}</a>
+        @if (btnText) {
+        <button (click)="cardClicked()" class="btn">{{ btnText }}</button>
+        } @if (linkBtnText) {
+        <a [routerLink]="linkTo" class="btn">{{ linkBtnText }}</a>
         }
       </div>
       }
