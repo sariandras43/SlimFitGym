@@ -6,7 +6,7 @@ import { SignUpPageComponent } from './Pages/sign-up-page/sign-up-page.component
 import { RoomsComponent } from './Pages/rooms/rooms.component';
 import { RoomDetailComponent } from './Pages/room-detail/room-detail.component';
 import { MachinesPageComponent } from './Pages/machines-page/machines-page.component';
-import { TrainigsPageComponent } from './Pages/trainigs-page/trainigs-page.component';
+import { TrainigsPageComponent } from './Pages/trainings-page/trainings-page.component';
 import { UserPageComponent } from './Pages/user-page/user-page.component';
 import { BasicUserDataComponent } from './Components/CMS/basic-user-data/basic-user-data.component';
 import { MachinesCMSComponent } from './Components/CMS/machines-cms/machines-cms.component';

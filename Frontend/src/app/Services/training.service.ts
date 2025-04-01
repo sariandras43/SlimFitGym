@@ -28,7 +28,7 @@ export class TrainingService {
     if (trainings) {
       const parsedTrainings = JSON.parse(trainings);
       this.parseDateTime(parsedTrainings);
-      this.allTrainingsSubject.next(parsedTrainings);
+      this.allTrainingsSubject.next(this.subscribedOrDefault(parsedTrainings));
     }
 
 
@@ -61,6 +61,7 @@ export class TrainingService {
           this.parseDateTime(response);
 
           this.subscribedTrainingsSubject.next(response);
+          this.allTrainingsSubject.next(this.subscribedOrDefault(this.allTrainingsSubject.value));
         },
         error: (error) => {
           console.log(error.error.message ?? error.message);
@@ -79,7 +80,7 @@ export class TrainingService {
             d.trainingEnd = new Date(d.trainingEnd);
           });
 
-          this.allTrainingsSubject.next(response);
+          this.allTrainingsSubject.next(this.subscribedOrDefault(parsedTraining));
           localStorage.setItem('trainings', JSON.stringify(response));
         },
         error: (error) => {
@@ -109,10 +110,23 @@ export class TrainingService {
       `Bearer ${this.user.token}`
     );
     return this.http
-      .post<Boolean>(
+      .post<{trainingId: number, accountId:number}>(
         `${this.config.apiUrl}/trainings/signup`,{trainingId, accountId: this.user.id},
         { headers }
-      )
+      ).pipe(
+        map((response: {trainingId: number, accountId:number}) => {
+          const editedTraining = this.allTrainingsSubject.value?.find(t=> t.id == trainingId)
+          if(editedTraining)
+            {
+              
+              editedTraining.userApplied = true;
+              editedTraining.freePlaces--;
+              this.subscribedTrainingsSubject.value?.push(editedTraining);
+              return true;
+            }
+            return false;
+        })
+      );
 
   }
   unsubscribeFromTraining(trainingId:number) : Observable<Boolean>{
@@ -122,9 +136,32 @@ export class TrainingService {
       `Bearer ${this.user.token}`
     );
     return this.http
-      .post<Boolean>(
+      .post<{trainingId: number, accountId:number}>(
         `${this.config.apiUrl}/trainings/signout`,{trainingId, accountId: this.user.id},
         { headers }
-      )
+      ).pipe(
+        map((response: {trainingId: number, accountId:number}) => {
+          const editedTraining = this.allTrainingsSubject.value?.find(t=> t.id == trainingId)
+          if(editedTraining)
+          {
+
+            editedTraining.userApplied = false;
+            this.subscribedTrainingsSubject.next(this.subscribedTrainingsSubject.value?.filter(st=> st.id != trainingId))
+
+            editedTraining.freePlaces++;
+            return true;
+          }
+          return false;
+
+        })
+      );
+  }
+  subscribedOrDefault(training: TrainingModel[] | undefined){
+    const subscribedTrainings = this.subscribedTrainingsSubject.value
+    if(!subscribedTrainings) return training;
+    return training?.map(t=>{
+      return {...t,userApplied: subscribedTrainings.some(st=> t.id == st.id )};  
+    })
+
   }
 }

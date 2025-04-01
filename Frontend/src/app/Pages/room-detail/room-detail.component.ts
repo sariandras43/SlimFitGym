@@ -24,13 +24,32 @@ import { TrainingService } from '../../Services/training.service';
   styleUrl: './room-detail.component.scss',
 })
 export class RoomDetailComponent {
+unsubscribe(training: TrainingModel) {
+  this.trainingService.unsubscribeFromTraining(training.id).subscribe({
+    next: ()=>{
+      training.freePlaces++;
+      training.userApplied = false;
+    },
+    error: (err)=>{}
+  })
+}
+subscribe(training: TrainingModel) {
+  this.trainingService.subscribeToTraining(training.id).subscribe({
+    next: ()=>{
+      training.freePlaces--;
+      training.userApplied = true;
+
+    },
+    error: (err)=>{}
+  })
+}
   id: number = 0;
   room: RoomModel | undefined;
   trainings: TrainingModel[] = [];
   allMachineCount: number = 0;
   machineTypeCount: number = 0;
   user: UserModel | undefined;
-  constructor(private route: ActivatedRoute, roomService: RoomService, userService: UserService, trainingService: TrainingService) {
+  constructor(private route: ActivatedRoute, roomService: RoomService, userService: UserService, private trainingService: TrainingService) {
     this.route.paramMap.subscribe((params) => {
       this.id = Number(params.get('id'));
     });
@@ -50,7 +69,10 @@ export class RoomDetailComponent {
       },
     });
 
-    trainingService.getTrainingsInRoom(this.id).subscribe({
+    
+  }
+  getTraining(){
+    this.trainingService.getTrainingsInRoom(this.id).subscribe({
       next: (response: TrainingModel[]) => {
         this.trainings = response;
 
@@ -60,6 +82,9 @@ export class RoomDetailComponent {
       },
     });
   }
+  ngAfterViewInit() {
+    this.getTraining();
 
+  }
 
 }

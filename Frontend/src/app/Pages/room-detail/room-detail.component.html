@@ -1,7 +1,7 @@
 <app-hero
   [imgSrc]="room?.imageUrl || 'templateSzoba.jpg' "
-  title="Termeink"
-  subtitle="Termeink között mindenki megtalálhatja a számára legmegfelelőbbet"
+  [title]="room?.name"
+  [subtitle]="room?.description"
 />
 <div class="counterContainer g5 mt5">
   <app-counter-bubble [number]="allMachineCount" title="gép" />
@@ -13,7 +13,7 @@
   <div class="eventWrapper">
     @if (trainings.length > 0) {
 
-      <app-events  [events]="trainings" [user]="user"/>
+      <app-events (subscribed)="subscribe($event)" (unsubscribed)="unsubscribe($event)"  [events]="trainings" [user]="user"/>
     }
   </div>
   <div class=" machines">
