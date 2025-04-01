@@ -14,6 +14,7 @@ import { PassesCMSComponent } from './Components/CMS/passes-cms/passes-cms.compo
 import { RoomCMSComponent } from './Components/CMS/room-cms/room-cms.component';
 import { UserCMSComponent } from './Components/CMS/user-cms/user-cms.component';
 import { MyPassComponent } from './Components/CMS/my-pass/my-pass.component';
+import { TrainingsCMSComponent } from './Components/CMS/trainings-cms/trainings-cms.component';
 
 export const routes: Routes = [
   { path: '', component: MainPageComponent },
@@ -32,6 +33,7 @@ export const routes: Routes = [
       { path: 'rooms', component: RoomCMSComponent },
       { path: 'users', component: UserCMSComponent },
       { path: 'myPass', component: MyPassComponent },
+      { path: 'trainings', component: TrainingsCMSComponent  },
       { path: '', redirectTo: 'userData', pathMatch: 'full' },
     ],
   },

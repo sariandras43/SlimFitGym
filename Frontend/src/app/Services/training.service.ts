@@ -18,7 +18,7 @@ export class TrainingService {
   >(undefined);
   allTrainings$ = this.allTrainingsSubject.asObservable();
   subscribedTrainings$ = this.subscribedTrainingsSubject.asObservable();
-  user: UserModel |undefined; 
+  user: UserModel | undefined;
   constructor(
     private config: ConfigService,
     private http: HttpClient,
@@ -31,12 +31,10 @@ export class TrainingService {
       this.allTrainingsSubject.next(this.subscribedOrDefault(parsedTrainings));
     }
 
-
     this.getTrainings();
     userService.loggedInUser$.subscribe((usr) => {
-      if (usr) 
-        this.user = usr;
-        this.getSubscribedTrainings();
+      if (usr) this.user = usr;
+      this.getSubscribedTrainings();
     });
   }
   parseDateTime(trainings: TrainingModel[]) {
@@ -46,7 +44,7 @@ export class TrainingService {
     });
   }
   getSubscribedTrainings() {
-    if(!this.user) return;
+    if (!this.user) return;
     const headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${this.user.token}`
@@ -61,7 +59,9 @@ export class TrainingService {
           this.parseDateTime(response);
 
           this.subscribedTrainingsSubject.next(response);
-          this.allTrainingsSubject.next(this.subscribedOrDefault(this.allTrainingsSubject.value));
+          this.allTrainingsSubject.next(
+            this.subscribedOrDefault(this.allTrainingsSubject.value)
+          );
         },
         error: (error) => {
           console.log(error.error.message ?? error.message);
@@ -80,7 +80,9 @@ export class TrainingService {
             d.trainingEnd = new Date(d.trainingEnd);
           });
 
-          this.allTrainingsSubject.next(this.subscribedOrDefault(parsedTraining));
+          this.allTrainingsSubject.next(
+            this.subscribedOrDefault(parsedTraining)
+          );
           localStorage.setItem('trainings', JSON.stringify(response));
         },
         error: (error) => {
@@ -93,75 +95,125 @@ export class TrainingService {
       .get<TrainingModel[]>(`${this.config.apiUrl}/trainings/room/${id}`)
       .pipe(
         map((response) => {
-          const appliedTrainings = this.subscribedTrainingsSubject.value
+          const appliedTrainings = this.subscribedTrainingsSubject.value;
           return response.map((d) => ({
             ...d,
             trainingStart: new Date(d.trainingStart),
             trainingEnd: new Date(d.trainingEnd),
-            userApplied: !!appliedTrainings?.some(t=> d.id == t.id)
+            userApplied: !!appliedTrainings?.some((t) => d.id == t.id),
           }));
         })
       );
   }
-  subscribeToTraining(trainingId:number) : Observable<Boolean>{
-    if(!this.user) return throwError(() => new Error('Nincs bejelentkezett felhasználó'));
+  subscribeToTraining(trainingId: number): Observable<Boolean> {
+    if (!this.user)
+      return throwError(() => new Error('Nincs bejelentkezett felhasználó'));
     const headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${this.user.token}`
     );
     return this.http
-      .post<{trainingId: number, accountId:number}>(
-        `${this.config.apiUrl}/trainings/signup`,{trainingId, accountId: this.user.id},
+      .post<{ trainingId: number; accountId: number }>(
+        `${this.config.apiUrl}/trainings/signup`,
+        { trainingId, accountId: this.user.id },
         { headers }
-      ).pipe(
-        map((response: {trainingId: number, accountId:number}) => {
-          const editedTraining = this.allTrainingsSubject.value?.find(t=> t.id == trainingId)
-          if(editedTraining)
-            {
-              
-              editedTraining.userApplied = true;
-              editedTraining.freePlaces--;
-              this.subscribedTrainingsSubject.value?.push(editedTraining);
-              return true;
-            }
-            return false;
+      )
+      .pipe(
+        map((response: { trainingId: number; accountId: number }) => {
+          const editedTraining = this.allTrainingsSubject.value?.find(
+            (t) => t.id == trainingId
+          );
+          if (editedTraining) {
+            editedTraining.userApplied = true;
+            editedTraining.freePlaces--;
+            this.subscribedTrainingsSubject.value?.push(editedTraining);
+            return true;
+          }
+          return false;
         })
       );
-
   }
-  unsubscribeFromTraining(trainingId:number) : Observable<Boolean>{
-    if(!this.user) return throwError(() => new Error('Nincs bejelentkezett felhasználó'));
+  unsubscribeFromTraining(trainingId: number): Observable<Boolean> {
+    if (!this.user)
+      return throwError(() => new Error('Nincs bejelentkezett felhasználó'));
     const headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${this.user.token}`
     );
     return this.http
-      .post<{trainingId: number, accountId:number}>(
-        `${this.config.apiUrl}/trainings/signout`,{trainingId, accountId: this.user.id},
+      .post<{ trainingId: number; accountId: number }>(
+        `${this.config.apiUrl}/trainings/signout`,
+        { trainingId, accountId: this.user.id },
         { headers }
-      ).pipe(
-        map((response: {trainingId: number, accountId:number}) => {
-          const editedTraining = this.allTrainingsSubject.value?.find(t=> t.id == trainingId)
-          if(editedTraining)
-          {
-
+      )
+      .pipe(
+        map((response: { trainingId: number; accountId: number }) => {
+          const editedTraining = this.allTrainingsSubject.value?.find(
+            (t) => t.id == trainingId
+          );
+          if (editedTraining) {
             editedTraining.userApplied = false;
-            this.subscribedTrainingsSubject.next(this.subscribedTrainingsSubject.value?.filter(st=> st.id != trainingId))
+            this.subscribedTrainingsSubject.next(
+              this.subscribedTrainingsSubject.value?.filter(
+                (st) => st.id != trainingId
+              )
+            );
 
             editedTraining.freePlaces++;
             return true;
           }
           return false;
-
         })
       );
   }
-  subscribedOrDefault(training: TrainingModel[] | undefined){
-    const subscribedTrainings = this.subscribedTrainingsSubject.value
-    if(!subscribedTrainings) return training;
-    return training?.map(t=>{
-      return {...t,userApplied: subscribedTrainings.some(st=> t.id == st.id )};  
-    })
-
+  subscribedOrDefault(training: TrainingModel[] | undefined) {
+    const subscribedTrainings = this.subscribedTrainingsSubject.value;
+    if (!subscribedTrainings) return training;
+    return training?.map((t) => {
+      return {
+        ...t,
+        userApplied: subscribedTrainings.some((st) => t.id == st.id),
+      };
+    });
+  }
+  getAllTrainings(): Observable<TrainingModel[]> {
+    if (!this.user)
+      return throwError(() => new Error('Nincs bejelentkezett felhasználó'));
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.user.token}`
+    );
+    return this.http
+      .get<TrainingModel[]>(`${this.config.apiUrl}/trainings/all`, { headers })
+      .pipe(
+        map((response: TrainingModel[]) => {
+          const parsedTraining = response;
+          parsedTraining.map((d) => {
+            d.trainingStart = new Date(d.trainingStart);
+            d.trainingEnd = new Date(d.trainingEnd);
+          });
+          return parsedTraining;
+        })
+      );
+  }
+  deleteTraining(training: TrainingModel): Observable<TrainingModel> {
+    if (!this.user)
+      return throwError(() => new Error('Nincs bejelentkezett felhasználó'));
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.user.token}`
+    );
+    return this.http
+      .delete<TrainingModel>(`${this.config.apiUrl}/trainings/${training.id}`, {
+        headers,
+      })
+      .pipe(
+        map((deletedTraining) => {
+          this.allTrainingsSubject.next(
+            this.allTrainingsSubject.value?.filter((t) => training.id != t.id)
+          );
+          return deletedTraining;
+        })
+      );
   }
 }
