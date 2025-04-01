@@ -33,7 +33,7 @@
       />
       <span class="toggle-slider"></span>
 
-      Törölt termek mutatása
+      Törölt felhsználók mutatása
     </label>
   </div>
 
@@ -61,10 +61,7 @@
       <td data-cell="Email">{{ user.email }}</td>
       <td data-cell="Telefonszám">{{ user.phone }}</td>
       <td data-cell="Szerep">
-        @if (user.role == 'trainer') {edző} @else if (user.role == 'user')
-        {Felhasználó} @else if (user.role== 'employee') {dolgozó} @else {
-        {{ user.role }}
-        }
+      {{userInHungarian(user)}}
       </td>
 
       <td data-cell="Profilkép"><img [src]="user.imageUrl" alt="" /></td>

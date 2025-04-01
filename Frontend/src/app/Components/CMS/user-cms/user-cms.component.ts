@@ -182,7 +182,7 @@ throw new Error('Method not implemented.');
       );
       return usr;
     });
-    let filtered = this.users.filter(s=> s.email?.includes(this.searchTerm) || s.name?.includes(this.searchTerm) || s.phone?.includes(this.searchTerm) || s.role?.includes(this.searchTerm));
+    let filtered = this.users.filter(s=> s.email?.toLowerCase().includes(this.searchTerm) || s.name?.toLowerCase().includes(this.searchTerm) || s.phone?.toLowerCase().includes(this.searchTerm) || this.userInHungarian(s).toLowerCase().includes(this.searchTerm));
 
 
     if (this.sortState.property) {
@@ -233,5 +233,15 @@ throw new Error('Method not implemented.');
   getSortIndicator(property: SortableProperty): string {
     if (this.sortState.property !== property) return '';
     return this.sortState.direction === SortDirection.Asc ? '⬆' : '⬇';
+  }
+  userInHungarian(user: UserModel) : string{
+    
+    if(user.role == "user")
+      return "Felhasználó"
+    if(user.role == 'trainer')
+      return "Edző"
+    if(user.role == "employee")
+      return "Dolgozó"
+    return user.role || "";
   }
 }
