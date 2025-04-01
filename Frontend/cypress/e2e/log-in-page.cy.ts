@@ -2,7 +2,7 @@ describe('Signup Form Validation (Tab off/Input)', () => {
   describe('Signup Form Validation frontend', () => {
     beforeEach(() => {
       // Visit the page containing the signup form
-      cy.visit('http://localhost:4200/login'); // Adjust the URL based on your app's route
+      cy.visit('/login'); // Adjust the URL based on your app's route
     });
     it('login should redirect to user page if correct password and email', () => {
       cy.get('#loginEmail').clear().type('admin@gmail.com'); 

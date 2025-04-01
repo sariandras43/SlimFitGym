@@ -137,8 +137,10 @@ export class PassesCMSComponent {
     }
 
     this.isSubmitting = true;
-    const { isActive, ...payload } = this.selectedPass;
-
+    const { isActive,  ...payload } = this.selectedPass;
+    payload.days = payload.days || 0;
+    payload.maxEntries = payload.maxEntries || 0;
+    payload.price = payload.price || 0;
 
     this.passService.savePass(payload).subscribe({
       next: (updated) => {

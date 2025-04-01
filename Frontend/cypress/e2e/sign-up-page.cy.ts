@@ -2,7 +2,7 @@ describe('Signup Form Validation (Tab off/Input)', () => {
   describe('Signup Form Validation frontend', () => {
     beforeEach(() => {
       // Visit the page containing the signup form
-      cy.visit('http://localhost:4200/signup'); // Adjust the URL based on your app's route
+      cy.visit('/signup'); // Adjust the URL based on your app's route
     });
   
     it('should show an error message when the email is empty after tabbing off', () => {
@@ -130,6 +130,34 @@ describe('Signup Form Validation (Tab off/Input)', () => {
       cy.get('[type="submit"]').click();
   
       cy.url().should('eq', 'http://localhost:4200/user/userData');
+
+
+    });
+
+    it('should throw error in already used email', () => {
+      
+      cy.get('#singUpName').clear().type('John Doe');
+      cy.get('#singUpEmail').clear().type('johndoe@example.com');
+      cy.get('#singUpPhone').clear().type('+36301234567');
+      cy.get('#singUpPassword').clear().type('StrongPassword1!');
+      cy.get('#singUpPasswordAgain').clear().type('StrongPassword1!');
+  
+      cy.get('[type="submit"]').click();
+      cy.get('.alert > div').should('be.visible')
+      .contains('Ezzel az email címmel már regisztráltak.');
+
+    });
+    it('should throw error in already used phone', () => {
+      
+      cy.get('#singUpName').clear().type('John Doe');
+      cy.get('#singUpEmail').clear().type('johndoe11@example.com');
+      cy.get('#singUpPhone').clear().type('+36301234567');
+      cy.get('#singUpPassword').clear().type('StrongPassword1!');
+      cy.get('#singUpPasswordAgain').clear().type('StrongPassword1!');
+  
+      cy.get('[type="submit"]').click();
+      cy.get('.alert > div').should('be.visible')
+      .contains('Ez a telefonszám már használatban van');
 
 
     });

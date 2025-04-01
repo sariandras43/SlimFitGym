@@ -35,3 +35,19 @@
 //     }
 //   }
 // }
+
+declare namespace Cypress {
+    interface Chainable {
+      loginAsAdmin(): void;
+    }
+  }
+  
+  Cypress.Commands.add('loginAsAdmin', () => {
+    cy.session('admin-login', () => {
+      cy.visit('/login');
+      cy.get('#loginEmail').type('admin@gmail.com');
+      cy.get('#logInPassword').type('admin');
+      cy.get('[data-cy="loginButton"]').click();
+      cy.url().should('include', '/user/userData');
+    });
+  });
