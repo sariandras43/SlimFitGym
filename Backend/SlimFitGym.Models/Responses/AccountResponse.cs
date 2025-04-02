@@ -17,6 +17,7 @@ namespace SlimFitGym.Models.Responses
         public DateTime ValidTo { get; set; }
         public string Role { get; set; }
         public string ImageUrl { get; set; }
+        public bool IsActive { get; set; }
         public AccountResponse(Account a, string token, DateTime validTo,string imageUrl="")
         {
             Id = a.Id;
@@ -26,6 +27,7 @@ namespace SlimFitGym.Models.Responses
             Role = a.Role;
             Phone = a.Phone;
             ValidTo = validTo;
+            IsActive = a.isActive;
             ImageUrl = imageUrl;
         }
 
@@ -37,6 +39,7 @@ namespace SlimFitGym.Models.Responses
             Email = a.Email;
             Role = a.Role;
             ImageUrl = imageUrl;
+            IsActive = a.isActive;
             Token = "";
         }
 

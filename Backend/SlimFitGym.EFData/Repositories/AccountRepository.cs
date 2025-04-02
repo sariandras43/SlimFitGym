@@ -185,6 +185,8 @@ namespace SlimFitGym.EFData.Repositories
             if (accountToDelete == null) return null;
             if (this.context.Set<Account>().Where(a=>a.Role=="admin" && a.isActive && a.Id==id).Count()==1)
                 throw new Exception("Utolsó adminisztrátor fiók nem törölhető.");
+            if (this.context.Set<Account>().Where(a => a.Role == "employee" && a.isActive && a.Id == id).Count() == 1)
+                throw new Exception("Utolsó dolgozó fiók nem törölhető.");
             accountToDelete.isActive = false;
             this.context.Entry(accountToDelete).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             //TODO cascading delete at reservations and trainings, images
@@ -232,6 +234,13 @@ namespace SlimFitGym.EFData.Repositories
             if (onlyActive)
                 return this.context.Set<Account>().Where(a=>a.isActive).Select(a=>new AccountResponse(a,imagesRepository.GetImageUrlByAccountId(a.Id))).ToList();    
             return this.context.Set<Account>().Select(a=>new AccountResponse(a,imagesRepository.GetImageUrlByAccountId(a.Id))).ToList();
+        }
+
+        public List<AccountResponse> GetTrainers(bool onlyActive = true)
+        {
+            if (onlyActive)
+                return this.context.Set<Account>().Where(a => a.isActive && a.Role=="trainer").Select(a => new AccountResponse(a, imagesRepository.GetImageUrlByAccountId(a.Id))).ToList();
+            return this.context.Set<Account>().Select(a => new AccountResponse(a, imagesRepository.GetImageUrlByAccountId(a.Id))).ToList();
         }
     }
 }

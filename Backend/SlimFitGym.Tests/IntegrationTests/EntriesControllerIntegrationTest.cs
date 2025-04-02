@@ -25,7 +25,7 @@ namespace SlimFitGym.Tests.IntegrationTests
         {
             // Arrange
             string request = "/api/entries/" + id;
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {Login(email,password).Result}");
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {Login(email,password).Result.Token}");
 
             // Act
             HttpResponseMessage response = await client.GetAsync(request);
@@ -53,25 +53,18 @@ namespace SlimFitGym.Tests.IntegrationTests
 
         [Theory]
         [MemberData(nameof(GetEntriesPostTestData))]
-        public async Task PostEntryShouldReturnOkIfLoggedInPersonWantsToEntry(int id, string email, string password, bool success)
+        public async Task PostEntryShouldReturnOkIfAdminOrEmployeeWantsToEntrySomeone(int id, string email, string password, bool success)
         {
             // Arrange
             string request = "/api/entries/" + id;
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {Login(email, password).Result}");
+            AccountResponse account = Login(email, password).Result;
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {account.Token}");
 
-            //Entry entryRequest = new Entry()
-            //{
-            //    Id = 0,
-            //    AccountId = id
-            //};
-
-            //string jsonContent = JsonConvert.SerializeObject(entryRequest);
-            //StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
             // Act
             HttpResponseMessage response = await client.PostAsync(request,null);
 
             // Assert
-            if (success)
+            if (success && (account.Role=="admin"||account.Role=="employee"))
             {
                 Entry entry = JsonConvert.DeserializeObject<Entry>(await response.Content.ReadAsStringAsync())!;
                 Assert.Multiple(() =>
@@ -96,7 +89,7 @@ namespace SlimFitGym.Tests.IntegrationTests
         {
             // Arrange
             string request = "/api/entries/3";
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {Login("pista@gmail.com", "pista").Result}");
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {Login("admin@gmail.com", "admin").Result.Token}");
 
             Entry entryRequest = new Entry()
             {
@@ -146,7 +139,7 @@ namespace SlimFitGym.Tests.IntegrationTests
             });
         }
 
-        private async Task<string> Login(string email, string password)
+        private async Task<AccountResponse> Login(string email, string password)
         {
             string request = "/api/auth/login";
             LoginRequest loginRequest = new LoginRequest()
@@ -162,7 +155,7 @@ namespace SlimFitGym.Tests.IntegrationTests
             HttpResponseMessage response = await client.PostAsync(request, content);
 
             AccountResponse login = JsonConvert.DeserializeObject<AccountResponse>(await response.Content.ReadAsStringAsync())!;
-            return login.Token;
+            return login;
         }
 
         public static List<T> ReadTestData<T>(string filePath)

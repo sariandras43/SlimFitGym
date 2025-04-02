@@ -21,5 +21,6 @@ namespace SlimFitGym.EFData.Interfaces
         Training? NewTraining(string token, TrainingRequest training);
         Training? UpdateTraining(string token, int id, TrainingRequest training);
         TrainingResponse? DeleteOrMakeInactive(string token, int id);
+        List<TrainingResponse>? GetActiveTrainingsByTrainerId(int trainerId);
     }
 }

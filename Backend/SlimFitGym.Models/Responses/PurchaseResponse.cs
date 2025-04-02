@@ -21,5 +21,9 @@ namespace SlimFitGym.Models.Responses
             PassId = p.PassId;
             AccountId = p.AccountId;
         }
+        public PurchaseResponse()
+        {
+            
+        }
     }
 }
