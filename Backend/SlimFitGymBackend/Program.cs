@@ -58,6 +58,7 @@ namespace SlimFitGymBackend
                 context.Database.EnsureCreated();
                 
             }
+#if DEBUG
             app.MapPost("seed", () => {
 
                 using (var scope = app.Services.CreateScope())
@@ -72,6 +73,7 @@ namespace SlimFitGymBackend
 
                 }
             });
+#endif
             app.Run();
         }
     }

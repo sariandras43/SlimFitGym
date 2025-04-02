@@ -142,9 +142,9 @@ namespace SlimFitGymBackend.Controllers
             return this.Execute(() =>
             {
                 int idNum;
-                TrainingRequest trainingToUpdate = Newtonsoft.Json.JsonConvert.DeserializeObject<TrainingRequest>(training.ToString());
                 if (int.TryParse(id, out idNum))
                 {
+                    TrainingRequest trainingToUpdate = Newtonsoft.Json.JsonConvert.DeserializeObject<TrainingRequest>(training.ToString());
                     var res = trainingsRepository.UpdateTraining(token, idNum, trainingToUpdate);
                     if (res != null) return Ok(res);
                     return NotFound(new { message = "Nem található az edzés." });
