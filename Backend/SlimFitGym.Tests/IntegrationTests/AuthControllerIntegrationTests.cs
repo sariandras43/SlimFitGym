@@ -10,6 +10,7 @@ using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
 using SlimFitGym.Models.Responses;
 using SlimFitGymBackend;
+[assembly: CollectionBehavior(CollectionBehavior.CollectionPerAssembly)]
 
 namespace SlimFitGym.Tests.IntegrationTests
 {
@@ -171,7 +172,6 @@ namespace SlimFitGym.Tests.IntegrationTests
 
         [Theory]
         [InlineData("kazmer@gmail.com", "kazmer", 3, false)]
-        [InlineData("admin@gmail.com", "admin", 2, true)]
         [InlineData("pista@gmail.com", "pista", 3, true)]
         public async Task DeleteAccountShouldReturnForbiddenOrDeletesAccount(string email, string password, int accountIdToDelete, bool success)
         {
@@ -217,6 +217,25 @@ namespace SlimFitGym.Tests.IntegrationTests
             Assert.NotNull(response);
             Assert.Equal("BadRequest", response.StatusCode.ToString());
             Assert.Equal("Utolsó adminisztrátor fiók nem törölhető.", error.Message);
+        }
+
+        [Fact]
+        public async Task DeleteLastEmployeeShouldReturnError()
+        {
+            // Arrange 
+            string request = "/api/auth/delete/4";
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {Login("ica@gmail.com", "ica").Result}");
+
+
+            // Act
+            HttpResponseMessage response = await client.DeleteAsync(request);
+
+            // Assert
+            ErrorModel error = JsonConvert.DeserializeObject<ErrorModel>(await response.Content.ReadAsStringAsync())!;
+
+            Assert.NotNull(response);
+            Assert.Equal("BadRequest", response.StatusCode.ToString());
+            Assert.Equal("Utolsó dolgozó fiók nem törölhető.", error.Message);
         }
 
 

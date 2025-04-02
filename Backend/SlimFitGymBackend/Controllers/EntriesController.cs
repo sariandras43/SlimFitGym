@@ -71,7 +71,7 @@ namespace SlimFitGymBackend.Controllers
 
         // POST api/<EntriesController>/4
         [HttpPost("{accountId}")]
-        [Authorize]
+        [Authorize(Roles ="admin,employee")]
         public IActionResult Post([FromRoute] string accountId)
         {
             string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
