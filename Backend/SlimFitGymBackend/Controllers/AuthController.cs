@@ -117,5 +117,15 @@ namespace SlimFitGymBackend.Controllers
                 return Ok(res);
             });
         }
+
+        [HttpGet("trainers")]
+        public IActionResult GetAllActiveTrainer()
+        {
+            return this.Execute(() =>
+            {
+                var res = accountRepository.GetTrainers(true);
+                return Ok(res);
+            });
+        }
     }
 }

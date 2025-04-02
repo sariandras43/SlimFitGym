@@ -102,6 +102,24 @@ namespace SlimFitGymBackend.Controllers
             });
         }
 
+        [HttpGet("trainer/{id}")]
+        public IActionResult GetActiveTrainingsByTrainerId([FromRoute] string id)
+        {
+            return this.Execute(() =>
+            {
+                int idNum;
+                if (int.TryParse(id, out idNum))
+                {
+                    var res = trainingsRepository.GetActiveTrainingsByTrainerId(idNum);
+                    if (res != null)
+                        return Ok(res);
+                    return NotFound(new { message = "Nem található az edző." });
+
+                }
+                throw new Exception("Érvénytelen azonosító.");
+            });
+        }
+
         [HttpPost]
         [Authorize(Roles = "admin,trainer")]
         public IActionResult Post([FromBody] TrainingRequest training)

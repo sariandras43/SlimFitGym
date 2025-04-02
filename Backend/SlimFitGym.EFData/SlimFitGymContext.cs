@@ -129,7 +129,7 @@ namespace SlimFitGym.EFData
 
             modelBuilder.Entity<Pass>().HasData
             (
-                new Pass() { Id = 1, Days = 30, Name = "Havi", MaxEntries = 0, Price = 15000 },
+                new Pass() { Id = 1, Days = 30, Name = "Havi", MaxEntries = 0, Price = 15000, IsActive = false },
                 new Pass() { Id = 2, Days = 0, Name = "15 alkalmas bérlet", MaxEntries = 15, Price = 10000 },
                 new Pass() { Id = 3, Days = 90, Name = "Negyedéves", MaxEntries = 0, Price = 40000 },
                 new Pass() { Id = 4, Days = 365, Name = "Éves bérlet", MaxEntries = 0, Price = 120000 },

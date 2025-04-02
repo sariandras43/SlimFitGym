@@ -20,5 +20,6 @@ namespace SlimFitGym.EFData.Interfaces
         AccountResponse? GetLoggedInAccountFromToken(string token);
         List<AccountResponse> GetAllAccounts(bool onlyActive);
         Account? GetAccountByIdEvenDeletedOne(int id);
+        List<AccountResponse> GetTrainers(bool onlyActive);
     }
 }
