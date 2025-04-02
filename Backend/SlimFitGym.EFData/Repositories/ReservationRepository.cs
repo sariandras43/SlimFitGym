@@ -73,7 +73,7 @@ namespace SlimFitGym.EFData.Repositories
                 throw new UnauthorizedAccessException();
 
 
-            Training? training = context.Set<Training>().SingleOrDefault(t=>t.Id == reservation.TrainingId && t.IsActive);
+            Training? training = context.Set<Training>().SingleOrDefault(t=>t.Id == reservation.TrainingId && t.IsActive && t.TrainingStart > DateTime.Now);
             if (training == null)
                 return null;
             Account? trainer = context.Set<Account>().SingleOrDefault(a=>a.Id == training.TrainerId);
@@ -99,10 +99,12 @@ namespace SlimFitGym.EFData.Repositories
         {
             if (id <= 0)
                 throw new Exception("Érvénytelen azonosító.");
-            Reservation? reservationToDelete = this.context.Set<Reservation>().SingleOrDefault(t => t.Id == id);
+            Reservation? reservationToDelete = this.context.Set<Reservation>().SingleOrDefault(r => r.Id == id);
             if (reservationToDelete == null)
                 return null;
-
+            Training? training = this.context.Set<Training>().SingleOrDefault(t=>t.Id == reservationToDelete.Id && t.IsActive && t.TrainingStart> DateTime.Now);
+            if (training == null)
+                throw new Exception("Nem lehet leiratkozni kitörölt vagy múltbéli edzésről.");
             this.context.Set<Reservation>().Remove(reservationToDelete);
             this.context.SaveChanges();
             return new ReservationResponse(reservationToDelete);
@@ -116,16 +118,15 @@ namespace SlimFitGym.EFData.Repositories
             Account? accountFromToken = accountRepository.GetAccountById(tokenGenerator.GetAccountIdFromToken(token));
             if (accountFromToken == null)
                 throw new Exception("Érvénytelen token.");
-            //Account? account = accountRepository.GetAccountById(accountId);
-            //if (accountFromToken.Role != "admin" && account == null)
-            //    return null;
             if (accountId != tokenGenerator.GetAccountIdFromToken(token))
                 throw new UnauthorizedAccessException();
 
             Reservation? reservationToDelete = this.context.Set<Reservation>().SingleOrDefault(r => r.TrainingId == trainingId && r.AccountId==accountId);
             if (reservationToDelete == null)
                 return null;
-
+            Training? training = this.context.Set<Training>().SingleOrDefault(t => t.Id == reservationToDelete.TrainingId && t.IsActive && t.TrainingStart > DateTime.Now);
+            if (training == null)
+                throw new Exception("Nem lehet leiratkozni kitörölt vagy múltbéli edzésről.");
             this.context.Set<Reservation>().Remove(reservationToDelete);
             this.context.SaveChanges();
             return new ReservationResponse(reservationToDelete);

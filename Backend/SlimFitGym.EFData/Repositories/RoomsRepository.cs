@@ -206,23 +206,35 @@ namespace SlimFitGym.EFData.Repositories
         public Room? DeleteRoom(int id)
         {
             var roomToDelete = this.context.Set<Room>().SingleOrDefault(r => r.Id == id);
-            if (roomToDelete == null)
+            if (roomToDelete == null || !roomToDelete.IsActive)
                 return null;
-            if (!roomToDelete.IsActive)
-                return null;
-            //List<RoomAndMachine> machinesInTheRoom = roomsAndMachinesRepository.GetRoomsAndMachinesByRoomId(roomToDelete.Id);
-            //foreach (RoomAndMachine rm in machinesInTheRoom)
-            //{
-            //    roomsAndMachinesRepository.DeleteConnection(rm.Id);
-            //}
+            this.context.Set<RoomAndMachine>().Where(rm => rm.RoomId == id).ExecuteDelete();
             if (context.Set<Training>().Any(t=>t.RoomId == id))
             {
                 roomToDelete.IsActive = false;
+                var trainings = this.context.Set<Training>().Where(t => t.RoomId == id && t.IsActive && t.TrainingStart > DateTime.Now);
+                foreach (Training training in trainings)
+                {
+                    if (this.context.Set<Reservation>().Any(r=>r.TrainingId==training.Id))
+                    {
+                        training.IsActive = false;
+                        this.context.Entry(training).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                        this.context.SaveChanges();
+                    }
+                    else
+                    {
+                        this.context.Set<Training>().Where(t => t.Id == training.Id).ExecuteDelete();
+                        this.context.SaveChanges();
+                    }
+                }
+
+                imagesRepository.DeleteImageByRoomId(id);
                 this.context.Entry(roomToDelete).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 this.context.SaveChanges();
                 return roomToDelete;
 
             }
+            imagesRepository.DeleteImageByRoomId(id);
             this.context.Set<Room>().Remove(roomToDelete);
             this.context.SaveChanges();
             return roomToDelete;

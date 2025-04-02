@@ -1,4 +1,5 @@
 ﻿using BCrypt.Net;
+using Microsoft.EntityFrameworkCore;
 using SlimFitGym.EFData.Interfaces;
 using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
@@ -174,14 +175,14 @@ namespace SlimFitGym.EFData.Repositories
 
         public AccountResponse? DeleteAccount(string token, int id)
         {
-            var accountWhichDeletes = this.context.Set<Account>().SingleOrDefault(a => a.Id == tokenGenerator.GetAccountIdFromToken(token) && a.isActive);
-            if (tokenGenerator.GetAccountIdFromToken(token) != id && accountWhichDeletes.Role != "admin")
-                throw new UnauthorizedAccessException();
-            if (accountWhichDeletes == null)
-                throw new Exception("A felhasználó aki törölne, nem létezik");
             if (id <= 0)
                 throw new Exception("Érvénytelen azonosító.");
-            var accountToDelete = this.context.Set<Account>().SingleOrDefault(a => a.Id == id&&a.isActive);
+            var accountWhichDeletes = this.context.Set<Account>().SingleOrDefault(a => a.Id == tokenGenerator.GetAccountIdFromToken(token) && a.isActive);
+            if (accountWhichDeletes == null)
+                throw new Exception("A felhasználó aki törölne, nem létezik");
+            if (tokenGenerator.GetAccountIdFromToken(token) != id && accountWhichDeletes.Role != "admin")
+                throw new UnauthorizedAccessException();
+            var accountToDelete = this.context.Set<Account>().SingleOrDefault(a => a.Id == id && a.isActive);
             if (accountToDelete == null) return null;
             if (this.context.Set<Account>().Where(a=>a.Role=="admin" && a.isActive && a.Id==id).Count()==1)
                 throw new Exception("Utolsó adminisztrátor fiók nem törölhető.");
@@ -189,8 +190,37 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Utolsó dolgozó fiók nem törölhető.");
             accountToDelete.isActive = false;
             this.context.Entry(accountToDelete).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            //TODO cascading delete at reservations and trainings, images
             this.context.SaveChanges();
+            //TODO cascading delete at reservations and trainings
+            imagesRepository.DeleteImageByAccountId(id);
+            if (accountToDelete.Role == "trainer")
+            { 
+                List<Training> trainingsOfTrainer = context.Set<Training>().Where(t=>t.TrainerId == id && t.IsActive && t.TrainingStart > DateTime.Now).ToList();
+                foreach (Training training in trainingsOfTrainer)
+                {
+                    if (context.Set<Reservation>().Any(r => r.TrainingId == training.Id))
+                    {
+                        training.IsActive = false;
+                        this.context.Entry(training).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                        this.context.SaveChanges();
+                    }
+                    else
+                    {
+                        this.context.Set<Training>().Where(t=>t.Id == training.Id).ExecuteDelete();
+                        this.context.SaveChanges();
+                    }
+                }
+            }
+            List<Training> trainings = this.context.Set<Training>().Where(t=>t.IsActive && t.TrainingStart > DateTime.Now).ToList();
+            foreach (Training training in trainings)
+            {
+                Reservation? reservation = this.context.Set<Reservation>().SingleOrDefault(r => r.AccountId == id && r.TrainingId == training.Id);
+                if (reservation !=null)
+                {
+                    this.context.Set<Reservation>().Where(r => r.AccountId == id && r.TrainingId == training.Id).ExecuteDelete();
+                    this.context.SaveChanges(true);
+                }
+            }
             return new AccountResponse(accountToDelete);
 
         }
