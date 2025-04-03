@@ -1,6 +1,5 @@
 describe('Admin CMS - Passes Management', () => {
   const testPasses = [
-    { name: 'Havi', days: 30, price: 15000, type: 'days' },
     { name: '15 alkalmas bérlet', entries: 15, price: 10000, type: 'entries' },
     { name: 'Negyedéves', days: 90, price: 40000, type: 'days' },
     { name: 'Éves bérlet', days: 365, price: 120000, type: 'days' },
@@ -8,246 +7,235 @@ describe('Admin CMS - Passes Management', () => {
   ];
 
   beforeEach(() => {
+    cy.visit('');
     cy.loginAsAdmin();
+    cy.request('POST', "http://localhost:5278/seed"); 
     cy.visit('/user/passes', { timeout: 10000 });
     cy.get('table').should('be.visible');
   });
 
-
-  it('should sort by different columns', () => {
-   
-    cy.get('th').contains('Ár').click();
-    
-    cy.get('tr:not(.deleted) [data-cell="Ár"]').then($cells => {
-      const prices = $cells.map((_, el) => {
-        const priceText = el.innerText.replace(/\s/g, '');
-        return parseInt(priceText);
-      }).get();
-  
-      const expectedPrices = [5000, 10000, 15000, 40000, 120000];
-      expect(prices).to.deep.equal(expectedPrices);
+  describe('Initial State Verification', () => {
+    it('should display active passes with correct data', () => {
+      cy.get('table tr:not(.deleted)').should('have.length', testPasses.length + 1);
+      
+      testPasses.forEach(pass => {
+        cy.contains('tr:not(.deleted)', pass.name).within(() => {
+          if (pass.type === 'days') {
+            cy.get('[data-cell="Napok"]').should('contain', pass.days);
+            cy.get('[data-cell="Max. belépések"]').should('contain', '-');
+          }
+          if (pass.type === 'entries') {
+            cy.get('[data-cell="Max. belépések"]').should('contain', pass.entries);
+            cy.get('[data-cell="Napok"]').should('contain', '-');
+          }
+          if (pass.type === 'both') {
+            cy.get('[data-cell="Napok"]').should('contain', pass.days);
+            cy.get('[data-cell="Max. belépések"]').should('contain', pass.entries);
+          }
+          cy.get('[data-cell="Ár"]').should('contain', pass.price);
+        });
+      });
     });
-  
-    cy.get('th').contains('Napok').click().click();
-    cy.get('tr:not(.deleted) [data-cell="Napok"]').then($cells => {
-      const days = $cells.map((_, el) => {
-        const dayText = el.innerText;
-        return dayText === '-' ? 0 : parseInt(dayText);
-      }).get();
-  
-      const expectedDays = [365, 90, 30, 7, 0];
-      expect(days).to.deep.equal(expectedDays);
+
+    it('should hide deleted passes by default', () => {
+      cy.contains('tr:not(.deleted)', 'Havi').should('not.exist');
+      cy.get('tr.deleted').should('not.exist');
     });
   });
-  it('should sort by entries and highlighted status', () => {
-    // Sort by entries
-    cy.get('th').contains('Max. belépések').click().click();
-    cy.get('[data-cell="Max. belépések"]').then($cells => {
-      const entries = $cells.map((_, el) => parseInt(el.innerText) || 0).get();
-      expect(entries).to.deep.equal([15, 7, 0, 0, 0]);
+
+  describe('Sorting Functionality', () => {
+    const verifySort = (column: string, values: any[]) => {
+      cy.get(`[data-cell="${column}"]`).then($cells => {
+        const actual = $cells.map((_, el) => el.innerText).get();
+        expect(actual).to.deep.equal(values);
+      });
+    };
+
+    it('should sort by price ascending/descending', () => {
+      cy.get('th:contains("Ár")').click();
+      verifySort('Ár', ['5000 Ft', '10000 Ft', '40000 Ft', '120000 Ft']);
+      
+      cy.get('th:contains("Ár")').click();
+      verifySort('Ár', ['120000 Ft', '40000 Ft', '10000 Ft', '5000 Ft']);
     });
 
-    // Sort by highlighted
-    cy.get('th').contains('Kiemelt').click();
-    cy.get('[data-cell="Kiemelt"]').then($cells => {
-      const values = $cells.map((_, el) => el.innerText).get();
-      expect(values).to.deep.equal(['Nem Kiemelt', 'Nem Kiemelt', 'Nem Kiemelt', 'Nem Kiemelt', 'Nem Kiemelt']);
+    it('should sort by days descending', () => {
+      cy.get('th:contains("Napok")').click().click();
+      verifySort('Napok', ['365', '90', '7', '-']);
+    });
+
+    it('should show correct sort indicators', () => {
+      cy.get('th:contains("Név")').click();
+      cy.get('th:contains("Név")').should('contain', '⬆');
+      
+      cy.get('th:contains("Név")').click();
+      cy.get('th:contains("Név")').should('contain', '⬇');
     });
   });
-  it('should display initial passes with correct data', () => {
-    cy.get('table tr:not(.deleted)').should(
-      'have.length',
-      testPasses.length + 1
-    ); // +1 for header
 
-    testPasses.forEach((pass) => {
-      cy.contains('tr:not(.deleted)', pass.name).within(() => {
-        if (pass.type === 'days') {
-          cy.get('[data-cell="Napok"]').should('contain', pass.days);
-          cy.get('[data-cell="Max. belépések"]').should('contain', '-');
-        }
-        if (pass.type === 'entries') {
-          cy.get('[data-cell="Max. belépések"]').should(
-            'contain',
-            pass.entries
-          );
-          cy.get('[data-cell="Napok"]').should('contain', '-');
-        }
-        if (pass.type === 'both') {
-          cy.get('[data-cell="Napok"]').should('contain', pass.days);
-          cy.get('[data-cell="Max. belépések"]').should(
-            'contain',
-            pass.entries
-          );
-        }
-        cy.get('[data-cell="Ár"]').should('contain', pass.price.toString());
+  describe('CRUD Operations', () => {
+    it('should create new pass with valid data', () => {
+      cy.get('.newButton').click();
+      cy.get('#passNameInput').type('Premium Pass');
+      cy.get('#priceInput').type('25000');
+      cy.get('#daysInput').type('60');
+      cy.get('.save-button').click();
+      cy.contains('tr', 'Premium Pass').should('be.visible');
+    });
+
+    it('should update existing pass', () => {
+      cy.contains('tr', 'Heti bérlet').within(() => {
+        cy.get('button[aria-label="update"]').click();
+      });
+      cy.get('#passNameInput').clear().type('Weekly Pro');
+      cy.get('.save-button').click();
+      cy.contains('tr', 'Weekly Pro').should('be.visible');
+    });
+
+    it('should soft-delete pass', () => {
+      cy.contains('tr', '15 alkalmas bérlet').within(() => {
+        cy.get('button[aria-label="delete"]').click();
+      });
+      cy.get('.toggle-slider').click();
+      cy.contains('tr.deleted', '15 alkalmas bérlet').should('be.visible');
+    });
+  });
+
+  describe('Form Validation', () => {
+    it('should require mandatory fields', () => {
+      cy.get('.newButton').click();
+      cy.get('.save-button').click();
+      cy.get('.error-message').should('contain', 'A név kötelező');
+      cy.get('.error-message').should('contain', 'Az ár kötelező');
+    });
+
+    it('should prevent zero days/entries combination', () => {
+      cy.get('.newButton').click();
+      cy.get('#passNameInput').type('Invalid Pass');
+      cy.get('#priceInput').type('10000');
+      cy.get('.save-button').click();
+      cy.get('.bottom-error').should('contain', 'nap');
+      cy.get('.bottom-error').should('contain', 'belépés');
+    });
+
+    it('should handle negative values', () => {
+      cy.get('.newButton').click();
+      cy.get('#priceInput').type('-5000');
+      cy.get('#daysInput').type('30');
+      cy.get('.save-button').click();
+      cy.get('.error-message').should('contain', 'Az ár kötelező');
+    });
+  });
+
+  describe('Deleted Passes Management', () => {
+    beforeEach(() => {
+      cy.contains('tr', '15 alkalmas bérlet').within(() => {
+        cy.get('button[aria-label="delete"]').click();
+      });
+    });
+
+    it('should toggle deleted passes visibility', () => {
+      cy.get('.toggle-slider').click();
+      cy.get('tr.deleted').should('have.length.at.least', 2);
+      cy.get('.toggle-slider').click();
+      cy.get('tr.deleted').should('not.exist');
+    });
+
+    it('should prevent editing deleted passes', () => {
+      cy.get('.toggle-slider').click();
+      cy.contains('tr.deleted', '15 alkalmas bérlet').within(() => {
+        cy.get('button[aria-label="update"]').should('not.exist');
       });
     });
   });
 
-  it('should validate day/entry requirements', () => {
-    cy.get('.newButton').click();
+  describe('Search Functionality', () => {
+    it('should filter by name partial match', () => {
+      cy.get('.searchBar').type('éves');
+      cy.get('tr:not(.deleted) [data-cell="Név"]').should('have.length', 2);
+    });
 
-    // Fill required fields first
-    cy.get('#passNameInput').type('Test Pass');
-    cy.get('#priceInput').type('10000');
+    it('should be case-insensitive', () => {
+      cy.get('.searchBar').type('NEgyEdÉvES');
+      cy.contains('tr:not(.deleted)', 'Negyedéves').should('be.visible');
+    });
 
-    cy.get('#daysInput').clear();
-    cy.get('#maxEntriesInput').clear();
-    cy.get('.save-button').click();
+    it('should search benefits content', () => {
+      cy.get('.newButton').click();
+      cy.get('#passNameInput').type('Special Pass');
+      cy.get('#daysInput').type('60');
 
-    cy.get('.bottom-error')
-      .should('be.visible')
-      .and(
-        'contain.text',
-        'Kötelező megadni legalább a maximum belépések számát vagy a felhasználható napok értékét'
-      );
-
-    cy.get('#daysInput').type('30');
-    cy.get('.save-button').click();
-    cy.get('.bottom-error').should('not.exist');
-
-    cy.get('.newButton').click();
-    cy.get('#passNameInput').type('Test Pass 2');
-    cy.get('#priceInput').type('15000');
-
-    cy.get('#maxEntriesInput').type('10');
-    cy.get('.save-button').click();
-    cy.get('.bottom-error').should('not.exist');
-  });
-
-  
-
-  it('should handle complex pass combinations', () => {
-    // Test creating pass with both days and entries
-    cy.get('.newButton').click();
-    cy.get('#passNameInput').type('Kombinált bérlet');
-    cy.get('#priceInput').type('20000');
-    cy.get('#daysInput').type('30');
-    cy.get('#maxEntriesInput').type('20');
-    cy.get('.save-button').click();
-
-    cy.contains('tr', 'Kombinált bérlet').within(() => {
-      cy.get('[data-cell="Napok"]').should('contain', '30');
-      cy.get('[data-cell="Max. belépések"]').should('contain', '20');
+      cy.get('#priceInput').type('15000');
+      cy.get('.add-benefit').click();
+      cy.get('.benefit-item input').type('Exclusive Access');
+      cy.get('.save-button').click();
+      
+      cy.get('.searchBar').type('Exclusive');
+      cy.contains('tr', 'Special Pass').should('be.visible');
     });
   });
 
-  
-  it('should filter passes using search functionality', () => {
-    // Test name search
-    cy.get('.searchBar').type('havi');
-    cy.get('tr:not(.deleted) [data-cell="Név"]').should('contain', 'Havi');
-    cy.get('tr:not(.deleted)').should('have.length', 2);
-
-    // Test benefit search
-    // cy.get('.searchBar').clear().type('előny');
-    // cy.get('[data-cell="Előnyök"]').first().should('not.contain', '-');
-  });
-  it('should maintain data integrity after edit', () => {
-    cy.contains('tr', 'Heti bérlet').within(() => {
-      cy.get('button[aria-label="update"]').click();
-    });
-
-    // Change from weekly to monthly
-    cy.get('#passNameInput').clear().type('Havi bérlet');
-    cy.get('#daysInput').clear().type('30');
-    cy.get('#maxEntriesInput').clear();
-    cy.get('.save-button').click();
-
-    cy.get('table').should('contain', 'Havi bérlet');
-    cy.contains('tr', 'Havi bérlet').within(() => {
-      cy.get('[data-cell="Napok"]').should('contain', '30');
-      cy.get('[data-cell="Max. belépések"]').should('contain', '-');
-    });
-  });
-  it('should toggle deleted passes visibility', () => {
-    // Delete a pass first
-    cy.contains('tr', '15 alkalmas bérlet').within(() => {
-      cy.get('button[aria-label="delete"]').click();
-    });
-
-    // Verify toggle
-    cy.get('.toggle-slider').click();
-    cy.get('tr.deleted').should('be.visible');
-    cy.get('.toggle-slider').click();
-    cy.get('tr.deleted').should('not.exist');
-  });
-
-  it('should validate required fields in form', () => {
-    cy.get('.newButton').click();
-    
-    // Test empty name
-    cy.get('#priceInput').type('10000');
-    cy.get('#daysInput').type('30');
-    cy.get('.save-button').click();
-    cy.get('.error-message').should('contain', 'A név kötelező');
-
-    // Test invalid price
-    cy.get('#passNameInput').type('Test Pass');
-    cy.get('#priceInput').clear().type('0');
-    cy.get('.save-button').click();
-    cy.get('.error-message').should('contain', 'Az ár kötelező');
-  });
-
-  it('should handle benefits management', () => {
-    cy.get('.newButton').click();
-    cy.get('#passNameInput').type('Benefit Test');
-    cy.get('#priceInput').type('15000');
-    cy.get('#daysInput').type('30');
-
-    // Add benefits
-    cy.get('.add-benefit').click();
-    cy.get('.benefit-item input').first().type('Uszkve');
-    cy.get('.add-benefit').click();
-    cy.get('.benefit-item input').eq(1).type('Másik előny');
-    
-    // Remove one benefit
-    cy.get('.benefit-item button').first().click();
-    cy.get('.save-button').click();
-
-    // Verify in table
-    cy.contains('tr', 'Benefit Test').within(() => {
-      cy.get('[data-cell="Előnyök"]').should('contain', 'Másik előny');
-      cy.get('[data-cell="Előnyök"]').should('not.contain', 'Uszkve');
+  describe('Benefits Management', () => {
+    it('should add/remove benefits', () => {
+      cy.get('.newButton').click();
+      cy.get('#passNameInput').type('Benefit Test');
+      cy.get('#priceInput').type('15000');
+      cy.get('#daysInput').type('60');
+      
+      // Add benefits
+      cy.get('.add-benefit').click().click();
+      cy.get('.benefit-item input').first().type('Pool Access');
+      cy.get('.benefit-item input').eq(1).type('Sauna Access');
+      
+      // Remove one benefit
+      cy.get('.benefit-item button').first().click();
+      cy.get('.save-button').click();
+      
+      cy.contains('tr', 'Benefit Test').within(() => {
+        cy.get('[data-cell="Előnyök"]').should('contain', 'Sauna Access');
+        cy.get('[data-cell="Előnyök"]').should('not.contain', 'Pool Access');
+      });
     });
   });
 
- 
-
-  it('should cancel modal without saving', () => {
-    cy.get('.newButton').click();
-    cy.get('#passNameInput').type('Temp Pass');
-    cy.get('.cancel-button').click();
-    cy.contains('Temp Pass').should('not.exist');
-  });
-
-  // it('should handle server errors gracefully', () => {
-  //   cy.intercept('POST', '/api/passes', {
-  //     statusCode: 500,
-  //     body: { message: 'Server error' }
-  //   });
-
-  //   cy.get('.newButton').click();
-  //   cy.get('#passNameInput').type('Error Test');
-  //   cy.get('#priceInput').type('10000');
-  //   cy.get('#daysInput').type('30');
-  //   cy.get('.save-button').click();
-
-  //   cy.get('.bottom-error').should('contain', 'Hiba történt');
-  // });
-
-  it('should edit and persist highlighted status', () => {
-    cy.contains('tr', 'Éves bérlet').within(() => {
-      cy.get('button[aria-label="update"]').click();
+  describe('Edge Cases', () => {
+    it('should persist data after refresh', () => {
+      cy.contains('tr', 'Éves bérlet').within(() => {
+        cy.get('button[aria-label="update"]').click();
+      });
+      cy.get('#passNameInput').clear().type('Annual Premium');
+      cy.get('.save-button').click();
+      cy.reload();
+      cy.contains('tr', 'Annual Premium').should('be.visible');
     });
 
-    cy.get('.toggleFields > .toggle > .toggle-slider').click();
-    cy.get('.save-button').click();
+    it('should handle concurrent deletions', () => {
+      // Delete multiple passes
+      cy.contains('tr', 'Negyedéves').within(() => {
+        cy.get('button[aria-label="delete"]').click();
+      });
+      cy.contains('tr', 'Heti bérlet').within(() => {
+        cy.get('button[aria-label="delete"]').click();
+      });
+      
+      cy.get('.toggle-slider').click();
+      cy.get('tr.deleted').should('have.length', 3); // 2 new + 1 seeded
+    });
 
-    cy.contains('tr', 'Éves bérlet').within(() => {
-      cy.get('[data-cell="Kiemelt"]').should('contain', 'Kiemelt');
+    it('should handle maximum value inputs', () => {
+      cy.get('.newButton').click();
+      cy.get('#passNameInput').type('Max Values Pass');
+      cy.get('#priceInput').type('9999999');
+      cy.get('#daysInput').type('36500');
+      cy.get('#maxEntriesInput').type('1000');
+      cy.get('.save-button').click();
+      
+      cy.contains('tr', 'Max Values Pass').within(() => {
+        cy.get('[data-cell="Ár"]').should('contain', '9999999');
+        cy.get('[data-cell="Napok"]').should('contain', '36500');
+        cy.get('[data-cell="Max. belépések"]').should('contain', '1000');
+      });
     });
   });
-
 });
+

@@ -9,7 +9,10 @@ enum SortDirection {
   Desc = 'desc',
 }
 
-type SortableProperty = keyof Pick<PassModel, 'name' | 'price' | 'days' |'maxEntries'| 'isActive' | 'isHighlighted'>;
+type SortableProperty = keyof Pick<
+  PassModel,
+  'name' | 'price' | 'days' | 'maxEntries' | 'isActive' | 'isHighlighted'
+>;
 
 @Component({
   selector: 'app-passes-cms',
@@ -42,12 +45,12 @@ export class PassesCMSComponent {
 
   private loadPasses() {
     this.passService.getPassesAll().subscribe({
-        next: (passes) => {
-          this.passes = passes || [];
-          this.updateDisplayPasses();
-        },
-        error: (err) => console.error('Failed to load passes:', err),
-      });
+      next: (passes) => {
+        this.passes = passes || [];
+        this.updateDisplayPasses();
+      },
+      error: (err) => console.error('Failed to load passes:', err),
+    });
   }
 
   search(event: Event) {
@@ -115,7 +118,8 @@ export class PassesCMSComponent {
         this.deletingPassId = null;
         this.updateDisplayPasses();
       },
-      error: (err) => {console.error('Delete failed:', err)
+      error: (err) => {
+        console.error('Delete failed:', err);
 
         this.deletingPassId = null;
       },
@@ -130,14 +134,13 @@ export class PassesCMSComponent {
     this.priceError = !this.selectedPass.price;
 
     if (this.nameError || this.priceError) return;
-    if(this.selectedPass.maxEntries == 0 && this.selectedPass.days == 0)
-    {
-      this.bottomError = "vagy napot vagy maximum belépést meg kell adni!"
+    if (this.selectedPass.maxEntries == 0 && this.selectedPass.days == 0) {
+      this.bottomError = 'vagy napot vagy maximum belépést meg kell adni!';
       return;
     }
 
     this.isSubmitting = true;
-    const { isActive,  ...payload } = this.selectedPass;
+    const { isActive, ...payload } = this.selectedPass;
     payload.days = payload.days || 0;
     payload.maxEntries = payload.maxEntries || 0;
     payload.price = payload.price || 0;
@@ -177,7 +180,6 @@ export class PassesCMSComponent {
   }
 
   modalOpen(pass?: PassModel) {
-    
     this.bottomError = null;
     this.selectedPass = pass
       ? { ...pass, benefits: [...pass.benefits] }
