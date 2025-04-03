@@ -239,3 +239,111 @@ describe('Admin CMS - Passes Management', () => {
   });
 });
 
+describe('Admin CMS - User Management', () => {
+  const seededUsers = [
+    { 
+      name: 'admin', 
+      email: 'admin@gmail.com',
+      role: 'admin',
+      phone: '+36123456789',
+      hungarianRole: 'admin' // No translation in userInHungarian()
+    },
+    { 
+      name: 'kazmer', 
+      email: 'kazmer@gmail.com',
+      role: 'trainer',
+      phone: '+36123456799',
+      hungarianRole: 'Edző'
+    },
+    { 
+      name: 'pista', 
+      email: 'pista@gmail.com',
+      role: 'user',
+      phone: '+36123456788',
+      hungarianRole: 'Felhasználó'
+    },
+    { 
+      name: 'ica', 
+      email: 'ica@gmail.com',
+      role: 'employee',
+      phone: '+36126456788',
+      hungarianRole: 'Dolgozó'
+    }
+  ];
+
+  beforeEach(() => {
+    cy.request('POST', "http://localhost:5278/seed");
+    cy.loginAsAdmin();
+    cy.visit('/user/users', { timeout: 10000 });
+    cy.get('table').should('be.visible');
+  });
+
+  describe('Initial State Verification', () => {
+    it('should display all seeded users with correct data', () => {
+      cy.get('table tr:not(.deleted)').should('have.length', seededUsers.length + 1); // +1 for header
+      
+      seededUsers.forEach(user => {
+        cy.contains('tr:not(.deleted)', user.name).within(() => {
+          cy.get('[data-cell="Email"]').should('contain', user.email);
+          cy.get('[data-cell="Telefonszám"]').should('contain', user.phone);
+          cy.get('[data-cell="Szerep"]').should('contain', user.hungarianRole);
+        });
+      });
+    });
+
+    it('should show admin role untranslated', () => {
+      cy.contains('tr', 'admin').within(() => {
+        cy.get('[data-cell="Szerep"]').should('contain', 'admin');
+      });
+    });
+  });
+
+  describe('Role Specific Features', () => {
+    it('should show trainer approval buttons only for applicants', () => {
+      cy.contains('tr', 'kazmer').within(() => {
+        cy.get('button.success').should('not.exist');
+        cy.get('button.danger').should('not.exist');
+      });
+    });
+
+    it('should prevent deleting admin account', () => {
+      cy.contains('tr', 'admin').within(() => {
+        cy.get('button[aria-label="delete"]').should('not.exist');
+      });
+    });
+  });
+
+  describe('User Actions', () => {
+    it('should delete regular user', () => {
+      cy.contains('tr', 'pista').within(() => {
+        cy.get('button[aria-label="delete"]').click();
+      });
+      cy.contains('tr', 'pista').should('not.exist');
+    });
+
+    it('should toggle deleted users visibility', () => {
+      // Delete a user first
+      cy.contains('tr', 'pista').within(() => {
+        cy.get('button[aria-label="delete"]').click();
+      });
+      
+      cy.get('.toggle-slider').click();
+      cy.get('tr.deleted').should('contain', 'pista');
+      cy.get('.toggle-slider').click();
+      cy.get('tr.deleted').should('not.exist');
+    });
+  });
+
+  describe('Search Functionality', () => {
+    it('should filter by partial phone number', () => {
+      cy.get('.searchBar').type('612345');
+      cy.get('tr:not(.deleted)').should('have.length', 4); // header + admin, kazmer, pista
+    });
+
+    it('should search by role translation', () => {
+      cy.get('.searchBar').type('Edző');
+      cy.contains('tr', 'kazmer').should('be.visible');
+      cy.get('tr:not(.deleted)').should('have.length', 2); // header + kazmer
+    });
+  });
+});
