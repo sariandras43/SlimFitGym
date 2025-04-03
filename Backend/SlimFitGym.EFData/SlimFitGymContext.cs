@@ -58,9 +58,14 @@ namespace SlimFitGym.EFData
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //add-migration XYZ -Project SlimFitGym.EFData -StartupProject SlimFitGym.EFData
+            SeedDatabase(modelBuilder);
+        }
+
+        public void SeedDatabase(ModelBuilder modelBuilder)
+        {
             modelBuilder.Entity<Account>().HasData
             (
-                new Account() { Id = 1,Name="admin",Password= BCrypt.Net.BCrypt.EnhancedHashPassword("admin", 10), Email="admin@gmail.com",Phone="+36123456789",Role="admin"},
+                new Account() { Id = 1, Name = "admin", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("admin", 10), Email = "admin@gmail.com", Phone = "+36123456789", Role = "admin" },
                 new Account() { Id = 2, Name = "kazmer", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("kazmer", 10), Email = "kazmer@gmail.com", Phone = "+36123456799", Role = "trainer" },
                 new Account() { Id = 3, Name = "pista", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("pista", 10), Email = "pista@gmail.com", Phone = "+36123456788", Role = "user" },
                 new Account() { Id = 4, Name = "ica", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("ica", 10), Email = "ica@gmail.com", Phone = "+36126456788", Role = "employee" }
@@ -110,11 +115,11 @@ namespace SlimFitGym.EFData
 
             modelBuilder.Entity<Training>().HasData
             (
-                new Training() { Id = 1, Name = "TRX edzés", RoomId = 1, TrainerId = 2, MaxPeople = 6, TrainingStart = new DateTime(2025, 5, 1, 10, 0, 0), TrainingEnd = new DateTime(2024, 5, 1, 11, 0, 0) , IsActive=true },
+                new Training() { Id = 1, Name = "TRX edzés", RoomId = 1, TrainerId = 2, MaxPeople = 6, TrainingStart = new DateTime(2025, 5, 1, 10, 0, 0), TrainingEnd = new DateTime(2024, 5, 1, 11, 0, 0), IsActive = true },
                 new Training() { Id = 2, Name = "Spinning", RoomId = 8, TrainerId = 2, MaxPeople = 10, TrainingStart = new DateTime(2025, 5, 2, 14, 0, 0), TrainingEnd = new DateTime(2024, 5, 2, 15, 0, 0), IsActive = true },
-                new Training() { Id = 3, Name = "Jóga", RoomId = 5, TrainerId = 2, MaxPeople = 8, TrainingStart = new DateTime(2025, 5, 3, 9, 0, 0), TrainingEnd = new DateTime(2024, 5, 3, 10, 0, 0) , IsActive = true },
-                new Training() { Id = 4, Name = "CrossFit", RoomId = 4, TrainerId = 2, MaxPeople = 12, TrainingStart = new DateTime(2025, 5, 4, 16, 0, 0), TrainingEnd = new DateTime(2024, 5, 4, 17, 0, 0) , IsActive = true },
-                new Training() { Id = 5, Name = "Aerobik", RoomId = 6, TrainerId = 2, MaxPeople = 18, TrainingStart = new DateTime(2025, 5, 5, 18, 0, 0), TrainingEnd = new DateTime(2024, 5, 5, 19, 0, 0) , IsActive = true }
+                new Training() { Id = 3, Name = "Jóga", RoomId = 5, TrainerId = 2, MaxPeople = 8, TrainingStart = new DateTime(2025, 5, 3, 9, 0, 0), TrainingEnd = new DateTime(2024, 5, 3, 10, 0, 0), IsActive = true },
+                new Training() { Id = 4, Name = "CrossFit", RoomId = 4, TrainerId = 2, MaxPeople = 12, TrainingStart = new DateTime(2025, 5, 4, 16, 0, 0), TrainingEnd = new DateTime(2024, 5, 4, 17, 0, 0), IsActive = true },
+                new Training() { Id = 5, Name = "Aerobik", RoomId = 6, TrainerId = 2, MaxPeople = 18, TrainingStart = new DateTime(2025, 5, 5, 18, 0, 0), TrainingEnd = new DateTime(2024, 5, 5, 19, 0, 0), IsActive = true }
 
             );
 
@@ -129,7 +134,7 @@ namespace SlimFitGym.EFData
 
             modelBuilder.Entity<Pass>().HasData
             (
-                new Pass() { Id = 1, Days = 30, Name = "Havi", MaxEntries = 0, Price = 15000 },
+                new Pass() { Id = 1, Days = 30, Name = "Havi", MaxEntries = 0, Price = 15000, IsActive = false },
                 new Pass() { Id = 2, Days = 0, Name = "15 alkalmas bérlet", MaxEntries = 15, Price = 10000 },
                 new Pass() { Id = 3, Days = 90, Name = "Negyedéves", MaxEntries = 0, Price = 40000 },
                 new Pass() { Id = 4, Days = 365, Name = "Éves bérlet", MaxEntries = 0, Price = 120000 },
@@ -147,20 +152,19 @@ namespace SlimFitGym.EFData
 
             modelBuilder.Entity<Reservation>().HasData
             (
-                new Reservation() { Id=1,TrainingId=1,AccountId=3}
+                new Reservation() { Id = 1, TrainingId = 1, AccountId = 3 }
             );
 
 
             modelBuilder.Entity<Purchase>().HasData
             (
-                new Purchase() {Id=1,AccountId=3,PassId=2,PurchaseDate= DateTime.Now }
+                new Purchase() { Id = 1, AccountId = 3, PassId = 2, PurchaseDate = DateTime.Now }
             );
 
             modelBuilder.Entity<Benefit>().HasIndex(b => b.BenefitName).IsUnique();
-            modelBuilder.Entity<Account>().HasIndex(a=>a.Email).IsUnique();
-            modelBuilder.Entity<Machine>().HasIndex(m=>m.Name).IsUnique();
-            modelBuilder.Entity<Room>().HasIndex(r=>r.Name).IsUnique();
-
+            modelBuilder.Entity<Account>().HasIndex(a => a.Email).IsUnique();
+            modelBuilder.Entity<Machine>().HasIndex(m => m.Name).IsUnique();
+            modelBuilder.Entity<Room>().HasIndex(r => r.Name).IsUnique();
         }
 
     }

@@ -13,33 +13,58 @@ using System.Threading.Tasks;
 
 namespace SlimFitGym.Tests.IntegrationTests
 {
-    public class PurchasesControllerUnitTests : BaseIntegrationTest
+    public class PurchasesControllerUnitTests : IClassFixture<WebApplicationFactory<Program>>
     {
+        private readonly HttpClient client;
 
-        public PurchasesControllerUnitTests(WebApplicationFactory<Program> factory) : base(factory) { }
+        public PurchasesControllerUnitTests(WebApplicationFactory<Program> factory)
+        {
+            client = factory.CreateClient();
+        }
 
 
         [Fact]
-        public async Task GetPurchases_ShouldReturnUnathorizedWhenLoggedOut()
+        public async Task GetPurchasesShouldReturnUnathorizedWhenLoggedOut()
         {
             // Act
-            var response = await Client.GetAsync("/api/purchases");
+            var response = await client.GetAsync("/api/purchases");
 
             // Assert
             Assert.Equal("Unauthorized",response.StatusCode.ToString());
         }
 
         [Fact]
-        public async Task GetPurchases_ShouldReturnPurchasesWhenLoggedInAsAdmin()
+        public async Task GetPurchasesShouldReturnForbiddenWhenWhenTryingToGetOtherPersonsPurchasesAsUser()
         {
-            // Arrange
-            Client.DefaultRequestHeaders.Add("Authorization", $"Bearer {Login("admin@gmail.com", "admin").Result}");
+            //Arrange
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {Login("kazmer@gmail.com", "kazmer").Result}");
+
 
             // Act
-            var response = await Client.GetAsync("/api/purchases");
+            var response = await client.GetAsync("/api/purchases/1");
 
             // Assert
-            Assert.Equal("Unauthorized", response.StatusCode.ToString());
+            Assert.Equal("Forbidden", response.StatusCode.ToString());
+        }
+
+        [Fact]
+        public async Task GetPurchasesShouldReturnPurchasesWhenLoggedInAsAdmin()
+        {
+            // Arrange
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {Login("admin@gmail.com", "admin").Result}");
+
+            // Act
+            var response = await client.GetAsync("/api/purchases");
+
+            // Assert
+            List<PurchaseResponse> purchases = JsonConvert.DeserializeObject<List<PurchaseResponse>>(await response.Content.ReadAsStringAsync())!;
+
+            Assert.Multiple(() =>
+            {
+                Assert.NotNull(response);
+                Assert.Equal("OK", response.StatusCode.ToString());
+                Assert.IsType<List<PurchaseResponse>>(purchases);
+            });
         }
 
 
@@ -56,7 +81,7 @@ namespace SlimFitGym.Tests.IntegrationTests
             StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
 
-            HttpResponseMessage response = await Client.PostAsync(request, content);
+            HttpResponseMessage response = await client.PostAsync(request, content);
 
             AccountResponse login = JsonConvert.DeserializeObject<AccountResponse>(await response.Content.ReadAsStringAsync())!;
             return login.Token;

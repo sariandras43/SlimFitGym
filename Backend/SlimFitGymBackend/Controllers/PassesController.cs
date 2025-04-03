@@ -113,10 +113,10 @@ namespace SlimFitGymBackend.Controllers
         {
             return this.Execute(() =>
             {
-                var passToModify = Newtonsoft.Json.JsonConvert.DeserializeObject<PassRequest>(pass.ToString());
                 int idNum;
                 if (int.TryParse(id, out idNum))
                 {
+                    var passToModify = Newtonsoft.Json.JsonConvert.DeserializeObject<PassRequest>(pass.ToString());
                     var res = passesRepository.UpdatePass(idNum, passToModify);
                     if (res != null) return Ok(res);
                     return NotFound("Nem található aktív bérlet ezzel az azonosítóval.");

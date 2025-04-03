@@ -142,6 +142,32 @@ namespace SlimFitGym.EFData.Repositories
                 TrainingStart = t.TrainingStart,
                 TrainingEnd = t.TrainingEnd,
                 Trainer = accountRepository.GetAccountById(t.TrainerId)!.Name,
+                Room = room.Name,
+                FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
+                TrainerImageUrl = imagesRepository.GetImageUrlByAccountId(t.TrainerId),
+                RoomImageUrl = imagesRepository.GetImageUrlByRoomId(t.RoomId),
+                TrainerId = t.TrainerId,
+                RoomId = t.RoomId
+            }).ToList();
+            return trainings;
+        }
+
+        public List<TrainingResponse>? GetActiveTrainingsByTrainerId(int trainerId)
+        {
+            if (trainerId <= 0)
+                throw new Exception("Érvénytelen azonosító.");
+            Account? account = this.context.Set<Account>().SingleOrDefault(a => a.Id == trainerId && (a.Role=="trainer" || a.Role == "admin") && a.isActive);
+            if (account == null)
+                return null;
+            List<TrainingResponse>? trainings = this.context.Set<Training>().Where(t => t.TrainerId == trainerId && t.IsActive && t.TrainingStart > DateTime.Now).Select(t => new TrainingResponse()
+            {
+                Id = t.Id,
+                Name = t.Name,
+                MaxPeople = t.MaxPeople,
+                IsActive = t.IsActive,
+                TrainingStart = t.TrainingStart,
+                TrainingEnd = t.TrainingEnd,
+                Trainer = account.Name,
                 Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
                 FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
                 TrainerImageUrl = imagesRepository.GetImageUrlByAccountId(t.TrainerId),

@@ -67,11 +67,10 @@ namespace SlimFitGymBackend.Controllers
         {
             return this.Execute(() =>
             {
-                var machineToModify = Newtonsoft.Json.JsonConvert.DeserializeObject<MachineRequest>(machine.ToString());
-
                 int idNum;
                 if (int.TryParse(id,out idNum))
                 {
+                    var machineToModify = Newtonsoft.Json.JsonConvert.DeserializeObject<MachineRequest>(machine.ToString());
                     var res = machinesRepository.UpdateMachine(idNum, machineToModify);
                     if (res!=null) return Ok(res);
                     return NotFound("Nem található a gép.");

@@ -15,6 +15,7 @@ namespace SlimFitGym.EFData.Interfaces
         RoomWithMachinesResponse? GetRoomWithMachinesById(int id);
         RoomAndMachineResponse? GetRoomAndMachineConnectionById(int id);
         List<RoomAndMachine>? GetRoomsAndMachinesByRoomId(int roomId);
+        List<RoomWithMachinesResponse>? GetAllRoomsWithMachines();
         RoomAndMachine? GetRoomAndMachineByMachineAndRoomId(int machineId, int roomId);
         List<RoomAndMachine>? GetRoomAndMachineConnections();
         RoomAndMachineResponse? ConnectRoomAndMachine(RoomAndMachine roomAndMachine);
