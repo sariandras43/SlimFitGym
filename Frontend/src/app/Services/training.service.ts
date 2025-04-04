@@ -10,6 +10,48 @@ import { UserModel } from '../Models/user.model';
   providedIn: 'root',
 })
 export class TrainingService {
+  saveTraining(selectedTraining: TrainingModel) : Observable<TrainingModel> {
+      const headers = new HttpHeaders().set(
+        'Authorization',
+        `Bearer ${this.user?.token}`
+      );
+  
+      
+      if (selectedTraining.id === -1) {
+        const { id, ...postRoom } = selectedTraining;
+        return this.http.post<TrainingModel>(
+          `${this.config.apiUrl}/trainings`,
+          postRoom,
+          { headers }
+        );
+      } else {
+        return this.http.put<TrainingModel>(
+          `${this.config.apiUrl}/trainings/${selectedTraining.id}`,
+          selectedTraining,
+          { headers }
+        );
+      }
+    }
+  getMyTrainings(): Observable<TrainingModel[]>  {
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.user?.token}`
+    );
+    return this.http
+      .get<TrainingModel[]>(
+        `${this.config.apiUrl}/trainings/trainer/${this.user?.id}`,
+        { headers }
+      ).pipe(
+        map((response) => {
+          const appliedTrainings = this.subscribedTrainingsSubject.value;
+          return response.map((d) => ({
+            ...d,
+            trainingStart: new Date(d.trainingStart),
+            trainingEnd: new Date(d.trainingEnd)
+          }));
+        })
+      );
+  }
   private allTrainingsSubject = new BehaviorSubject<
     TrainingModel[] | undefined
   >(undefined);
