@@ -72,12 +72,15 @@
           }
         </div>
         <div class="inputField">
-          <label for="roomDescriptionInput">Leírás</label>
+          <label for="roomDescriptionInput">Leírás *</label>
           <textarea
             id="roomDescriptionInput"
             [(ngModel)]="selectedRoom.description"
             [ngModelOptions]="{ standalone: true }"
           ></textarea>
+          @if(formSubmitted && descriptionError){
+            <span class="error-message">A leírás kötelező!</span>
+            }
         </div>
 
         <div class="inputField">
@@ -88,7 +91,7 @@
             [(ngModel)]="selectedRoom.recommendedPeople"
             [ngModelOptions]="{ standalone: true }"
           />
-          @if(formSubmitted && priceError){
+          @if(formSubmitted && recomendedPeopleError){
           <span class="error-message">Ajánlott létszám nem lehet nulla</span>
           }
         </div>

@@ -33,7 +33,8 @@ export class RoomCMSComponent {
   searchTerm: string = '';
   formSubmitted = false;
   nameError = false;
-  priceError = false;
+  recomendedPeopleError = false;
+  descriptionError = false;
   isSubmitting = false;
   showDeleted = false;
   deletingRoomId: number | null = null;
@@ -189,6 +190,22 @@ export class RoomCMSComponent {
     this.formSubmitted = true;
 
     this.isSubmitting = true;
+
+    if(this.selectedRoom.name == '')
+    {
+      this.nameError = true;
+      return;
+    }
+    if(this.selectedRoom.description == '')
+      {
+        this.descriptionError = true;
+        return;
+      }
+      if(this.selectedRoom.recommendedPeople == 0)
+        {
+          this.recomendedPeopleError = true;
+          return;
+        }
 
     if (this.selectedRoom.id === -1) {
       this.roomService.saveRoom(this.selectedRoom).subscribe({

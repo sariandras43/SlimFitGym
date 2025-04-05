@@ -125,7 +125,7 @@
       <td data-cell="Fő kép"><img [src]="machine.imageUrls[0]" alt="" class="" /></td>
       <td data-cell="Segédleti kép"><img [src]="machine.imageUrls[1]" alt="" class="" /></td>
       <td class="itemButtons">
-        <button (click)="modalOpen(machine)">
+        <button aria-label="update" (click)="modalOpen(machine)">
           <svg
             width="800px"
             height="800px"
@@ -149,7 +149,7 @@
             />
           </svg>
         </button>
-        <button (click)="delete(machine)">
+        <button aria-label="delete" (click)="delete(machine)">
           @if (deletingMachineId === machine.id) {
             <app-button-loader [size]="0.3"></app-button-loader>
           }
