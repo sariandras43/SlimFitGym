@@ -27,32 +27,18 @@ export class BasicUserDataComponent {
   canModify: Boolean = false;
   @Input() loggedInUserPass: PassModel | undefined;
 
-  public get currentUser() {
-    const user =
-      localStorage.getItem('loggedInUser') ||
-      sessionStorage.getItem('loggedInUser');
-    if (!user) {
-      return undefined;
-    }
-    return JSON.parse(user);
-  }
+  originalUser: UserModel = {id:0};
 
   constructor(private userService: UserService, private router: Router) {
-    const loggedInUser = localStorage.getItem('loggedInUser');
-    const loggedInUserPass = localStorage.getItem('userPass');
+    
 
-    if (loggedInUser) {
-      this.user = JSON.parse(loggedInUser);
-    }
-    if (loggedInUserPass) {
-      this.loggedInUserPass = JSON.parse(loggedInUserPass);
-    }
-
+   
     this.userService.getPass();
 
     userService.loggedInUser$.subscribe((res) => {
       if (res) {
         this.user = res;
+        this.originalUser = {...res};
       }
     });
     userService.loggedInUserPass$.subscribe((res) => {
@@ -64,9 +50,9 @@ export class BasicUserDataComponent {
   }
   public get changedUserValue() {
     let hasChanged = false;
-    let updateUserData: UserModel = { id: this.currentUser.id };
+    let updateUserData: UserModel = { id: this.originalUser.id };
 
-    if (!(this.user.email == '' || this.user.email == this.currentUser.email)) {
+    if (!(this.user.email == '' || this.user.email == this.originalUser.email)) {
       updateUserData.email = this.user.email;
       hasChanged = true;
     }
@@ -74,11 +60,11 @@ export class BasicUserDataComponent {
       updateUserData.image = this.user.image;
       hasChanged = true;
     }
-    if (!(this.user.name == '' || this.user.name == this.currentUser.name)) {
+    if (!(this.user.name == '' || this.user.name == this.originalUser.name)) {
       updateUserData.name = this.user.name;
       hasChanged = true;
     }
-    if (!(this.user.phone == '' || this.user.phone == this.currentUser.phone)) {
+    if (!(this.user.phone == '' || this.user.phone == this.originalUser.phone)) {
       updateUserData.phone = this.user.phone;
       hasChanged = true;
     }
@@ -98,7 +84,7 @@ export class BasicUserDataComponent {
       this.userService.updateUser(updateUser).subscribe({
         next: (response) => {
           this.updateLoading = false;
-          this.user = this.currentUser;
+          this.user = this.originalUser;
           this.formChanged();
         },
         error: (error) => {
@@ -112,7 +98,7 @@ export class BasicUserDataComponent {
   imgDelete() {
     this.deleteImageLoading = true;
 
-    let updateUserData: UserModel = { id: this.currentUser.id, image: '' };
+    let updateUserData: UserModel = { id: this.originalUser.id, image: '' };
     this.userService.updateUser(updateUserData).subscribe({
       next: (response) => {
         this.deleteImageLoading = false;
