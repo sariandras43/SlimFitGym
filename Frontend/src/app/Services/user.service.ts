@@ -4,66 +4,57 @@ import { ConfigService } from './config.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { PassModel } from '../Models/pass.model';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  getAllUsers(): Observable<UserModel[]> {
-    const headers = new HttpHeaders().set(
-      'Authorization',
-      `Bearer ${this.loggedInUserSubject.getValue()?.token}`
-    );
-    return this.http.get<UserModel[]>(
-      `${this.config.apiUrl}/auth/accounts/all`, {headers}
-    );
-  }
-  private loggedInUserSubject = new BehaviorSubject<UserModel | undefined>(
-    undefined
-  );
+  private loggedInUserSubject = new BehaviorSubject<UserModel | undefined>(undefined);
   loggedInUser$ = this.loggedInUserSubject.asObservable();
-  private loggedInUserPassSubject = new BehaviorSubject<PassModel | undefined>(
-    undefined
-  );
+  private loggedInUserPassSubject = new BehaviorSubject<PassModel | undefined>(undefined);
   loggedInUserPass$ = this.loggedInUserPassSubject.asObservable();
 
-  constructor(private config: ConfigService, private http: HttpClient) {
+  constructor(
+    private config: ConfigService,
+    private http: HttpClient,
+    private cookieService: CookieService
+  ) {
     this.checkUser();
-    
   }
 
-  login(
-    email: string,
-    password: string,
-    rememberMe: boolean
-  ): Observable<boolean> {
-    return this.http
-      .post<UserModel>(`${this.config.apiUrl}/auth/login`, {
-        email,
-        password,
-        rememberMe,
-      })
-      .pipe(
-        map((response: UserModel) => {
-          this.loggedInUserSubject.next(response);
+  private getAuthHeaders(): HttpHeaders {
+    const token = this.loggedInUserSubject.getValue()?.token;
+    return new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  }
 
-          const storage = rememberMe ? localStorage : sessionStorage;
-          storage.setItem('loggedInUser', JSON.stringify(response));
-          this.getPass();
-          return true;
-        })
-      );
+  getAllUsers(): Observable<UserModel[]> {
+    return this.http.get<UserModel[]>(
+      `${this.config.apiUrl}/auth/accounts/all`,
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  login(email: string, password: string, rememberMe: boolean): Observable<boolean> {
+    return this.http.post<UserModel>(`${this.config.apiUrl}/auth/login`, {
+      email,
+      password,
+      rememberMe,
+    }).pipe(
+      map((response: UserModel) => {
+        this.handleAuthResponse(response, rememberMe);
+        return true;
+      })
+    );
   }
 
   logout() {
     this.loggedInUserSubject.next(undefined);
     this.loggedInUserPassSubject.next(undefined);
-    localStorage.removeItem('loggedInUser');
-    sessionStorage.removeItem('loggedInUser');
-    localStorage.removeItem('userPass');
-    sessionStorage.removeItem('userPass');
-
+    this.cookieService.delete('authData', '/');
+    this.cookieService.delete('passData', '/');
   }
+
   register(
     email: string,
     name: string,
@@ -71,108 +62,114 @@ export class UserService {
     password: string,
     rememberMe: boolean
   ): Observable<boolean> {
-    return this.http
-      .post<UserModel>(`${this.config.apiUrl}/auth/register`, {
-        name,
-        email,
-        phone,
-        password,
-        rememberMe,
+    return this.http.post<UserModel>(`${this.config.apiUrl}/auth/register`, {
+      name,
+      email,
+      phone,
+      password,
+      rememberMe,
+    }).pipe(
+      map((response: UserModel) => {
+        this.handleAuthResponse(response, rememberMe);
+        return true;
       })
-      .pipe(
-        map((response: UserModel) => {
-          this.loggedInUserSubject.next(response);
-          localStorage.setItem('loggedInUser', JSON.stringify(response));
-          this.getPass();
-          return true;
-        })
-      );
+    );
   }
 
   updateUser(user: UserModel): Observable<boolean> {
-    const headers = new HttpHeaders().set(
-      'Authorization',
-      `Bearer ${this.loggedInUserSubject.getValue()?.token}`
-    );
-    return this.http
-      .put<UserModel>(`${this.config.apiUrl}/auth/modify/${user.id}`, user, {
-        headers,
+    return this.http.put<UserModel>(
+      `${this.config.apiUrl}/auth/modify/${user.id}`,
+      user,
+      { headers: this.getAuthHeaders() }
+    ).pipe(
+      map((updatedUser: UserModel) => {
+        const currentUser = this.loggedInUserSubject.getValue();
+        const mergedUser = { ...currentUser, ...updatedUser };
+        this.loggedInUserSubject.next(mergedUser);
+        this.cookieService.set('authData', JSON.stringify(mergedUser), {
+          secure: true,
+          sameSite: 'Strict',
+          path: '/',
+        });
+        return true;
       })
-      .pipe(
-        map((response: UserModel) => {
-          response.token = this.loggedInUserSubject.getValue()?.token;
-          response.validTo = this.loggedInUserSubject.getValue()?.validTo;
-          this.loggedInUserSubject.next(response);
-          localStorage.setItem('loggedInUser', JSON.stringify(response));
-          this.getPass();
-          return true;
-        })
-      );
-  }
-
-  checkUser() {
-    const user =
-      localStorage.getItem('loggedInUser') ||
-      sessionStorage.getItem('loggedInUser');
-    if (user) {
-      const parsedUser: UserModel = JSON.parse(user);
-
-      if (
-        parsedUser.validTo &&
-        new Date().getTime() > Date.parse(parsedUser.validTo)
-      ) {
-        this.logout();
-        return;
-      }
-
-      this.loggedInUserSubject.next(parsedUser);
-      this.getPass();
-    }
+    );
   }
 
   deleteUser(user: UserModel): Observable<UserModel> {
-    const headers = new HttpHeaders().set(
-      'Authorization',
-      `Bearer ${this.loggedInUserSubject.getValue()?.token}`
-    );
     return this.http.delete<UserModel>(
       `${this.config.apiUrl}/auth/delete/${user.id}`,
-      {
-        headers,
-      }
+      { headers: this.getAuthHeaders() }
     );
   }
 
   getPass(): void {
-    let storage = localStorage;
-    let user = this.loggedInUserSubject.getValue();
-    if (!user) {
-      console.warn('No logged-in user found.');
+    const userId = this.loggedInUserSubject.getValue()?.id;
+    if (!userId) {
+      console.warn('No user ID available for pass retrieval');
       return;
     }
 
+    this.http.get<PassModel>(
+      `${this.config.apiUrl}/passes/accounts/${userId}/latest`,
+      { headers: this.getAuthHeaders() }
+    ).subscribe({
+      next: (pass) => {
+        this.loggedInUserPassSubject.next(pass);
+        this.cookieService.set('passData', JSON.stringify(pass), {
+          secure: true,
+          sameSite: 'Strict',
+          path: '/',
+        });
+      },
+      error: (error) => {
+        console.error('Failed to fetch pass:', error.error?.message || error.message);
+      },
+    });
+  }
 
-    const headers = new HttpHeaders().set(
-      'Authorization',
-      `Bearer ${user.token}`
-    );
+  private checkUser() {
+    const authCookie = this.cookieService.get('authData');
+    if (!authCookie) return;
 
-    this.http
-      .get<PassModel>(
-        `${this.config.apiUrl}/passes/accounts/${user.id}/latest`,
-        { headers }
-      )
-      .subscribe({
-        next: (response) => {
-          this.loggedInUserPassSubject.next(response);
-          storage.setItem('userPass', JSON.stringify(response));
-        },
-        error: (error) => {
-          console.error(
-            'Failed to fetch pass:',
-            error.error?.message || error.message
-          );
-        },
-      });
+    try {
+      const user: UserModel = JSON.parse(authCookie);
+      
+      if (user.validTo && new Date() > new Date(user.validTo)) {
+        this.logout();
+        return;
+      }
+
+      this.loggedInUserSubject.next(user);
+      this.restorePassFromCookie();
+    } catch (error) {
+      console.error('Error parsing auth cookie:', error);
+      this.logout();
+    }
+  }
+
+  private handleAuthResponse(response: UserModel, rememberMe: boolean) {
+    const cookieOptions = {
+      expires: rememberMe ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) : undefined,
+      secure: true,
+      sameSite: 'Strict' as const,
+      path: '/',
+    };
+
+    this.loggedInUserSubject.next(response);
+    this.cookieService.set('authData', JSON.stringify(response), cookieOptions);
+    this.getPass();
+  }
+
+  private restorePassFromCookie() {
+    const passCookie = this.cookieService.get('passData');
+    if (passCookie) {
+      try {
+        const pass: PassModel = JSON.parse(passCookie);
+        this.loggedInUserPassSubject.next(pass);
+      } catch (error) {
+        console.error('Error parsing pass cookie:', error);
+      }
+    }
   }
 }
