@@ -10,29 +10,48 @@ import { UserModel } from '../Models/user.model';
   providedIn: 'root',
 })
 export class TrainingService {
-  saveTraining(selectedTraining: TrainingModel) : Observable<TrainingModel> {
-      const headers = new HttpHeaders().set(
-        'Authorization',
-        `Bearer ${this.user?.token}`
-      );
-  
-      
-      if (selectedTraining.id === -1) {
-        const { id, ...postRoom } = selectedTraining;
-        return this.http.post<TrainingModel>(
-          `${this.config.apiUrl}/trainings`,
-          postRoom,
-          { headers }
+  saveTraining(
+    selectedTraining: Partial<TrainingModel>
+  ): Observable<TrainingModel> {
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${this.user?.token}`
+    );
+
+    if (selectedTraining.id === -1) {
+      const { id, ...postRoom } = selectedTraining;
+      return this.http
+        .post<TrainingModel>(`${this.config.apiUrl}/trainings`, postRoom, {
+          headers,
+        })
+        .pipe(
+          map((response) => {
+            return {
+              ...response,
+              trainingStart: new Date(response.trainingStart),
+              trainingEnd: new Date(response.trainingEnd),
+            };
+          })
         );
-      } else {
-        return this.http.put<TrainingModel>(
+    } else {
+      return this.http
+        .put<TrainingModel>(
           `${this.config.apiUrl}/trainings/${selectedTraining.id}`,
           selectedTraining,
           { headers }
+        )
+        .pipe(
+          map((response) => {
+            return {
+              ...response,
+              trainingStart: new Date(response.trainingStart),
+              trainingEnd: new Date(response.trainingEnd),
+            };
+          })
         );
-      }
     }
-  getMyTrainings(): Observable<TrainingModel[]>  {
+  }
+  getMyTrainings(): Observable<TrainingModel[]> {
     const headers = new HttpHeaders().set(
       'Authorization',
       `Bearer ${this.user?.token}`
@@ -41,13 +60,13 @@ export class TrainingService {
       .get<TrainingModel[]>(
         `${this.config.apiUrl}/trainings/trainer/${this.user?.id}`,
         { headers }
-      ).pipe(
+      )
+      .pipe(
         map((response) => {
-          const appliedTrainings = this.subscribedTrainingsSubject.value;
           return response.map((d) => ({
             ...d,
             trainingStart: new Date(d.trainingStart),
-            trainingEnd: new Date(d.trainingEnd)
+            trainingEnd: new Date(d.trainingEnd),
           }));
         })
       );
