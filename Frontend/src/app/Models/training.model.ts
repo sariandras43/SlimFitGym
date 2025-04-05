@@ -16,5 +16,7 @@ export interface TrainingModel {
 
     //for the display
     userApplied: boolean;
+    trainingStartString?: string,
+    trainingEndString?: string
   }
   

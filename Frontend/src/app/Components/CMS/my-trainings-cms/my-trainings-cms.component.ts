@@ -5,7 +5,7 @@ import { ButtonLoaderComponent } from '../../button-loader/button-loader.compone
 import { FormsModule } from '@angular/forms';
 import { RoomModel } from '../../../Models/room.model';
 import { RoomService } from '../../../Services/room.service';
-import { NgClass } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { UserService } from '../../../Services/user.service';
 import { UserModel } from '../../../Models/user.model';
 
@@ -27,7 +27,7 @@ type SortableProperty = keyof Pick<
 >;
 @Component({
   selector: 'app-my-trainings-cms',
-  imports: [FormsModule, ButtonLoaderComponent, NgClass],
+  imports: [FormsModule, ButtonLoaderComponent, NgClass, CommonModule],
   templateUrl: './my-trainings-cms.component.html',
   styleUrl: './my-trainings-cms.component.scss',
 })
@@ -43,11 +43,11 @@ export class MyTrainingsCMSComponent {
     if (this.selectedTraining.id === -1) {
       this.trainingService.saveTraining(this.selectedTraining).subscribe({
         next: (updated) => {
-          
           this.trainings.unshift({
-            ...updated, 
-            freePlaces: updated.maxPeople, 
-            room: this.rooms?.find(r => r.id == updated.roomId)?.name || ''});
+            ...updated,
+            freePlaces: updated.maxPeople,
+            room: this.rooms?.find((r) => r.id == updated.roomId)?.name || '',
+          });
           this.selectedTraining = undefined;
           this.isSubmitting = false;
           this.updateDisplayTrainings();
@@ -85,8 +85,7 @@ export class MyTrainingsCMSComponent {
       payload.trainingStart = this.selectedTraining.trainingStart;
     }
     if (
-      this.selectedTraining?.trainingEnd !==
-      this.originalTraining?.trainingEnd
+      this.selectedTraining?.trainingEnd !== this.originalTraining?.trainingEnd
     ) {
       payload.trainingEnd = this.selectedTraining.trainingEnd;
     }
@@ -100,9 +99,17 @@ export class MyTrainingsCMSComponent {
       next: (updated) => {
         const index = this.trainings.findIndex((p) => p.id === updated.id);
         if (index > -1) {
-          this.trainings[index] = updated;
+          this.trainings[index] = {
+            ...updated,
+            freePlaces: updated.maxPeople,
+            room: this.rooms?.find((r) => r.id == updated.roomId)?.name || '',
+          };
         } else {
-          this.trainings.unshift(updated);
+          this.trainings.unshift({
+            ...updated,
+            freePlaces: updated.maxPeople,
+            room: this.rooms?.find((r) => r.id == updated.roomId)?.name || '',
+          });
         }
         this.selectedTraining = undefined;
         this.isSubmitting = false;
@@ -114,6 +121,67 @@ export class MyTrainingsCMSComponent {
         this.bottomError = err.error?.message || 'Hiba mentés közben.';
       },
     });
+  }
+  updateDateTime(type: 'start' | 'end', field: 'date' | 'time', event: Event) {
+    if (
+      !this.selectedTraining ||
+      !this.selectedTraining.trainingStart ||
+      !this.selectedTraining.trainingEnd
+    )
+      return;
+
+    const input = event.target as HTMLInputElement;
+    const currentDate =
+      type === 'start'
+        ? new Date(this.selectedTraining.trainingStart)
+        : new Date(this.selectedTraining.trainingEnd);
+
+    if (field === 'date') {
+      const [year, month, day] = input.value.split('-').map(Number);
+      currentDate.setFullYear(year, month - 1, day);
+    } else {
+      const [hours, minutes] = input.value.split(':').map(Number);
+      currentDate.setHours(hours, minutes);
+    }
+
+    if (type === 'start') {
+      this.selectedTraining.trainingStart = new Date(currentDate);
+      // Auto-adjust end date if earlier than start
+      if (this.selectedTraining.trainingEnd < currentDate) {
+        this.selectedTraining.trainingEnd = new Date(
+          currentDate.getTime() + 3600000
+        );
+      }
+    } else {
+      this.selectedTraining.trainingEnd = new Date(currentDate);
+    }
+
+    this.validateDates();
+  }
+
+  private validateDates() {
+    if (
+      !this.selectedTraining ||
+      !this.selectedTraining.trainingStart ||
+      !this.selectedTraining.trainingEnd
+    )
+      return;
+
+    // Basic validation
+    const now = new Date();
+    const start = this.selectedTraining.trainingStart;
+    const end = this.selectedTraining.trainingEnd;
+
+    this.bottomError = null;
+
+    if (start < now) {
+      this.bottomError = 'A kezdő dátum nem lehet a múltban!';
+    }
+
+    if (end < start) {
+      this.bottomError = 'A befejezési dátum nem lehet korábbi mint a kezdő!';
+      this.selectedTraining.trainingEnd = new Date(start.getTime() + 3600000);
+    }
   }
   trainings: TrainingModel[] = [];
   trainerApplicants: {
@@ -131,7 +199,7 @@ export class MyTrainingsCMSComponent {
   maxPeopleError = false;
   bottomError: string | null = null;
   minStartDate = new Date().toISOString().slice(0, 16);
-  maxStartDate = new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+  maxStartDate = new Date(new Date().setFullYear(new Date().getFullYear() + 4))
     .toISOString()
     .slice(0, 16);
   searchTerm: string = '';
@@ -180,6 +248,7 @@ export class MyTrainingsCMSComponent {
     }
 
     // Date relationship validation
+
     if (
       type === 'start' &&
       this.selectedTraining.trainingEnd < this.selectedTraining.trainingStart
@@ -206,7 +275,6 @@ export class MyTrainingsCMSComponent {
   }
   displayDate(training: TrainingModel) {
     const { trainingStart, trainingEnd } = training;
-    console.log(trainingStart, trainingEnd);
     if (trainingStart) {
       const startString = `${trainingStart.getFullYear()}.${trainingStart.getDate()}.${trainingStart.getDay()} ${trainingStart.getHours()}:${trainingStart.getHours()} - `;
       if (trainingStart.getDay() == trainingEnd.getDay()) {
@@ -262,7 +330,6 @@ export class MyTrainingsCMSComponent {
         s.freePlaces?.toString().includes(this.searchTerm)
     );
 
-    console.log(this.sortState.property);
     if (this.sortState.property) {
       filtered = this.sorttrainings(
         filtered,

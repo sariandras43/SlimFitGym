@@ -698,3 +698,45 @@ input[type="number"] {
     
   }
 }
+.date-time-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.time-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: center;
+  
+  input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid var(--bg-color);
+    border-radius: calc(var(--border-radius) / 3);
+    background: var(--bg-secondary);
+    color: var(--main-text);
+    transition: all 0.2s ease;
+
+    &:focus {
+      border-color: var(--primary-color);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2);
+    }
+
+    &[type="date"] {
+      min-width: 160px;
+    }
+
+    &[type="time"] {
+      min-width: 120px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .time-row {
+    grid-template-columns: 1fr;
+  }
+}

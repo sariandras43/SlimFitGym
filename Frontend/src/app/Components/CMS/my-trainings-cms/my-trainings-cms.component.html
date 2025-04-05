@@ -76,7 +76,7 @@
         <div class="inputField">
           <div class="add-room-controls">
             <select
-            id="trainingRoomInput"
+              id="trainingRoomInput"
               [(ngModel)]="selectedTraining.roomId"
               class="room-select"
               [ngModelOptions]="{ standalone: true }"
@@ -88,41 +88,53 @@
             </select>
           </div>
         </div>
-        <!-- Add these input fields inside your form -->
-        <div class="inputField">
-          <label for="startDate">Kezdő dátum *</label>
-          <input
-            type="datetime-local"
-            id="startDate"
-            [(ngModel)]="selectedTraining.trainingStart"
-            [ngModelOptions]="{ standalone: true }"
-            (input)="validateDate($event, 'start')"
-            [min]="minStartDate"
-            [max]="maxStartDate"
-            [ngClass]="{
-              error:
-                bottomError &&
-                bottomError.toLocaleLowerCase().includes('évszám')
-            }"
-          />
-        </div>
+        <!-- Replace the datetime-local inputs with this: -->
+        <div class="date-time-section">
+          <!-- Start Date & Time -->
+          <div class="date-time-group">
+            <div class="inputField">
+              <label for="startDate">Edzés kezdete *</label>
+              <div class="time-row">
+                <input
+                  type="date"
+                  id="startDate"
+                  [value]="selectedTraining.trainingStart | date : 'yyyy-MM-dd'"
+                  (input)="updateDateTime('start', 'date', $event)"
+                  [min]="minStartDate | date : 'yyyy-MM-dd'"
+                  [max]="maxStartDate | date : 'yyyy-MM-dd'"
+                />
+                <input
+                  type="time"
+                  id="startTime"
+                  [value]="selectedTraining.trainingStart | date : 'HH:mm'"
+                  (input)="updateDateTime('start', 'time', $event)"
+                />
+              </div>
+            </div>
+          </div>
 
-        <div class="inputField">
-          <label for="endDate">Végző dátum *</label>
-          <input
-            [ngClass]="{
-              error:
-                bottomError &&
-                bottomError.toLocaleLowerCase().includes('évszám')
-            }"
-            type="datetime-local"
-            id="endDate"
-            [(ngModel)]="selectedTraining.trainingEnd"
-            [ngModelOptions]="{ standalone: true }"
-            [min]="selectedTraining.trainingStart || minStartDate"
-            (input)="validateDate($event, 'end')"
-            [max]="maxStartDate"
-          />
+          <!-- End Date & Time -->
+          <div class="date-time-group">
+            <div class="inputField">
+              <label for="endDate">Edzés vége *</label>
+              <div class="time-row">
+                <input
+                  type="date"
+                  id="endDate"
+                  [value]="selectedTraining.trainingEnd | date : 'yyyy-MM-dd'"
+                  (input)="updateDateTime('end', 'date', $event)"
+                  [min]="selectedTraining.trainingStart | date : 'yyyy-MM-dd'"
+                  [max]="maxStartDate | date : 'yyyy-MM-dd'"
+                />
+                <input
+                  type="time"
+                  id="endTime"
+                  [value]="selectedTraining.trainingEnd | date : 'HH:mm'"
+                  (input)="updateDateTime('end', 'time', $event)"
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         @if (bottomError) {
