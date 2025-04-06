@@ -96,7 +96,12 @@ export class UserService {
       .pipe(
         map((updatedUser: UserModel) => {
           const currentUser = this.loggedInUserSubject.getValue();
-          const mergedUser = { ...currentUser, ...updatedUser, token: currentUser?.token, validTo: currentUser?.validTo };
+          const mergedUser = {
+            ...currentUser,
+            ...updatedUser,
+            token: currentUser?.token,
+            validTo: currentUser?.validTo,
+          };
           this.loggedInUserSubject.next(mergedUser);
           this.cookieService.set('authData', JSON.stringify(mergedUser), {
             secure: true,
@@ -145,6 +150,10 @@ export class UserService {
       });
   }
 
+  getTrainers(): Observable<UserModel[]> {
+    return this.http.get<UserModel[]>(`${this.config.apiUrl}/auth/trainers`);
+  }
+
   private checkUser() {
     const authCookie = this.cookieService.get('authData');
     if (!authCookie) return;
@@ -157,14 +166,22 @@ export class UserService {
         return;
       }
       this.loggedInUserSubject.next(user);
-      this.http.get<UserModel>(`${this.config.apiUrl}/auth/me`, {headers: this.getAuthHeaders()}).subscribe({
-        next: (response) => {
-          this.loggedInUserSubject.next({...response, token: this.loggedInUserSubject.value?.token, validTo: this.loggedInUserPassSubject.value?.validTo});
-        },
-        error: () => {
-          this.loggedInUserSubject.next(undefined);
-        },
-      });
+      this.http
+        .get<UserModel>(`${this.config.apiUrl}/auth/me`, {
+          headers: this.getAuthHeaders(),
+        })
+        .subscribe({
+          next: (response) => {
+            this.loggedInUserSubject.next({
+              ...response,
+              token: this.loggedInUserSubject.value?.token,
+              validTo: this.loggedInUserPassSubject.value?.validTo,
+            });
+          },
+          error: () => {
+            this.loggedInUserSubject.next(undefined);
+          },
+        });
 
       this.restorePassFromCookie();
     } catch (error) {

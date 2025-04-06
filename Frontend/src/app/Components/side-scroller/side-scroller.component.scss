@@ -1,0 +1,52 @@
+/* user-billboard.component.css */
+.billboard-container {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    padding: 20px 0;
+    background: inherit;
+    margin: 20px 0;
+  }
+  
+  .slider {
+    display: flex;
+    animation: slide 15s linear infinite;
+
+   gap: 10em;
+    width: 100%
+
+  }
+  
+  @keyframes slide {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50.2%);
+    }
+  }
+  
+  .user-card {
+    flex: 0 0 auto;
+
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  
+  
+  .user-image {
+    width: 20rem;
+    height: 20rem;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+   
+  }
+  
+  .user-name {
+    font-size: 2rem;
+    font-weight: 500;
+    color: var(--main-text);
+    padding: 0 10px;
+  }
