@@ -39,6 +39,7 @@
 declare namespace Cypress {
     interface Chainable {
       loginAsAdmin(): void;
+      loginAsUser(): void;
     }
   }
   
@@ -47,6 +48,15 @@ declare namespace Cypress {
       cy.visit('/login');
       cy.get('#loginEmail').type('admin@gmail.com');
       cy.get('#logInPassword').type('admin');
+      cy.get('[data-cy="loginButton"]').click();
+      cy.url().should('include', '/user/userData');
+    });
+  });
+  Cypress.Commands.add('loginAsUser', () => {
+    cy.session('user-login', () => {
+      cy.visit('/login');
+      cy.get('#loginEmail').type('pista@gmail.com');
+      cy.get('#logInPassword').type('pista');
       cy.get('[data-cy="loginButton"]').click();
       cy.url().should('include', '/user/userData');
     });
