@@ -1,0 +1,52 @@
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--bg-secondary);
+  padding: 2rem;
+}
+
+.error-container {
+  text-align: center;
+  max-width: 600px;
+  padding: 2rem;
+  border-radius: 20px;
+  background: var(--bg-light);
+}
+
+.error-code {
+  font-size: 8rem;
+  font-weight: 900;
+  color: var(--primary-color);
+  line-height: 1;
+}
+
+.error-title {
+  font-size: 2rem;
+  margin: 1rem 0;
+  color: var(--primary-text);
+}
+
+
+.home-link {
+  display: inline-block;
+  padding: 12px 24px;
+  color: var(--primary-color);
+  border-radius: 30px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    background-color: var(--primary-color);
+    color: white;
+    
+  }
+}
+
+
+@keyframes gear-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
