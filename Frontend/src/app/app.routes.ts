@@ -16,6 +16,9 @@ import { UserCMSComponent } from './Components/CMS/user-cms/user-cms.component';
 import { MyPassComponent } from './Components/CMS/my-pass/my-pass.component';
 import { TrainingsCMSComponent } from './Components/CMS/trainings-cms/trainings-cms.component';
 import { MyTrainingsCMSComponent } from './Components/CMS/my-trainings-cms/my-trainings-cms.component';
+import { RoleGuard } from './Auth/role.guard';
+import { AuthGuard } from './Auth/auth.guard';
+import { NotFoundComponent } from './Pages/not-found/not-found.component';
 
 export const routes: Routes = [
   { path: '', component: MainPageComponent },
@@ -27,19 +30,63 @@ export const routes: Routes = [
   {
     path: 'user',
     component: UserPageComponent,
+    canActivate: [AuthGuard], // First check authentication
     children: [
       { path: 'userData', component: BasicUserDataComponent },
-      { path: 'machines', component: MachinesCMSComponent },
-      { path: 'passes', component: PassesCMSComponent },
-      { path: 'rooms', component: RoomCMSComponent },
-      { path: 'users', component: UserCMSComponent },
-      { path: 'myPass', component: MyPassComponent },
-      { path: 'trainings', component: TrainingsCMSComponent  },
-      { path: 'myTrainings', component: MyTrainingsCMSComponent  },
+      
+      // User-specific
+      { 
+        path: 'myPass', 
+        component: MyPassComponent,
+        data: { allowedRoles: ['user'] }
+      },
+
+      // Trainer+Admin routes
+      { 
+        path: 'myTrainings', 
+        component: MyTrainingsCMSComponent,
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['trainer', 'admin'] }
+      },
+
+      // Admin-only routes
+      { 
+        path: 'trainings', 
+        component: TrainingsCMSComponent,
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['admin'] }
+      },
+      { 
+        path: 'passes', 
+        component: PassesCMSComponent,
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['admin'] }
+      },
+      { 
+        path: 'rooms', 
+        component: RoomCMSComponent,
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['admin'] }
+      },
+      { 
+        path: 'users', 
+        component: UserCMSComponent,
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['admin'] }
+      },
+      { 
+        path: 'machines', 
+        component: MachinesCMSComponent,
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['admin'] }
+      },
       { path: '', redirectTo: 'userData', pathMatch: 'full' },
-    ],
+    ]
   },
+
 
   { path: 'login', component: LogInPageComponent },
   { path: 'signup', component: SignUpPageComponent },
+  { path: '404', component: NotFoundComponent },
+  { path: '**', redirectTo: '/404' }
 ];
