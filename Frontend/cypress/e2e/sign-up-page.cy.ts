@@ -1,7 +1,7 @@
 describe('Signup Form Validation (Tab off/Input)', () => {
   describe('Signup Form Validation frontend', () => {
     beforeEach(() => {
-      // Visit the page containing the signup form
+      cy.viewport('macbook-15')  
       cy.visit('/signup'); // Adjust the URL based on your app's route
     });
   
@@ -120,6 +120,7 @@ describe('Signup Form Validation (Tab off/Input)', () => {
   
     
     it('should successfully sign up with valid credentials', () => {
+      cy.request('POST', "http://localhost:5278/seed"); 
       
       cy.get('#singUpName').clear().type('John Doe');
       cy.get('#singUpEmail').clear().type('johndoe@example.com');
