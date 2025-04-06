@@ -39,6 +39,7 @@ export class BasicUserDataComponent {
       if (res) {
         this.user = res;
         this.originalUser = {...res};
+        console.log(res)
       }
     });
     userService.loggedInUserPass$.subscribe((res) => {
@@ -84,7 +85,6 @@ export class BasicUserDataComponent {
       this.userService.updateUser(updateUser).subscribe({
         next: (response) => {
           this.updateLoading = false;
-          this.user = this.originalUser;
           this.formChanged();
         },
         error: (error) => {
