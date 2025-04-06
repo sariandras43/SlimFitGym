@@ -4,6 +4,7 @@ import { CounterBubbleComponent } from '../../Components/counter-bubble/counter-
 import { RoomService } from '../../Services/room.service';
 import { RoomModel } from '../../Models/room.model';
 import { RoomCardComponent } from "../../Components/cards/room-card/room-card.component";
+import { MachineService } from '../../Services/machine.service';
 
 @Component({
   selector: 'app-rooms',
@@ -13,9 +14,22 @@ import { RoomCardComponent } from "../../Components/cards/room-card/room-card.co
 })
 export class RoomsComponent {
   rooms: RoomModel[] | undefined;
-  constructor(roomService: RoomService) {
-    roomService.rooms$.subscribe((rooms)=>{
+  fullMaxPeople = 0;
+  machineCount = 0;
+  constructor(private roomService: RoomService, private machineService: MachineService) {
+    
+  }
+  ngAfterViewInit() {
+    this.roomService.rooms$.subscribe((rooms) => {
       this.rooms = rooms;
-    })
+      this.fullMaxPeople = 0;
+      rooms?.forEach(r=>{
+        this.fullMaxPeople += r.recommendedPeople;
+      })
+      this.machineService.allMachines$.subscribe(m=>{
+        this.machineCount = m?.length || 0;
+       
+      })
+    });
   }
 }
