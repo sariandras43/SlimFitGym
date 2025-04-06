@@ -9,6 +9,7 @@ import { MachineService } from '../../Services/machine.service';
 import { SideScrollerComponent } from "../../Components/side-scroller/side-scroller.component";
 import { UserModel } from '../../Models/user.model';
 import { UserService } from '../../Services/user.service';
+import { FooterComponent } from "../../Components/footer/footer.component";
 
 @Component({
   selector: 'app-main-page',
@@ -17,7 +18,8 @@ import { UserService } from '../../Services/user.service';
     CounterBubbleComponent,
     SubscriptionsComponent,
     PromotionComponent,
-    SideScrollerComponent
+    SideScrollerComponent,
+    FooterComponent
 ],
   templateUrl: './main-page.component.html',
   styleUrl: './main-page.component.scss',

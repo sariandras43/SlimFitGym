@@ -6,24 +6,25 @@
 <app-counter-bubble [number]="machineCount" title="Fajta gép"/>
 
 </div>
-<div class="scrollerContainer">
-    <h2>Edzőink</h2>
-  <app-side-scroller [trainers]="trainers"></app-side-scroller>
-</div>
 <section class="promotions-container ">
   <app-promotion
-    imageUrl="mainHero.jpeg"
-    title="Modern Felszerelés"
+  imageUrl="mainHero.jpeg"
+  title="Modern Felszerelés"
     description="Legújabb technológiájú edzőgépeinkkel garantáljuk a hatékony edzést. Minden szinthez megfelelő felszerelés!"
   ></app-promotion>
-
+  
   <app-promotion
     imageUrl="mainHero.jpeg"
     [align]="'right'"
     title="Szakértő Edzők"
     description="Tapasztalt edzőink segítenek céljaid elérésében. Személyre szabott edzésterv és folyamatos támogatás!"
-  ></app-promotion>
-</section>
+    ></app-promotion>
+  </section>
+  <div class="scrollerContainer">
+      <h2>Edzőink</h2>
+    <app-side-scroller [trainers]="trainers"></app-side-scroller>
+  </div>
 <div class="mt5">
     <app-subscriptions title="Kiemelt ajánlataink" [highlightOnly]="true"/>
 </div>
+<app-footer></app-footer>
