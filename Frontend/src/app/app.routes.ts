@@ -19,6 +19,7 @@ import { MyTrainingsCMSComponent } from './Components/CMS/my-trainings-cms/my-tr
 import { RoleGuard } from './Auth/role.guard';
 import { AuthGuard } from './Auth/auth.guard';
 import { NotFoundComponent } from './Pages/not-found/not-found.component';
+import { SubscribedTrainingsComponent } from './Components/CMS/subscribed-trainings/subscribed-trainings.component';
 
 export const routes: Routes = [
   { path: '', component: MainPageComponent },
@@ -33,6 +34,7 @@ export const routes: Routes = [
     canActivate: [AuthGuard], // First check authentication
     children: [
       { path: 'userData', component: BasicUserDataComponent },
+      { path: 'subscribedTrainings', component: SubscribedTrainingsComponent },
       
       // User-specific
       { 
