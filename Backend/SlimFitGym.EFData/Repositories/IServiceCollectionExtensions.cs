@@ -34,6 +34,7 @@ namespace SlimFitGym.Data.Repository
             service.AddScoped<ITrainerApplicantsRepository, TrainerApplicantsRepository>();
             service.AddScoped<IEntriesRepository, EntriesRepository>();
             service.AddScoped<IImagesRepository, ImagesRepository>();
+            service.AddScoped<IStatisticsRepository, StatisticsRepository>();
             service.AddDbContext<SlimFitGymContext>();
         }
 
