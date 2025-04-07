@@ -191,10 +191,20 @@ export class UserService {
   }
 
   private handleAuthResponse(response: UserModel, rememberMe: boolean) {
+    let expiration: Date | undefined = undefined;
+    if(rememberMe)
+    {
+      if(response.validTo)
+      {
+
+        expiration = new Date(response.validTo)
+      }
+      else{
+        new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+      }
+    }
     const cookieOptions = {
-      expires: rememberMe
-        ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-        : undefined,
+      expires: expiration,
       secure: true,
       sameSite: 'Strict' as const,
       path: '/',
