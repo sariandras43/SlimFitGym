@@ -39,6 +39,11 @@
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|AnyCPU'">
+      <AndroidPackageFormat>apk</AndroidPackageFormat>
+		<RunAOTCompilation>false</RunAOTCompilation>
+    </PropertyGroup>
+
     <ItemGroup>
         <!-- App Icon -->
 

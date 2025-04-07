@@ -15,7 +15,7 @@
             <ul class="dropdown-menu lighter-dark" aria-labelledby="logoutDropdown">
                 <NavLink href="/modifydata" class="dropdown-item lighter-dark fw-bold">@AccountModel.LoggedInUser.Name</NavLink>
                 <li class="@(DataService.isLoading ? "disabled" : "")">
-                    <a class="dropdown-item lighter-dark" href="#" @onclick="@(DataService.isLoading ? null : Logout)">Kijelentkezés</a>
+                    <a class="dropdown-item lighter-dark" href="#" @onclick="Logout">Kijelentkezés</a>
                 </li>
             </ul>
 
