@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { TrainingModel } from '../../../Models/training.model';
 import { TrainingService } from '../../../Services/training.service';
 import { ButtonLoaderComponent } from "../../button-loader/button-loader.component";
+import Utils from '../../../utils/util';
 
 enum SortDirection {
   Asc = 'asc',
@@ -50,12 +51,7 @@ toggleShowDeleted() {
     this.loadTrainings();
   }
   displayDate(training: TrainingModel) {
-    const {trainingStart,trainingEnd } = training;
-    const startString = `${trainingStart.getFullYear()}.${trainingStart.getDate()}.${trainingStart.getDay()} ${trainingStart.getHours()}:${trainingStart.getHours()} - `;
-    if (trainingStart.getDay() == trainingEnd.getDay()) {
-      return startString + `${trainingEnd.getHours()}:${trainingEnd.getMinutes()}`;
-    }
-    return startString + `${trainingEnd.getFullYear()}.${trainingEnd.getDate()}.${trainingEnd.getDay()} ${trainingEnd.getHours()}:${trainingEnd.getHours()}`;
+    return Utils.displayDate(training);  
   }
  
   private loadTrainings() {

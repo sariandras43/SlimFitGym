@@ -8,6 +8,7 @@ import { RoomService } from '../../../Services/room.service';
 import { CommonModule, NgClass } from '@angular/common';
 import { UserService } from '../../../Services/user.service';
 import { UserModel } from '../../../Models/user.model';
+import Utils from '../../../utils/util';
 
 enum SortDirection {
   Asc = 'asc',
@@ -270,22 +271,7 @@ export class MyTrainingsCMSComponent {
     this.roomService.rooms$.subscribe((r) => (this.rooms = r));
   }
   displayDate(training: TrainingModel) {
-    const { trainingStart, trainingEnd } = training;
-    if (trainingStart) {
-      const startString = `${trainingStart.getFullYear()}.${trainingStart.getDate()}.${trainingStart.getDay()} ${trainingStart.getHours()}:${trainingStart.getHours()} - `;
-      if (trainingStart.getDay() == trainingEnd.getDay()) {
-        return (
-          startString + `${trainingEnd.getHours()}:${trainingEnd.getMinutes()}`
-        );
-      }
-      return (
-        startString +
-        `${trainingEnd.getFullYear()}.${trainingEnd.getDate()}.${trainingEnd.getDay()} ${trainingEnd.getHours()}:${trainingEnd.getHours()}`
-      );
-    } else if (trainingEnd) {
-      return `${trainingEnd.getFullYear()}.${trainingEnd.getDate()}.${trainingEnd.getDay()} ${trainingEnd.getHours()}:${trainingEnd.getHours()}`;
-    }
-    return '';
+    return Utils.displayDate(training);
   }
 
   private loadTrainings() {

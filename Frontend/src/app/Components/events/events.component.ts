@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { TrainingModel } from '../../Models/training.model';
 import { UserModel } from '../../Models/user.model';
+import Utils from '../../utils/util';
 
 @Component({
   selector: 'app-events',
@@ -20,11 +21,6 @@ this.unsubscribed.emit(training)
   @Output() subscribed = new EventEmitter<TrainingModel>;
   @Output() unsubscribed = new EventEmitter<TrainingModel>;
   displayDate(training: TrainingModel) {
-    const {trainingStart,trainingEnd } = training;
-    const startString = `${trainingStart.getFullYear()}.${trainingStart.getDate()}.${trainingStart.getDay()} ${trainingStart.getHours()}:${trainingStart.getHours()} - `;
-    if (trainingStart.getDay() == trainingEnd.getDay()) {
-      return startString + `${trainingEnd.getHours()}:${trainingEnd.getMinutes()}`;
-    }
-    return startString + `${trainingEnd.getFullYear()}.${trainingEnd.getDate()}.${trainingEnd.getDay()} ${trainingEnd.getHours()}:${trainingEnd.getHours()}`;
+    return Utils.displayDate(training);  
   }
 }

@@ -5,7 +5,8 @@ import { TrainingService } from '../../Services/training.service';
 import { combineLatest, Subscription } from 'rxjs';
 import { UserService } from '../../Services/user.service';
 import { UserModel } from '../../Models/user.model';
-import { FooterComponent } from "../../Components/footer/footer.component";
+import { FooterComponent } from '../../Components/footer/footer.component';
+import Util from '../../utils/util';
 
 @Component({
   selector: 'app-trainigs-page',
@@ -52,33 +53,7 @@ export class TrainigsPageComponent {
     });
   }
 
-
   displayDate(training: TrainingModel): string {
-    const { trainingStart, trainingEnd } = training;
-    if (!(trainingStart instanceof Date) || !(trainingEnd instanceof Date))
-      return '';
-
-    const pad = (num: number) => num.toString().padStart(2, '0');
-
-    const startDate = `${trainingStart.getFullYear()}.${
-      trainingStart.getMonth() + 1
-    }.${trainingStart.getDate()}`;
-    const startTime = `${pad(trainingStart.getHours())}:${pad(
-      trainingStart.getMinutes()
-    )}`;
-
-    if (trainingStart.toDateString() === trainingEnd.toDateString()) {
-      return `${startDate} ${startTime} - ${pad(trainingEnd.getHours())}:${pad(
-        trainingEnd.getMinutes()
-      )}`;
-    } else {
-      const endDate = `${trainingEnd.getFullYear()}.${
-        trainingEnd.getMonth() + 1
-      }.${trainingEnd.getDate()}`;
-      const endTime = `${pad(trainingEnd.getHours())}:${pad(
-        trainingEnd.getMinutes()
-      )}`;
-      return `${startDate} ${startTime} - ${endDate} ${endTime}`;
-    }
+    return Util.displayDate(training);
   }
 }
