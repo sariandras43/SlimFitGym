@@ -11,6 +11,7 @@ import { TrainingModel } from '../../Models/training.model';
 import { UserService } from '../../Services/user.service';
 import { UserModel } from '../../Models/user.model';
 import { TrainingService } from '../../Services/training.service';
+import { FooterComponent } from "../../Components/footer/footer.component";
 
 @Component({
   selector: 'app-room-detail',
@@ -19,7 +20,8 @@ import { TrainingService } from '../../Services/training.service';
     CounterBubbleComponent,
     EventsComponent,
     MachinesComponent,
-  ],
+    FooterComponent
+],
   templateUrl: './room-detail.component.html',
   styleUrl: './room-detail.component.scss',
 })

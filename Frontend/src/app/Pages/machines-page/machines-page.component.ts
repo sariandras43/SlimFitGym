@@ -3,10 +3,11 @@ import { HeroComponent } from '../../Components/hero/hero.component';
 import { MachinesComponent } from '../../Components/machines/machines.component';
 import { MachineService } from '../../Services/machine.service';
 import { MachineModel } from '../../Models/machine.model';
+import { FooterComponent } from "../../Components/footer/footer.component";
 
 @Component({
   selector: 'app-machines-page',
-  imports: [HeroComponent, MachinesComponent],
+  imports: [HeroComponent, MachinesComponent, FooterComponent],
   templateUrl: './machines-page.component.html',
   styleUrl: './machines-page.component.scss',
 })

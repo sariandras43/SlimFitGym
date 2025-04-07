@@ -5,10 +5,11 @@ import { TrainingService } from '../../Services/training.service';
 import { combineLatest, Subscription } from 'rxjs';
 import { UserService } from '../../Services/user.service';
 import { UserModel } from '../../Models/user.model';
+import { FooterComponent } from "../../Components/footer/footer.component";
 
 @Component({
   selector: 'app-trainigs-page',
-  imports: [HeroComponent],
+  imports: [HeroComponent, FooterComponent],
   templateUrl: './trainings-page.component.html',
   styleUrl: './trainings-page.component.scss',
 })

@@ -5,10 +5,11 @@ import { RoomService } from '../../Services/room.service';
 import { RoomModel } from '../../Models/room.model';
 import { RoomCardComponent } from "../../Components/cards/room-card/room-card.component";
 import { MachineService } from '../../Services/machine.service';
+import { FooterComponent } from "../../Components/footer/footer.component";
 
 @Component({
   selector: 'app-rooms',
-  imports: [HeroComponent, CounterBubbleComponent, RoomCardComponent],
+  imports: [HeroComponent, CounterBubbleComponent, RoomCardComponent, FooterComponent],
   templateUrl: './rooms.component.html',
   styleUrl: './rooms.component.scss',
 })
