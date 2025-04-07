@@ -20,6 +20,7 @@ import { RoleGuard } from './Auth/role.guard';
 import { AuthGuard } from './Auth/auth.guard';
 import { NotFoundComponent } from './Pages/not-found/not-found.component';
 import { SubscribedTrainingsComponent } from './Components/CMS/subscribed-trainings/subscribed-trainings.component';
+import { DashboardComponent } from './Components/CMS/dashboard/dashboard.component';
 
 export const routes: Routes = [
   { path: '', component: MainPageComponent },
@@ -52,6 +53,12 @@ export const routes: Routes = [
       {
         path: 'trainings',
         component: TrainingsCMSComponent,
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['admin'] },
+      },
+      {
+        path: 'dashboard',
+        component: DashboardComponent,
         canActivate: [RoleGuard],
         data: { allowedRoles: ['admin'] },
       },

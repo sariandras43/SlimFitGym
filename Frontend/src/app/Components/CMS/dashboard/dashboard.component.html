@@ -1,0 +1,58 @@
+<div class="dashboard-grid">
+    <h1>Analytics Dashboard</h1>
+  
+    <div class="charts-container">
+      <!-- Line Chart -->
+      <div class="chart-card">
+        <h2>Sales Trend</h2>
+        <div class="chart-container">
+          <canvas 
+            appChart
+            [type]="'line'"
+            [data]="lineChartData"
+            [options]="chartOptions">
+          </canvas>
+        </div>
+      </div>
+  
+      <!-- Bar Chart -->
+      <div class="chart-card">
+        <h2>Revenue by Quarter</h2>
+        <div class="chart-container">
+          <canvas 
+            appChart
+            [type]="'bar'"
+            [data]="barChartData"
+            [options]="chartOptions">
+          </canvas>
+        </div>
+      </div>
+  
+      <!-- Pie Chart -->
+      <div class="chart-card">
+        <h2>Acquisition Sources</h2>
+        <div class="chart-container">
+          <canvas 
+            appChart
+            [type]="'pie'"
+            [data]="pieChartData"
+            [options]="chartOptions">
+          </canvas>
+        </div>
+      </div>
+  
+      <!-- Doughnut Chart -->
+      <div class="chart-card">
+        <h2>Project Status</h2>
+        <div class="chart-container">
+          <canvas 
+            appChart
+            [type]="'doughnut'"
+            [data]="doughnutChartData"
+            [options]="chartOptions">
+          </canvas>
+        </div>
+      </div>
+  
+    </div>
+  </div>

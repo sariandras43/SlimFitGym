@@ -1,0 +1,41 @@
+.dashboard-grid {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  
+  .charts-container {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+  
+  .chart-card {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px var(--bg-dark);
+    min-height: 400px;
+    height: 400px; 
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .chart-card h2 {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    color: var(--main-text);
+    flex-shrink: 0; 
+  }
+  
+  .chart-container {
+    flex: 1;
+    min-height: 0; 
+    position: relative;
+  }
+  
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+  }

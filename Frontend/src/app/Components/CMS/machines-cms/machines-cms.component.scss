@@ -256,7 +256,7 @@ tr:nth-of-type(2n){
   display: flex;
   flex-wrap: wrap;
   gap: 2rem;
-  justify-content: space-between; // Distribute space between items
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 1em;
   border-radius: var(--border-radius);
