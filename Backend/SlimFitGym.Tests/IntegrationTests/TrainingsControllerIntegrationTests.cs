@@ -1,14 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
-using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
 using SlimFitGym.Models.Responses;
 using SlimFitGymBackend;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace SlimFitGym.Tests.IntegrationTests
 {
@@ -40,6 +35,48 @@ namespace SlimFitGym.Tests.IntegrationTests
                 Assert.Equal("OK", response.StatusCode.ToString());
                 Assert.IsType<List<TrainingResponse>>(trainings);
                 Assert.True(trainings.Count > 0);
+            });
+        }
+
+        [Fact]
+        public async Task GetTrainingsWithLimitShouldReturnSpecificAmountOfTrainings()
+        {
+            // Arrange
+            var request = "/api/trainings?limit=5";
+
+            // Act
+            var response = await client.GetAsync(request);
+
+            // Assert
+            var trainings = JsonConvert.DeserializeObject<List<TrainingResponse>>(await response.Content.ReadAsStringAsync());
+
+
+            Assert.Multiple(() => {
+                Assert.NotNull(response);
+                Assert.Equal("OK", response.StatusCode.ToString());
+                Assert.IsType<List<TrainingResponse>>(trainings);
+                Assert.Equal(5,trainings.Count);
+            });
+        }
+
+        [Fact]
+        public async Task GetTrainingsWhichHasZumbaInItsName()
+        {
+            // Arrange
+            var request = "/api/trainings?query=Zumba";
+
+            // Act
+            var response = await client.GetAsync(request);
+
+            // Assert
+            var trainings = JsonConvert.DeserializeObject<List<TrainingResponse>>(await response.Content.ReadAsStringAsync());
+
+
+            Assert.Multiple(() => {
+                Assert.NotNull(response);
+                Assert.Equal("OK", response.StatusCode.ToString());
+                Assert.IsType<List<TrainingResponse>>(trainings);
+                Assert.Single(trainings);
             });
         }
 
@@ -116,6 +153,21 @@ namespace SlimFitGym.Tests.IntegrationTests
             });
         }
 
+        [Fact]
+        public async Task DeleteTrainingShouldReturnUnathorizedWhenLoggedOut()
+        {
+            // Arrange
+            var request = "/api/trainings/1";
+
+            // Act
+            var response = await client.DeleteAsync(request);
+
+            // Assert
+            Assert.Multiple(() => {
+                Assert.NotNull(response);
+                Assert.Equal("Unauthorized", response.StatusCode.ToString());
+            });
+        }
 
         [Fact]
         public async Task NewTrainingShouldReturnForbiddenWhenLoggedInUserIsNotTrainer()

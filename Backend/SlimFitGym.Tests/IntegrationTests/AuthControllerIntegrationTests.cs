@@ -200,6 +200,26 @@ namespace SlimFitGym.Tests.IntegrationTests
             }
         }
 
+        [Theory]
+        [InlineData("kazmer@gmail.com", "kazmer")]
+        [InlineData("pista@gmail.com", "pista")]
+        [InlineData("ica@gmail.com", "ica")]
+        public async Task GetAllAccountsSholdReturnForbiddenWhenLoggedInPersonIsNotAdmiin(string email, string password)
+        {
+            // Arrange 
+            string request = "/api/auth/accounts/all" ;
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {Login(email, password).Result}");
+
+
+            // Act
+            HttpResponseMessage response = await client.GetAsync(request);
+
+            //Assert
+            Assert.NotNull(response);
+            Assert.Equal("Forbidden", response.StatusCode.ToString());
+            
+        }
+
         [Fact]
         public async Task DeleteLastAdminAccountShouldReturnError()
         {
