@@ -31,64 +31,60 @@ export const routes: Routes = [
   {
     path: 'user',
     component: UserPageComponent,
-    canActivate: [AuthGuard], // First check authentication
+    canActivate: [AuthGuard],
     children: [
       { path: 'userData', component: BasicUserDataComponent },
       { path: 'subscribedTrainings', component: SubscribedTrainingsComponent },
-      
-      // User-specific
-      { 
-        path: 'myPass', 
+
+      {
+        path: 'myPass',
         component: MyPassComponent,
-        data: { allowedRoles: ['user'] }
+        data: { allowedRoles: ['user'] },
       },
 
-      // Trainer+Admin routes
-      { 
-        path: 'myTrainings', 
+      {
+        path: 'myTrainings',
         component: MyTrainingsCMSComponent,
         canActivate: [RoleGuard],
-        data: { allowedRoles: ['trainer', 'admin'] }
+        data: { allowedRoles: ['trainer', 'admin'] },
       },
 
-      // Admin-only routes
-      { 
-        path: 'trainings', 
+      {
+        path: 'trainings',
         component: TrainingsCMSComponent,
         canActivate: [RoleGuard],
-        data: { allowedRoles: ['admin'] }
+        data: { allowedRoles: ['admin'] },
       },
-      { 
-        path: 'passes', 
+      {
+        path: 'passes',
         component: PassesCMSComponent,
         canActivate: [RoleGuard],
-        data: { allowedRoles: ['admin'] }
+        data: { allowedRoles: ['admin'] },
       },
-      { 
-        path: 'rooms', 
+      {
+        path: 'rooms',
         component: RoomCMSComponent,
         canActivate: [RoleGuard],
-        data: { allowedRoles: ['admin'] }
+        data: { allowedRoles: ['admin'] },
       },
-      { 
-        path: 'users', 
+      {
+        path: 'users',
         component: UserCMSComponent,
         canActivate: [RoleGuard],
-        data: { allowedRoles: ['admin'] }
+        data: { allowedRoles: ['admin'] },
       },
-      { 
-        path: 'machines', 
+      {
+        path: 'machines',
         component: MachinesCMSComponent,
         canActivate: [RoleGuard],
-        data: { allowedRoles: ['admin'] }
+        data: { allowedRoles: ['admin'] },
       },
       { path: '', redirectTo: 'userData', pathMatch: 'full' },
-    ]
+    ],
   },
-
 
   { path: 'login', component: LogInPageComponent },
   { path: 'signup', component: SignUpPageComponent },
   { path: '404', component: NotFoundComponent },
-  { path: '**', redirectTo: '/404' }
+  { path: '**', redirectTo: '/404' },
 ];

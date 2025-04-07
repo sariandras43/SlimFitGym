@@ -146,7 +146,7 @@ export class MyTrainingsCMSComponent {
 
     if (type === 'start') {
       this.selectedTraining.trainingStart = new Date(currentDate);
-      // Auto-adjust end date if earlier than start
+
       if (this.selectedTraining.trainingEnd < currentDate) {
         this.selectedTraining.trainingEnd = new Date(
           currentDate.getTime() + 3600000
@@ -167,7 +167,6 @@ export class MyTrainingsCMSComponent {
     )
       return;
 
-    // Basic validation
     const now = new Date();
     const start = this.selectedTraining.trainingStart;
     const end = this.selectedTraining.trainingEnd;
@@ -236,7 +235,6 @@ export class MyTrainingsCMSComponent {
     const input = event.target as HTMLInputElement;
     const value = input.value;
 
-    // Year validation
     const currentYear = new Date().getFullYear();
     const year = Number(value.slice(0, 4));
     if (year < currentYear || year > currentYear + 10) {
@@ -246,8 +244,6 @@ export class MyTrainingsCMSComponent {
       } között kell lennie`;
       return;
     }
-
-    // Date relationship validation
 
     if (
       type === 'start' &&
