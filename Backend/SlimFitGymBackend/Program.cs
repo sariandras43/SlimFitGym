@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SlimFitGym.Data.Repository;
+using SlimFitGym.EFData;
 using System.Runtime.CompilerServices;
 using System.Threading.RateLimiting;
 using static System.Net.Mime.MediaTypeNames;
@@ -52,12 +53,27 @@ namespace SlimFitGymBackend
                 var services = scope.ServiceProvider;
 
                 var context = services.GetRequiredService<SlimFitGym.EFData.SlimFitGymContext>();
-                //TODO: removing when we dont need it anymore
+                //Added for frontend tests
                 context.Database.EnsureDeleted();
-                //
                 context.Database.EnsureCreated();
+                
             }
+#if DEBUG
+            app.MapPost("seed", () => {
 
+                using (var scope = app.Services.CreateScope())
+                {
+                    var services = scope.ServiceProvider;
+
+                    var context = services.GetRequiredService<SlimFitGym.EFData.SlimFitGymContext>();
+                    //Added for frontend tests
+                    context.Database.EnsureDeleted();
+                    context.Database.EnsureCreated();
+                    context.SeedDatabase(new ModelBuilder());
+
+                }
+            });
+#endif
             app.Run();
         }
     }

@@ -14,6 +14,7 @@ namespace SlimFitGym.EFData.Interfaces
         List<PurchaseResponse> GetAllPurchases();
         List<Purchase>? GetPurchasesByAccountId(string token, int accountId);
         Purchase? GetLatestPurchaseByAccountId(string token, int accountId);
+        Purchase? GetLatestPurchaseByAccountId(int accountId);
         PurchaseResponse? GetPurchaseById(int id);
         PurchaseResponse? NewPurchase(string token, PurchaseRequest purchase);
     }

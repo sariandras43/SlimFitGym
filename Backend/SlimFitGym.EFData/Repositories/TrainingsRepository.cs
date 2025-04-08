@@ -41,10 +41,10 @@ namespace SlimFitGym.EFData.Repositories
             return context.Set<Training>().ToList();
         }
 
-        public List<TrainingResponse> GetActiveTrainings()
+        public List<TrainingResponse> GetActiveTrainings(string query = "", int limit = 20, int offset = 0)
         {
-
-            return context.Set<Training>().Where(t=> t.IsActive && t.TrainingStart > DateTime.Now).Select(t=>new TrainingResponse()
+            List<TrainingResponse> trainings = 
+            trainings =  context.Set<Training>().Where(t=> t.IsActive && t.TrainingStart > DateTime.Now).Select(t=>new TrainingResponse()
             {
                 Id=t.Id,
                 Name=t.Name,
@@ -61,6 +61,12 @@ namespace SlimFitGym.EFData.Repositories
                 RoomId = t.RoomId
 
             }).ToList();
+
+            return trainings.Where(t => t.Name.ToLower().Contains(query.Trim().ToLower()) || t.Trainer.ToLower().Contains(query.Trim().ToLower())|| t.Room.ToLower().Contains(query.Trim().ToLower())).Take(limit).Skip(offset).ToList();
+        }
+        public int GetTotalTrainingCountFromNow()
+        {
+            return context.Set<Training>().Where(t=>t.IsActive && t.TrainingStart > DateTime.Now).Count();
         }
 
         public List<TrainingResponse>? GetTrainingsByAccountId(string token, int accountId)
@@ -142,6 +148,32 @@ namespace SlimFitGym.EFData.Repositories
                 TrainingStart = t.TrainingStart,
                 TrainingEnd = t.TrainingEnd,
                 Trainer = accountRepository.GetAccountById(t.TrainerId)!.Name,
+                Room = room.Name,
+                FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
+                TrainerImageUrl = imagesRepository.GetImageUrlByAccountId(t.TrainerId),
+                RoomImageUrl = imagesRepository.GetImageUrlByRoomId(t.RoomId),
+                TrainerId = t.TrainerId,
+                RoomId = t.RoomId
+            }).ToList();
+            return trainings;
+        }
+
+        public List<TrainingResponse>? GetActiveTrainingsByTrainerId(int trainerId)
+        {
+            if (trainerId <= 0)
+                throw new Exception("Érvénytelen azonosító.");
+            Account? account = this.context.Set<Account>().SingleOrDefault(a => a.Id == trainerId && (a.Role=="trainer" || a.Role == "admin") && a.isActive);
+            if (account == null)
+                return null;
+            List<TrainingResponse>? trainings = this.context.Set<Training>().Where(t => t.TrainerId == trainerId && t.IsActive && t.TrainingStart > DateTime.Now).Select(t => new TrainingResponse()
+            {
+                Id = t.Id,
+                Name = t.Name,
+                MaxPeople = t.MaxPeople,
+                IsActive = t.IsActive,
+                TrainingStart = t.TrainingStart,
+                TrainingEnd = t.TrainingEnd,
+                Trainer = account.Name,
                 Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
                 FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
                 TrainerImageUrl = imagesRepository.GetImageUrlByAccountId(t.TrainerId),
@@ -172,34 +204,37 @@ namespace SlimFitGym.EFData.Repositories
 
         public Training? NewTraining(string token, TrainingRequest training)
         {
+            if (training == null)
+                throw new Exception("Hibás kérés.");
             if (training.TrainerId <= 0)
                 throw new Exception("Ilyen edző nem létezik");
             if (training.RoomId <= 0)
                 throw new Exception("Ilyen terem nem létezik");
-            if (training == null)
-                throw new Exception("Hibás kérés.");
             Account? accountFromToken = accountRepository.GetAccountById(tokenGenerator.GetAccountIdFromToken(token));
             if (accountFromToken == null)
                 throw new Exception("Érvénytelen token.");
             if (training.TrainerId != tokenGenerator.GetAccountIdFromToken(token) ||  accountFromToken.Id != training.TrainerId)
                 throw new Exception("Nem lehet máshoz edzést felvenni.");
-            if (training.Name== null || training.Name.Length == 0)
-                throw new Exception("A név mező kitöltése kötelező.");
-            TimeSpan trainingSpan = training.TrainingEnd - training.TrainingStart; 
-            if (trainingSpan.TotalMinutes<30)
-                throw new Exception("Érvénytelen időintervallum (minimum 30 perces edzés vehető fel).");
+            if (training.Name== null || training.Name.Length == 0 || training.Name.Length > 100)
+                throw new Exception("A név mező minimum 4, maximum 100 karakter hosszú lehet.");
             if (training.MaxPeople<1)
                 throw new Exception("A maximum résztvevők mező kitöltése kötelező");
-            if (training.Name.Length > 100)
-                throw new Exception("A név maximum 100 karakter hosszú lehet.");
+            //These arent neccesary
             Account? account = accountRepository.GetAccountById(training.TrainerId);
             if (account==null)
                 throw new Exception("Ilyen fiók nem létezik");
             if (account.Role=="user")
                 throw new Exception("Ez a felhasználó nem jogosult edzés felvételére");
+            //
             Room? room = roomsRepository.GetRoomById(training.RoomId);
             if (room == null)
                 throw new Exception("Ilyen terem nem létezik");
+            if (training.TrainingStart<DateTime.Now || training.TrainingEnd<DateTime.Now)
+               throw new Exception("Nem lehet múltba edzést felvenni.");
+            TimeSpan trainingSpan = training.TrainingEnd - training.TrainingStart; 
+            if (trainingSpan.TotalMinutes<30)
+                throw new Exception("Érvénytelen időintervallum (minimum 30 perces edzés vehető fel).");
+            //Any
             List<Training> trainingsInTheSpecificRoom = context.Set<Training>().AsNoTracking().Where(t=>t.RoomId==training.RoomId && t.IsActive).ToList();
             foreach (Training t in trainingsInTheSpecificRoom)
             {
@@ -225,63 +260,68 @@ namespace SlimFitGym.EFData.Repositories
 
         public Training? UpdateTraining(string token, int id, TrainingRequest training)
         {
-            if (training.TrainerId<=0)
-                throw new Exception("Ilyen edző nem létezik");
-            if (training.RoomId <= 0)
-                throw new Exception("Ilyen terem nem létezik");
-            if (id != training.Id)
-                throw new Exception("Érvénytelen azonosító.");
             if (training == null)
                 throw new Exception("Hibás kérés.");
+            if (id != training.Id)
+                throw new Exception("Érvénytelen azonosító.");
             Account? accountFromToken = accountRepository.GetAccountById(tokenGenerator.GetAccountIdFromToken(token));
             if (accountFromToken == null)
                 throw new Exception("Érvénytelen token.");
-            if (training.TrainerId != tokenGenerator.GetAccountIdFromToken(token) || accountFromToken.Id != training.TrainerId)
-                throw new Exception("Nem lehet más edzését módosítani felvenni.");
-            if (training.Name == null || training.Name.Length == 0)
-                throw new Exception("A név mező kitöltése kötelező.");
-            TimeSpan trainingSpan = training.TrainingEnd - training.TrainingStart;
-            if (trainingSpan.TotalMinutes < 30)
-                throw new Exception("Érvénytelen időintervallum (minimum 30 perces edzés vehető fel).");
-            if (training.MaxPeople < 1)
-                throw new Exception("A maximum résztvevők mező kitöltése kötelező");
-            if (training.Name.Length > 100)
-                throw new Exception("A név maximum 100 karakter hosszú lehet.");
-            if (training.MaxPeople < 1)
-                throw new Exception("A maximum résztvevők mező kitöltése kötelező");
-            if (training.Name.Length > 100)
-                throw new Exception("A név maximum 100 karakter hosszú lehet.");
-            if (!this.context.Set<Training>().Any(t => t.Id == id && t.IsActive))
+            Training? trainingToModify = context.Set<Training>().SingleOrDefault(t=>t.Id == id && t.IsActive);
+            if (trainingToModify==null)
                 return null;
-            if (training.MaxPeople - reservationRepository.GetReservationsByTrainingId(id)!.Count < 0)
-                throw new Exception("Több a résztvevő, mint az új látszám");
-            Account? account = accountRepository.GetAccountById(training.TrainerId);
-            if (account == null)
-                throw new Exception("Ilyen edző nem létezik");
-            if (account.Role == "user")
-                throw new Exception("Ez a felhasználó nem jogosult edzés felvételére");
-            Room? room = roomsRepository.GetRoomById(training.RoomId);
-            if (room == null)
-                throw new Exception("Ilyen terem nem létezik");
-            List<Training> trainingsInTheSpecificRoom = context.Set<Training>().AsNoTracking().Where(t => t.RoomId == training.RoomId && t.IsActive).ToList();
-            trainingsInTheSpecificRoom.RemoveAll(t=>t.Id==id);
-            foreach (Training t in trainingsInTheSpecificRoom)
+            if (trainingToModify.TrainerId != tokenGenerator.GetAccountIdFromToken(token))
+                throw new Exception("Nem lehet más edzését módosítani, felvenni.");
+            if (DateTime.Now > trainingToModify.TrainingStart)
+                throw new Exception("Nem lehet már megtörtént edzés adatait módosítani.");
+
+            List<Training> trainingsInTheSpecificRoom;
+            if (training.RoomId != 0)
             {
-                if (t.TrainingStart <= training.TrainingStart && t.TrainingEnd >= training.TrainingEnd)
-                    throw new Exception("Ebben az időpontban foglalt a terem");
+                Room? room = roomsRepository.GetRoomById(training.RoomId);
+                if (room == null)
+                    throw new Exception("Ilyen terem nem létezik");
+                trainingsInTheSpecificRoom = context.Set<Training>().AsNoTracking().Where(t => t.RoomId == training.RoomId && t.IsActive).ToList();
+                trainingsInTheSpecificRoom.RemoveAll(t => t.Id == id);
+                foreach (Training t in trainingsInTheSpecificRoom)
+                {
+                    if (t.TrainingStart <= training.TrainingStart && t.TrainingEnd >= training.TrainingEnd)
+                        throw new Exception("Ebben az időpontban foglalt a terem");
+                }
+                trainingToModify.RoomId = training.RoomId;
             }
 
-            Training trainingToModify = new Training()
+            if (training.Name!=null)
             {
-                Id = training.Id,
-                TrainingStart = training.TrainingStart,
-                TrainingEnd = training.TrainingEnd,
-                IsActive = true,
-                Name = training.Name,
-                MaxPeople = training.MaxPeople,
-                RoomId = training.RoomId,
-                TrainerId = training.TrainerId
-            };
+                if (training.Name.Length < 4 || training.Name.Length>100)
+                    throw new Exception("A név mező minimum 4, maximum 100 karakter hosszú lehet.");
+                trainingToModify.Name = training.Name;
+            }
+            if (training.MaxPeople!=0)
+            {
+                if (training.MaxPeople < 1)
+                    throw new Exception("A maximum résztvevők mező pozitív egész szám lehet.");
+                if (training.MaxPeople - reservationRepository.GetReservationsByTrainingId(id)!.Count < 0)
+                    throw new Exception("Több a résztvevő, mint az új látszám");
+                trainingToModify.MaxPeople = training.MaxPeople;
+            }
+
+            if (training.TrainingStart>DateTime.Now && training.TrainingEnd>DateTime.Now)
+            {
+                TimeSpan trainingSpan = training.TrainingEnd - training.TrainingStart;
+                if (trainingSpan.TotalMinutes < 30)
+                    throw new Exception("Érvénytelen időintervallum (minimum 30 perces edzés vehető fel).");
+                trainingsInTheSpecificRoom = context.Set<Training>().AsNoTracking().Where(t => t.RoomId == trainingToModify.RoomId && t.IsActive).ToList();
+                trainingsInTheSpecificRoom.RemoveAll(t=>t.Id==id);
+                //Any
+                foreach (Training t in trainingsInTheSpecificRoom)
+                {
+                    if (t.TrainingStart <= training.TrainingStart && t.TrainingEnd >= training.TrainingEnd)
+                        throw new Exception("Ebben az időpontban foglalt a terem");
+                }
+                trainingToModify.TrainingStart = training.TrainingStart;
+                trainingToModify.TrainingEnd = training.TrainingEnd;
+            }
 
             this.context.Entry(trainingToModify).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             this.context.SaveChanges();

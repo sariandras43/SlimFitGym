@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using CloudinaryDotNet;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json.Linq;
 using SlimFitGym.EFData;
 using SlimFitGym.EFData.Interfaces;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
+using System;
+using System.Collections.Generic;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -26,11 +30,19 @@ namespace SlimFitGymBackend.Controllers
 
         // GET: api/<TrainingsController>
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get([FromQuery] string query = "", [FromQuery] string limit = "20", [FromQuery] string offset = "0")
         {
             return this.Execute(() =>
             {
-                return Ok(trainingsRepository.GetActiveTrainings());
+                int limitNum;
+                int offsetNum;
+                if (int.TryParse(limit, out limitNum) && int.TryParse(offset, out offsetNum))
+                {
+                    Response.Headers.Add("X-Total-Count", trainingsRepository.GetTotalTrainingCountFromNow().ToString());
+                    return Ok(trainingsRepository.GetActiveTrainings(query, limitNum, offsetNum));
+                }
+                return BadRequest(new { message = "Érvénytelen query paraméterek." });
+
             });
         }
 
@@ -102,29 +114,23 @@ namespace SlimFitGymBackend.Controllers
             });
         }
 
-        //TODO: something with the url, cause its messy
-        //[HttpGet("/search/{limit}&{offset}.{trainingName?}")]
-        //public IActionResult Filter([FromRoute] string? trainingName="" ,[FromRoute] string? limit ="1" ,[FromRoute] string? offset = "1")
-        //{
-        //    return this.Execute(() =>
-        //    {
-        //        int limitNum;
-        //        int offsetNum;
+        [HttpGet("trainer/{id}")]
+        public IActionResult GetActiveTrainingsByTrainerId([FromRoute] string id)
+        {
+            return this.Execute(() =>
+            {
+                int idNum;
+                if (int.TryParse(id, out idNum))
+                {
+                    var res = trainingsRepository.GetActiveTrainingsByTrainerId(idNum);
+                    if (res != null)
+                        return Ok(res);
+                    return NotFound(new { message = "Nem található az edző." });
 
-        //        if (trainingName.StartsWith("%20"))
-        //            throw new Exception("Érvénytelen paraméterek.");
-        //        if (!int.TryParse(limit,out limitNum))
-        //            throw new Exception("Érvénytelen paraméterek.");
-        //        if (!int.TryParse(offset, out offsetNum))
-        //            throw new Exception("Érvénytelen paraméterek.");
-        //        List<Training> res = trainingsRepository.FilterTrainings(trainingName.Trim(),limitNum,offsetNum);
-        //        if (res == null||res.Count==0)
-        //            return NotFound(new { message = "Nem találhatók edzések ilyen paraméterek mellett." });
-        //        return Ok(res);
-
-        //    });
-        //}
-
+                }
+                throw new Exception("Érvénytelen azonosító.");
+            });
+        }
 
         [HttpPost]
         [Authorize(Roles = "admin,trainer")]
@@ -141,7 +147,7 @@ namespace SlimFitGymBackend.Controllers
         // PUT api/<TrainingsController>/5
         [HttpPut("{id}")]
         [Authorize(Roles = "admin,trainer")]
-        public IActionResult Put([FromRoute]string id, [FromBody] TrainingRequest training)
+        public IActionResult Put([FromRoute]string id, [FromBody] dynamic training)
         {
             string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
 
@@ -150,7 +156,8 @@ namespace SlimFitGymBackend.Controllers
                 int idNum;
                 if (int.TryParse(id, out idNum))
                 {
-                    var res = trainingsRepository.UpdateTraining(token, idNum, training);
+                    TrainingRequest trainingToUpdate = Newtonsoft.Json.JsonConvert.DeserializeObject<TrainingRequest>(training.ToString());
+                    var res = trainingsRepository.UpdateTraining(token, idNum, trainingToUpdate);
                     if (res != null) return Ok(res);
                     return NotFound(new { message = "Nem található az edzés." });
 

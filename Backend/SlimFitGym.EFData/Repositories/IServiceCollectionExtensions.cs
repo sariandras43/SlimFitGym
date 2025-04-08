@@ -34,6 +34,7 @@ namespace SlimFitGym.Data.Repository
             service.AddScoped<ITrainerApplicantsRepository, TrainerApplicantsRepository>();
             service.AddScoped<IEntriesRepository, EntriesRepository>();
             service.AddScoped<IImagesRepository, ImagesRepository>();
+            service.AddScoped<IStatisticsRepository, StatisticsRepository>();
             service.AddDbContext<SlimFitGymContext>();
         }
 
@@ -143,7 +144,7 @@ namespace SlimFitGym.Data.Repository
                         Endpoint = "*",
                         Limit = 1000,
                         Period = "1m",
-                        QuotaExceededResponse = new QuotaExceededResponse(){StatusCode=429,ContentType="application/json", Content="Túl sok kérés."}
+                        QuotaExceededResponse = new QuotaExceededResponse(){StatusCode=429,ContentType="application/json", Content=""}
                     }
                 };
             });

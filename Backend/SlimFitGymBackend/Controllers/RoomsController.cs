@@ -30,13 +30,13 @@ namespace SlimFitGymBackend.Controllers
             });
         }
         [HttpGet("all")]
-        //[Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
 
         public IActionResult GetAll()
         {
             return this.Execute(() =>
             {
-                return Ok(roomsRepository.GetAllRooms());
+                return Ok(roomsAndMachinesRepository.GetAllRoomsWithMachines());
             });
         }
 
@@ -63,7 +63,7 @@ namespace SlimFitGymBackend.Controllers
 
         // POST api/<RoomsController>
         [HttpPost]
-        //[Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
 
         public IActionResult Post([FromBody] RoomRequest value)
         {
@@ -76,18 +76,17 @@ namespace SlimFitGymBackend.Controllers
 
         // PUT api/<RoomsController>/5
         [HttpPut("{id}")]
-        //[Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
 
-        public IActionResult Put([FromRoute] string id, [FromBody] RoomRequest value)
+        public IActionResult Put([FromRoute] string id, [FromBody] dynamic room)
         {
             return this.Execute(() =>
             {
                 int idNum;
                 if (int.TryParse(id,out idNum))
                 {
-                    //TODO: JSON parse error!!!
-                    //Room room = Newtonsoft.Json.JsonConvert.DeserializeObject<Room>(value.ToString());
-                    var res = roomsRepository.UpdateRoom(idNum, value);
+                    RoomRequest roomToModify = Newtonsoft.Json.JsonConvert.DeserializeObject<RoomRequest>(room.ToString());
+                    var res = roomsRepository.UpdateRoom(idNum, roomToModify);
                     if (res!=null)
                         return Ok(res);
                     return NotFound(new { message = "Szoba nem található" });
@@ -99,7 +98,7 @@ namespace SlimFitGymBackend.Controllers
 
         // DELETE api/<RoomsController>/5
         [HttpDelete("{id}")]
-        //[Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
 
         public IActionResult Delete([FromRoute] string id)
         {

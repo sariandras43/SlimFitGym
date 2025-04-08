@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace SlimFitGymBackend
 {
@@ -12,26 +13,19 @@ namespace SlimFitGymBackend
             }
             catch (Exception ex)
             {
+                if (ex is UnauthorizedAccessException)
+                    return controller.Forbid();
+                if (ex is JsonSerializationException)
+                    return controller.BadRequest(new { message = "Helytelen érték a JSON-ben." });
 #if DEBUG
 
-                if (ex.Message.Contains("parsing"))
-                {
-                    return controller.BadRequest(new { message = "Nem JSON formátumú a body." });
-                }
-                if (ex is UnauthorizedAccessException)
-                {
-                    return controller.Forbid();
-                }
                 return controller.BadRequest(new
                 {
                     message = ex.Message,
                     stackTrace = ex.StackTrace
                 });
 #else
-                if (ex.Message.Contains("parsing"))
-                {
-                    return controller.BadRequest(new { message = "Nem JSON formátumú a body." });
-                }
+
                 return controller.BadRequest(new { message = ex.Message });
 #endif
             }

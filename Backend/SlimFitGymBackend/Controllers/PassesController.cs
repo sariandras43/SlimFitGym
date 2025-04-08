@@ -109,14 +109,15 @@ namespace SlimFitGymBackend.Controllers
         [HttpPut("{id}")]
         [Authorize(Roles = "admin")]
 
-        public IActionResult Put([FromRoute] string id, [FromBody] PassRequest pass)
+        public IActionResult Put([FromRoute] string id, [FromBody] dynamic pass)
         {
             return this.Execute(() =>
             {
                 int idNum;
                 if (int.TryParse(id, out idNum))
                 {
-                    var res = passesRepository.UpdatePass(idNum, pass);
+                    var passToModify = Newtonsoft.Json.JsonConvert.DeserializeObject<PassRequest>(pass.ToString());
+                    var res = passesRepository.UpdatePass(idNum, passToModify);
                     if (res != null) return Ok(res);
                     return NotFound("Nem található aktív bérlet ezzel az azonosítóval.");
 

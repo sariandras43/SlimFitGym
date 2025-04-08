@@ -15,7 +15,7 @@ namespace SlimFitGym.Models.Responses
         public int Days { get; set; }
         public decimal Price { get; set; }
         public bool isActive { get; set; }
-        public bool isHighlighted { get; set; }
+        public bool? isHighlighted { get; set; }
         public List<string> Benefits { get; set; } = new List<string>();
 
         public PassResponse(Pass p)
@@ -26,7 +26,11 @@ namespace SlimFitGym.Models.Responses
             MaxEntries = p.MaxEntries;
             Price = p.Price;
             isActive = p.IsActive;
-            isHighlighted = p.IsHighlighted;
+            if (p.IsHighlighted!=null)
+            {
+                isHighlighted = p.IsHighlighted;
+                
+            }
         }
     }
 }
