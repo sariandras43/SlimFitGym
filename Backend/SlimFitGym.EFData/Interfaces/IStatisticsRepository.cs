@@ -9,5 +9,6 @@ namespace SlimFitGym.EFData.Interfaces
     public interface IStatisticsRepository
     {
         public List<dynamic> PurchasesAndIncomePerMonth(int year);
+        public List<dynamic> EntriesPerMonth(int year);
     }
 }

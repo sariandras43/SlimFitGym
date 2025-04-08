@@ -59,6 +59,16 @@ namespace SlimFitGym.EFData.Repositories
             return purchase;
         }
 
+        public Purchase? GetLatestPurchaseByAccountId(int accountId)
+        {
+            if (accountId <= 0) return null;
+            Account? account = accountRepository.GetAccountById(accountId);
+            if (account == null) return null;
+            Purchase? purchase = context.Set<Purchase>().Where(p => p.AccountId == accountId).OrderByDescending(p => p.Id).FirstOrDefault();
+            if (purchase == null) return null;
+            return purchase;
+        }
+
         public PurchaseResponse? GetPurchaseById(int id)
         {
             if (id <= 0)

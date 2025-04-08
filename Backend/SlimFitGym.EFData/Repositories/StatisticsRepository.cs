@@ -37,5 +37,19 @@ namespace SlimFitGym.EFData.Repositories
             }
             return result;
         }
+
+        public List<dynamic> EntriesPerMonth(int year)
+        {
+            if (year < 2025)
+                throw new Exception("Csak 2024 utáni évszám adható meg.");
+            List<dynamic> result = new List<dynamic>();
+            List<Entry> entries = this.context.Set<Entry>().Where(e => e.EntryDate.Year == year).ToList();
+            for (int month = 1; month < 13; month++)
+            {
+                List<Entry> entriesPerMonth = entries.Where(e => e.EntryDate.Month == month).ToList();
+                result.Add(new { month = month, count = entriesPerMonth.Count()});
+            }
+            return result;
+        }
     }
 }

@@ -6,7 +6,7 @@ using SlimFitGym.EFData.Interfaces;
 namespace SlimFitGymBackend.Controllers
 {
     [Route("api/statistics")]
-    [Authorize(Roles ="admin")]
+    [Authorize(Roles = "admin")]
     [ApiController]
     public class StatisticsController : ControllerBase
     {
@@ -26,6 +26,19 @@ namespace SlimFitGymBackend.Controllers
                     return Ok(statisticsRepository.PurchasesAndIncomePerMonth(yearNum));
                 }
                 return BadRequest(new {message = "Érvénytelen évszám." });
+            });
+        }
+
+        [HttpGet("entries")]
+        public IActionResult GetEntriesStatistics([FromQuery] string year)
+        {
+            return this.Execute(() =>
+            {
+                if (int.TryParse(year, out int yearNum))
+                {
+                    return Ok(statisticsRepository.EntriesPerMonth(yearNum));
+                }
+                return BadRequest(new { message = "Érvénytelen évszám." });
             });
         }
     }
