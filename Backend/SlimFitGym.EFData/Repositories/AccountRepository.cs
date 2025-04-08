@@ -1,5 +1,6 @@
 ﻿using BCrypt.Net;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using SlimFitGym.EFData.Interfaces;
 using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
@@ -21,13 +22,17 @@ namespace SlimFitGym.EFData.Repositories
         readonly SlimFitGymContext context;
         readonly TokenGenerator tokenGenerator;
         readonly IImagesRepository imagesRepository;
+        readonly IServiceProvider provider;
 
-        public AccountRepository(SlimFitGymContext context, TokenGenerator tokenGenerator, IImagesRepository imagesRepository)
+        public AccountRepository(SlimFitGymContext context, TokenGenerator tokenGenerator, IImagesRepository imagesRepository, IServiceProvider provider)
         {
             this.context = context;
             this.tokenGenerator = tokenGenerator;
             this.imagesRepository = imagesRepository;
+            this.provider = provider;
         }
+        private ITrainerApplicantsRepository GetTrainerApplicantsRepository()
+            => provider.GetRequiredService<ITrainerApplicantsRepository>();
 
         public AccountResponse? Login(LoginRequest login)
         {
@@ -40,12 +45,14 @@ namespace SlimFitGym.EFData.Repositories
                 validTo = DateTime.Now.AddDays(364);
 
             string? url = imagesRepository.GetImageUrlByAccountId(a.Id);
+            ITrainerApplicantsRepository trainerApplicantsRepository = GetTrainerApplicantsRepository();
+            bool isTrainerApplicant = trainerApplicantsRepository.GetAllApplicants().Any(t=>t.AccountId==a.Id);
             if (url!=null)
             {
-                return new AccountResponse(a,tokenGenerator.GenerateToken(a.Id,a.Email,login.RememberMe,a.Role),validTo,url);
+                return new AccountResponse(a,tokenGenerator.GenerateToken(a.Id,a.Email,login.RememberMe,a.Role),validTo,url,isTrainerApplicant);
 
             }
-            return new AccountResponse(a, tokenGenerator.GenerateToken(a.Id, a.Email, login.RememberMe, a.Role), validTo);
+            return new AccountResponse(a, tokenGenerator.GenerateToken(a.Id, a.Email, login.RememberMe, a.Role),validTo,"", isTrainerApplicant);
         }
 
         public AccountResponse? Register(RegistrationRequest registration)
@@ -104,6 +111,9 @@ namespace SlimFitGym.EFData.Repositories
                 return null;
             if (account.Id != request.Id)
                 throw new Exception("Érvénytelen azonosító.");
+            ITrainerApplicantsRepository trainerApplicantsRepository = GetTrainerApplicantsRepository();
+
+            bool isTrainerApplicant = trainerApplicantsRepository.GetAllApplicants().Any(t => t.AccountId == account.Id);
             if (!string.IsNullOrWhiteSpace(request.Name))
             {
                 if(request.Name.Length > 4 && request.Name.Length < 100)
@@ -170,7 +180,7 @@ namespace SlimFitGym.EFData.Repositories
             this.context.SaveChanges();
             string url = imagesRepository.GetImageUrlByAccountId(id);
 
-            return new AccountResponse(account, url);
+            return new AccountResponse(account, url, isTrainerApplicant);
         }
 
         public AccountResponse? DeleteAccount(string token, int id)
@@ -188,10 +198,6 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Utolsó adminisztrátor fiók nem törölhető.");
             if (this.context.Set<Account>().Where(a => a.Role == "employee" && a.isActive && a.Id == id).Count() == 1)
                 throw new Exception("Utolsó dolgozó fiók nem törölhető.");
-            accountToDelete.isActive = false;
-            this.context.Entry(accountToDelete).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            this.context.SaveChanges();
-            //TODO cascading delete at reservations and trainings
             imagesRepository.DeleteImageByAccountId(id);
             if (accountToDelete.Role == "trainer")
             { 
@@ -221,7 +227,12 @@ namespace SlimFitGym.EFData.Repositories
                     this.context.SaveChanges(true);
                 }
             }
-            return new AccountResponse(accountToDelete);
+            ITrainerApplicantsRepository trainerApplicantsRepository = GetTrainerApplicantsRepository();
+            trainerApplicantsRepository.Reject(id);
+            accountToDelete.isActive = false;
+            this.context.Entry(accountToDelete).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            this.context.SaveChanges();
+            return new AccountResponse(accountToDelete,"",false);
 
         }
 
@@ -229,7 +240,10 @@ namespace SlimFitGym.EFData.Repositories
         {
             var account = this.context.Set<Account>().SingleOrDefault(a => a.Id == tokenGenerator.GetAccountIdFromToken(token));
             if (account == null) return null;
-            return new AccountResponse(account,imagesRepository.GetImageUrlByAccountId(account.Id));
+            ITrainerApplicantsRepository trainerApplicantsRepository = GetTrainerApplicantsRepository();
+            bool isTrainerApplicant = trainerApplicantsRepository.GetAllApplicants().Any(t => t.AccountId == account.Id);
+
+            return new AccountResponse(account,imagesRepository.GetImageUrlByAccountId(account.Id),isTrainerApplicant);
         }
 
         public Account? GetAccountById(int id)
@@ -262,15 +276,15 @@ namespace SlimFitGym.EFData.Repositories
         public List<AccountResponse> GetAllAccounts(bool onlyActive = false)
         {
             if (onlyActive)
-                return this.context.Set<Account>().Where(a=>a.isActive).Select(a=>new AccountResponse(a,imagesRepository.GetImageUrlByAccountId(a.Id))).ToList();    
-            return this.context.Set<Account>().Select(a=>new AccountResponse(a,imagesRepository.GetImageUrlByAccountId(a.Id))).ToList();
+                return this.context.Set<Account>().Where(a=>a.isActive).Select(a=>new AccountResponse(a,imagesRepository.GetImageUrlByAccountId(a.Id),false)).ToList();    
+            return this.context.Set<Account>().Select(a=>new AccountResponse(a,imagesRepository.GetImageUrlByAccountId(a.Id),false)).ToList();
         }
 
         public List<AccountResponse> GetTrainers(bool onlyActive = true)
         {
             if (onlyActive)
-                return this.context.Set<Account>().Where(a => a.isActive && a.Role=="trainer").Select(a => new AccountResponse(a, imagesRepository.GetImageUrlByAccountId(a.Id))).ToList();
-            return this.context.Set<Account>().Select(a => new AccountResponse(a, imagesRepository.GetImageUrlByAccountId(a.Id))).ToList();
+                return this.context.Set<Account>().Where(a => a.isActive && a.Role=="trainer").Select(a => new AccountResponse(a, imagesRepository.GetImageUrlByAccountId(a.Id), false)).ToList();
+            return this.context.Set<Account>().Select(a => new AccountResponse(a, imagesRepository.GetImageUrlByAccountId(a.Id),false)).ToList();
         }
     }
 }

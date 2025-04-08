@@ -25,6 +25,17 @@ namespace SlimFitGym.Tests.UnitTests
         public void GetAllActiveTrainingsShouldReturnTrainingResponseList()
         {
             // Arrange
+            var mockHttpContext = new Mock<HttpContext>();
+            var mockResponse = new Mock<HttpResponse>();
+            var responseHeaders = new HeaderDictionary();
+
+            mockResponse.Setup(r => r.Headers).Returns(responseHeaders);
+            mockHttpContext.Setup(ctx => ctx.Response).Returns(mockResponse.Object);
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = mockHttpContext.Object
+            };
             List<TrainingResponse> mockReturnValue = new List<TrainingResponse>()
             {
                 new TrainingResponse()
@@ -42,7 +53,8 @@ namespace SlimFitGym.Tests.UnitTests
                     TrainerImageUrl=""
                 }
             };
-            trainingsRepositoryMock.Setup(r => r.GetActiveTrainings()).Returns(mockReturnValue);
+            trainingsRepositoryMock.Setup(r => r.GetTotalTrainingCountFromNow()).Returns(1);
+            trainingsRepositoryMock.Setup(r => r.GetActiveTrainings("",20,0)).Returns(mockReturnValue);
 
             // Act
             IActionResult result = controller.Get();

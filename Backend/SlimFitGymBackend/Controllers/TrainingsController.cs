@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using CloudinaryDotNet;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json.Linq;
 using SlimFitGym.EFData;
 using SlimFitGym.EFData.Interfaces;
 using SlimFitGym.EFData.Repositories;
 using SlimFitGym.Models.Models;
 using SlimFitGym.Models.Requests;
+using System;
+using System.Collections.Generic;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -26,11 +30,19 @@ namespace SlimFitGymBackend.Controllers
 
         // GET: api/<TrainingsController>
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get([FromQuery] string query = "", [FromQuery] string limit = "20", [FromQuery] string offset = "0")
         {
             return this.Execute(() =>
             {
-                return Ok(trainingsRepository.GetActiveTrainings());
+                int limitNum;
+                int offsetNum;
+                if (int.TryParse(limit, out limitNum) && int.TryParse(offset, out offsetNum))
+                {
+                    Response.Headers.Add("X-Total-Count", trainingsRepository.GetTotalTrainingCountFromNow().ToString());
+                    return Ok(trainingsRepository.GetActiveTrainings(query, limitNum, offsetNum));
+                }
+                return BadRequest(new { message = "Érvénytelen query paraméterek." });
+
             });
         }
 
