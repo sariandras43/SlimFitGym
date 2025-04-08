@@ -81,10 +81,11 @@
         }
       </td>
       <td>
-        @if (user.role != 'admin' && user.role != "employee") 
+        @if (user.role != 'admin' && user.role != "employee" && user.isActive) 
         {
 
           <div class="itemButtons">
+            
             <button aria-label="delete" (click)="delete(user)">
               @if (deletingUserId === user.id) {
               <app-button-loader [size]="0.3"></app-button-loader>

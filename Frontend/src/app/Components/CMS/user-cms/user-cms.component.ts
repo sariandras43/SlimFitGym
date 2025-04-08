@@ -70,9 +70,10 @@ type SortableProperty = keyof Pick<
   ],
 })
 export class UserCMSComponent {
-toggleShowDeleted() {
-throw new Error('Method not implemented.');
-}
+  toggleShowDeleted() {
+    this.showDeleted = !this.showDeleted;
+    this.updateDisplayUsers();
+  }
   users: UserModel[] = [];
   trainerApplicants: {
     accountId: number;
@@ -86,12 +87,12 @@ throw new Error('Method not implemented.');
   bottomError: string | null = null;
   errorMsg: string = '';
   showDeleted: boolean = false;
-  
+
   sortState: { property: SortableProperty | null; direction: SortDirection } = {
     property: null,
     direction: SortDirection.Asc,
   };
-  
+
   constructor(
     private userService: UserService,
     private trainerApplicantsService: TrainerApplicationService
@@ -105,10 +106,9 @@ throw new Error('Method not implemented.');
     this.loadingUserId = user.id;
     this.trainerApplicantsService.deleteApplicant(id).subscribe({
       next: (s) => {
-       
         user = s;
         this.loadingUserId = null;
-        this.loadUsers();  
+        this.loadUsers();
       },
       error: (err) => {
         this.errorMsg =
@@ -126,14 +126,12 @@ throw new Error('Method not implemented.');
     if (!id) return;
     this.trainerApplicantsService.acceptApplicant(id).subscribe({
       next: (s) => {
-        
         this.loadUsers();
         this.loadingUserId = null;
-        
       },
       error: (err) => {
         this.loadingUserId == null;
-        
+
         this.errorMsg =
           err.error?.message || 'Nem sikerült elfogadni a jelentkezést.';
       },
@@ -162,7 +160,7 @@ throw new Error('Method not implemented.');
     this.searchTerm = input.value.toLowerCase();
     this.updateDisplayUsers();
   }
-  
+
   sortBy(property: SortableProperty) {
     if (this.sortState.property === property) {
       this.sortState.direction =
@@ -178,12 +176,21 @@ throw new Error('Method not implemented.');
   private updateDisplayUsers() {
     this.users.map((usr) => {
       usr.appliedForTraining = !!this.trainerApplicants.find(
-        (tA) => tA.accountId === usr.id && tA.acceptedAt === null && usr.role == 'user'
+        (tA) =>
+          tA.accountId === usr.id &&
+          tA.acceptedAt === null &&
+          usr.role == 'user'
       );
       return usr;
     });
-    let filtered = this.users.filter(s=> s.email?.toLowerCase().includes(this.searchTerm) || s.name?.toLowerCase().includes(this.searchTerm) || s.phone?.toLowerCase().includes(this.searchTerm) || this.userInHungarian(s).toLowerCase().includes(this.searchTerm));
-
+    let filtered = this.users.filter((usr) => usr.isActive || this.showDeleted);
+    filtered = filtered.filter(
+      (s) =>
+        s.email?.toLowerCase().includes(this.searchTerm) ||
+        s.name?.toLowerCase().includes(this.searchTerm) ||
+        s.phone?.toLowerCase().includes(this.searchTerm) ||
+        this.userInHungarian(s).toLowerCase().includes(this.searchTerm)
+    );
 
     if (this.sortState.property) {
       filtered = this.sortusers(
@@ -220,6 +227,7 @@ throw new Error('Method not implemented.');
     this.userService.deleteUser(user).subscribe({
       next: () => {
         this.deletingUserId = null;
+        user.isActive = false;
         this.updateDisplayUsers();
       },
       error: (err) => {
@@ -234,14 +242,10 @@ throw new Error('Method not implemented.');
     if (this.sortState.property !== property) return '';
     return this.sortState.direction === SortDirection.Asc ? '⬆' : '⬇';
   }
-  userInHungarian(user: UserModel) : string{
-    
-    if(user.role == "user")
-      return "Felhasználó"
-    if(user.role == 'trainer')
-      return "Edző"
-    if(user.role == "employee")
-      return "Dolgozó"
-    return user.role || "";
+  userInHungarian(user: UserModel): string {
+    if (user.role == 'user') return 'Felhasználó';
+    if (user.role == 'trainer') return 'Edző';
+    if (user.role == 'employee') return 'Dolgozó';
+    return user.role || '';
   }
 }
