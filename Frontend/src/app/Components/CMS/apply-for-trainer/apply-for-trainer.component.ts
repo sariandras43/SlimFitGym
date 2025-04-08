@@ -29,5 +29,7 @@ export class ApplyForTrainerComponent {
       },
     });
   }
-  constructor(private trainerApplicationService: TrainerApplicationService) {}
+  constructor(private trainerApplicationService: TrainerApplicationService) {
+    
+  }
 }
