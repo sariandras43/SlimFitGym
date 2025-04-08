@@ -18,7 +18,8 @@ namespace SlimFitGym.Models.Responses
         public string Role { get; set; }
         public string ImageUrl { get; set; }
         public bool IsActive { get; set; }
-        public AccountResponse(Account a, string token, DateTime validTo,string imageUrl="")
+        public bool? IsAppliedAsTrainer { get; set; }
+        public AccountResponse(Account a, string token, DateTime validTo,string imageUrl="", bool isAppliedAsTrainer = false)
         {
             Id = a.Id;
             Name = a.Name;
@@ -29,9 +30,10 @@ namespace SlimFitGym.Models.Responses
             ValidTo = validTo;
             IsActive = a.isActive;
             ImageUrl = imageUrl;
+            IsAppliedAsTrainer = isAppliedAsTrainer;
         }
 
-        public AccountResponse(Account a, string imageUrl="")
+        public AccountResponse(Account a, string imageUrl="", bool isAppliedAsTrainer = false)
         {
             Id = a.Id;
             Name = a.Name;
@@ -41,6 +43,8 @@ namespace SlimFitGym.Models.Responses
             ImageUrl = imageUrl;
             IsActive = a.isActive;
             Token = "";
+            IsAppliedAsTrainer = isAppliedAsTrainer;
+
         }
 
         public AccountResponse()

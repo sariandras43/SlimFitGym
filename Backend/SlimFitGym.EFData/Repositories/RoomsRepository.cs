@@ -84,8 +84,11 @@ namespace SlimFitGym.EFData.Repositories
                 this.context.SaveChanges();
 
             }
-
-            Image images = imagesRepository.UploadImageToRoom(newRoom.Image, savedRoom.Id);
+            if (!string.IsNullOrWhiteSpace(newRoom.Image))
+            {
+                Image images = imagesRepository.UploadImageToRoom(newRoom.Image, savedRoom.Id);
+                
+            }
 
             return roomsAndMachinesRepository.GetRoomWithMachinesById(savedRoom.Id);
 

@@ -12,7 +12,8 @@ namespace SlimFitGym.EFData.Interfaces
     public interface ITrainingsRepository
     {
         List<Training> GetAllTrainings();
-        List<TrainingResponse> GetActiveTrainings();
+        List<TrainingResponse> GetActiveTrainings(string query = "", int limit = 20, int offset = 0);
+        int GetTotalTrainingCountFromNow();
         List<TrainingResponse>? GetTrainingsByAccountId(string token, int accountId);
         TrainingResponse? GetActiveTraningById(int id);
         List<TrainingResponse>? GetActiveTrainingsByRoomId(int roomId);

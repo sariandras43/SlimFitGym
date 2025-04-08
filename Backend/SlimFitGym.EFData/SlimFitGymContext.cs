@@ -68,14 +68,28 @@ namespace SlimFitGym.EFData
                 new Account() { Id = 1, Name = "admin", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("admin", 10), Email = "admin@gmail.com", Phone = "+36123456789", Role = "admin" },
                 new Account() { Id = 2, Name = "kazmer", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("kazmer", 10), Email = "kazmer@gmail.com", Phone = "+36123456799", Role = "trainer" },
                 new Account() { Id = 3, Name = "pista", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("pista", 10), Email = "pista@gmail.com", Phone = "+36123456788", Role = "user" },
-                new Account() { Id = 4, Name = "ica", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("ica", 10), Email = "ica@gmail.com", Phone = "+36126456788", Role = "employee" }
+                new Account() { Id = 4, Name = "ica", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("ica", 10), Email = "ica@gmail.com", Phone = "+36126456788", Role = "employee" },
+
+                new Account() { Id = 5, Name = "Kovács Beáta", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("kovacsbeata", 10), Email = "beata.kovacs@gmail.com", Phone = "+36301234501", Role = "trainer" },
+                new Account() { Id = 6, Name = "Tóth Tamás", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("tothtamas", 10), Email = "tamas.toth@gmail.com", Phone = "+36301234502", Role = "trainer" },
+                new Account() { Id = 7, Name = "Farkas Nóra", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("farkasnora", 10), Email = "nora.farkas@gmail.com", Phone = "+36301234503", Role = "trainer" },
+                new Account() { Id = 8, Name = "Szabó Bence", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("szabobence", 10), Email = "bence.szabo@gmail.com", Phone = "+36301234504", Role = "trainer" },
+                new Account() { Id = 9, Name = "Kiss Zsanett", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("kisszsanett", 10), Email = "zsanett.kiss@gmail.com", Phone = "+36301234505", Role = "trainer" },
+
+                new Account() { Id = 10, Name = "Nagy Róbert", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("nagyrobert", 10), Email = "robert.nagy@gmail.com", Phone = "+36301234506", Role = "user" },
+                new Account() { Id = 11, Name = "Horváth Vivien", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("horvathvivien", 10), Email = "vivien.horvath@gmail.com", Phone = "+36301234507", Role = "user" },
+                new Account() { Id = 12, Name = "Varga Dániel", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("vargadaniel", 10), Email = "daniel.varga@gmail.com", Phone = "+36301234508", Role = "user" },
+                new Account() { Id = 13, Name = "Szilágyi Anna", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("szilagyianna", 10), Email = "anna.szilagyi@gmail.com", Phone = "+36301234509", Role = "user" },
+                new Account() { Id = 14, Name = "Balogh Gabriella", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("baloghgabriella", 10), Email = "gabriella.balogh@gmail.com", Phone = "+36301234510", Role = "user" },
+                new Account() { Id = 15, Name = "Nagy István", Password = BCrypt.Net.BCrypt.EnhancedHashPassword("nagyistvan", 10), Email = "nagy.istvan@gmail.com", Phone = "+36701234510", Role = "user" , isActive = false}
+
             );
 
             modelBuilder.Entity<Machine>().HasData
             (
-                new Machine() { Id = 1, Name = "Bicikli", Description = null },
-                new Machine() { Id = 2, Name = "Futópad", Description = null },
-                new Machine() { Id = 3, Name = "Elliptikus tréner", Description = null },
+                new Machine() { Id = 1, Name = "Bicikli", Description = "Egyszerű bicikli" },
+                new Machine() { Id = 2, Name = "Futópad", Description = "Sima futópad" },
+                new Machine() { Id = 3, Name = "Elliptikus tréner", Description = "Profi gépezet" },
                 new Machine() { Id = 4, Name = "Evezőgép", Description = "Professzionális evezőgép" },
                 new Machine() { Id = 5, Name = "Súlyzópad", Description = "Állítható dőlésszögű súlyzópad" },
                 new Machine() { Id = 6, Name = "Lépcsőzőgép", Description = "Intenzív kardió edzéshez" },
@@ -115,11 +129,21 @@ namespace SlimFitGym.EFData
 
             modelBuilder.Entity<Training>().HasData
             (
-                new Training() { Id = 1, Name = "TRX edzés", RoomId = 1, TrainerId = 2, MaxPeople = 6, TrainingStart = new DateTime(2025, 5, 1, 10, 0, 0), TrainingEnd = new DateTime(2024, 5, 1, 11, 0, 0), IsActive = true },
-                new Training() { Id = 2, Name = "Spinning", RoomId = 8, TrainerId = 2, MaxPeople = 10, TrainingStart = new DateTime(2025, 5, 2, 14, 0, 0), TrainingEnd = new DateTime(2024, 5, 2, 15, 0, 0), IsActive = true },
-                new Training() { Id = 3, Name = "Jóga", RoomId = 5, TrainerId = 2, MaxPeople = 8, TrainingStart = new DateTime(2025, 5, 3, 9, 0, 0), TrainingEnd = new DateTime(2024, 5, 3, 10, 0, 0), IsActive = true },
-                new Training() { Id = 4, Name = "CrossFit", RoomId = 4, TrainerId = 2, MaxPeople = 12, TrainingStart = new DateTime(2025, 5, 4, 16, 0, 0), TrainingEnd = new DateTime(2024, 5, 4, 17, 0, 0), IsActive = true },
-                new Training() { Id = 5, Name = "Aerobik", RoomId = 6, TrainerId = 2, MaxPeople = 18, TrainingStart = new DateTime(2025, 5, 5, 18, 0, 0), TrainingEnd = new DateTime(2024, 5, 5, 19, 0, 0), IsActive = true }
+                new Training() { Id = 1, Name = "TRX edzés", RoomId = 1, TrainerId = 2, MaxPeople = 6, TrainingStart = new DateTime(2025, 5, 1, 10, 0, 0), TrainingEnd = new DateTime(2025, 5, 1, 11, 0, 0), IsActive = true },
+                new Training() { Id = 2, Name = "Spinning", RoomId = 8, TrainerId = 2, MaxPeople = 10, TrainingStart = new DateTime(2025, 5, 2, 14, 0, 0), TrainingEnd = new DateTime(2025, 5, 2, 15, 0, 0), IsActive = true },
+                new Training() { Id = 3, Name = "Jóga", RoomId = 5, TrainerId = 2, MaxPeople = 8, TrainingStart = new DateTime(2025, 5, 3, 9, 0, 0), TrainingEnd = new DateTime(2025, 5, 3, 10, 0, 0), IsActive = true },
+                new Training() { Id = 4, Name = "CrossFit", RoomId = 4, TrainerId = 2, MaxPeople = 12, TrainingStart = new DateTime(2025, 5, 4, 16, 0, 0), TrainingEnd = new DateTime(2025, 5, 4, 17, 0, 0), IsActive = true },
+                new Training() { Id = 5, Name = "Aerobik", RoomId = 6, TrainerId = 2, MaxPeople = 18, TrainingStart = new DateTime(2025, 5, 5, 18, 0, 0), TrainingEnd = new DateTime(2025, 5, 5, 19, 0, 0), IsActive = true },
+                new Training() { Id = 6, Name = "Aerobik", RoomId = 6, TrainerId = 5, MaxPeople = 18, TrainingStart = new DateTime(2025, 7, 12, 10, 0, 0), TrainingEnd = new DateTime(2025, 7, 12, 11, 0, 0), IsActive = true },
+                new Training() { Id = 7, Name = "Spinning", RoomId = 8, TrainerId = 6, MaxPeople = 15, TrainingStart = new DateTime(2025, 7, 13, 9, 30, 0), TrainingEnd = new DateTime(2025, 7, 13, 10, 30, 0), IsActive = true },
+                new Training() { Id = 8, Name = "Zumba", RoomId = 1, TrainerId = 7, MaxPeople = 20, TrainingStart = new DateTime(2025, 7, 14, 16, 0, 0), TrainingEnd = new DateTime(2025, 7, 14, 17, 0, 0), IsActive = true },
+                new Training() { Id = 9, Name = "Pilates", RoomId = 2, TrainerId = 8, MaxPeople = 12, TrainingStart = new DateTime(2025, 7, 15, 14, 30, 0), TrainingEnd = new DateTime(2025, 7, 15, 15, 30, 0), IsActive = true },
+                new Training() { Id = 10, Name = "TRX", RoomId = 3, TrainerId = 5, MaxPeople = 10, TrainingStart = new DateTime(2025, 7, 16, 17, 0, 0), TrainingEnd = new DateTime(2025, 7, 16, 18, 0, 0), IsActive = true },
+                new Training() { Id = 11, Name = "Jóga", RoomId = 5, TrainerId = 7, MaxPeople = 8, TrainingStart = new DateTime(2025, 7, 17, 18, 0, 0), TrainingEnd = new DateTime(2025, 7, 17, 19, 0, 0), IsActive = true },
+                new Training() { Id = 12, Name = "CrossFit", RoomId = 4, TrainerId = 6, MaxPeople = 12, TrainingStart = new DateTime(2025, 7, 18, 17, 30, 0), TrainingEnd = new DateTime(2025, 7, 18, 18, 30, 0), IsActive = true },
+                new Training() { Id = 13, Name = "Box", RoomId = 7, TrainerId = 8, MaxPeople = 10, TrainingStart = new DateTime(2025, 7, 19, 14, 0, 0), TrainingEnd = new DateTime(2025, 7, 19, 15, 0, 0), IsActive = true },
+                new Training() { Id = 14, Name = "Kondi", RoomId = 3, TrainerId = 5, MaxPeople = 20, TrainingStart = new DateTime(2025, 7, 20, 15, 30, 0), TrainingEnd = new DateTime(2025, 7, 20, 16, 30, 0), IsActive = true },
+                new Training() { Id = 15, Name = "HIIT", RoomId = 4, TrainerId = 7, MaxPeople = 12, TrainingStart = new DateTime(2025, 7, 21, 18, 30, 0), TrainingEnd = new DateTime(2025, 7, 21, 19, 30, 0), IsActive = true }
 
             );
 
@@ -134,9 +158,9 @@ namespace SlimFitGym.EFData
 
             modelBuilder.Entity<Pass>().HasData
             (
-                new Pass() { Id = 1, Days = 30, Name = "Havi", MaxEntries = 0, Price = 15000, IsActive = false },
-                new Pass() { Id = 2, Days = 0, Name = "15 alkalmas bérlet", MaxEntries = 15, Price = 10000 },
-                new Pass() { Id = 3, Days = 90, Name = "Negyedéves", MaxEntries = 0, Price = 40000 },
+                new Pass() { Id = 1, Days = 30, Name = "Havi", MaxEntries = 0, Price = 15000, IsHighlighted = true },
+                new Pass() { Id = 2, Days = 0, Name = "15 alkalmas bérlet", MaxEntries = 15, Price = 10000, IsHighlighted = true },
+                new Pass() { Id = 3, Days = 90, Name = "Negyedéves", MaxEntries = 0, Price = 40000, IsHighlighted = true },
                 new Pass() { Id = 4, Days = 365, Name = "Éves bérlet", MaxEntries = 0, Price = 120000 },
                 new Pass() { Id = 5, Days = 7, Name = "Heti bérlet", MaxEntries = 7, Price = 5000 }
             );
@@ -158,8 +182,35 @@ namespace SlimFitGym.EFData
 
             modelBuilder.Entity<Purchase>().HasData
             (
-                new Purchase() { Id = 1, AccountId = 3, PassId = 2, PurchaseDate = DateTime.Now }
+                new Purchase() { Id = 1, AccountId = 3, PassId = 2, PurchaseDate = DateTime.Now },
+                new Purchase() { Id = 2, AccountId = 15, PassId = 3, PurchaseDate = new DateTime(2025,1,1,10,0,0) }
             );
+            List<Entry> entries = new List<Entry>();
+            int id = 1;
+            for (int month = 1; month < 4; month++)
+            {
+                if (month==1)
+                {
+                    for (int day = 1; day < 25; day++)
+                    {
+                        entries.Add(new Entry() { Id = id, AccountId = 15, EntryDate = new DateTime(2025, month, day, 11, 30, 0) });
+                        id++;
+                        entries.Add(new Entry() { Id = id, AccountId = 2, EntryDate = new DateTime(2025, month, day, 11, 30, 0) });
+                        id++;
+                    }
+                }
+                else
+                {
+                    for (int day = 1; day < 15; day++)
+                    {
+                        entries.Add(new Entry() { Id = id, AccountId = 15, EntryDate = new DateTime(2025, month, day, 11, 30, 0) });
+                        id++;
+                        entries.Add(new Entry() { Id = id, AccountId = 2, EntryDate = new DateTime(2025, month, day, 11, 30, 0) });
+                        id++;
+                    }
+                }
+            }
+            modelBuilder.Entity<Entry>().HasData(entries);
 
             modelBuilder.Entity<Benefit>().HasIndex(b => b.BenefitName).IsUnique();
             modelBuilder.Entity<Account>().HasIndex(a => a.Email).IsUnique();

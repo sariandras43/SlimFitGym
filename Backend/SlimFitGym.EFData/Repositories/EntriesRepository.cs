@@ -35,9 +35,7 @@ namespace SlimFitGym.EFData.Repositories
         {
             Account? accountFromToken = accountRepository.GetAccountById(tokenGenerator.GetAccountIdFromToken(token));
             if (accountFromToken == null)
-            {
                 throw new Exception("Ércénytelen token.");
-            }
             if (accountFromToken.Role=="user" || accountFromToken.Role=="trainer")
                 throw new UnauthorizedAccessException();
             if (accountId<=0) throw new Exception("Érvénytelen azonosító.");
@@ -50,7 +48,7 @@ namespace SlimFitGym.EFData.Repositories
                 this.context.SaveChanges();
                 return newEntry;
             }
-            Purchase? latestPurchase = purchasesRepository.GetLatestPurchaseByAccountId(token, accountId);
+            Purchase? latestPurchase = purchasesRepository.GetLatestPurchaseByAccountId(accountId);
             if (latestPurchase == null) throw new Exception("Ez a felhasználó nem vett még bérletet.");
             Pass? pass = passesRepository.GetPassModelById(latestPurchase.PassId);
             if (pass == null)
@@ -106,7 +104,7 @@ namespace SlimFitGym.EFData.Repositories
                 return null;
             else if (accountFromToken.Role != "admin" && account == null)
                 throw new UnauthorizedAccessException();
-            if (accountId != tokenGenerator.GetAccountIdFromToken(token) && accountFromToken.Role != "admin")
+            if (accountId != tokenGenerator.GetAccountIdFromToken(token) && accountFromToken.Role != "admin" && accountFromToken.Role != "employee")
                 throw new UnauthorizedAccessException();
             DateTime from;
             string[] dateTimeFormats = {
