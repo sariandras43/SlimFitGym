@@ -38,7 +38,7 @@ jobs:
                 -e CloudinarySettings__ApiKey="${{ secrets.CLOUDINARY_APIKEY }}" \
                 -e CloudinarySettings__ApiSecret="${{ secrets.CLOUDINARY_APISECRET }}" \
                 ghcr.io/sariandras43/slimfitgymbackend:$IMAGE_TAG \
-                dotnet test /app/YourTestProject.csproj --logger "trx"
+                dotnet test /app/SlimFitGym.Tests.csproj --logger "trx"
                 
         
         - name: Pushing the container to GHCR
