@@ -22,14 +22,27 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-        - name: generate image tag
+        - name: Generate image tag
           run: |
             echo "IMAGE_TAG=$(date +%s)" >> $GITHUB_ENV
             
         - uses: actions/checkout@v4
-        - name: Build the Docker image
+        - name: Build Docker image
           run: |
             docker build --file ./Backend/Dockerfile --tag ghcr.io/sariandras43/slimfitgymbackend:$IMAGE_TAG --tag ghcr.io/sariandras43/slimfitgymbackend:latest ./Backend
+
+        - name: Run tests
+          run: |
+                docker run --rm \
+                -e CloudinarySettings__CloudName="${{ secrets.CLOUDINARY_CLOUDNAME }}" \
+                -e CloudinarySettings__ApiKey="${{ secrets.CLOUDINARY_APIKEY }}" \
+                -e CloudinarySettings__ApiSecret="${{ secrets.CLOUDINARY_APISECRET }}" \
+                ghcr.io/sariandras43/slimfitgymbackend:$IMAGE_TAG \
+                dotnet test /app/YourTestProject.csproj --logger "trx"
+                
+        
+        - name: Pushing the container to GHCR
+          run: |
             docker login ghcr.io -u sariandras43 -p ${{secrets.GHCR_TOKEN}}
             docker push ghcr.io/sariandras43/slimfitgymbackend:$IMAGE_TAG
             docker push ghcr.io/sariandras43/slimfitgymbackend:latest
