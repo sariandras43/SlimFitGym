@@ -1,20 +1,38 @@
-<nav class="flex g1 vcenter" aria-label="Main Menu">
-  <ul class="flex vcenter g1">
-    <li>
-      <a  routerLink="" routerLinkActive="selected">
-        <img src="Logo.svg" class="logo" alt="" />
-      </a>
-    </li>
-    <li>
-      <a routerLink="" routerLinkActive="selected" ><h2>Főoldal</h2></a>
-    </li>
-    <li><a routerLink="subscriptions" routerLinkActive="selected">Bérletek</a></li>
-    <li><a routerLink="rooms" routerLinkActive="selected">Termek</a></li>
-    <li><a routerLink="training" >Edzésprogramok</a></li>
-    <li><a routerLink="machines" >Gépek</a></li>
-  </ul>
-  <ul class="flex g1 vcenter right" >
-    <li><a routerLink="login" class="btn full">Log in</a></li>
-    <li><a routerLink="signup" class="btn">Sign up</a></li>
-  </ul>
+<nav class="navbar" aria-label="Main Menu">
+  <div class="nav-container container">
+    <a routerLink="/" class="logo-link">
+      <img src="Logo.svg" class="logo" alt="Gym Logo" />
+    </a>
+
+    <button class="menu-toggle" (click)="toggleMenu()" [attr.aria-expanded]="isMenuOpen">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <div class="nav-links" [class.active]="isMenuOpen">
+      <ul class="main-links">
+        <li><a routerLink="" routerLinkActive="selected" class="nav-link"><h2>Főoldal</h2></a></li>
+        <li><a routerLink="subscriptions" routerLinkActive="selected" class="nav-link">Bérletek</a></li>
+        <li><a routerLink="rooms" routerLinkActive="selected" class="nav-link">Termek</a></li>
+        <li><a routerLink="training" routerLinkActive="selected" class="nav-link">Edzésprogramok</a></li>
+        <li><a routerLink="machines" routerLinkActive="selected" class="nav-link">Gépek</a></li>
+      </ul>
+
+      <div class="auth-section">
+        @if (loggedInUser) {
+          <a routerLink="user" class="profile-link">
+            @if (loggedInUser.imageUrl) {
+              <img [src]="loggedInUser.imageUrl" alt="Profilkép" class="profile-img">
+            } @else {
+              <img src="muscleManOrange.svg" alt="Alapértelmezett profilkép" class="profile-img default">
+            }
+          </a>
+        } @else {
+          <a routerLink="login" class="auth-btn">Bejelentkezés</a>
+          <a routerLink="signup" class="auth-btn primary">Regisztráció</a>
+        }
+      </div>
+    </div>
+  </div>
 </nav>

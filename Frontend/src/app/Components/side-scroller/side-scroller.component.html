@@ -1,0 +1,22 @@
+@if (trainers?.length) {
+
+    <div class="billboard-container" >
+        <div class="slider">
+            @for (user of duplicatedUsers; track $index) {
+
+                <div class="user-card" >
+                   
+
+                        <img 
+
+                          [src]="user.imageUrl || 'muscleManOrange.svg'" 
+                          [alt]="user.name || 'User image'"
+                          class="user-image"
+                        >
+                    
+                  <div class="user-name">{{ user.name || 'Anonymous' }}</div>
+                </div>
+            }
+        </div>
+      </div>
+}

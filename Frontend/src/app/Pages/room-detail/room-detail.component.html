@@ -1,0 +1,24 @@
+<app-hero
+  [imgSrc]="room?.imageUrl || 'templateSzoba.jpg' "
+  [title]="room?.name"
+  [subtitle]="room?.description"
+/>
+<div class="counterContainer g5 mt5">
+  <app-counter-bubble [number]="allMachineCount" title="gép" />
+  <app-counter-bubble [number]="room?.recommendedPeople || 0" title="ferőhely" />
+  <app-counter-bubble [number]="machineTypeCount" title="fajta gép" />
+</div>
+
+<div class="container mt5" >
+  <div class="eventWrapper">
+    @if (trainings.length > 0) {
+
+      <app-events (subscribed)="subscribe($event)" (unsubscribed)="unsubscribe($event)"  [events]="trainings" [user]="user"/>
+    }
+  </div>
+  <div class=" machines">
+    <h2>Terem gépei</h2>
+    <app-machines [machines]="room?.machines"/>
+  </div>
+</div>
+<app-footer></app-footer>

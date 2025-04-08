@@ -11,15 +11,3 @@ $card-width: 25rem;
   flex-wrap: wrap;
   flex-basis: $card-width;
 }
-app-card {
-  max-width: $card-width;
-  width: fit-content;
-  background-color: var(--bg-tertiary);
-  .expandedContent {
-    img {
-      height: 100%;
-      width: 30em;
-      object-fit: cover;
-    }
-  }
-}

@@ -1,0 +1,29 @@
+<div class="container">
+    @if (errorMsg) {
+        <div class="error-message container" @errorAnimation>
+          <p>{{ errorMsg }}</p>
+          <button (click)="errorMsg = ''">×</button>
+        </div>
+        }
+    <h2>Edzőnek jelentkezés</h2>
+    <p class="message">
+        Edző jelentkezésedet az oldal adminja fogja elbírálni. Csak akkor jelentkezz ha ténylegesen része akarsz lenni a csapatunknak!
+    </p>
+    @if(sent)
+    {
+        <p class="sent-message"> ✔ Jelenkezés elküldve</p>
+    }
+    @else {
+
+        <button (click)="applyToBeTrainer()" class="delete">
+            @if (loading) {
+                <app-button-loader [size]="0.7" ></app-button-loader>
+            }
+            @else {
+    
+                Jelentkezés
+            }
+            
+        </button>
+    }
+</div>

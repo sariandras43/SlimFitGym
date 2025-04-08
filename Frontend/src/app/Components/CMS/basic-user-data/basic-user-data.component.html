@@ -1,25 +1,105 @@
-<div class="userData">
-    <div class="imgWrap"><img src="norbi.jpg" alt="" class="profilePic" /></div>
+<div class="container">
+  <form class="userData" (input)="formChanged()">
+    <div class="imgWrap">
+      <div class="profilePic">
+        @if (user.imageUrl) {
+        <img [src]="user.imageUrl" alt="" class="" />
+
+        } @else {
+
+        <img src="muscleManOrange.svg" alt="" class="default" />
+        }
+
+        <div class="addHover">
+          <label for="file-upload" class="custom-file-upload"> + </label>
+          <input
+            id="file-upload"
+            (change)="imageChanged($event)"
+            type="file"
+            accept=".jpg,.jpeg,.gif,.avif"
+          />
+        </div>
+      </div>
+      <button (click)="imgDelete()" class="delete imgDelete">
+        @if (deleteImageLoading) {
+        <app-button-loader [size]="0.6"></app-button-loader>
+        } @else { Kép törlése }
+      </button>
+    </div>
     <div class="basicData">
       <p>
         <label for="name">Név: </label>
-        <input type="text" id="name" value="Tiborfalvi Tibor" />
+        <input
+          type="text"
+          id="name"
+          [(ngModel)]="user.name"
+          [ngModelOptions]="{ standalone: true }"
+        />
       </p>
       <p>
         <label for="email">Email: </label>
-        <input type="email" id="email" value="tibor@tibor.com" />
+        <input
+          type="email"
+          id="email"
+          value="tibor@tibor.com"
+          [(ngModel)]="user.email"
+          [ngModelOptions]="{ standalone: true }"
+        />
       </p>
       <p>
         <label for="phone">Telefonszám: </label>
-        <input type="tel" id="phone" value="+36303341322" />
+        <input
+          type="tel"
+          id="phone"
+          value="+36303341322"
+          [(ngModel)]="user.phone"
+          [ngModelOptions]="{ standalone: true }"
+        />
       </p>
+
+      @if (user.role == "admin") {
       <p>
-        <span>Jelenlegi Bérlet: </span>
-        <a class="pass">Alap</a>
+        <span>Jelenlegi szerep: </span>
+        <span class="pass admin">Admin</span>
       </p>
+      } @else if (user.role == "trainer") {
+      <p>
+        <span>Jelenlegi szerep: </span>
+        <span class="pass admin">Edző</span>
+      </p>
+      } @if (loggedInUserPass) {
+      <p>
+        <span>Jelenlegi bérlet: </span>
+        <a class="pass" routerLink="/subscriptions">{{
+          loggedInUserPass.name
+        }}</a>
+      </p>
+
+      }
       <div class="buttons">
-        <button class="edit">Módosítás</button>
-        <button class="delete">Felhasználó törlése</button>
+        @if (updateLoading) {
+        <div class="edit wrap">
+          <app-button-loader [size]="0.55"></app-button-loader>
+        </div>
+
+        } @else {
+
+        <input
+          type="submit"
+          class="edit"
+          [ngClass]="{ disabled: !canModify }"
+          (click)="updateUser()"
+          value="Módosítás"
+        />
+        }
+        <button class="delete" (click)="logout()">Kijelentkezés</button>
       </div>
     </div>
-  </div>
+  </form>
+  <app-new-password [user]="user"></app-new-password>
+  @if (user.role == 'user') {
+
+  <app-apply-for-trainer></app-apply-for-trainer>
+  }
+  <app-delete-user [user]="user"></app-delete-user>
+</div>

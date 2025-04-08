@@ -1,0 +1,44 @@
+h1{
+  text-align: center;
+}
+  
+  .charts-container {
+    flex-wrap: wrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 1.5rem;
+  }
+  
+  .chart-card {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px var(--bg-dark);
+    min-height: 400px;
+    height: 400px; 
+    width: 40rem;
+    
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .chart-card h2 {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    color: var(--main-text);
+    flex-shrink: 0; 
+  }
+  
+  .chart-container {
+    flex: 1;
+    min-height: 0; 
+    position: relative;
+  }
+  
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+  }

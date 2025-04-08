@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../Services/auth.service';
+import {  UserService } from '../../Services/user.service';
 import { FormsModule } from '@angular/forms';
+import { UserModel } from '../../Models/user.model';
 
 @Component({
   selector: 'app-log-in-page',
@@ -20,7 +21,7 @@ export class LogInPageComponent {
   errorMessage = '';
 
   constructor(
-    private authService: AuthService,
+    private userService: UserService,
     private router: Router
   ) { }
 
@@ -29,7 +30,7 @@ export class LogInPageComponent {
       this.errorMessage = "Email cím és jelszó megadása kötelező!";
       return;
     }
-    this.authService.login(this.model.email, this.model.password, this.model.rememberMe).subscribe({
+    this.userService.login(this.model.email, this.model.password, this.model.rememberMe).subscribe({
       next: (response) => {
         if (response) {
           this.router.navigate(['user']);

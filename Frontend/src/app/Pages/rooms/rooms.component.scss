@@ -6,7 +6,7 @@ $card-width: 45rem;
   justify-content: center;
   flex-wrap: wrap;
   flex-basis: $card-width;
-  app-card {
+  app-room-card {
     background-color: var(--bg-tertiary);
     max-width: $card-width;
   }

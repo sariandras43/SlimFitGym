@@ -1,0 +1,17 @@
+.machines
+{
+    h2{
+        font-size: 4rem;
+        margin-bottom: 0.5em;
+    }
+    
+
+}
+.container{
+  display: flex;
+  align-items: center;
+  gap: 3em;
+  .eventWrapper{
+    margin-top: 8em;
+  }
+}

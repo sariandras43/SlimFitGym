@@ -1,8 +1,25 @@
 <div class="eventContainer">
-    <h2>Események</h2>
+
+        <h2>Események</h2>
+
     
-    @for (item of esemenyek; track $index) {
-        <p class="title">Norbi fitness</p>
-        <p class="subtitle"><span>2025.03.23 </span> <span>11:00 - 13:00</span></p>
+    @for (training of events; track $index) {
+
+        <div class="event">
+            <p class="title">{{training.name}} - {{training.trainer}}</p>
+            <p class="subtitle">{{displayDate(training)}}</p>
+            @if(user && training.trainerId != user.id)
+              {
+                @if (training.userApplied) {
+                  <button class="applied" (click)="unsubscribe(training)" >Jelentkezve</button>
+                }
+                @else if (training.freePlaces == 0) {
+                  <button class="full">betelt</button>
+                }
+                @else {
+                  <button class="apply" (click)="subscribe(training)">Jelentkezés</button>
+                }
+              }
+        </div>
     }
 </div>

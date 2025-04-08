@@ -39,7 +39,12 @@
         &+.inputField{
             margin-top: 1em;
         }
-        
+        &.rememberMe{
+            
+            flex-direction: row;
+            gap: 0.5em;
+            
+        }
     }
     .links{
         display: flex;
@@ -51,7 +56,7 @@
             
         }
     }
-    button{
+    .submitButton{
         background-color: var(--primary-color);
         border-radius: var(--border-radius);
         border: none;
@@ -66,7 +71,7 @@
         
     }
     &:has(.errorField){
-        button{
+        .submitButton{
             background-color: var(--danger);
         }
         

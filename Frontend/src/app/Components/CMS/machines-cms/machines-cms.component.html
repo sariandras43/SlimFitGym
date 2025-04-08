@@ -1,0 +1,194 @@
+<div class="container">
+  
+
+    <div class="controlWrap">
+      <div class="controls">
+        <div class="searchBarWrap">
+          <div class="iconWrap">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 50 50"
+              width="50px"
+              height="50px"
+              class="search"
+            >
+              <path
+                d="M 21 3 C 11.601563 3 4 10.601563 4 20 C 4 29.398438 11.601563 37 21 37 C 24.355469 37 27.460938 36.015625 30.09375 34.34375 L 42.375 46.625 L 46.625 42.375 L 34.5 30.28125 C 36.679688 27.421875 38 23.878906 38 20 C 38 10.601563 30.398438 3 21 3 Z M 21 7 C 28.199219 7 34 12.800781 34 20 C 34 27.199219 28.199219 33 21 33 C 13.800781 33 8 27.199219 8 20 C 8 12.800781 13.800781 7 21 7 Z"
+              />
+            </svg>
+            <input
+              (input)="search($event)"
+              class="searchBar"
+              type="text"
+              placeholder="Keresés..."
+            />
+          </div>
+        </div>
+  
+        <div class="filter-controls">
+          <button (click)="modalOpen()" class="newButton">Új gép</button>
+        </div>
+      </div>
+      
+    </div>
+  @if (selectedMachine) {
+
+    <div class="modalWrapper">
+      <div class="overlay"></div>
+      <div class="modal">
+        <div class="modal-header">
+          <h2>{{ selectedMachine.id != -1 ? "Gép szerkesztése" : "Új gép" }}</h2>
+          <div class="modal-actions">
+            <button class="cancel-button" (click)="selectedMachine = undefined">Mégse</button>
+            <button class="save-button" (click)="save()"> @if (isSubmitting) {
+              <app-button-loader [size]="0.7"></app-button-loader>
+              } @else { Mentés }</button>
+          </div>
+        </div>
+        <form class="machineForm">
+          <p class="inputField">
+            <label for="machineNameInput">Név</label>
+            <input type="text" id="machineNameInput" [(ngModel)]="selectedMachine.name" [ngModelOptions]="{ standalone: true }"/>
+            @if(formSubmitted && nameError){
+
+              <span class="error-message">A név kötelező!</span>
+            }
+          </p>
+          <p class="inputField">
+            <label for="machineDescriptionInput">Leírás</label>
+            <textarea id="machineDescriptionInput" [(ngModel)]="selectedMachine.description" [ngModelOptions]="{ standalone: true }"></textarea>
+          </p>
+          <div class="uploadImages">
+            <div class="imgWrap">
+              <p>Fő kép</p>
+              <div class="mainImage imgUpload">
+                @if (selectedMachine.imageUrls[0]) {
+                <img [src]="selectedMachine.imageUrls[0]" alt="" class="" />
+                }
+                <div class="addHover">
+                  <label for="mainImage-upload" class="custom-file-upload">
+                    +
+                  </label>
+                  <input
+                    id="mainImage-upload"
+                    (change)="imageChanged($event, 0)"
+                    type="file"
+                    accept=".jpg,.jpeg,.gif,.avif"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="imgWrap">
+              <p>Segédleti kép</p>
+              <div class="secondaryImage imgUpload">
+                @if (selectedMachine.imageUrls[1]) {
+                <img [src]="selectedMachine.imageUrls[1]" alt="" class="" />
+                }
+                <div class="addHover">
+                  <label for="secondaryImage-upload" class="custom-file-upload">
+                    +
+                  </label>
+                  <input
+                    id="secondaryImage-upload"
+                    (change)="imageChanged($event, 1)"
+                    type="file"
+                    accept=".jpg,.jpeg,.gif,.avif"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          @if(formSubmitted && bottomError){
+
+            <div  class="error-message image-error">
+              {{bottomError}}
+            </div>
+          }
+        </form>
+      </div>
+    </div>
+  }
+  <table>
+    <tr>
+      <th (click)="sortBy('name')">Név {{ getSortIndicator("name") }}</th>
+      <th (click)="sortBy('description')">
+        Leírás {{ getSortIndicator("description") }}
+      </th>
+      <th>Fő kép</th>
+      <th>Segédleti kép</th>
+      <th></th>
+    </tr>
+    @for (machine of displayMachines; track $index) {
+    <tr>
+      <td data-cell="Név">{{ machine.name }}</td>
+      <td data-cell="Leírás">{{ machine.description }}</td>
+      <td data-cell="Fő kép"><img [src]="machine.imageUrls[0]" alt="" class="" /></td>
+      <td data-cell="Segédleti kép"><img [src]="machine.imageUrls[1]" alt="" class="" /></td>
+      <td class="itemButtons">
+        <button aria-label="update" (click)="modalOpen(machine)">
+          <svg
+            width="800px"
+            height="800px"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M21.2799 6.40005L11.7399 15.94C10.7899 16.89 7.96987 17.33 7.33987 16.7C6.70987 16.07 7.13987 13.25 8.08987 12.3L17.6399 2.75002C17.8754 2.49308 18.1605 2.28654 18.4781 2.14284C18.7956 1.99914 19.139 1.92124 19.4875 1.9139C19.8359 1.90657 20.1823 1.96991 20.5056 2.10012C20.8289 2.23033 21.1225 2.42473 21.3686 2.67153C21.6147 2.91833 21.8083 3.21243 21.9376 3.53609C22.0669 3.85976 22.1294 4.20626 22.1211 4.55471C22.1128 4.90316 22.0339 5.24635 21.8894 5.5635C21.7448 5.88065 21.5375 6.16524 21.2799 6.40005V6.40005Z"
+              stroke="#000000"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M11 4H6C4.93913 4 3.92178 4.42142 3.17163 5.17157C2.42149 5.92172 2 6.93913 2 8V18C2 19.0609 2.42149 20.0783 3.17163 20.8284C3.92178 21.5786 4.93913 22 6 22H17C19.21 22 20 20.2 20 18V13"
+              stroke="#000000"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+        <button aria-label="delete" (click)="delete(machine)">
+          @if (deletingMachineId === machine.id) {
+            <app-button-loader [size]="0.3"></app-button-loader>
+          }
+          @else {
+            <svg
+              width="800px"
+              height="800px"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M4 7H20"
+                stroke="#000000"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M6 10L7.70141 19.3578C7.87432 20.3088 8.70258 21 9.66915 21H14.3308C15.2974 21 16.1257 20.3087 16.2986 19.3578L18 10"
+                stroke="#000000"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z"
+                stroke="#000000"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            
+          }
+
+        </button>
+      </td>
+    </tr>
+    }
+  </table>
+</div>

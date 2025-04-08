@@ -6,7 +6,7 @@
       src="mainHero.jpeg"
       alt=""
     />
-    <form class="content" [formGroup]="profileForm" unambiguousRole>
+    <form (submit)="signUp()" class="content" [formGroup]="profileForm" unambiguousRole>
       <div class="inputField">
         <label class="input_title" for="singUpEmail">Email</label>
         <input type="email" id="singUpEmail" formControlName="email" />
@@ -125,8 +125,14 @@
           </div>
         }
       </div>
-    </div>
 
+    </div>
+    <div class="alert alert-danger errorField" *ngIf="this.errorMessage">
+      <div>
+
+        {{this.errorMessage}}
+      </div>
+    </div>
       <div class="links">
         <a routerLink="/login">Bejelentkezés</a>
       </div>

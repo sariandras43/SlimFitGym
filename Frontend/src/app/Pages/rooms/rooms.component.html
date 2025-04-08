@@ -4,54 +4,18 @@
   subtitle="Termeink között mindenki megtalálhatja a számára legmegfelelőbbet"
 />
 <div class="counterContainer g5 mt5">
-    <app-counter-bubble [number]="5" title="hinnye"/>
-    <app-counter-bubble [number]="12" title="valami"/>
-    <app-counter-bubble [number]="32" title="cucc"/>
-    
-    </div>
-
+  <app-counter-bubble [number]="rooms?.length || 0" title="szoba" />
+  <app-counter-bubble [number]="fullMaxPeople" title="Férőhely" />
+  <app-counter-bubble [number]="machineCount" title="Fajta gép" />
+</div>
 
 <div class="container">
-    <div class="eventWrapper"></div>
-    <div class="mt5 flex cardWrapper">
-      <app-card
-        title="Alap terem"
-        linkTo="pelda"
-        [isClickable]="true"
-        imgSrc="templateSzoba.jpg"
-        description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, sapiente atque! Explicabo sapiente nobis possimus? Reiciendis, iure reprehenderit rem dolor eligendi dignissimos ad? Amet sunt aliquam dicta, sint incidunt similique!"
-      >
-      <h3 ngProjectAs="card-title"  >Valami</h3>
-    </app-card>
-      <app-card
-        title="Alap terem"
-        linkTo="pelda"
-        [isClickable]="true"
-        imgSrc="templateSzoba.jpg"
-        description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, sapiente atque! Explicabo sapiente nobis possimus? Reiciendis, iure reprehenderit rem dolor eligendi dignissimos ad? Amet sunt aliquam dicta, sint incidunt similique!"
-      />
-      <app-card
-        title="Alap terem"
-        linkTo="pelda"
-        [isClickable]="true"
-        imgSrc="templateSzoba.jpg"
-        description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, sapiente atque! Explicabo sapiente nobis possimus? Reiciendis, iure reprehenderit rem dolor eligendi dignissimos ad? Amet sunt aliquam dicta, sint incidunt similique!"
-      />
-      <app-card
-        title="Alap terem"
-        linkTo="pelda"
-        [isClickable]="true"
-        imgSrc="templateSzoba.jpg"
-        description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, sapiente atque! Explicabo sapiente nobis possimus? Reiciendis, iure reprehenderit rem dolor eligendi dignissimos ad? Amet sunt aliquam dicta, sint incidunt similique!"
-      />
-      <app-card
-        title="Alap terem"
-        linkTo="pelda"
-        [isClickable]="true"
-        imgSrc="templateSzoba.jpg"
-        description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, sapiente atque! Explicabo sapiente nobis possimus? Reiciendis, iure reprehenderit rem dolor eligendi dignissimos ad? Amet sunt aliquam dicta, sint incidunt similique!"
-      />
-    
-    
-    </div>
+  <div class="eventWrapper"></div>
+  <div class="mt5 flex cardWrapper">
+    @for (room of rooms; track $index) {
+      <app-room-card [room]="room"></app-room-card>
+      
+    }
+  </div>
 </div>
+<app-footer></app-footer>
