@@ -14,6 +14,7 @@ WORKDIR /src
 COPY ["SlimFitGymBackend/SlimFitGymBackend.csproj", "SlimFitGymBackend/"]
 COPY ["SlimFitGym.Models/SlimFitGym.Models.csproj", "SlimFitGym.Models/"]
 COPY ["SlimFitGym.EFData/SlimFitGym.EFData.csproj", "SlimFitGym.EFData/"]
+COPY ["SlimFitGym.Tests/SlimFitGym.Tests.csproj", "SlimFitGym.Tests/"]
 RUN dotnet restore "SlimFitGymBackend\SlimFitGymBackend.csproj"
 COPY . .
 WORKDIR "/src/SlimFitGymBackend"
