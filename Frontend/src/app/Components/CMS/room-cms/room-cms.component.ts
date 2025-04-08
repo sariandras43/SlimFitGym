@@ -1,4 +1,3 @@
-// room-cms.component.ts
 import { Component } from '@angular/core';
 import { RoomModel } from '../../../Models/room.model';
 import { RoomService } from '../../../Services/room.service';
@@ -7,6 +6,7 @@ import { ButtonLoaderComponent } from '../../button-loader/button-loader.compone
 import { MachineModel } from '../../../Models/machine.model';
 import { MachinesCMSComponent } from '../machines-cms/machines-cms.component';
 import { MachineService } from '../../../Services/machine.service';
+import { NgClass } from '@angular/common';
 
 enum SortDirection {
   Asc = 'asc',
@@ -21,7 +21,7 @@ type SortableProperty = keyof Pick<
 @Component({
   selector: 'app-room-cms',
   standalone: true,
-  imports: [FormsModule, ButtonLoaderComponent],
+  imports: [FormsModule, ButtonLoaderComponent, NgClass],
   templateUrl: './room-cms.component.html',
   styleUrls: ['./room-cms.component.scss'],
 })
@@ -186,26 +186,33 @@ export class RoomCMSComponent {
 
   save() {
     if (this.isSubmitting || !this.selectedRoom) return;
+    this.nameError = false;
+    this.descriptionError = false;
+    this.recomendedPeopleError = false;
+    this.bottomError = '';
 
     this.formSubmitted = true;
 
     this.isSubmitting = true;
 
-    if(this.selectedRoom.name == '')
-    {
+    if (this.selectedRoom.name == '') {
+      this.isSubmitting = false;
+
       this.nameError = true;
       return;
     }
-    if(this.selectedRoom.description == '')
-      {
-        this.descriptionError = true;
-        return;
-      }
-      if(this.selectedRoom.recommendedPeople == 0)
-        {
-          this.recomendedPeopleError = true;
-          return;
-        }
+    if (this.selectedRoom.description == '') {
+      this.isSubmitting = false;
+
+      this.descriptionError = true;
+      return;
+    }
+    if (this.selectedRoom.recommendedPeople == 0) {
+      this.isSubmitting = false;
+
+      this.recomendedPeopleError = true;
+      return;
+    }
 
     if (this.selectedRoom.id === -1) {
       this.roomService.saveRoom(this.selectedRoom).subscribe({
