@@ -1,52 +1,59 @@
-/* user-billboard.component.css */
+// side-scroller.component.scss
 .billboard-container {
-    overflow: hidden;
-    position: relative;
-    width: 100%;
-    padding: 20px 0;
-    background: inherit;
-    margin: 20px 0;
-  }
-  
-  .slider {
-    display: flex;
-    animation: slide 15s linear infinite;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  padding: 20px 0;
+  margin: 20px 0;
+}
 
-   gap: 10em;
-    width: 100%
+.slider {
+  display: flex;
+  animation: slide linear infinite;
+  animation-duration: 40s;
+  gap: 4em;
+  will-change: transform;
+  width: max-content;
+  
+  // Dynamic gap adjustment
+  @media (max-width: 768px) {
+    gap: 2em;
+    animation-duration: 60s;
+  }
+  @media (max-width: 480px) {
+    gap: 1em;
+  }
+}
 
-  }
-  
-  @keyframes slide {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(-50.2%);
-    }
-  }
-  
-  .user-card {
-    flex: 0 0 auto;
+@keyframes slide {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
 
-    text-align: center;
-    transition: transform 0.3s ease;
-  }
+.user-card {
+  flex: 0 0 auto;
+  text-align: center;
+  min-width: 200px; // Prevent items from collapsing
   
-  
-  .user-image {
-    width: 20rem;
-    height: 20rem;
-    border-radius: 50%;
-    object-fit: cover;
-    margin: 0 auto 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-   
+  @media (max-width: 768px) {
+    min-width: 150px;
   }
-  
-  .user-name {
-    font-size: 2rem;
-    font-weight: 500;
-    color: var(--main-text);
-    padding: 0 10px;
+  @media (max-width: 480px) {
+    min-width: 120px;
   }
+}
+
+.user-image {
+  width: clamp(8rem, 15vw, 15rem);
+  height: clamp(8rem, 15vw, 15rem);
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.user-name {
+  font-size: clamp(1.2rem, 2vw, 1.8rem);
+  font-weight: 500;
+  color: var(--main-text);
+}

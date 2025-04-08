@@ -2,8 +2,8 @@
     border-radius: 100%;
     aspect-ratio: 1 / 1;
     flex-direction: column;
-    padding: 5em;
     width: 20em;
+    max-width: 100%;
     position: relative;
     overflow: hidden;
     border: none;
@@ -22,7 +22,7 @@
 
     .number {
         font-weight: bolder;
-        font-size: 6rem;
+        font-size: 5rem;
         color: var(--secondary-color);
     }
 
@@ -31,4 +31,7 @@
         letter-spacing: 1px;
         text-transform: uppercase;
     }
+}
+:host{
+    max-width: 100%;
 }

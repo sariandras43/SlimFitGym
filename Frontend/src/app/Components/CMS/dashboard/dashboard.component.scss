@@ -1,13 +1,14 @@
-.dashboard-grid {
-    padding: 2rem;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
+h1{
+  text-align: center;
+}
   
   .charts-container {
-    display: grid;
+    flex-wrap: wrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
     gap: 1.5rem;
-    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
   }
   
   .chart-card {
@@ -17,6 +18,8 @@
     box-shadow: 0 4px 6px var(--bg-dark);
     min-height: 400px;
     height: 400px; 
+    width: 40rem;
+    
     display: flex;
     flex-direction: column;
   }

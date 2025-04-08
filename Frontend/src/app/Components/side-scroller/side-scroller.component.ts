@@ -14,8 +14,11 @@ export class SideScrollerComponent {
   get duplicatedUsers():  {name: string, imageUrl: string}[] {
     if (!this.trainers?.length) return [];
     
-    const minItems =  this.trainers.length * 1 > 8 ? this.trainers.length : 8; 
-    const repeatCount = Math.ceil(minItems / this.trainers.length);
-    return Array(repeatCount).fill(this.trainers).flat();
+    if (!this.trainers?.length) return [];
+  
+    // Ensure minimum of 8 items for smooth animation
+    const minItems = 8;
+    const neededRepetitions = Math.ceil(minItems / this.trainers.length);
+    return Array(neededRepetitions * 2).fill(this.trainers).flat();
   }
 }
