@@ -21,7 +21,6 @@ export class NavbarComponent {
       this.loggedInUser = user;
     });
 
-    // Close menu on navigation
     this.router.events.subscribe(() => {
       this.isMenuOpen = false;
     });
