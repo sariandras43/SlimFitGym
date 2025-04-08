@@ -27,7 +27,7 @@ export class UserService {
     this.checkUser();
   }
 
-  private getAuthHeaders(): HttpHeaders {
+  public getAuthHeaders(): HttpHeaders {
     const token = this.loggedInUserSubject.getValue()?.token;
     return new HttpHeaders().set('Authorization', `Bearer ${token}`);
   }

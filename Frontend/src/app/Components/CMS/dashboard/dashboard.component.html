@@ -2,35 +2,41 @@
     <h1>Analytics Dashboard</h1>
   
     <div class="charts-container">
-      <!-- Line Chart -->
-      <div class="chart-card">
-        <h2>Sales Trend</h2>
-        <div class="chart-container">
-          <canvas 
-            appChart
-            [type]="'line'"
-            [data]="lineChartData"
-            [options]="chartOptions">
-          </canvas>
-        </div>
-      </div>
+       @if (lineChartData.datasets && lineChartData.datasets.length != 0) {
+         <div class="chart-card">
+           <h2>Belépések</h2>
+           <div class="chart-container">
+             <canvas 
+               appChart
+               [type]="'line'"
+               [data]="lineChartData"
+               [options]="chartOptions">
+             </canvas>
+           </div>
+         </div>
+
+       }
+       
   
-      <!-- Bar Chart -->
-      <div class="chart-card">
-        <h2>Revenue by Quarter</h2>
-        <div class="chart-container">
-          <canvas 
-            appChart
-            [type]="'bar'"
-            [data]="barChartData"
-            [options]="chartOptions">
-          </canvas>
-        </div>
-      </div>
+       @if (barChartData.datasets && barChartData.datasets.length != 0) {
+       
+         <div class="chart-card">
+           <h2>Bevétel</h2>
+           <div class="chart-container">
+             <canvas 
+               appChart
+               [type]="'bar'"
+               [data]="barChartData"
+               [options]="chartOptions">
+             </canvas>
+           </div>
+         </div>
+      }
   
-      <!-- Pie Chart -->
+      @if (pieChartData.datasets && pieChartData.datasets.length != 0) {
+       
       <div class="chart-card">
-        <h2>Acquisition Sources</h2>
+        <h2>Negyedéves bevétel aránya</h2>
         <div class="chart-container">
           <canvas 
             appChart
@@ -41,18 +47,21 @@
         </div>
       </div>
   
-      <!-- Doughnut Chart -->
+    }
+    @if (linePurchaseData.datasets && linePurchaseData.datasets.length != 0) {
       <div class="chart-card">
-        <h2>Project Status</h2>
+        <h2>Vásárlások száma</h2>
         <div class="chart-container">
           <canvas 
             appChart
-            [type]="'doughnut'"
-            [data]="doughnutChartData"
+            [type]="'line'"
+            [data]="linePurchaseData"
             [options]="chartOptions">
           </canvas>
         </div>
       </div>
+
+    }
   
     </div>
   </div>
