@@ -9,8 +9,7 @@
   </h2>
 </button>
 @if (opened) {
-<div class="content">
-
-    <ng-content class="expanded"></ng-content>
+<div class="content" @expandCollapse>
+  <ng-content class="expanded"></ng-content>
 </div>
 }

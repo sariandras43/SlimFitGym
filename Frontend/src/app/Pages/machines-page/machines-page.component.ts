@@ -1,13 +1,31 @@
 import { Component } from '@angular/core';
-import { HeroComponent } from "../../Components/hero/hero.component";
-import { MachinesComponent } from "../../Components/machines/machines.component";
+import { HeroComponent } from '../../Components/hero/hero.component';
+import { MachinesComponent } from '../../Components/machines/machines.component';
+import { MachineService } from '../../Services/machine.service';
+import { MachineModel } from '../../Models/machine.model';
+import { FooterComponent } from "../../Components/footer/footer.component";
 
 @Component({
   selector: 'app-machines-page',
-  imports: [HeroComponent, MachinesComponent],
+  imports: [HeroComponent, MachinesComponent, FooterComponent],
   templateUrl: './machines-page.component.html',
-  styleUrl: './machines-page.component.scss'
+  styleUrl: './machines-page.component.scss',
 })
 export class MachinesPageComponent {
-  machines = Array<string>(10)
+  SearchTerm: string = '';
+search($event: Event) {
+  const input = $event.target as HTMLInputElement;
+  this.SearchTerm = input.value.toLowerCase();
+  this.updateMachines();
+}
+machines: MachineModel[] | undefined;
+displayMachines: MachineModel[] | undefined;
+constructor(machineService: MachineService) {
+  machineService.allMachines$.subscribe((res)=>{ this.machines = res});
+  this.updateMachines();
+}
+updateMachines(){
+   this.displayMachines = this.machines?.filter(s=> s.description?.toLocaleLowerCase().includes(this.SearchTerm) || s.name.toLocaleLowerCase().includes(this.SearchTerm))
+
+  }
 }

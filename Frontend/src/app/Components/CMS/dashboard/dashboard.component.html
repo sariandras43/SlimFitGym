@@ -1,0 +1,69 @@
+<div class="container">
+  <div class="dashboard-grid">
+      <h1>Analitika</h1>
+  
+      <div class="charts-container">
+         @if (lineChartData.datasets && lineChartData.datasets.length != 0) {
+           <div class="chart-card">
+             <h2>Belépések</h2>
+             <div class="chart-container">
+               <canvas
+                 appChart
+                 [type]="'line'"
+                 [data]="lineChartData"
+                 [options]="chartOptions">
+               </canvas>
+             </div>
+           </div>
+  
+         }
+  
+  
+         @if (barChartData.datasets && barChartData.datasets.length != 0) {
+  
+           <div class="chart-card">
+             <h2>Bevétel</h2>
+             <div class="chart-container">
+               <canvas
+                 appChart
+                 [type]="'bar'"
+                 [data]="barChartData"
+                 [options]="chartOptions">
+               </canvas>
+             </div>
+           </div>
+        }
+  
+        @if (pieChartData.datasets && pieChartData.datasets.length != 0) {
+  
+        <div class="chart-card">
+          <h2>Negyedéves bevétel aránya</h2>
+          <div class="chart-container">
+            <canvas
+              appChart
+              [type]="'pie'"
+              [data]="pieChartData"
+              [options]="chartOptions">
+            </canvas>
+          </div>
+        </div>
+  
+      }
+      @if (linePurchaseData.datasets && linePurchaseData.datasets.length != 0) {
+        <div class="chart-card">
+          <h2>Vásárlások száma</h2>
+          <div class="chart-container">
+            <canvas
+              appChart
+              [type]="'line'"
+              [data]="linePurchaseData"
+              [options]="chartOptions">
+            </canvas>
+          </div>
+        </div>
+  
+      }
+  
+      </div>
+    </div>
+</div>

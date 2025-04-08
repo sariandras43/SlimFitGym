@@ -1,14 +1,21 @@
 import { Component, input } from '@angular/core';
-import { CardComponent } from "../card/card.component";
+import { MachineCardComponent } from '../cards/machine-card/machine-card.component';
+import { MachineService } from '../../Services/machine.service';
+import { MachineModel } from '../../Models/machine.model';
 
 @Component({
   selector: 'app-machines',
-  imports: [CardComponent],
+  imports: [MachineCardComponent],
   templateUrl: './machines.component.html',
-  styleUrl: './machines.component.scss'
+  styleUrl: './machines.component.scss',
 })
 export class MachinesComponent {
-  machines = input<Array<any>>();
+  machines = input<MachineModel[]>();
+
+  
+  
+
+
 
 
 }

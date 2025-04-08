@@ -1,0 +1,37 @@
+h2{
+    font-size: 3rem;
+margin-top: 4rem;
+color: var(--danger);
+border-bottom: rgba(var(--main-text-rgb),0.2) solid 3px;
+margin-bottom: 2rem;
+}
+button{
+    background-color: var(--bg-tertiary);
+    border: var(--danger) 2px solid;
+    border-radius: var(--border-radius);
+    font-size: 1.5rem;
+    padding: .25em 2em;
+    margin-top: 1em;
+    color: var(--danger);
+    &:hover{
+        cursor: pointer;
+        background-color: var(--danger);
+        color: var(--main-text);
+    }
+}
+.warningMessage{
+    color: var(--main-text);
+    font-size: 1.5rem;
+    max-width: 75ch;
+}
+input{
+    font-size: 1.5rem;
+    width: 60%;
+    max-width: 30rem;
+    padding: 0.25em 0em;
+    border: none;
+    border-bottom: 1px solid var(--secondary-text);
+    outline: transparent;
+            background-color: inherit;
+            color: var(--main-text);
+}

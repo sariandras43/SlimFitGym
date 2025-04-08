@@ -1,0 +1,20 @@
+<div class="container">
+    <div>
+      <div>
+        <zxing-scanner (scanSuccess)="onCodeResult($event)"></zxing-scanner>
+        <div>
+          <h3>Legutóbbi eredmény:</h3>
+          <p>{{ scannedResult }}</p>
+        </div>
+      </div>
+      <div style="flex: 1">
+        <h3>Utolsó olvasások listája:</h3>
+        <ul>
+          @for (code of scanHistory; track $index) {
+          <li>{{ code }}</li>
+    
+          }
+        </ul>
+      </div>
+    </div>
+</div>

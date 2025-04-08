@@ -4,9 +4,10 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "dev": "concurrently \"dotnet run --project ../Backend/SlimFitGymBackend/SlimFitGymBackend.csproj\" \"npm run start\"",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "concurrently \"dotnet run --project ../Backend/SlimFitGymBackend/SlimFitGymBackend.csproj\" \"npm run start\" \"npx cypress run\"",
+    "test": "concurrently \"dotnet run --project ../Backend/SlimFitGymBackend/SlimFitGymBackend.csproj >nul 2>&1\" \"npm run start >nul 2>&1\" \"npx cypress run\"",
     "test:open": "concurrently \"dotnet run --project ../Backend/SlimFitGymBackend/SlimFitGymBackend.csproj\" \"npm run start\" \"npx cypress open\""
   },
   "private": true,
@@ -19,6 +20,11 @@
     "@angular/platform-browser": "^19.0.0",
     "@angular/platform-browser-dynamic": "^19.0.0",
     "@angular/router": "^19.0.0",
+    "@types/chart.js": "^2.9.41",
+    "@zxing/ngx-scanner": "^19.0.0",
+    "chart.js": "^4.4.8",
+    "ng2-charts": "^8.0.0",
+    "ngx-cookie-service": "^19.1.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
@@ -29,7 +35,7 @@
     "@angular/compiler-cli": "^19.0.0",
     "@types/jasmine": "~5.1.0",
     "concurrently": "^9.1.2",
-    "cypress": "^14.0.3",
+    "cypress": "^14.2.1",
     "jasmine-core": "~5.4.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

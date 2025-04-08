@@ -1,0 +1,19 @@
+<div class="promo-banner" [class.align-right]="align === 'right'">
+    <div class="image-container" 
+         [@fadeInImage]="{ 
+           value: animationState, 
+           params: { imageStart: align === 'left' ? '100px' : '-100px' }
+         }">
+        <img [src]="imageUrl" alt="Gym promotion" class="promo-image">
+    </div>
+    <div class="text-content" 
+         [@fadeInText]="{ 
+           value: animationState, 
+           params: { textStart: align === 'left' ? '-100px' : '100px' }
+         }">
+        <div class="steel-plate">
+            <h2 class="promo-title">{{ title }}</h2>
+            <p class="promo-description">{{ description }}</p>
+        </div>
+    </div>
+</div>

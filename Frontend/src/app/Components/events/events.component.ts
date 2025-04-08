@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { TrainingModel } from '../../Models/training.model';
+import { UserModel } from '../../Models/user.model';
+import Utils from '../../utils/util';
 
 @Component({
   selector: 'app-events',
@@ -7,5 +10,17 @@ import { Component } from '@angular/core';
   styleUrl: './events.component.scss'
 })
 export class EventsComponent {
-  esemenyek = Array<string>(10)
+subscribe(training: TrainingModel) {
+this.subscribed.emit(training);
+}
+unsubscribe(training: TrainingModel) {
+this.unsubscribed.emit(training)
+}
+  @Input() events : Array<TrainingModel> | undefined;
+  @Input() user : UserModel |undefined;
+  @Output() subscribed = new EventEmitter<TrainingModel>;
+  @Output() unsubscribed = new EventEmitter<TrainingModel>;
+  displayDate(training: TrainingModel) {
+    return Utils.displayDate(training);  
+  }
 }
