@@ -1,4 +1,3 @@
-// auth.guard.ts
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, UrlTree } from '@angular/router';
 import { Observable, map, take } from 'rxjs';
@@ -12,9 +11,12 @@ export class AuthGuard implements CanActivate {
 
   canActivate(): Observable<boolean | UrlTree> {
     return this.userService.loggedInUser$.pipe(
-      take(1), // Take the latest user state
+      take(1),
+
       map((user) => {
-        // Allow navigation if user exists, else redirect to login
+        if (user?.role == 'employee') {
+          return this.router.parseUrl('/employee');
+        }
         return user ? true : this.router.parseUrl('/login');
       })
     );

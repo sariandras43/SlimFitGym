@@ -21,6 +21,7 @@ import { AuthGuard } from './Auth/auth.guard';
 import { NotFoundComponent } from './Pages/not-found/not-found.component';
 import { SubscribedTrainingsComponent } from './Components/CMS/subscribed-trainings/subscribed-trainings.component';
 import { DashboardComponent } from './Components/CMS/dashboard/dashboard.component';
+import { WorkerPageComponent } from './Components/CMS/worker-page/worker-page.component';
 
 export const routes: Routes = [
   { path: '', component: MainPageComponent },
@@ -30,6 +31,12 @@ export const routes: Routes = [
   { path: 'machines', component: MachinesPageComponent },
   { path: 'training', component: TrainigsPageComponent },
   {
+    path: 'employee',
+    component: WorkerPageComponent,
+    data: { allowedRoles: ['employee'] },
+    canActivate: [RoleGuard]
+  },
+  {
     path: 'user',
     component: UserPageComponent,
     canActivate: [AuthGuard],
@@ -37,12 +44,12 @@ export const routes: Routes = [
       { path: 'userData', component: BasicUserDataComponent },
       { path: 'subscribedTrainings', component: SubscribedTrainingsComponent },
 
+      
       {
-        path: 'myPass',
+        path: 'scanner',
         component: MyPassComponent,
-        data: { allowedRoles: ['user'] },
+        data: { allowedRoles: ['worker'] },
       },
-
       {
         path: 'myTrainings',
         component: MyTrainingsCMSComponent,
