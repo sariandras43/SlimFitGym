@@ -3,21 +3,21 @@ import { BehaviorSubject } from 'rxjs';
 import { UserService } from './user.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ConfigService } from './config.service';
-import { PurchaseModel } from '../Models/purchaseStatistic.model';
-import { EntryModel } from '../Models/entryStatistic.model';
+import { PurchaseStatisticModel } from '../Models/purchaseStatistic.model';
+import { EntryStatisticModel } from '../Models/entryStatistic.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StatisticsService {
-  private entriesSubject = new BehaviorSubject<EntryModel[] | undefined>(
-    undefined
-  );
+  private entriesSubject = new BehaviorSubject<
+    EntryStatisticModel[] | undefined
+  >(undefined);
   entries$ = this.entriesSubject.asObservable();
 
-  private purchasesSubject = new BehaviorSubject<PurchaseModel  [] | undefined>(
-    undefined
-  );
+  private purchasesSubject = new BehaviorSubject<
+    PurchaseStatisticModel[] | undefined
+  >(undefined);
   purchases$ = this.purchasesSubject.asObservable();
   constructor(
     private userService: UserService,
@@ -33,9 +33,12 @@ export class StatisticsService {
   }
   getPurchasesStatistic() {
     this.http
-      .get<PurchaseModel[]>(`${this.config.apiUrl}/statistics/purchases?year=2025`, {
-        headers: this.userService.getAuthHeaders(),
-      })
+      .get<PurchaseStatisticModel[]>(
+        `${this.config.apiUrl}/statistics/purchases?year=2025`,
+        {
+          headers: this.userService.getAuthHeaders(),
+        }
+      )
       .subscribe({
         next: (stat) => {
           this.purchasesSubject.next(stat);
@@ -50,9 +53,12 @@ export class StatisticsService {
   }
   getEntriesStatistic() {
     this.http
-      .get<EntryModel[]>(`${this.config.apiUrl}/statistics/entries?year=2025`, {
-        headers: this.userService.getAuthHeaders(),
-      })
+      .get<EntryStatisticModel[]>(
+        `${this.config.apiUrl}/statistics/entries?year=2025`,
+        {
+          headers: this.userService.getAuthHeaders(),
+        }
+      )
       .subscribe({
         next: (stat) => {
           this.entriesSubject.next(stat);

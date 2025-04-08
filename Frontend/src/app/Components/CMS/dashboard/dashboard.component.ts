@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ChartDirective } from '../../../chart-directives/chart.directive';
 import { StatisticsService } from '../../../Services/statistics.service';
-import { EntryModel } from '../../../Models/entryStatistic.model';
-import { PurchaseModel } from '../../../Models/purchaseStatistic.model';
+import { EntryStatisticModel } from '../../../Models/entryStatistic.model';
+import { PurchaseStatisticModel } from '../../../Models/purchaseStatistic.model';
 import { scales } from 'chart.js';
 @Component({
   selector: 'app-dashboard',
@@ -46,7 +46,6 @@ export class DashboardComponent implements OnInit {
         },
       },
       y: {
-        
         ticks: {
           color: this.secondaryText,
           font: { weight: '400' },
@@ -133,7 +132,7 @@ export class DashboardComponent implements OnInit {
       },
     });
   }
-  updatePurchasesStatistic(purhcases: PurchaseModel[] | undefined) {
+  updatePurchasesStatistic(purhcases: PurchaseStatisticModel[] | undefined) {
     if (!purhcases) return;
     this.barChartData.datasets = [
       {
@@ -144,7 +143,7 @@ export class DashboardComponent implements OnInit {
         borderWidth: 1,
         borderRadius: 4,
         stack: 'Stack 0',
-      }
+      },
     ];
     this.pieChartData.datasets = [
       {
@@ -175,10 +174,10 @@ export class DashboardComponent implements OnInit {
         fill: true,
         borderWidth: 2,
         pointBackgroundColor: this.bgSecondary,
-      }
-    ]
+      },
+    ];
   }
-  updateEntryStatistic(entries: EntryModel[] | undefined) {
+  updateEntryStatistic(entries: EntryStatisticModel[] | undefined) {
     if (!entries) return;
     this.lineChartData.datasets[0] = {
       label: 'Belépés',
