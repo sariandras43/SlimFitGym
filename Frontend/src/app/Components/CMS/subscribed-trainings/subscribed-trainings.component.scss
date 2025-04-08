@@ -57,7 +57,10 @@ h2 {
   display: flex;
   border-radius: calc(var(--border-radius) * 2);
   overflow: hidden;
-
+  position: relative;
+  &:has(.cancelled){
+    opacity: 0.7;
+  }
   .trainerImage {
     border-top-left-radius: var(--border-radius);
     border-bottom-left-radius: var(--border-radius);
@@ -69,6 +72,12 @@ h2 {
       object-fit: cover;
     }
   }
+  .cancelled{
+    
+    font-size: 3rem;
+    color: var(--danger);
+    text-shadow: 5px 5px 5px var(--bg-dark);
+  }
   .trainingContent {
     position: relative;
     isolation: isolate;
@@ -79,7 +88,7 @@ h2 {
     justify-content: center;
     align-items: baseline;
     background-color: #000;
-
+    
     img {
       position: absolute;
       z-index: -1;

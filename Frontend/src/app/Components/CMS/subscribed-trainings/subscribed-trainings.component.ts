@@ -10,46 +10,50 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-subscribed-trainings',
   imports: [FormsModule],
   templateUrl: './subscribed-trainings.component.html',
-  styleUrl: './subscribed-trainings.component.scss'
+  styleUrl: './subscribed-trainings.component.scss',
 })
 export class SubscribedTrainingsComponent {
   searchValue = '';
 
-  search(){
-    console.log(this.searchValue)
-    this.displayTrainings = this.trainings.filter(t=> t.name.toLowerCase().includes(this.searchValue)
-  || t.trainer.toLowerCase().includes(this.searchValue))
+  search() {
+    this.updateDisplayTrainings();
   }
 
+  trainings: TrainingModel[] = [];
+  displayTrainings: TrainingModel[] = [];
+  user: UserModel | undefined;
 
+  constructor(private trainingService: TrainingService) {
+    trainingService.subscribedTrainings$.subscribe({
+      next: (t) => {
+        if (t) {
+          this.trainings = t
+            .filter((t) => {
+              return t.trainingEnd > new Date(Date.now());
 
-   trainings: TrainingModel[] = [];
-   displayTrainings: TrainingModel[] = [];
-   user: UserModel | undefined;
- 
-   constructor(
-     private trainingService: TrainingService
-   ) {
-     trainingService.subscribedTrainings$.subscribe({
-       next: (t) => {
-         if (t) {
-           this.trainings = t.sort(training => training.trainingStart.getTime());
-           this.displayTrainings = [...this.trainings];
+            })
+            .sort((training) => training.trainingStart.getTime());
+          this.updateDisplayTrainings();
+        }
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
+  }
 
-         }
-       },
-       error: (err) => {
-         console.log(err);
-       },
-     });
-   }
- 
- 
-   displayDate(training: TrainingModel): string {
-     return Utils.displayDate(training);
-   }
+  displayDate(training: TrainingModel): string {
+    return Utils.displayDate(training);
+  }
+  updateDisplayTrainings() {
+    this.displayTrainings = this.trainings.filter(
+      (t) =>
+        t.name.toLowerCase().includes(this.searchValue) ||
+        t.trainer.toLowerCase().includes(this.searchValue)
+    );
+  }
 
-   subscribe(training: TrainingModel) {
+  subscribe(training: TrainingModel) {
     this.trainingService.subscribeToTraining(training.id).subscribe({
       next: () => {},
       error: (err) => {

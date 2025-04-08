@@ -36,10 +36,18 @@
             }}
           </p>
           <p class="date">{{ displayDate(training) }}</p>
+          @if (training.isActive) {
 
-          <button class="applied" (click)="unsubscribe(training)">
-            Lemondás
-          </button>
+  
+            <button class="applied" (click)="unsubscribe(training)">
+              Lemondás
+            </button>
+          }
+          @else{
+            <div class="cancelled">
+              Elmarad
+            </div>
+          }
         </div>
       </div>
     </div>
