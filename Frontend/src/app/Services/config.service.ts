@@ -4,6 +4,6 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class ConfigService {
-  apiUrl = 'http://localhost:5278/api';
+  apiUrl = 'https://slimfitgymbackend-bdgbechedpcpaag4.westeurope-01.azurewebsites.net/api';
   constructor() { }
 }
