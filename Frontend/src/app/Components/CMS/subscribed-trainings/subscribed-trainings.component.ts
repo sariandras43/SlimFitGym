@@ -5,15 +5,17 @@ import { TrainingService } from '../../../Services/training.service';
 import { UserService } from '../../../Services/user.service';
 import Utils from '../../../utils/util';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-subscribed-trainings',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './subscribed-trainings.component.html',
   styleUrl: './subscribed-trainings.component.scss',
 })
 export class SubscribedTrainingsComponent {
   searchValue = '';
+  isLoading = false;
 
   search() {
     this.updateDisplayTrainings();
