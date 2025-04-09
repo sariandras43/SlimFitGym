@@ -1,5 +1,6 @@
 ﻿@using SlimFitGym_Mobile.Models
 @using SlimFitGym_Mobile.Services
+@inject NavigationManager NavigationManager
 @page "/passes"
 
 <Header />
@@ -42,7 +43,7 @@
                                 </p>
                                 @if (AccountModel.LoggedInUser?.Role != "trainer")
                                 {
-                                    <NavLink href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="btn btn-primary w-100">Vásárlás</NavLink>
+                                    <button @onclick="() => Purchase(pass.Id)" class="btn btn-primary w-100">Vásárlás</button>
                                 }
                             </div>
                         </div>
@@ -63,5 +64,14 @@
         DataService.isLoading = true;
         passes = await DataService.GetPasses();
         DataService.isLoading = false;
+    }
+
+    private async Task Purchase(int passId)
+    {
+        if (AccountModel.LoggedInUser != null)
+        {
+            await DataService.PurchasePass(AccountModel.LoggedInUser.Id, passId);
+            NavigationManager.NavigateTo("/");
+        }
     }
 }

@@ -311,6 +311,34 @@ namespace SlimFitGym_Mobile.Services
             }
         }
 
+        public static async Task PurchasePass(int accountId, int passId)
+        {
+            if (AccountModel.LoggedInUser != null) SetBearerToken();
+            try
+            {
+                var newPurchase = new
+                {
+                    passID = passId,
+                    accountId = accountId
+                };
+                var json = JsonSerializer.Serialize(newPurchase);
+                var response = await _httpClient.PostAsync($"{apiBaseURL}purchases",
+                    new StringContent(json, Encoding.UTF8, "application/json"));
+                if (response.IsSuccessStatusCode)
+                {
+                    return;
+                }
+                else
+                {
+                    throw new Exception("Hiba a bérlet vásárlása során!");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public static async Task<List<EntryModel>> GetEntriesOfAccount(int accountId)
         {
             if (AccountModel.LoggedInUser != null) SetBearerToken();
@@ -324,30 +352,6 @@ namespace SlimFitGym_Mobile.Services
                 throw new Exception(ex.Message);
             }
         }
-
-        //public static async Task PostEntry(int accountId)
-        //{
-        //    if (AccountModel.LoggedInUser != null) SetBearerToken();
-        //    try
-        //    {
-        //        var response = await _httpClient.PostAsync(
-        //            $"{apiBaseURL}entries/{accountId}",
-        //            new StringContent(null, Encoding.UTF8, "application/json")
-        //        );
-        //        if (response.IsSuccessStatusCode)
-        //            return;
-        //        else
-        //        {
-        //            var errorContent = await response.Content.ReadAsStringAsync();
-        //            var error = JsonSerializer.Deserialize<ErrorResult>(errorContent, options);
-        //            throw new Exception(error?.Message ?? "Hiba a beléptetés során"); // display in error message
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception(ex.Message);
-        //    }
-        //}
 
         public static void SetBearerToken()
         {
