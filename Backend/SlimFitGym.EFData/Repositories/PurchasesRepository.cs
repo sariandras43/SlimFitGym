@@ -99,7 +99,7 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Edző, admin és dolgozó nem vehet bérletet.");
 
 
-            Purchase savedPurchase = this.context.Set<Purchase>().Add(new Purchase() { AccountId=purchase.AccountId,PassId=purchase.PassId,PurchaseDate=DateTime.Now}).Entity;
+            Purchase savedPurchase = this.context.Set<Purchase>().Add(new Purchase() { AccountId=purchase.AccountId,PassId=purchase.PassId,PurchaseDate=DateTime.UtcNow}).Entity;
 
             this.context.SaveChanges();
             return new PurchaseResponse(savedPurchase);

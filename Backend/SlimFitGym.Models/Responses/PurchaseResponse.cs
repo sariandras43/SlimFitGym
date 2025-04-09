@@ -17,7 +17,7 @@ namespace SlimFitGym.Models.Responses
         public PurchaseResponse(Purchase p)
         {
             Id = p.Id;
-            PurchaseDate = p.PurchaseDate;
+            PurchaseDate = p.PurchaseDate.ToUniversalTime();
             PassId = p.PassId;
             AccountId = p.AccountId;
         }

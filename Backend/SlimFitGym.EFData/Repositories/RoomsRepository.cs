@@ -215,7 +215,7 @@ namespace SlimFitGym.EFData.Repositories
             if (context.Set<Training>().Any(t=>t.RoomId == id))
             {
                 roomToDelete.IsActive = false;
-                var trainings = this.context.Set<Training>().Where(t => t.RoomId == id && t.IsActive && t.TrainingStart > DateTime.Now);
+                var trainings = this.context.Set<Training>().Where(t => t.RoomId == id && t.IsActive && t.TrainingStart > DateTime.UtcNow);
                 foreach (Training training in trainings)
                 {
                     if (this.context.Set<Reservation>().Any(r=>r.TrainingId==training.Id))

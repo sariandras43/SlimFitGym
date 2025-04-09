@@ -40,9 +40,9 @@ namespace SlimFitGym.EFData.Repositories
 
             if (a==null || !BCrypt.Net.BCrypt.EnhancedVerify(login.Password, a.Password))
                 throw new Exception("Helytelen email cím vagy jelszó.");
-            DateTime validTo = DateTime.Now.AddDays(1);
+            DateTime validTo = DateTime.UtcNow.AddDays(1);
             if (login.RememberMe)
-                validTo = DateTime.Now.AddDays(364);
+                validTo = DateTime.UtcNow.AddDays(364);
 
             string? url = imagesRepository.GetImageUrlByAccountId(a.Id);
             ITrainerApplicantsRepository trainerApplicantsRepository = GetTrainerApplicantsRepository();
@@ -88,9 +88,9 @@ namespace SlimFitGym.EFData.Repositories
                 Role = "user"
             };
 
-            DateTime validTo = DateTime.Now.AddDays(1);
+            DateTime validTo = DateTime.UtcNow.AddDays(1);
             if (registration.RememberMe)
-                validTo = DateTime.Now.AddDays(364);
+                validTo = DateTime.UtcNow.AddDays(364);
             Account savedAccount = this.context.Set<Account>().Add(newAccount).Entity;
             this.context.SaveChanges();
             return new AccountResponse(savedAccount, tokenGenerator.GenerateToken(savedAccount.Id,savedAccount.Email, false, savedAccount.Role),validTo);
@@ -201,7 +201,7 @@ namespace SlimFitGym.EFData.Repositories
             imagesRepository.DeleteImageByAccountId(id);
             if (accountToDelete.Role == "trainer")
             { 
-                List<Training> trainingsOfTrainer = context.Set<Training>().Where(t=>t.TrainerId == id && t.IsActive && t.TrainingStart > DateTime.Now).ToList();
+                List<Training> trainingsOfTrainer = context.Set<Training>().Where(t=>t.TrainerId == id && t.IsActive && t.TrainingStart > DateTime.UtcNow).ToList();
                 foreach (Training training in trainingsOfTrainer)
                 {
                     if (context.Set<Reservation>().Any(r => r.TrainingId == training.Id))
@@ -217,7 +217,7 @@ namespace SlimFitGym.EFData.Repositories
                     }
                 }
             }
-            List<Training> trainings = this.context.Set<Training>().Where(t=>t.IsActive && t.TrainingStart > DateTime.Now).ToList();
+            List<Training> trainings = this.context.Set<Training>().Where(t=>t.IsActive && t.TrainingStart > DateTime.UtcNow).ToList();
             foreach (Training training in trainings)
             {
                 Reservation? reservation = this.context.Set<Reservation>().SingleOrDefault(r => r.AccountId == id && r.TrainingId == training.Id);

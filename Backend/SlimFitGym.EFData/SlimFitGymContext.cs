@@ -129,21 +129,21 @@ namespace SlimFitGym.EFData
 
             modelBuilder.Entity<Training>().HasData
             (
-                new Training() { Id = 1, Name = "TRX edzés", RoomId = 1, TrainerId = 2, MaxPeople = 6, TrainingStart = new DateTime(2025, 5, 1, 10, 0, 0), TrainingEnd = new DateTime(2025, 5, 1, 11, 0, 0), IsActive = true },
-                new Training() { Id = 2, Name = "Spinning", RoomId = 8, TrainerId = 2, MaxPeople = 10, TrainingStart = new DateTime(2025, 5, 2, 14, 0, 0), TrainingEnd = new DateTime(2025, 5, 2, 15, 0, 0), IsActive = true },
-                new Training() { Id = 3, Name = "Jóga", RoomId = 5, TrainerId = 2, MaxPeople = 8, TrainingStart = new DateTime(2025, 5, 3, 9, 0, 0), TrainingEnd = new DateTime(2025, 5, 3, 10, 0, 0), IsActive = true },
-                new Training() { Id = 4, Name = "CrossFit", RoomId = 4, TrainerId = 2, MaxPeople = 12, TrainingStart = new DateTime(2025, 5, 4, 16, 0, 0), TrainingEnd = new DateTime(2025, 5, 4, 17, 0, 0), IsActive = true },
-                new Training() { Id = 5, Name = "Aerobik", RoomId = 6, TrainerId = 2, MaxPeople = 18, TrainingStart = new DateTime(2025, 5, 5, 18, 0, 0), TrainingEnd = new DateTime(2025, 5, 5, 19, 0, 0), IsActive = true },
-                new Training() { Id = 6, Name = "Aerobik", RoomId = 6, TrainerId = 5, MaxPeople = 18, TrainingStart = new DateTime(2025, 7, 12, 10, 0, 0), TrainingEnd = new DateTime(2025, 7, 12, 11, 0, 0), IsActive = true },
-                new Training() { Id = 7, Name = "Spinning", RoomId = 8, TrainerId = 6, MaxPeople = 15, TrainingStart = new DateTime(2025, 7, 13, 9, 30, 0), TrainingEnd = new DateTime(2025, 7, 13, 10, 30, 0), IsActive = true },
-                new Training() { Id = 8, Name = "Zumba", RoomId = 1, TrainerId = 7, MaxPeople = 20, TrainingStart = new DateTime(2025, 7, 14, 16, 0, 0), TrainingEnd = new DateTime(2025, 7, 14, 17, 0, 0), IsActive = true },
-                new Training() { Id = 9, Name = "Pilates", RoomId = 2, TrainerId = 8, MaxPeople = 12, TrainingStart = new DateTime(2025, 7, 15, 14, 30, 0), TrainingEnd = new DateTime(2025, 7, 15, 15, 30, 0), IsActive = true },
-                new Training() { Id = 10, Name = "TRX", RoomId = 3, TrainerId = 5, MaxPeople = 10, TrainingStart = new DateTime(2025, 7, 16, 17, 0, 0), TrainingEnd = new DateTime(2025, 7, 16, 18, 0, 0), IsActive = true },
-                new Training() { Id = 11, Name = "Jóga", RoomId = 5, TrainerId = 7, MaxPeople = 8, TrainingStart = new DateTime(2025, 7, 17, 18, 0, 0), TrainingEnd = new DateTime(2025, 7, 17, 19, 0, 0), IsActive = true },
-                new Training() { Id = 12, Name = "CrossFit", RoomId = 4, TrainerId = 6, MaxPeople = 12, TrainingStart = new DateTime(2025, 7, 18, 17, 30, 0), TrainingEnd = new DateTime(2025, 7, 18, 18, 30, 0), IsActive = true },
-                new Training() { Id = 13, Name = "Box", RoomId = 7, TrainerId = 8, MaxPeople = 10, TrainingStart = new DateTime(2025, 7, 19, 14, 0, 0), TrainingEnd = new DateTime(2025, 7, 19, 15, 0, 0), IsActive = true },
-                new Training() { Id = 14, Name = "Kondi", RoomId = 3, TrainerId = 5, MaxPeople = 20, TrainingStart = new DateTime(2025, 7, 20, 15, 30, 0), TrainingEnd = new DateTime(2025, 7, 20, 16, 30, 0), IsActive = true },
-                new Training() { Id = 15, Name = "HIIT", RoomId = 4, TrainerId = 7, MaxPeople = 12, TrainingStart = new DateTime(2025, 7, 21, 18, 30, 0), TrainingEnd = new DateTime(2025, 7, 21, 19, 30, 0), IsActive = true }
+                new Training() { Id = 1, Name = "TRX edzés", RoomId = 1, TrainerId = 2, MaxPeople = 6, TrainingStart = new DateTime(2025, 5, 1, 10, 0, 0).ToUniversalTime(), TrainingEnd = new DateTime(2025, 5, 1, 11, 0, 0).ToUniversalTime(), IsActive = true },
+                new Training() { Id = 2, Name = "Spinning", RoomId = 8, TrainerId = 2, MaxPeople = 10, TrainingStart = new DateTime(2025, 5, 2, 14, 0, 0).ToUniversalTime(), TrainingEnd = new DateTime(2025, 5, 2, 15, 0, 0).ToUniversalTime(), IsActive = true },
+                new Training() { Id = 3, Name = "Jóga", RoomId = 5, TrainerId = 2, MaxPeople = 8, TrainingStart = new DateTime(2025, 5, 3, 9, 0, 0).ToUniversalTime(), TrainingEnd = new DateTime(2025, 5, 3, 10, 0, 0).ToUniversalTime(), IsActive = true },
+                new Training() { Id = 4, Name = "CrossFit", RoomId = 4, TrainerId = 2, MaxPeople = 12, TrainingStart = new DateTime(2025, 5, 4, 16, 0, 0).ToUniversalTime(), TrainingEnd = new DateTime(2025, 5, 4, 17, 0, 0).ToUniversalTime(), IsActive = true },
+                new Training() { Id = 5, Name = "Aerobik", RoomId = 6, TrainerId = 2, MaxPeople = 18, TrainingStart = new DateTime(2025, 5, 5, 18, 0, 0).ToUniversalTime(), TrainingEnd = new DateTime(2025, 5, 5, 19, 0, 0).ToUniversalTime(), IsActive = true },
+                new Training() { Id = 6, Name = "Aerobik", RoomId = 6, TrainerId = 5, MaxPeople = 18, TrainingStart = new DateTime(2025, 7, 12, 10, 0, 0).ToUniversalTime(), TrainingEnd = new DateTime(2025, 7, 12, 11, 0, 0).ToUniversalTime(), IsActive = true },
+                new Training() { Id = 7, Name = "Spinning", RoomId = 8, TrainerId = 6, MaxPeople = 15, TrainingStart = new DateTime(2025, 7, 13, 9, 30, 0).ToUniversalTime(), TrainingEnd = new DateTime(2025, 7, 13, 10, 30, 0).ToUniversalTime(), IsActive = true },
+                new Training() { Id = 8, Name = "Zumba", RoomId = 1, TrainerId = 7, MaxPeople = 20, TrainingStart = new DateTime(2025, 7, 14, 16, 0, 0).ToUniversalTime(), TrainingEnd = new DateTime(2025, 7, 14, 17, 0, 0).ToUniversalTime(), IsActive = true },
+                new Training() { Id = 9, Name = "Pilates", RoomId = 2, TrainerId = 8, MaxPeople = 12, TrainingStart = new DateTime(2025, 7, 15, 14, 30, 0).ToUniversalTime(), TrainingEnd = new DateTime(2025, 7, 15, 15, 30, 0).ToUniversalTime(), IsActive = true },
+                new Training() { Id = 10, Name = "TRX", RoomId = 3, TrainerId = 5, MaxPeople = 10, TrainingStart = new DateTime(2025, 7, 16, 17, 0, 0).ToUniversalTime(), TrainingEnd = new DateTime(2025, 7, 16, 18, 0, 0).ToUniversalTime(), IsActive = true },
+                new Training() { Id = 11, Name = "Jóga", RoomId = 5, TrainerId = 7, MaxPeople = 8, TrainingStart = new DateTime(2025, 7, 17, 18, 0, 0).ToUniversalTime(), TrainingEnd = new DateTime(2025, 7, 17, 19, 0, 0).ToUniversalTime(), IsActive = true },
+                new Training() { Id = 12, Name = "CrossFit", RoomId = 4, TrainerId = 6, MaxPeople = 12, TrainingStart = new DateTime(2025, 7, 18, 17, 30, 0).ToUniversalTime(), TrainingEnd = new DateTime(2025, 7, 18, 18, 30, 0).ToUniversalTime(), IsActive = true },
+                new Training() { Id = 13, Name = "Box", RoomId = 7, TrainerId = 8, MaxPeople = 10, TrainingStart = new DateTime(2025, 7, 19, 14, 0, 0).ToUniversalTime(), TrainingEnd = new DateTime(2025, 7, 19, 15, 0, 0).ToUniversalTime(), IsActive = true },
+                new Training() { Id = 14, Name = "Kondi", RoomId = 3, TrainerId = 5, MaxPeople = 20, TrainingStart = new DateTime(2025, 7, 20, 15, 30, 0).ToUniversalTime(), TrainingEnd = new DateTime(2025, 7, 20, 16, 30, 0).ToUniversalTime(), IsActive = true },
+                new Training() { Id = 15, Name = "HIIT", RoomId = 4, TrainerId = 7, MaxPeople = 12, TrainingStart = new DateTime(2025, 7, 21, 18, 30, 0).ToUniversalTime(), TrainingEnd = new DateTime(2025, 7, 21, 19, 30, 0).ToUniversalTime(), IsActive = true }
 
             );
 
@@ -182,8 +182,8 @@ namespace SlimFitGym.EFData
 
             modelBuilder.Entity<Purchase>().HasData
             (
-                new Purchase() { Id = 1, AccountId = 3, PassId = 2, PurchaseDate = DateTime.Now },
-                new Purchase() { Id = 2, AccountId = 15, PassId = 3, PurchaseDate = new DateTime(2025,1,1,10,0,0) }
+                new Purchase() { Id = 1, AccountId = 3, PassId = 2, PurchaseDate = DateTime.UtcNow },
+                new Purchase() { Id = 2, AccountId = 15, PassId = 3, PurchaseDate = new DateTime(2025,1,1,10,0,0).ToUniversalTime() }
             );
             List<Entry> entries = new List<Entry>();
             int id = 1;
@@ -193,9 +193,9 @@ namespace SlimFitGym.EFData
                 {
                     for (int day = 1; day < 25; day++)
                     {
-                        entries.Add(new Entry() { Id = id, AccountId = 15, EntryDate = new DateTime(2025, month, day, 11, 30, 0) });
+                        entries.Add(new Entry() { Id = id, AccountId = 15, EntryDate = new DateTime(2025, month, day, 11, 30, 0).ToUniversalTime() });
                         id++;
-                        entries.Add(new Entry() { Id = id, AccountId = 2, EntryDate = new DateTime(2025, month, day, 11, 30, 0) });
+                        entries.Add(new Entry() { Id = id, AccountId = 2, EntryDate = new DateTime(2025, month, day, 11, 30, 0).ToUniversalTime() });
                         id++;
                     }
                 }
@@ -203,9 +203,9 @@ namespace SlimFitGym.EFData
                 {
                     for (int day = 1; day < 15; day++)
                     {
-                        entries.Add(new Entry() { Id = id, AccountId = 15, EntryDate = new DateTime(2025, month, day, 11, 30, 0) });
+                        entries.Add(new Entry() { Id = id, AccountId = 15, EntryDate = new DateTime(2025, month, day, 11, 30, 0).ToUniversalTime() });
                         id++;
-                        entries.Add(new Entry() { Id = id, AccountId = 2, EntryDate = new DateTime(2025, month, day, 11, 30, 0) });
+                        entries.Add(new Entry() { Id = id, AccountId = 2, EntryDate = new DateTime(2025, month, day, 11, 30, 0).ToUniversalTime() });
                         id++;
                     }
                 }

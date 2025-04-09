@@ -36,22 +36,38 @@ namespace SlimFitGym.EFData.Repositories
             this.tokenGenerator = tokenGenerator;
         }
 
-        public List<Training> GetAllTrainings()
+        public List<TrainingResponse> GetAllTrainings()
         {
-            return context.Set<Training>().ToList();
+            return context.Set<Training>().Select(t => new TrainingResponse()
+            {
+                Id = t.Id,
+                Name = t.Name,
+                MaxPeople = t.MaxPeople,
+                IsActive = t.IsActive,
+                TrainingStart = t.TrainingStart.ToUniversalTime(),
+                TrainingEnd = t.TrainingEnd.ToUniversalTime(),
+                Trainer = accountRepository.GetAccountById(t.TrainerId)!.Name,
+                Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
+                FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
+                TrainerImageUrl = imagesRepository.GetImageUrlByAccountId(t.TrainerId),
+                RoomImageUrl = imagesRepository.GetImageUrlByRoomId(t.RoomId),
+                TrainerId = t.TrainerId,
+                RoomId = t.RoomId
+
+            }).ToList();
         }
 
         public List<TrainingResponse> GetActiveTrainings(string query = "", int limit = 20, int offset = 0)
         {
             List<TrainingResponse> trainings = 
-            trainings =  context.Set<Training>().Where(t=> t.IsActive && t.TrainingStart > DateTime.Now).Select(t=>new TrainingResponse()
+            trainings =  context.Set<Training>().Where(t=> t.IsActive && t.TrainingStart > DateTime.UtcNow).Select(t=>new TrainingResponse()
             {
                 Id=t.Id,
                 Name=t.Name,
                 MaxPeople=t.MaxPeople,
                 IsActive=t.IsActive,
-                TrainingStart = t.TrainingStart,
-                TrainingEnd = t.TrainingEnd,
+                TrainingStart = t.TrainingStart.ToUniversalTime(),
+                TrainingEnd = t.TrainingEnd.ToUniversalTime(),
                 Trainer = accountRepository.GetAccountById(t.TrainerId)!.Name,
                 Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
                 FreePlaces = t.MaxPeople-reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
@@ -66,7 +82,7 @@ namespace SlimFitGym.EFData.Repositories
         }
         public int GetTotalTrainingCountFromNow()
         {
-            return context.Set<Training>().Where(t=>t.IsActive && t.TrainingStart > DateTime.Now).Count();
+            return context.Set<Training>().Where(t=>t.IsActive && t.TrainingStart > DateTime.UtcNow).Count();
         }
 
         public List<TrainingResponse>? GetTrainingsByAccountId(string token, int accountId)
@@ -82,14 +98,14 @@ namespace SlimFitGym.EFData.Repositories
             List<TrainingResponse> res = new List<TrainingResponse>();
             foreach (int trainingId in reservations)
             {
-                var traininRes = context.Set<Training>().Where(t => t.Id==trainingId && t.TrainingStart > DateTime.Now).Select(t => new TrainingResponse()
+                var traininRes = context.Set<Training>().Where(t => t.Id==trainingId && t.TrainingStart > DateTime.UtcNow).Select(t => new TrainingResponse()
                 {
                     Id = t.Id,
                     Name = t.Name,
                     MaxPeople = t.MaxPeople,
                     IsActive = t.IsActive,
-                    TrainingStart = t.TrainingStart,
-                    TrainingEnd = t.TrainingEnd,
+                    TrainingStart = t.TrainingStart.ToUniversalTime(),
+                    TrainingEnd = t.TrainingEnd.ToUniversalTime(),
                     Trainer = accountRepository.GetAccountById(t.TrainerId)!.Name,
                     Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
                     FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
@@ -117,8 +133,8 @@ namespace SlimFitGym.EFData.Repositories
                     Name = t.Name,
                     MaxPeople = t.MaxPeople,
                     IsActive = t.IsActive,
-                    TrainingStart = t.TrainingStart,
-                    TrainingEnd = t.TrainingEnd,
+                    TrainingStart = t.TrainingStart.ToUniversalTime(),
+                    TrainingEnd = t.TrainingEnd.ToUniversalTime(),
                     Trainer = accountRepository.GetAccountById(t.TrainerId)!.Name,
                     Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
                     FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
@@ -139,14 +155,14 @@ namespace SlimFitGym.EFData.Repositories
             Room? room = this.context.Set<Room>().SingleOrDefault(r=>r.Id == roomId && r.IsActive);
             if (room == null)
                 return null;
-            List<TrainingResponse>? trainings = this.context.Set<Training>().Where(t=>t.RoomId== roomId && t.IsActive && t.TrainingStart>DateTime.Now).Select(t=>new TrainingResponse()
+            List<TrainingResponse>? trainings = this.context.Set<Training>().Where(t=>t.RoomId== roomId && t.IsActive && t.TrainingStart>DateTime.UtcNow).Select(t=>new TrainingResponse()
             {
                 Id = t.Id,
                 Name = t.Name,
                 MaxPeople = t.MaxPeople,
                 IsActive = t.IsActive,
-                TrainingStart = t.TrainingStart,
-                TrainingEnd = t.TrainingEnd,
+                TrainingStart = t.TrainingStart.ToUniversalTime(),
+                TrainingEnd = t.TrainingEnd.ToUniversalTime(),
                 Trainer = accountRepository.GetAccountById(t.TrainerId)!.Name,
                 Room = room.Name,
                 FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
@@ -165,14 +181,14 @@ namespace SlimFitGym.EFData.Repositories
             Account? account = this.context.Set<Account>().SingleOrDefault(a => a.Id == trainerId && (a.Role=="trainer" || a.Role == "admin") && a.isActive);
             if (account == null)
                 return null;
-            List<TrainingResponse>? trainings = this.context.Set<Training>().Where(t => t.TrainerId == trainerId && t.IsActive && t.TrainingStart > DateTime.Now).Select(t => new TrainingResponse()
+            List<TrainingResponse>? trainings = this.context.Set<Training>().Where(t => t.TrainerId == trainerId && t.IsActive && t.TrainingStart > DateTime.UtcNow).Select(t => new TrainingResponse()
             {
                 Id = t.Id,
                 Name = t.Name,
                 MaxPeople = t.MaxPeople,
                 IsActive = t.IsActive,
-                TrainingStart = t.TrainingStart,
-                TrainingEnd = t.TrainingEnd,
+                TrainingStart = t.TrainingStart.ToUniversalTime(),
+                TrainingEnd = t.TrainingEnd.ToUniversalTime(),
                 Trainer = account.Name,
                 Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
                 FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count(),
@@ -229,7 +245,7 @@ namespace SlimFitGym.EFData.Repositories
             Room? room = roomsRepository.GetRoomById(training.RoomId);
             if (room == null)
                 throw new Exception("Ilyen terem nem létezik");
-            if (training.TrainingStart<DateTime.Now || training.TrainingEnd<DateTime.Now)
+            if (training.TrainingStart<DateTime.UtcNow || training.TrainingEnd<DateTime.UtcNow)
                throw new Exception("Nem lehet múltba edzést felvenni.");
             TimeSpan trainingSpan = training.TrainingEnd - training.TrainingStart; 
             if (trainingSpan.TotalMinutes<30)
@@ -244,8 +260,8 @@ namespace SlimFitGym.EFData.Repositories
 
             Training trainingToSave = new Training()
             {
-                TrainingStart = training.TrainingStart,
-                TrainingEnd = training.TrainingEnd,
+                TrainingStart = training.TrainingStart.ToUniversalTime(),
+                TrainingEnd = training.TrainingEnd.ToUniversalTime(),
                 IsActive=true,
                 Name = training.Name,
                 MaxPeople=training.MaxPeople,
@@ -272,7 +288,7 @@ namespace SlimFitGym.EFData.Repositories
                 return null;
             if (trainingToModify.TrainerId != tokenGenerator.GetAccountIdFromToken(token))
                 throw new Exception("Nem lehet más edzését módosítani, felvenni.");
-            if (DateTime.Now > trainingToModify.TrainingStart)
+            if (DateTime.UtcNow > trainingToModify.TrainingStart)
                 throw new Exception("Nem lehet már megtörtént edzés adatait módosítani.");
 
             List<Training> trainingsInTheSpecificRoom;
@@ -306,7 +322,7 @@ namespace SlimFitGym.EFData.Repositories
                 trainingToModify.MaxPeople = training.MaxPeople;
             }
 
-            if (training.TrainingStart>DateTime.Now && training.TrainingEnd>DateTime.Now)
+            if (training.TrainingStart>DateTime.UtcNow && training.TrainingEnd>DateTime.UtcNow)
             {
                 TimeSpan trainingSpan = training.TrainingEnd - training.TrainingStart;
                 if (trainingSpan.TotalMinutes < 30)
@@ -319,8 +335,8 @@ namespace SlimFitGym.EFData.Repositories
                     if (t.TrainingStart <= training.TrainingStart && t.TrainingEnd >= training.TrainingEnd)
                         throw new Exception("Ebben az időpontban foglalt a terem");
                 }
-                trainingToModify.TrainingStart = training.TrainingStart;
-                trainingToModify.TrainingEnd = training.TrainingEnd;
+                trainingToModify.TrainingStart = training.TrainingStart.ToUniversalTime();
+                trainingToModify.TrainingEnd = training.TrainingEnd.ToUniversalTime();
             }
 
             this.context.Entry(trainingToModify).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
@@ -351,8 +367,8 @@ namespace SlimFitGym.EFData.Repositories
                     Name = t.Name,
                     MaxPeople = t.MaxPeople,
                     IsActive = t.IsActive,
-                    TrainingStart = t.TrainingStart,
-                    TrainingEnd = t.TrainingEnd,
+                    TrainingStart = t.TrainingStart.ToUniversalTime(),
+                    TrainingEnd = t.TrainingEnd.ToUniversalTime(),
                     Trainer = accountRepository.GetAccountById(t.TrainerId)!.Name,
                     Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
                     FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count()
@@ -370,8 +386,8 @@ namespace SlimFitGym.EFData.Repositories
                     Name = t.Name,
                     MaxPeople = t.MaxPeople,
                     IsActive = t.IsActive,
-                    TrainingStart = t.TrainingStart,
-                    TrainingEnd = t.TrainingEnd,
+                    TrainingStart = t.TrainingStart.ToUniversalTime(),
+                    TrainingEnd = t.TrainingEnd.ToUniversalTime(),
                     Trainer = accountRepository.GetAccountById(t.TrainerId)!.Name,
                     Room = roomsRepository.GetRoomById(t.RoomId)!.Name,
                     FreePlaces = t.MaxPeople - reservationRepository.GetReservationsByTrainingId(t.Id)!.Count()
