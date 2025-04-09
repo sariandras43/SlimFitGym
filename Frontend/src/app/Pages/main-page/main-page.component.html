@@ -20,10 +20,13 @@
     description="Tapasztalt edzőink segítenek céljaid elérésében. Személyre szabott edzésterv és folyamatos támogatás!"
     ></app-promotion>
   </section>
-  <div class="scrollerContainer">
-      <h2>Edzőink</h2>
-    <app-side-scroller [trainers]="trainers"></app-side-scroller>
-  </div>
+  @if (trainers && trainers.length > 0) {
+
+    <div class="scrollerContainer">
+        <h2>Edzőink</h2>
+      <app-side-scroller [trainers]="trainers"></app-side-scroller>
+    </div>
+  }
 <div class="mt5">
     <app-subscriptions title="Kiemelt ajánlataink" [highlightOnly]="true"/>
 </div>

@@ -192,7 +192,6 @@ export class PassesCMSComponent {
           isActive: true,
           isHighlighted: false,
           benefits: [],
-          validTo: new Date().toISOString().split('T')[0],
           remainingEntries: undefined,
         };
   }
