@@ -1,11 +1,16 @@
 .container {
   margin-top: var(--navbar-height);
-  padding: 2rem;
-  min-height: calc(100vh - var(--navbar-height));
   background: var(--bg-color);
   color: var(--main-text);
+  padding: 2rem;
   display: flex;
-  gap: 2rem;
+  flex-direction: column;
+  .content {
+    min-height: calc(100svh - var(--navbar-height) - 4rem);
+    height: 100%;
+    display: flex;
+    gap: 2rem;
+  }
 
   .scanner-wrapper {
     flex: 1;
@@ -31,6 +36,7 @@
     border: 1px solid var(--danger);
     margin: 1rem 0;
     width: 100%;
+    position: relative;
   }
 
   h3 {
@@ -47,6 +53,8 @@
     min-width: 300px;
     max-height: 600px;
     overflow-y: auto;
+    position: relative;
+
 
     p {
       background: var(--bg-color-40);
@@ -102,7 +110,7 @@
     border-radius: 4px;
   }
 }
-// worker-page.component.scss additions
+
 .last-entry {
   margin-bottom: 2rem;
 
@@ -132,4 +140,17 @@
   border-radius: calc(var(--border-radius) / 2);
   margin: 1rem 0;
   border: 1px solid var(--danger);
+}
+
+.logout {
+  background-color: var(--danger);
+  color: var(--main-text);
+  border: none;
+  margin-left: auto;
+  padding: .25em 2em;
+  height: 3rem;
+  position: absolute;
+  right: 1rem;
+  top: 1.5rem;
+  border-radius: var(--border-radius);
 }

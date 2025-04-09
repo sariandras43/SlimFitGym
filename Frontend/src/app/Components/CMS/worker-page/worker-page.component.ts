@@ -5,6 +5,8 @@ import { BrowserQRCodeReader } from '@zxing/library';
 import { EntryService } from '../../../Services/entry.service';
 import { Entry } from '../../../Models/entry.model';
 import { DatePipe } from '@angular/common';
+import { UserService } from '../../../Services/user.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-worker-page',
@@ -19,8 +21,12 @@ export class WorkerPageComponent implements OnInit {
   hasCameraPermission: boolean | null = null;
   lastEntry: Entry | null = null;
   errorMessage: string | null = null;
+  logout() {
+    this.userService.logout();
 
-  constructor(private entryService: EntryService) {}
+    this.router.navigate(['/']);
+  }
+  constructor(private entryService: EntryService, private userService: UserService, private router: Router) {}
   async ngOnInit() {
     this.entryService.displayEntries$.subscribe((entries) => {
       if (entries.length > 0) {
@@ -92,4 +98,8 @@ export class WorkerPageComponent implements OnInit {
   ngOnDestroy() {
     this.scanner?.reset();
   }
+
+  
+
+
 }
