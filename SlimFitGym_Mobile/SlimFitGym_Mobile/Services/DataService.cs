@@ -287,6 +287,20 @@ namespace SlimFitGym_Mobile.Services
             }
         }
 
+        public static async Task<PassModel> GetPass(int id)
+        {
+            if (AccountModel.LoggedInUser != null) SetBearerToken();
+            try
+            {
+                var pass = await _httpClient.GetFromJsonAsync<PassModel>($"{apiBaseURL}passes/{id}");
+                return pass ?? new PassModel();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public static async Task<PassModel> GetAccountsPass(int accountId)
         {
             if (AccountModel.LoggedInUser != null) SetBearerToken();

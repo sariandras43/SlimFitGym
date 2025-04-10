@@ -43,7 +43,7 @@
                                 </p>
                                 @if (AccountModel.LoggedInUser?.Role != "trainer")
                                 {
-                                    <button @onclick="() => Purchase(pass.Id)" class="btn btn-primary w-100">Vásárlás</button>
+                                     <NavLink href="@($"/passpurchase/{pass.Id}")" class="btn btn-primary w-100">Vásárlás</NavLink>
                                 }
                             </div>
                         </div>
@@ -64,14 +64,5 @@
         DataService.isLoading = true;
         passes = await DataService.GetPasses();
         DataService.isLoading = false;
-    }
-
-    private async Task Purchase(int passId)
-    {
-        if (AccountModel.LoggedInUser != null)
-        {
-            await DataService.PurchasePass(AccountModel.LoggedInUser.Id, passId);
-            NavigationManager.NavigateTo("/");
-        }
     }
 }
