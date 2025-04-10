@@ -60,7 +60,7 @@ namespace SlimFitGym.EFData.Repositories
         public List<TrainingResponse> GetActiveTrainings(string query = "", int limit = 20, int offset = 0)
         {
             List<TrainingResponse> trainings = 
-            trainings =  context.Set<Training>().Where(t=> t.IsActive && t.TrainingStart > DateTime.UtcNow).Select(t=>new TrainingResponse()
+            trainings = context.Set<Training>().Where(t=> t.IsActive && t.TrainingStart > DateTime.UtcNow).Select(t=>new TrainingResponse()
             {
                 Id=t.Id,
                 Name=t.Name,
@@ -78,7 +78,7 @@ namespace SlimFitGym.EFData.Repositories
 
             }).ToList();
 
-            return trainings.Where(t => t.Name.ToLower().Contains(query.Trim().ToLower()) || t.Trainer.ToLower().Contains(query.Trim().ToLower())|| t.Room.ToLower().Contains(query.Trim().ToLower())).Take(limit).Skip(offset).ToList();
+            return trainings.Where(t => t.Name.ToLower().Contains(query.Trim().ToLower()) || t.Trainer.ToLower().Contains(query.Trim().ToLower())|| t.Room.ToLower().Contains(query.Trim().ToLower())).Skip(offset).Take(limit).ToList();
         }
         public int GetTotalTrainingCountFromNow()
         {
