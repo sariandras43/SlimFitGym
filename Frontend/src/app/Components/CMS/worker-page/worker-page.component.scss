@@ -50,10 +50,11 @@
     padding: 2rem;
     border-radius: var(--border-radius);
     flex: 1;
-    min-width: 300px;
+    flex-basis: 500px;
     max-height: 600px;
     overflow-y: auto;
     position: relative;
+    flex-shrink: 1;
 
 
     p {
