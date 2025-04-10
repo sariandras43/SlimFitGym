@@ -73,7 +73,7 @@ namespace SlimFitGym.EFData.Repositories
                 throw new UnauthorizedAccessException();
 
 
-            Training? training = context.Set<Training>().SingleOrDefault(t=>t.Id == reservation.TrainingId && t.IsActive && t.TrainingStart > DateTime.Now);
+            Training? training = context.Set<Training>().SingleOrDefault(t=>t.Id == reservation.TrainingId && t.IsActive && t.TrainingStart > DateTime.UtcNow);
             if (training == null)
                 return null;
             Account? trainer = context.Set<Account>().SingleOrDefault(a=>a.Id == training.TrainerId);
@@ -102,7 +102,7 @@ namespace SlimFitGym.EFData.Repositories
             Reservation? reservationToDelete = this.context.Set<Reservation>().SingleOrDefault(r => r.Id == id);
             if (reservationToDelete == null)
                 return null;
-            Training? training = this.context.Set<Training>().SingleOrDefault(t=>t.Id == reservationToDelete.Id && t.IsActive && t.TrainingStart> DateTime.Now);
+            Training? training = this.context.Set<Training>().SingleOrDefault(t=>t.Id == reservationToDelete.Id && t.IsActive && t.TrainingStart> DateTime.UtcNow);
             if (training == null)
                 throw new Exception("Nem lehet leiratkozni kitörölt vagy múltbéli edzésről.");
             this.context.Set<Reservation>().Remove(reservationToDelete);
@@ -124,7 +124,7 @@ namespace SlimFitGym.EFData.Repositories
             Reservation? reservationToDelete = this.context.Set<Reservation>().SingleOrDefault(r => r.TrainingId == trainingId && r.AccountId==accountId);
             if (reservationToDelete == null)
                 return null;
-            Training? training = this.context.Set<Training>().SingleOrDefault(t => t.Id == reservationToDelete.TrainingId && t.IsActive && t.TrainingStart > DateTime.Now);
+            Training? training = this.context.Set<Training>().SingleOrDefault(t => t.Id == reservationToDelete.TrainingId && t.IsActive && t.TrainingStart > DateTime.UtcNow);
             if (training == null)
                 throw new Exception("Nem lehet leiratkozni kitörölt vagy múltbéli edzésről.");
             this.context.Set<Reservation>().Remove(reservationToDelete);

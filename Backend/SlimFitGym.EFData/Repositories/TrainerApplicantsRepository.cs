@@ -79,7 +79,7 @@ namespace SlimFitGym.EFData.Repositories
             AccountResponse? newTrainer = accountRepository.BecomeATrainer(tr.AccountId);
             if (newTrainer == null)
                 return null;
-            tr.AcceptedAt = DateTime.Now;
+            tr.AcceptedAt = DateTime.UtcNow;
             this.context.Entry(tr).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             this.context.SaveChanges();
             return newTrainer;
