@@ -154,3 +154,45 @@
   top: 1.5rem;
   border-radius: var(--border-radius);
 }
+.history{
+  display: flex;
+  width: 100%;
+  align-items: center;
+  margin-bottom: 1rem;
+  h3{
+    margin: 0;
+  }
+  .pagination-controls {
+    margin-left: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1.5rem;
+
+      .pagination-button {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        background: var(--primary-color);
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover:not(:disabled) {
+          background: var(--primary-dark-color);
+        }
+
+        &:disabled {
+          background: var(--disabled-color);
+          cursor: not-allowed;
+          opacity: 0.7;
+        }
+      }
+
+      .page-indicator {
+        font-size: 1.1rem;
+        color: var(--secondary-text);
+      }
+    }
+}
