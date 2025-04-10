@@ -44,9 +44,8 @@ export const routes: Routes = [
       { path: 'userData', component: BasicUserDataComponent },
       { path: 'subscribedTrainings', component: SubscribedTrainingsComponent },
 
-      
       {
-        path: 'scanner',
+        path: 'myPass',
         component: MyPassComponent,
         data: { allowedRoles: ['worker'] },
       },

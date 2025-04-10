@@ -99,7 +99,7 @@
   <app-new-password [user]="user"></app-new-password>
   @if (user.role == 'user') {
 
-  <app-apply-for-trainer></app-apply-for-trainer>
+  <app-apply-for-trainer [user]="user"></app-apply-for-trainer>
   }
   <app-delete-user [user]="user"></app-delete-user>
 </div>

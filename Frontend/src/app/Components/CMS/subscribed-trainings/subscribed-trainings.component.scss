@@ -142,3 +142,37 @@ h2 {
     }
   }
 }
+.no-training {
+  text-align: center;
+  padding: 4em 0;
+
+  .no-training-content {
+    max-width: 600px;
+    margin: 0 auto;
+
+    h2 {
+      color: var(--primary-color);
+      margin-bottom: 1em;
+    }
+
+    p {
+      color: var(--secondary-text);
+      margin-bottom: 2em;
+    }
+
+    .btn.primary {
+      background: var(--primary-color);
+      color: var(--main-text);
+      padding: 1em 3em;
+      border-radius: var(--border-radius);
+      text-decoration: none;
+      font-weight: bold;
+      display: inline-block;
+      transition: transform 0.2s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+      }
+    }
+  }
+}

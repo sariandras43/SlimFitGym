@@ -12,5 +12,6 @@ export interface UserModel {
     image?: string
     appliedForTraining?: boolean
     isActive?: boolean
+    isAppliedAsTrainer?: boolean,
   }
   

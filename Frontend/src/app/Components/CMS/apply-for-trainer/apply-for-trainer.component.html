@@ -9,7 +9,7 @@
     <p class="message">
         Edző jelentkezésedet az oldal adminja fogja elbírálni. Csak akkor jelentkezz ha ténylegesen része akarsz lenni a csapatunknak!
     </p>
-    @if(sent)
+    @if(user?.isAppliedAsTrainer)
     {
         <p class="sent-message"> ✔ Jelenkezés elküldve</p>
     }
