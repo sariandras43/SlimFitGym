@@ -10,6 +10,7 @@ import {
   trigger,
 } from '@angular/animations';
 import { TrainerApplicationService } from '../../../Services/trainer-application.service';
+import { NgClass } from '@angular/common';
 
 enum SortDirection {
   Asc = 'asc',
@@ -23,7 +24,7 @@ type SortableProperty = keyof Pick<
 
 @Component({
   selector: 'app-user-cms',
-  imports: [ButtonLoaderComponent],
+  imports: [ButtonLoaderComponent, NgClass],
   templateUrl: './user-cms.component.html',
   styleUrl: './user-cms.component.scss',
   animations: [

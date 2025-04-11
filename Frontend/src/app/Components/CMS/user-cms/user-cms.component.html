@@ -56,7 +56,7 @@
       <th></th>
     </tr>
     @for (user of displayUsers; track $index) {
-    <tr>
+    <tr [ngClass]="{deleted: !user.isActive}">
       <td data-cell="Név">{{ user.name }}</td>
       <td data-cell="Email">{{ user.email }}</td>
       <td data-cell="Telefonszám">{{ user.phone }}</td>

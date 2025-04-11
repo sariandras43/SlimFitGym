@@ -25,6 +25,7 @@ export class BasicUserDataComponent {
   updateLoading: Boolean = false;
   deleteImageLoading: Boolean = false;
   canModify: Boolean = false;
+  errorMsg = '';
   @Input() loggedInUserPass: PassModel | undefined;
 
   originalUser: UserModel = {id:0};
@@ -90,7 +91,7 @@ export class BasicUserDataComponent {
         error: (error) => {
           this.updateLoading = false;
 
-          console.log(error.error.message ?? error.message);
+          this.errorMsg = error.error.message ?? error.message;
         },
       });
     }
@@ -106,7 +107,7 @@ export class BasicUserDataComponent {
       error: (error) => {
         this.deleteImageLoading = false;
 
-        console.log(error.error.message ?? error.message);
+        this.errorMsg = error.error.message ?? error.message;
       },
     });
   }

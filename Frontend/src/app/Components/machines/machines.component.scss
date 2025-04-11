@@ -1,13 +1,28 @@
-$card-width: 25rem;
-
-
-
 .cardWrapper {
-  gap: 2em;
-  border-radius: var(--border-radius);
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex-wrap: wrap;
-  flex-basis: $card-width;
+  gap: 2em;
+  justify-content: center;
+  padding: 2em;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  box-sizing: border-box;
+
+  // Target the machine cards
+  app-machine-card {
+    flex: 1 1 300px; // flex-grow | flex-shrink | flex-basis
+    max-width: 400px;
+    min-width: 300px;
+    
+    @media (max-width: 768px) {
+      flex-basis: 280px;
+      min-width: 280px;
+    }
+    
+    @media (max-width: 480px) {
+      flex-basis: 100%;
+      min-width: 250px;
+    }
+  }
 }

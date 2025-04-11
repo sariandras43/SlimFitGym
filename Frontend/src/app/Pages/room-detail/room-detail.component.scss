@@ -1,17 +1,42 @@
-.machines
-{
-    h2{
-        font-size: 4rem;
-        margin-bottom: 0.5em;
-    }
-    
-
-}
-.container{
-  display: flex;
-  align-items: center;
-  gap: 3em;
-  .eventWrapper{
-    margin-top: 8em;
+.machines {
+  h2 {
+    font-size: clamp(
+      2.5rem,
+      4vw + 1rem,
+      4rem
+    ); // Fluid scaling between 2.5-4rem
+    margin-bottom: 0.5em;
   }
+}
+
+.container {
+  display: flex;
+  align-items: flex-start;
+  gap: 3em;
+
+  @media (max-width: 992px) {
+    flex-direction: column;
+    gap: 2em;
+    .eventWrapper {
+      width: 100%;
+    }
+    .machines{
+      width: 100%;
+    }
+  }
+
+  .eventWrapper {
+    margin-top: clamp(3em, 8vw, 8em); // Fluid margin between 3-8em
+  }
+
+  .machines {
+    flex: 1;
+  }
+}
+
+.counterContainer {
+  display: flex;
+  gap: 2em;
+  flex-wrap: wrap;
+  justify-content: center;
 }

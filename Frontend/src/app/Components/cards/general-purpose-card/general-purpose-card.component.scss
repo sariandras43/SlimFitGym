@@ -1,7 +1,7 @@
 :host {
   background-color: none;
   height: 100%;
-  display: block;  
+  display: block;
 }
 .card {
   background-color: inherit;
@@ -18,7 +18,10 @@
   }
 
   .content {
-    padding: 2em 3em;
+    padding: 1em;
+    @media (min-width: 768px) {
+      padding: 2em 3em;
+    }
     gap: 0.5em;
     display: flex;
     flex-direction: column;
@@ -28,13 +31,13 @@
       text-align: justify;
     }
     .title {
-      font-size: 2rem;
+      font-size: clamp(1.5rem, 2.5vw, 2rem);
       text-align: center;
     }
     .priceWrap {
       .price {
         font-weight: bold;
-        font-size: 3.5rem;
+        font-size: clamp(2rem, 4vw, 3.5rem);
       }
       .unit {
         font-size: 1.5rem;
@@ -45,7 +48,7 @@
       list-style: none;
 
       li {
-        font-size: 1.5rem;
+        font-size: clamp(1rem, 1.5vw, 1.5rem);
 
         text-align: center;
       }
@@ -76,6 +79,4 @@
       width: 100%;
     }
   }
-
-  
 }
