@@ -3,7 +3,11 @@
   title="Edzéseink"
   subtitle="Itt nézheti meg az edzéseinket"
 />
-
+@if (loading) {
+  <div class="overlay">
+    <app-button-loader  [size]="2"></app-button-loader>
+  </div>
+}
 <div class="container mt5">
   <h2>Közelgő események</h2>
   <div class="container">

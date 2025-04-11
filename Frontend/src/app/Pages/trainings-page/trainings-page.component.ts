@@ -8,17 +8,19 @@ import { UserModel } from '../../Models/user.model';
 import { FooterComponent } from '../../Components/footer/footer.component';
 import Util from '../../utils/util';
 import { FormsModule } from '@angular/forms';
+import { ButtonLoaderComponent } from '../../Components/button-loader/button-loader.component';
 
 @Component({
   selector: 'app-trainigs-page',
-  imports: [HeroComponent, FooterComponent, FormsModule],
+  imports: [HeroComponent, FooterComponent, FormsModule, ButtonLoaderComponent],
   templateUrl: './trainings-page.component.html',
   styleUrl: './trainings-page.component.scss',
 })
 export class TrainigsPageComponent {
+  loading = false;
   searchParam: string | undefined;
   isSearching = false;
-  limit = 20;
+  limit = 10;
   offset = 0;
   hasMore = true;
   currentPage = 1;
@@ -75,29 +77,45 @@ export class TrainigsPageComponent {
     const params = {
       query: this.searchParam,
       limit: this.limit,
-      offset: this.offset
+      offset: this.offset,
     };
+    this.loading = true;
 
     this.trainingService.getTrainings(params).subscribe({
-      next:()=>{this.isSearching = false},
-      error: ()=>{this.isSearching = false}
+      next: () => {
+        this.isSearching = false;
+        this.loading = false;
+      },
+      error: () => {
+        this.isSearching = false;
+        this.loading = false;
+      },
     });
   }
 
   subscribe(training: TrainingModel) {
+    this.loading = true;
+
     this.trainingService.subscribeToTraining(training.id).subscribe({
-      next: () => {},
+      next: () => {
+        this.loading = false;
+      },
       error: (err) => {
         console.log(err);
+        this.loading = false;
       },
     });
   }
 
   unsubscribe(training: TrainingModel) {
+    this.loading = true;
     this.trainingService.unsubscribeFromTraining(training.id).subscribe({
-      next: () => {},
+      next: () => {
+        this.loading = false;
+      },
       error: (err) => {
         console.log(err);
+        this.loading = false;
       },
     });
   }
