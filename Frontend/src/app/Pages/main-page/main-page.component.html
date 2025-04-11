@@ -1,4 +1,4 @@
-<app-hero imgSrc="mainHero.jpeg" title="Slim fit gym" subtitle="Ahol az álmok valóra válnak"/>
+<app-hero imgSrc="workoutManExpanded.jpg" title="Slim fit gym" subtitle="Ahol az álmok valóra válnak"/>
 
 <div class="counterContainer g5">
 <app-counter-bubble [number]="roomCount" title="Szoba"/>
@@ -8,22 +8,25 @@
 </div>
 <section class="promotions-container ">
   <app-promotion
-  imageUrl="mainHero.jpeg"
+  imageUrl="modernEquipment.png"
   title="Modern Felszerelés"
     description="Legújabb technológiájú edzőgépeinkkel garantáljuk a hatékony edzést. Minden szinthez megfelelő felszerelés!"
   ></app-promotion>
   
   <app-promotion
-    imageUrl="mainHero.jpeg"
+    imageUrl="professionalTrainers.png"
     [align]="'right'"
     title="Szakértő Edzők"
     description="Tapasztalt edzőink segítenek céljaid elérésében. Személyre szabott edzésterv és folyamatos támogatás!"
     ></app-promotion>
   </section>
-  <div class="scrollerContainer">
-      <h2>Edzőink</h2>
-    <app-side-scroller [trainers]="trainers"></app-side-scroller>
-  </div>
+  @if (trainers && trainers.length > 0) {
+
+    <div class="scrollerContainer">
+        <h2>Edzőink</h2>
+      <app-side-scroller [trainers]="trainers"></app-side-scroller>
+    </div>
+  }
 <div class="mt5">
     <app-subscriptions title="Kiemelt ajánlataink" [highlightOnly]="true"/>
 </div>

@@ -203,8 +203,8 @@ namespace SlimFitGym.Tests.IntegrationTests
                 Name = "Test",
                 RoomId = 1,
                 TrainerId = 2,
-                TrainingStart = DateTime.Now.AddYears(2),
-                TrainingEnd = DateTime.Now.AddYears(2).AddHours(1)
+                TrainingStart = DateTime.UtcNow.AddYears(2),
+                TrainingEnd = DateTime.UtcNow.AddYears(2).AddHours(1)
             };
             var jsonContent = JsonConvert.SerializeObject(newTraining);
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");

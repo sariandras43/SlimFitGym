@@ -1,51 +1,55 @@
-.eventContainer{
-    background-color: var(--bg-tertiary);
+.eventContainer {
+  background-color: var(--bg-tertiary);
+  border-radius: var(--border-radius);
+  padding: clamp(1.5em, 2vw, 2em) clamp(1.5em, 4vw, 4em);
+  border: 2px solid var(--tertiary-color);
+  min-width: 100%;
+
+  h2 {
+    font-size: clamp(1.5rem, 2vw + 0.8rem, 2rem);
+  }
+
+  .subtitle {
+    color: var(--secondary-text);
+    margin-top: 0.25em;
+  }
+  .title {
+    margin-top: 1em;
+    font-weight: bold;
+    font-size: clamp(
+      1.1rem,
+      1.2vw + 0.9rem,
+      1.25rem
+    );
+  }
+  button {
+    flex-grow: 0;
+    border: none;
+    color: var(--text-color);
+    font-weight: bold;
+
     border-radius: var(--border-radius);
-    padding: 2em 4em 2em 3em;
-    border: 2px solid var(--tertiary-color);
-    min-width: 20em;
-    h2{
-        font-size: 2rem;
-    }
+    margin-top: 0.5em;
 
+    font-size: clamp(1rem, 1vw + 0.8rem, 1.2rem);
+    padding: clamp(0.1em, 0.5vw, 0.25em) clamp(0.5em, 2vw, 1em);
 
-    .subtitle{
-        color: var(--secondary-text);
-        margin-top: 0.25em;
-        
+    &:hover {
+      opacity: 0.9;
     }
-    .title{
-        margin-top: 1em;
-        font-weight: bold;
-        font-size: 1.25rem ;
+    cursor: pointer;
+    &.applied {
+      background-color: var(--tertiary-color);
     }
-    button{
-        flex-grow: 0;
-        border: none;
-        color: var(--text-color);
-        font-weight: bold;
-        padding:  .1em 1em;
-        border-radius: var(--border-radius);
-        margin-top: .5em;
-        font-size: 1.5rem;
-        &:hover{
-          opacity: 0.9;
-        }
-        cursor: pointer;
-        &.applied{
-          background-color: var(--tertiary-color);
-          
-        }
-        &.full{
-          background-color: var(--danger);
-          cursor: default;
-          &:hover{
-            opacity: 1;
-          }
-        }
-        &.apply{
-          background-color: var(--primary-color);
-
-        }
+    &.full {
+      background-color: var(--danger);
+      cursor: default;
+      &:hover {
+        opacity: 1;
+      }
     }
+    &.apply {
+      background-color: var(--primary-color);
+    }
+  }
 }

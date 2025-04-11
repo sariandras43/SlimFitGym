@@ -1,11 +1,21 @@
 <div class="container">
-  <h2 >{{title()}}</h2>
+  <h2>{{ title() }}</h2>
   <div class="subscriptions | g5">
-    @for (pass of passes; track $index) {
-      @if (!highlightOnly() || pass.isHighlighted ) {
+    @for (pass of passes; track $index) { @if (!highlightOnly() ||
+    pass.isHighlighted ) {
 
-        <app-pass-card (boughtPass)="handlePassPurchase($event)" [isRoleUser]="user?.role == 'user'"  [pass]='pass' ></app-pass-card>
-      }
-    }
-    
+    <app-pass-card
+      (boughtPass)="openPurchaseModal($event)"
+      [displayBuyButton]="
+        user?.role == 'user' && (userPass?.price || 0) < pass.price
+      "
+      [pass]="pass"
+    ></app-pass-card>
+    } }
+  </div>
 </div>
+<app-purchase-modal
+[isOpen]="showCardModal"
+(cancel)="closeCardModal()"
+(modalSubmitted)="handleCardSubmit()"
+></app-purchase-modal>

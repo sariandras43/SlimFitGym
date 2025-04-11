@@ -46,8 +46,8 @@ namespace SlimFitGym.Tests.UnitTests
                     MaxPeople = 1,
                     Name = "TRX edzés",
                     RoomId = 1,
-                    TrainingEnd = DateTime.Now.AddHours(1),
-                    TrainingStart = DateTime.Now,
+                    TrainingEnd = DateTime.UtcNow.AddHours(1),
+                    TrainingStart = DateTime.UtcNow,
                     RoomImageUrl = "",
                     TrainerId = 1,
                     TrainerImageUrl=""
@@ -83,8 +83,8 @@ namespace SlimFitGym.Tests.UnitTests
                 MaxPeople = 1,
                 Name = "TRX edzés",
                 RoomId = 1,
-                TrainingEnd = DateTime.Now.AddHours(1),
-                TrainingStart = DateTime.Now,
+                TrainingEnd = DateTime.UtcNow.AddHours(1),
+                TrainingStart = DateTime.UtcNow,
                 RoomImageUrl = "",
                 TrainerId = 1,
                 TrainerImageUrl = ""
@@ -128,8 +128,8 @@ namespace SlimFitGym.Tests.UnitTests
                 MaxPeople = 1,
                 Name = "TRX edzés",
                 RoomId = 1,
-                TrainingEnd = DateTime.Now.AddHours(1),
-                TrainingStart = DateTime.Now,
+                TrainingEnd = DateTime.UtcNow.AddHours(1),
+                TrainingStart = DateTime.UtcNow,
                 RoomImageUrl = "",
                 TrainerId = 1,
                 TrainerImageUrl = ""

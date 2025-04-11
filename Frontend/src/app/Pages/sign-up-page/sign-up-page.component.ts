@@ -12,13 +12,16 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { passwordValidator } from '../../validators/passwordValidation';
 import { UserService } from '../../Services/user.service';
+import { ButtonLoaderComponent } from "../../Components/button-loader/button-loader.component";
 @Component({
   selector: 'app-sign-up-page',
-  imports: [RouterModule, ReactiveFormsModule, CommonModule],
+  imports: [RouterModule, ReactiveFormsModule, CommonModule, ButtonLoaderComponent],
   templateUrl: './sign-up-page.component.html',
   styleUrl: './sign-up-page.component.scss',
 })
 export class SignUpPageComponent {
+  loading = false;
+
   constructor(private userService: UserService, private router: Router) {}
   private formBuilder = inject(FormBuilder);
   errorMessage: string | undefined;
@@ -82,6 +85,8 @@ export class SignUpPageComponent {
     )
       return;
 
+
+      this.loading = true;
     this.userService
       .register(
         this.email?.value,
@@ -92,13 +97,16 @@ export class SignUpPageComponent {
       )
       .subscribe({
         next: (response) => {
+          this.loading = false;
           if (response) {
             this.router.navigate(['user']);
           } else {
-            this.errorMessage = 'Helytelen email cím vagy jelszó!';
+            this.errorMessage = 'Váratlan hiba történt';
           }
         },
         error: (error) => {
+          this.loading = false;
+
           this.errorMessage = error.error.message ?? error.message;
         },
       });

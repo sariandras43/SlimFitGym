@@ -1,4 +1,4 @@
-export interface EntryModel {
+export interface EntryStatisticModel {
     month: number,
     count:number
 }

@@ -28,7 +28,7 @@ namespace SlimFitGymBackend
                 new("role",role)
             };
 
-            DateTime expiration = DateTime.Now.AddDays(1);
+            DateTime expiration = DateTime.UtcNow.AddDays(1);
             if (rememberMe)
                 expiration = expiration.AddDays(364);
 

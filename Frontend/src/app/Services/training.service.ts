@@ -17,7 +17,6 @@ export class TrainingService {
       'Authorization',
       `Bearer ${this.user?.token}`
     );
-
     if (selectedTraining.id === -1) {
       const { id, ...postRoom } = selectedTraining;
       return this.http
@@ -92,7 +91,7 @@ export class TrainingService {
       this.allTrainingsSubject.next(this.subscribedOrDefault(parsedTrainings));
     }
 
-    this.getTrainings();
+    this.getTrainings({limit: 10}).subscribe();
     userService.loggedInUser$.subscribe((usr) => {
       if (usr) this.user = usr;
       this.getSubscribedTrainings();
@@ -130,11 +129,21 @@ export class TrainingService {
       });
   }
 
-  getTrainings() {
-    this.http
-      .get<TrainingModel[]>(`${this.config.apiUrl}/trainings`)
-      .subscribe({
-        next: (response: TrainingModel[]) => {
+  getTrainings(args?: { limit?: number; offset?: number; query?: string }) {
+    let params = '';
+
+    if (args) {
+      params =
+        '?' +
+        (args.query ? `&query=${args.query}` : '') +
+        (args.limit ? `&limit=${args.limit}` : '') +
+        (args.offset ? `&offset=${args.offset}` : '');
+    }
+
+    return this.http
+      .get<TrainingModel[]>(`${this.config.apiUrl}/trainings` + params)
+      .pipe(
+        map((response: TrainingModel[]) => {
           const parsedTraining = response;
           parsedTraining.map((d) => {
             d.trainingStart = new Date(d.trainingStart);
@@ -145,11 +154,8 @@ export class TrainingService {
             this.subscribedOrDefault(parsedTraining)
           );
           localStorage.setItem('trainings', JSON.stringify(response));
-        },
-        error: (error) => {
-          console.log(error.error.message ?? error.message);
-        },
-      });
+        })
+      );
   }
   getTrainingsInRoom(id: number): Observable<TrainingModel[]> {
     return this.http

@@ -13,7 +13,7 @@
       }
     </ul>
 
-    @if (!pass?.passOfUser && isRoleUser) {
+    @if (!pass?.passOfUser && displayBuyButton) {
       <button class="btn" (click)="buyPass(pass)">
         @if (pass?.isLoading) {
           <app-button-loader [size]="0.5"></app-button-loader>

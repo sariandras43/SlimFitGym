@@ -43,7 +43,7 @@ namespace SlimFitGym.EFData.Repositories
             if (account==null) throw new Exception("Ez a felhasználó nem létezik.");
             if (account.Role=="trainer" || account.Role == "admin" || account.Role == "employee")
             {
-                Entry entryToSave = new Entry() { AccountId=account.Id,EntryDate=DateTime.Now};
+                Entry entryToSave = new Entry() { AccountId=account.Id,EntryDate=DateTime.UtcNow};
                 Entry newEntry = context.Set<Entry>().Add(entryToSave).Entity;
                 this.context.SaveChanges();
                 return newEntry;
@@ -55,9 +55,9 @@ namespace SlimFitGym.EFData.Repositories
                 throw new Exception("Nem létezik ilyen bérlet.");
             if (pass.MaxEntries==0)
             {
-                if ((DateTime.Now-latestPurchase.PurchaseDate).TotalSeconds>(latestPurchase.PurchaseDate.AddDays(pass.Days)-latestPurchase.PurchaseDate).TotalSeconds)
+                if ((DateTime.UtcNow-latestPurchase.PurchaseDate).TotalSeconds>(latestPurchase.PurchaseDate.AddDays(pass.Days)-latestPurchase.PurchaseDate).TotalSeconds)
                     throw new Exception("A felhasználó legutóbb vásárolt bérlete nem érvényes már.");
-                Entry entryToSave = new Entry() { AccountId=account.Id,EntryDate=DateTime.Now};
+                Entry entryToSave = new Entry() { AccountId=account.Id,EntryDate=DateTime.UtcNow};
                 Entry newEntry = context.Set<Entry>().Add(entryToSave).Entity;
                 this.context.SaveChanges();
                 return newEntry;
@@ -66,7 +66,7 @@ namespace SlimFitGym.EFData.Repositories
             {
                 List<Entry> entriesByAccountId = GetEntriesByAccountId(token, accountId, latestPurchase.PurchaseDate.ToString(), pass.MaxEntries);
                 if (entriesByAccountId.Count == pass.MaxEntries) throw new Exception("Ezzel a bérlettel nem lehet többször belépni.");
-                Entry entryToSave = new Entry() { AccountId = account.Id, EntryDate = DateTime.Now };
+                Entry entryToSave = new Entry() { AccountId = account.Id, EntryDate = DateTime.UtcNow };
                 Entry newEntry = context.Set<Entry>().Add(entryToSave).Entity;
                 this.context.SaveChanges();
                 return newEntry;
@@ -74,11 +74,11 @@ namespace SlimFitGym.EFData.Repositories
             else
             {
                 var asd =(latestPurchase.PurchaseDate.AddDays(pass.Days) - latestPurchase.PurchaseDate).TotalSeconds;
-                if ((DateTime.Now - latestPurchase.PurchaseDate).TotalSeconds > (latestPurchase.PurchaseDate.AddDays(pass.Days) - latestPurchase.PurchaseDate).TotalSeconds)
+                if ((DateTime.UtcNow - latestPurchase.PurchaseDate).TotalSeconds > (latestPurchase.PurchaseDate.AddDays(pass.Days) - latestPurchase.PurchaseDate).TotalSeconds)
                     throw new Exception("A felhasználó legutóbb vásárolt bérlete nem érvényes már.");
                 List<Entry> entriesByAccountId = GetEntriesByAccountId(token, accountId, latestPurchase.PurchaseDate.ToString(),pass.MaxEntries);
                 if (entriesByAccountId.Count == pass.MaxEntries) throw new Exception("Ezzel a bérlettel nem lehet többször belépni.");
-                Entry entryToSave = new Entry() { AccountId = account.Id, EntryDate = DateTime.Now };
+                Entry entryToSave = new Entry() { AccountId = account.Id, EntryDate = DateTime.UtcNow };
                 Entry newEntry = context.Set<Entry>().Add(entryToSave).Entity;
                 this.context.SaveChanges();
                 return newEntry;

@@ -1,20 +1,59 @@
 <div class="container">
-    <div>
-      <div>
-        <zxing-scanner (scanSuccess)="onCodeResult($event)"></zxing-scanner>
-        <div>
-          <h3>Legutóbbi eredmény:</h3>
-          <p>{{ scannedResult }}</p>
+  <div class="content">
+    @if (hasCameraPermission === false) {
+    <div class="error">
+      ⚠️ Kérjük engedélyezze a kamerát!!
+      <button class="logout" (click)="logout()">Kijelentkezés</button>
+    </div>
+    } @else {
+    <div class="scanner-wrapper">
+      <video id="video-element"></video>
+      <div class="scan-results">
+        <button class="logout" (click)="logout()">Kijelentkezés</button>
+        @if (lastEntry) {
+        <div class="last-entry">
+          <h3>Utolsó belépés</h3>
+          <div class="entry-card">
+            <div class="entry-name">{{ lastEntry.name }}</div>
+            <div class="entry-time">
+              {{ lastEntry.entryDate | date : "short" }}
+            </div>
+          </div>
         </div>
-      </div>
-      <div style="flex: 1">
-        <h3>Utolsó olvasások listája:</h3>
+        } @if (errorMessage) {
+        <div class="error-message">
+          {{ errorMessage }}
+        </div>
+        }
+        <div class="history">
+          <h3>Előzmények</h3>
+          <div class="pagination-controls">
+            <button
+              class="pagination-button"
+              (click)="previous()"
+              [disabled]="offset === 0"
+            >
+              &laquo; Előző
+            </button>
+            <span class="page-indicator">Oldal {{ offset/limit + 1 }}</span>
+            <button
+              class="pagination-button"
+              (click)="next()"
+              [disabled]="!hasMore"
+            >
+              Következő &raquo;
+            </button>
+          </div>
+        </div>
+        @if(entries.length > 0) {
         <ul>
-          @for (code of scanHistory; track $index) {
-          <li>{{ code }}</li>
-    
+          @for (code of entries; track $index) {
+          <li>{{ code.name }} - {{ code.entryDate | date : "short" }}</li>
           }
         </ul>
+        }
       </div>
     </div>
+    }
+  </div>
 </div>
