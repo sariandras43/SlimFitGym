@@ -6,11 +6,34 @@
   background-color: var(--bg-secondary);
   border-radius: var(--border-radius);
   min-height: 37em;
+
+  @media (max-width: 70em) {
+    grid-template-columns: 1fr;
+    width: 90%;
+    min-height: auto;
+    
+    img {
+      height: 300px;
+      width: 100%;
+      order: -1;
+    }
+  }
+
+  @media (max-width: 480px) {
+    width: 100%;
+    border-radius: 0;
+    
+    img {
+      height: 200px;
+    }
+  }
+
   img {
     border-radius: var(--border-radius);
     height: 100%;
     object-fit: cover;
   }
+
   .content {
     padding: 2em;
     display: flex;
@@ -19,15 +42,26 @@
     gap: 1em;
     position: relative;
 
+    @media (max-width: 480px) {
+      padding: 1.5em;
+      
+      input[type="submit"] {
+        font-size: 1.2rem;
+      }
+    }
+
     .inputField {
       display: flex;
       flex-direction: column;
       position: relative;
-      &:has(.errorField) {
-        input {
-          border-bottom: 2px solid var(--danger);
-        }
+      
+      .errorField {
+        position: relative;
+        top: auto;
+        margin-top: 0.5em; 
+        line-height: 1.3;
       }
+
       input {
         background-color: inherit;
         border: 0;
@@ -49,15 +83,13 @@
         margin-top: 1em;
       }
 
-      .errorField {
-        position: absolute;
-        top: 100%;
-        
-      }
+      
     }
-    .errorField{
+
+    .errorField {
       color: var(--danger);
     }
+
     .links {
       margin-top: 1em;
       display: flex;
@@ -67,6 +99,7 @@
         text-decoration: none;
       }
     }
+
     input[type="submit"] {
       background-color: var(--primary-color);
       border-radius: var(--border-radius);
@@ -78,6 +111,7 @@
     }
   }
 }
+
 .wrapperWrapper {
   padding-top: 6rem;
   min-height: 100vh;
@@ -86,4 +120,25 @@
   align-items: center;
   justify-content: center;
   width: 100%;
+
+  @media (max-width: 70em) {
+    padding-top: 2rem;
+    align-items: flex-start;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1rem;
+  }
+}
+.submitButton {
+  background-color: var(--primary-color);
+  border-radius: var(--border-radius);
+  border: none;
+  padding: .25em;
+  color: var(--primary-text);
+  margin-top: 1em;
+  font-size: 1.5rem;
+  &:has(app-button-loader){
+      padding-block: .6em;
+  }
 }

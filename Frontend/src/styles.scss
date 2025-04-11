@@ -126,8 +126,48 @@ body{
 .mt5{
   margin-top: 5em;
 }
-.counterContainer{
+.counterContainer {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  gap: 2em;
+  padding: 1em;
+
+  @media (min-width: 768px) {
+    gap: 5em;
+  }
+}
+.error-message {
+  position: fixed;
+  top: var(--navbar-height);
+  width: 90%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--bg-tertiary);
+  color: var(--danger);
+  padding: 1rem;
+  border: 1px solid var(--danger);
+  border-radius: var(--border-radius);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  p {
+    margin: 0;
+    font-weight: 500;
+  }
+
+  button {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font-size: 1.25rem;
+    padding: 0 0.5rem;
+    
+    &:hover {
+      opacity: 0.8;
+    }
+  }
 }

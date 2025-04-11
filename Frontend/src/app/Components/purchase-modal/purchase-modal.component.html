@@ -1,0 +1,71 @@
+<div class="modal" *ngIf="isOpen">
+    <div class="modal-content">
+      <h3>Kártya adatok</h3>
+      <form (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label>Kártyaszám</label>
+          <input 
+            type="text"
+            placeholder="4242 4242 4242 4242"
+            [ngModel]="cardData.number" 
+            (input)="formatCardNumber($event)"
+            name="number"
+            required
+          >
+        </div>
+  
+        <div class="form-row">
+          <div class="form-group">
+            <label>Lejárat (HH/ÉÉ)</label>
+            <input 
+              type="text" 
+              placeholder="12/34"
+              [ngModel]="cardData.expiry" 
+              (input)="formatExpiry($event)"
+              name="expiry"
+              required
+            >
+          </div>
+  
+          <div class="form-group">
+            <label (click)="fillTestCredentials()" style="cursor: pointer">
+              CVC
+            </label>
+            <input 
+              type="text" 
+              placeholder="123"
+              [(ngModel)]="cardData.cvc"
+              name="cvc"
+              required
+              maxlength="4"
+            >
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label>Kártyatulajdonos neve</label>
+          <input 
+            type="text" 
+            placeholder="John Doe"
+            [(ngModel)]="cardData.name"
+            name="name"
+            required
+          >
+        </div>
+  
+        <div class="error-message" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" (click)="onCancel()">Mégse</button>
+          <button 
+            type="submit" 
+            [disabled]="!cardData.number || !cardData.expiry || !cardData.cvc || !cardData.name"
+          >
+            Vásárlás
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>

@@ -1,4 +1,10 @@
 <div class="container">
+  @if (errorMsg) {
+  <div class="error-message" @errorAnimation>
+    <p>{{ errorMsg }}</p>
+    <button (click)="errorMsg = ''">×</button>
+  </div>
+  }
   <form class="userData" (input)="formChanged()">
     <div class="imgWrap">
       <div class="profilePic">
@@ -100,6 +106,8 @@
   @if (user.role == 'user') {
 
   <app-apply-for-trainer [user]="user"></app-apply-for-trainer>
-  }
+  } @if(user.role != 'admin') {
+
   <app-delete-user [user]="user"></app-delete-user>
+  }
 </div>

@@ -16,18 +16,7 @@ export class EntryService {
     private config: ConfigService,
     private http: HttpClient,
     private userService: UserService
-  ) {
-    this.userService.loggedInUser$.subscribe((u) => {
-      if (u) {
-        this.getEntries({
-          limit: 10,
-          offset: 0,
-          orderField: 'date',
-          accountId: 1,
-        });
-      }
-    });
-  }
+  ) {}
   getEntries(args: {
     limit: number;
     offset: number;
@@ -68,8 +57,8 @@ export class EntryService {
       )
       .pipe(
         map((res: Entry) => {
-          if (!res.accountName) {
-            res.accountName = entry.accountName;
+          if (!res.name) {
+            res.name = entry.name;
           }
           if (res.entryDate) {
             res.entryDate = new Date(res.entryDate);

@@ -3,7 +3,7 @@
     <img
       class="logInImage"
       [style.view-transition-name]="'log-in-image'"
-      src="mainHero.jpeg"
+      src="building.png"
       alt=""
     />
     <form (submit)="signUp()" class="content" [formGroup]="profileForm" unambiguousRole>
@@ -136,7 +136,16 @@
       <div class="links">
         <a routerLink="/login">Bejelentkezés</a>
       </div>
-      <input type="submit" value="Regisztráció" />
+      @if (!loading) {
+
+        <input type="submit" value="Regisztráció" />
+      }
+      @else {
+        <div class="submitButton">
+
+          <app-button-loader [size]="0.6"></app-button-loader>
+        </div>
+      }
     </form>
   </div>
 </div>

@@ -18,7 +18,7 @@ buyPass(pass:PassModel | undefined) {
 
 }
   @Input() pass: PassModel | undefined;
-  @Input() isRoleUser: boolean = false;
+  @Input() displayBuyButton: boolean = false;
   @Output() boughtPass = new EventEmitter<PassModel>(); 
    
   getBenefits(pass: PassModel|undefined): string[] {

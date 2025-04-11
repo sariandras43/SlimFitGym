@@ -56,7 +56,7 @@
       <th></th>
     </tr>
     @for (user of displayUsers; track $index) {
-    <tr>
+    <tr [ngClass]="{deleted: !user.isActive}">
       <td data-cell="Név">{{ user.name }}</td>
       <td data-cell="Email">{{ user.email }}</td>
       <td data-cell="Telefonszám">{{ user.phone }}</td>
@@ -66,7 +66,7 @@
 
       <td data-cell="Profilkép"><img [src]="user.imageUrl" alt="" /></td>
       <td data-cell="Edző jelentkezés elfogadása">
-        @if(user.appliedForTraining) {
+        @if(user.appliedForTraining && user.isActive) {
         <div class="button-wrapper">
           @if (loadingUserId == user.id) {
             <app-button-loader></app-button-loader>
@@ -86,7 +86,7 @@
 
           <div class="itemButtons">
             
-            <button aria-label="delete" (click)="delete(user)">
+            <button aria-label="delete" (click)="openDeleteModal(user)">
               @if (deletingUserId === user.id) {
               <app-button-loader [size]="0.3"></app-button-loader>
               } @else {
@@ -129,3 +129,15 @@
     }
   </table>
 </div>
+@if (showDeleteModal) {
+  <div class="modal-backdrop">
+    <div class="modal">
+      <h3>Felhasználó törlése</h3>
+      <p>Biztosan törölni szeretnéd {{ selectedUser?.name }} felhasználót?</p>
+      <div class="modal-actions">
+        <button class="btn secondary" (click)="onCancelDelete()">Mégse</button>
+        <button class="btn danger" (click)="onConfirmDelete()">Törlés</button>
+      </div>
+    </div>
+  </div>
+  }

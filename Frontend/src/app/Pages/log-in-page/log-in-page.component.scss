@@ -1,62 +1,91 @@
 .loginWrapper {
-  display: grid;
-  grid-template-columns: 5fr 4fr;
-  width: 70%;
-  margin: 0 auto;
-  background-color: var(--bg-secondary);
-  border-radius: var(--border-radius);
-  min-height: 37em;
-  img {
+    display: grid;
+    grid-template-columns: 5fr 4fr;
+    width: 70%;
+    margin: 0 auto;
+    background-color: var(--bg-secondary);
     border-radius: var(--border-radius);
-    height: 100%;
-    object-fit: cover;
-    view-transition-name: log-in-image;
-  }
-  .content{
-    padding: 2em;
-        display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 1em;
-    position: relative;
-    
-    
-    .inputField{
+    min-height: 37em;
+  
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      width: 90%;
+      min-height: auto;
+      
+      img {
+        height: 300px;
+        width: 100%;
+        order: -1;
+      }
+    }
+  
+    @media (max-width: 480px) {
+      width: 100%;
+      border-radius: 0;
+      
+      img {
+        height: 200px;
+      }
+    }
+  
+    img {
+      border-radius: var(--border-radius);
+      height: 100%;
+      object-fit: cover;
+      view-transition-name: log-in-image;
+    }
+  
+    .content {
+      padding: 2em;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1em;
+      position: relative;
+  
+      @media (max-width: 480px) {
+        padding: 1.5em;
+        
+        .submitButton {
+          font-size: 1.2rem;
+        }
+      }
+  
+      .inputField {
         display: flex;
         flex-direction: column;
         
-        input{
-            background-color: inherit;
-            border: 0;
-            border-bottom: 1px solid var(--secondary-text);
-            outline: rgba($color: #000000, $alpha: 0);
-            color: var(--primary-text);
-            &:focus{
-                border-bottom: 2px solid var(--primary-color);
-            }
-            
+        input {
+          background-color: inherit;
+          border: 0;
+          border-bottom: 1px solid var(--secondary-text);
+          outline: rgba($color: #000000, $alpha: 0);
+          color: var(--primary-text);
+          &:focus {
+            border-bottom: 2px solid var(--primary-color);
+          }
         }
-        &+.inputField{
-            margin-top: 1em;
+  
+        &+.inputField {
+          margin-top: 1em;
         }
-        &.rememberMe{
-            
-            flex-direction: row;
-            gap: 0.5em;
-            
+  
+        &.rememberMe {
+          flex-direction: row;
+          gap: 0.5em;
         }
-    }
-    .links{
+      }
+  
+      .links {
         display: flex;
         gap: .25em;
-        a{
-        
-            color: var(--secondary-text);
-            text-decoration: none;
-            
+        a {
+          color: var(--secondary-text);
+          text-decoration: none;
         }
-    }
-    .submitButton{
+      }
+  
+      .submitButton {
         background-color: var(--primary-color);
         border-radius: var(--border-radius);
         border: none;
@@ -64,26 +93,41 @@
         color: var(--primary-text);
         margin-top: 1em;
         font-size: 1.5rem;
-    }
-    .errorField{
+        &:has(app-button-loader){
+            padding-block: .6em;
+        }
+      }
+  
+      .errorField {
         color: var(--danger);
         font-weight: bold;
-        
-    }
-    &:has(.errorField){
-        .submitButton{
-            background-color: var(--danger);
+      }
+  
+      &:has(.errorField) {
+        .submitButton {
+          background-color: var(--danger);
         }
-        
+      }
     }
-}
-}
-.wrapperWrapper {
-  min-height: 100vh;
-  min-height: 100svh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding-top: 6rem;
-}
+  }
+    
+  
+  .wrapperWrapper {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding-top: 6rem;
+  
+    @media (max-width: 768px) {
+        margin-top: var(--navbar-height);
+      padding-top: 2rem;
+      align-items: flex-start;
+    }
+  
+    @media (max-width: 480px) {
+      padding: 1rem;
+    }
+  }

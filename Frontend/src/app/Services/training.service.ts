@@ -91,7 +91,7 @@ export class TrainingService {
       this.allTrainingsSubject.next(this.subscribedOrDefault(parsedTrainings));
     }
 
-    this.getTrainings().subscribe();
+    this.getTrainings({limit: 10}).subscribe();
     userService.loggedInUser$.subscribe((usr) => {
       if (usr) this.user = usr;
       this.getSubscribedTrainings();

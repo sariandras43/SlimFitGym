@@ -1,13 +1,16 @@
-$card-width: 45rem;
 .cardWrapper {
-  gap: 2em;
   border-radius: var(--border-radius);
-  display: flex;
   justify-content: center;
-  flex-wrap: wrap;
-  flex-basis: $card-width;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(400px, 100%), 1fr));
+
+  gap: 2em;
+  padding: 1em;
+  width: 100%;
   app-room-card {
+    justify-self: center;
     background-color: var(--bg-tertiary);
-    max-width: $card-width;
+    max-width: 600px;
+    width: 100%;
   }
 }

@@ -1,53 +1,64 @@
-<div class="wrapperWrapper">
-  <div class="loginWrapper">
-    <form class="content" method="post" (submit)="login()">
-      <div class="inputField">
-        <label class="input_title" for="loginEmail">Email</label>
-        <input
-          type="text"
-          id="loginEmail"
-          required
-          [(ngModel)]="model.email"
-          [ngModelOptions]="{ standalone: true }"
-        />
-      </div>
-      <div class="inputField">
-        <label class="input_title" for="loginEmail">Jelszó</label>
-        <input
-          type="password"
-          id="logInPassword"
-          required
-          [(ngModel)]="model.password"
-          [ngModelOptions]="{ standalone: true }"
-        />
-      </div>
-      <div class="inputField rememberMe">
-        <input
-          type="checkbox"
-          id="logInRemember"
-          value="true"
-          [(ngModel)]="model.rememberMe"
-          [ngModelOptions]="{ standalone: true }"
-        />
-        <label class="input_title" for="logInRemember"
-          >Bejelentkezve maradok</label
-        >
-      </div>
-      <div class="links">
-        <a routerLink="/signup">Regisztráció</a>
-      </div>
-      @if (errorMessage) {
-      <p data-cy="errorMessage" class="alert alert-danger errorField">
-        {{ errorMessage }}
-      </p>
-      }
-      <input
-        data-cy="loginButton"
-        class="submitButton"
-        type="submit"
-        value="Bejelentkezés"
-      />
-    </form>
-    <img class="logInImage" src="mainHero.jpeg" alt="" />
+<div class="container">
+  <div class="wrapperWrapper">
+    <div class="loginWrapper">
+      <form class="content" method="post" (submit)="login()">
+        <div class="inputField">
+          <label class="input_title" for="loginEmail">Email</label>
+          <input
+            type="text"
+            id="loginEmail"
+            required
+            [(ngModel)]="model.email"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </div>
+        <div class="inputField">
+          <label class="input_title" for="loginEmail">Jelszó</label>
+          <input
+            type="password"
+            id="logInPassword"
+            required
+            [(ngModel)]="model.password"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </div>
+        <div class="inputField rememberMe">
+          <input
+            type="checkbox"
+            id="logInRemember"
+            value="true"
+            [(ngModel)]="model.rememberMe"
+            [ngModelOptions]="{ standalone: true }"
+          />
+          <label class="input_title" for="logInRemember"
+            >Bejelentkezve maradok</label
+          >
+        </div>
+        <div class="links">
+          <a routerLink="/signup">Regisztráció</a>
+        </div>
+        @if (errorMessage) {
+        <p data-cy="errorMessage" class="alert alert-danger errorField">
+          {{ errorMessage }}
+        </p>
+        }
+        @if (!loading) {
+
+          <input
+            data-cy="loginButton"
+            class="submitButton"
+            type="submit"
+            value="Bejelentkezés"
+          />
+        }
+        @else {
+          <div class="submitButton">
+
+            <app-button-loader [size]="0.6"></app-button-loader>
+          </div>
+        }
+      </form>
+      <img class="logInImage" src="mainHero.jpeg" alt="" />
+    </div>
   </div>
 </div>
