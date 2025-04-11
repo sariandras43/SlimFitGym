@@ -1,5 +1,5 @@
 <app-hero
-  imgSrc="templateSzoba.jpg"
+  imgSrc="training.jpg"
   title="Edzéseink"
   subtitle="Itt nézheti meg az edzéseinket"
 />
@@ -36,7 +36,7 @@
     @for (training of trainings; track $index) {
     <div class="trainingSection">
       <div class="trainerImage">
-        <img [src]="training.trainerImageUrl || 'norbi.jpg'" alt="" />
+        <img [src]="training.trainerImageUrl || 'muscleManOrange.svg'" alt="" />
       </div>
       <div class="trainingContent">
         <img [src]="training.roomImageUrl || ' templateSzoba.jpg'" alt="" />
