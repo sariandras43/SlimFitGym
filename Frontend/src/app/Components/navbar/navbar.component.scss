@@ -2,14 +2,17 @@ $breakpoint: 70em;
 
 .navbar {
   position: fixed;
-  width: 100%   ;
+  width: 100%;
   top: 0;
   z-index: 1000;
-  background: rgba(var(--bg-tertiary-rgb), 0.30);
+  background: rgba(var(--bg-tertiary-rgb), 0.3);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 2px solid rgba(var(--tertiary-color-rgb), 0.7);
-
+  @media (max-width: $breakpoint) {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 }
 
 .nav-container {
@@ -23,11 +26,11 @@ $breakpoint: 70em;
 
 .logo-link {
   z-index: 1001;
-  
+
   .logo {
     width: 5em;
     transition: transform 0.3s ease;
-    
+
     &:hover {
       transform: scale(1.05);
     }
@@ -41,7 +44,7 @@ $breakpoint: 70em;
   flex-grow: 1;
   margin-left: 1rem;
   @media (max-width: $breakpoint) {
-  margin-left: 0;
+    margin-left: 0;
 
     position: fixed;
     top: 0;
@@ -57,7 +60,7 @@ $breakpoint: 70em;
     transform: translateY(-100%);
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     padding: 2rem;
-    
+
     &.active {
       transform: translateY(0);
     }
@@ -83,7 +86,6 @@ $breakpoint: 70em;
 }
 
 .nav-link {
-
   color: var(--main-text);
   text-decoration: none;
   font-weight: 500;
@@ -93,43 +95,41 @@ $breakpoint: 70em;
   font-size: 1.25rem;
   &:hover {
     color: var(--primary-color);
-    &::after{
+    &::after {
       width: 90%;
     }
-    h2::after{
+    h2::after {
       width: 90%;
-
     }
   }
 
-  h2{
+  h2 {
     position: relative;
-    &::after{
+    &::after {
       bottom: 0;
       left: 50%;
       transform: translate(-50%, 0);
       position: absolute;
-      content: '';
-      background-color:  var(--primary-color);
+      content: "";
+      background-color: var(--primary-color);
       width: 0;
       height: 0.15rem;
       transition: width 300ms ease-in-out;
     }
-
   }
-  
-  &:not(:has(h2)):after{
+
+  &:not(:has(h2)):after {
     bottom: 0;
     left: 50%;
     transform: translate(-50%, 0);
     position: absolute;
-    content: '';
-    background-color:  var(--primary-color);
+    content: "";
+    background-color: var(--primary-color);
     width: 0;
     height: 0.15rem;
     transition: width 300ms ease-in-out;
   }
-  
+
   h2 {
     font-size: 2.25rem;
     margin: 0;
@@ -148,7 +148,7 @@ $breakpoint: 70em;
   gap: 1.5rem;
   margin-left: auto;
   @media (max-width: $breakpoint) {
-  margin-left: 0;
+    margin-left: 0;
 
     flex-direction: column;
     gap: 1.5rem;
@@ -163,21 +163,21 @@ $breakpoint: 70em;
   transition: all 0.3s ease;
   text-decoration: none;
   color: var(--main-text);
-  
+
   &.primary {
     background: var(--primary-color);
-  
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    
+
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     }
   }
-  
+
   &:not(.primary) {
     border: 2px solid var(--primary-color);
-    
+
     &:hover {
       background: var(--primary-color);
     }
@@ -191,12 +191,12 @@ $breakpoint: 70em;
   &:hover {
     transform: scale(1.08);
   }
-  
+
   .profile-img {
     border-radius: 50%;
     width: 100%;
     height: 100%;
-  object-fit: cover;
+    object-fit: cover;
 
     &.default {
       padding: 0.5rem;
@@ -218,7 +218,7 @@ $breakpoint: 70em;
     background: var(--main-text);
     transition: all 0.3s ease;
     transform-origin: center;
-    
+
     &:nth-child(2) {
       margin: 6px 0;
     }
@@ -227,7 +227,7 @@ $breakpoint: 70em;
   @media (max-width: $breakpoint) {
     display: block;
   }
-  
+
   &[aria-expanded="true"] {
     span:first-child {
       transform: rotate(45deg) translate(6px, 6px);
