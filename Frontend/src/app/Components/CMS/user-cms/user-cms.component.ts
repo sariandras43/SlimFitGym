@@ -76,6 +76,9 @@ export class UserCMSComponent {
     this.updateDisplayUsers();
   }
   users: UserModel[] = [];
+  selectedUser: UserModel | null = null;
+  showDeleteModal = false;
+  
   trainerApplicants: {
     accountId: number;
     id: number;
@@ -99,6 +102,24 @@ export class UserCMSComponent {
     private trainerApplicantsService: TrainerApplicationService
   ) {
     this.loadUsers();
+  }
+
+  openDeleteModal(user: UserModel) {
+    this.selectedUser = user;
+    this.showDeleteModal = true;
+  }
+  
+  onCancelDelete() {
+    this.showDeleteModal = false;
+    this.selectedUser = null;
+  }
+  
+  onConfirmDelete() {
+    if (this.selectedUser) {
+      this.delete(this.selectedUser);
+      this.showDeleteModal = false;
+      this.selectedUser = null;
+    }
   }
   rejectUser(user: UserModel) {
     if (this.loadingUserId) return;
