@@ -93,6 +93,9 @@
         color: var(--primary-text);
         margin-top: 1em;
         font-size: 1.5rem;
+        &:has(app-button-loader){
+            padding-block: .6em;
+        }
       }
   
       .errorField {

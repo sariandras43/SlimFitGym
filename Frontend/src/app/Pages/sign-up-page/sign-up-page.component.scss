@@ -130,3 +130,15 @@
     padding: 1rem;
   }
 }
+.submitButton {
+  background-color: var(--primary-color);
+  border-radius: var(--border-radius);
+  border: none;
+  padding: .25em;
+  color: var(--primary-text);
+  margin-top: 1em;
+  font-size: 1.5rem;
+  &:has(app-button-loader){
+      padding-block: .6em;
+  }
+}

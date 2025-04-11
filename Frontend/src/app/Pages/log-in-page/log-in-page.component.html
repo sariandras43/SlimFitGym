@@ -42,12 +42,21 @@
           {{ errorMessage }}
         </p>
         }
-        <input
-          data-cy="loginButton"
-          class="submitButton"
-          type="submit"
-          value="Bejelentkezés"
-        />
+        @if (!loading) {
+
+          <input
+            data-cy="loginButton"
+            class="submitButton"
+            type="submit"
+            value="Bejelentkezés"
+          />
+        }
+        @else {
+          <div class="submitButton">
+
+            <app-button-loader [size]="0.6"></app-button-loader>
+          </div>
+        }
       </form>
       <img class="logInImage" src="mainHero.jpeg" alt="" />
     </div>
