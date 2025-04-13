@@ -1,9 +1,9 @@
 <!-- machine-card.component.html -->
-<div 
+<div
   class="card"
   [ngClass]="{
-    'clickable': machine && machine.imageUrls[1],
-    'flipped': flipped
+    clickable: machine && machine.imageUrls[1],
+    flipped: flipped
   }"
   (click)="flipCard()"
 >
@@ -12,24 +12,34 @@
       <!-- Front content -->
       <div>
         @if (machine?.imageUrls && machine!.imageUrls[0]) {
-          <img [src]="machine!.imageUrls[0]" alt="" loading="lazy" />
+        <img [src]="machine!.imageUrls[0]" alt="" loading="lazy" />
         } @else {
-          <img src="templateMachine.webp" alt="" loading="lazy" />
+        <img src="templateMachine.webp" alt="" loading="lazy" />
         }
         <div class="content">
           @if (machine?.name) {
-            <h3 class="title">{{ machine?.name }}</h3>
-          }
-          @if (machine?.description) {
-            <p class="description">{{ machine?.description }}</p>
+          <h3 class="title">{{ machine?.name }}
+
+          </h3>
+        } 
+        @if (machine?.machineCount) {
+        <p>{{ machine?.machineCount }} db</p>
+
+        } 
+        @if (machine?.description) {
+          <p class="description">{{ machine?.description }}</p>
           }
         </div>
       </div>
     </div>
-    
+
     <div class="card-face card-back">
       <!-- Back content -->
-      <img class="helper-image" [src]="machine && machine.imageUrls[1]" alt="" />
+      <img
+        class="helper-image"
+        [src]="machine && machine.imageUrls[1]"
+        alt=""
+      />
     </div>
   </div>
 </div>
