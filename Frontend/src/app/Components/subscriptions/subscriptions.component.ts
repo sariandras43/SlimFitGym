@@ -24,6 +24,7 @@ export class SubscriptionsComponent {
       .buyPass({ accountId: this.user.id, passId: $event.id })
       .subscribe({
         next: (purchase) => {
+          this.userService.getPass();
           this.userPass = this.passes?.find(
             (pass) => pass.id == purchase.passId
           );
@@ -35,7 +36,7 @@ export class SubscriptionsComponent {
         }
       });
   }
-  
+
   openPurchaseModal(pass: PassModel) {
     this.selectedPass = pass;
     this.showCardModal = true;
@@ -73,17 +74,19 @@ export class SubscriptionsComponent {
       this.displayUserPass(pass)
     );
   }
-
+  ngOnInit(){
+    this.userService.getPass();
+  }
   displayUserPass(pass?: PassModel) {
+
     this.passes?.forEach((p) => (p.passOfUser = false));
     if (pass) this.userPass = pass;
     if (!this.userPass) return;
-
+    console.log(pass)
     let passOfUser = this.passes?.find((p) => p.id == this.userPass?.id);
-    console.log(passOfUser);
     if (passOfUser) {
       passOfUser.passOfUser = true;
-      console.log(this.passes);
+      passOfUser.remainingEntries = this.userPass?.remainingEntries;
     } else {
       this.userPass.passOfUser = true;
       this.passes?.push(this.userPass);

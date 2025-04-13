@@ -21,7 +21,7 @@ export class PurhcasesComponent {
     return this.passes.find((p) => p.id == purhcase.passId)?.name;
   }
   findUser(purchase: PurchaseModel) {
-    return this.users.find((u) => u.id == purchase.id)?.name;
+    return this.users.find((u) => u.id == purchase.accountId)?.name;
   }
 
   purchases: PurchaseModel[] = [];
