@@ -7,7 +7,7 @@
     <app-pass-card
       (boughtPass)="openPurchaseModal($event)"
       [displayBuyButton]="
-        user?.role == 'user' && (userPass?.price || 0) < pass.price
+        user?.role == 'user' && ((userPass?.price || 0) <= pass.price )
       "
       [pass]="pass"
     ></app-pass-card>

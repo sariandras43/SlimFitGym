@@ -17,7 +17,7 @@ export class DeleteUserComponent {
         this.router.navigate(['/']);
       },
       error: (err) => {
-        console.log(err)
+        console.error(err)
       },
     });
   }

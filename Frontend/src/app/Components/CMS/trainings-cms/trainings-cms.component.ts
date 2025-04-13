@@ -88,7 +88,6 @@ toggleShowDeleted() {
     
     let filtered = this.trainings.filter(s=> s.trainer?.toLocaleLowerCase().includes(this.searchTerm) || s.name?.toLocaleLowerCase().includes(this.searchTerm) || s.room?.toLocaleLowerCase().includes(this.searchTerm) || s.maxPeople?.toString().includes(this.searchTerm) || s.freePlaces?.toString().includes(this.searchTerm) ) ;
     filtered = filtered.filter(t => this.showDeleted || t.isActive == true)
-    console.log(this.sortState.property)
     if (this.sortState.property) {
       filtered = this.sorttrainings(
         filtered,

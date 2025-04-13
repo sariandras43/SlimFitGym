@@ -34,7 +34,7 @@ export class StatisticsService {
   getPurchasesStatistic() {
     this.http
       .get<PurchaseStatisticModel[]>(
-        `${this.config.apiUrl}/statistics/purchases?year=2025`,
+        `${this.config.apiUrl}/statistics/purchases?year=${new Date().getFullYear()}`,
         {
           headers: this.userService.getAuthHeaders(),
         }
@@ -54,7 +54,7 @@ export class StatisticsService {
   getEntriesStatistic() {
     this.http
       .get<EntryStatisticModel[]>(
-        `${this.config.apiUrl}/statistics/entries?year=2025`,
+        `${this.config.apiUrl}/statistics/entries?year=${new Date().getFullYear()}`,
         {
           headers: this.userService.getAuthHeaders(),
         }

@@ -1,0 +1,33 @@
+<div class="container">
+  <div class="scanner-wrapper">
+    <div class="scan-results">
+      <div class="history">
+        <h3>Belépések</h3>
+        <div class="pagination-controls">
+          <button
+            class="pagination-button"
+            (click)="previous()"
+            [disabled]="offset === 0"
+          >
+            &laquo; Előző
+          </button>
+          <span class="page-indicator">Oldal {{ offset / limit + 1 }}</span>
+          <button
+            class="pagination-button"
+            (click)="next()"
+            [disabled]="!hasMore"
+          >
+            Következő &raquo;
+          </button>
+        </div>
+      </div>
+      @if(entries.length > 0) {
+      <ul>
+        @for (code of entries; track $index) {
+        <li>{{ code.name }} - {{ code.entryDate | date : "short" }}</li>
+        }
+      </ul>
+      }
+    </div>
+  </div>
+</div>

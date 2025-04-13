@@ -1,7 +1,7 @@
 <div class="card" [ngClass]="{'user-pass': pass?.passOfUser}">
   <div class="content">
     <h3 class="title">{{ pass?.name }}</h3>
-    
+
     <p class="priceWrap">
       <span class="price">{{ pass?.price }}</span>
       <span class="unit">Ft</span>
@@ -9,20 +9,19 @@
 
     <ul class="benefits">
       @for (benefit of getBenefits(pass); track $index) {
-        <li>{{ benefit }}</li>
+      <li>{{ benefit }}</li>
       }
     </ul>
+    @if ((!pass?.passOfUser || pass?.remainingEntries == 0  && pass?.maxEntries) && displayBuyButton) {
+    <button class="btn" (click)="buyPass(pass)">
+      @if (pass?.isLoading) {
+      <app-button-loader [size]="0.5"></app-button-loader>
+      }
+      @else {
+      Vásárlás
 
-    @if (!pass?.passOfUser && displayBuyButton) {
-      <button class="btn" (click)="buyPass(pass)">
-        @if (pass?.isLoading) {
-          <app-button-loader [size]="0.5"></app-button-loader>
-        }
-        @else {
-          Vásárlás
-
-        }
-      </button>
+      }
+    </button>
     }
   </div>
 </div>

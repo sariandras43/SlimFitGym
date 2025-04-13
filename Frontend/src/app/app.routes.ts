@@ -22,6 +22,8 @@ import { NotFoundComponent } from './Pages/not-found/not-found.component';
 import { SubscribedTrainingsComponent } from './Components/CMS/subscribed-trainings/subscribed-trainings.component';
 import { DashboardComponent } from './Components/CMS/dashboard/dashboard.component';
 import { WorkerPageComponent } from './Components/CMS/worker-page/worker-page.component';
+import { PurhcasesComponent } from './Components/CMS/purhcases/purhcases.component';
+import { EntriesComponent } from './Components/CMS/entries/entries.component';
 
 export const routes: Routes = [
   { path: '', component: MainPageComponent },
@@ -65,6 +67,18 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         component: DashboardComponent,
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['admin'] },
+      },
+      {
+        path: 'purchases',
+        component: PurhcasesComponent,
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['admin'] },
+      },
+      {
+        path: 'entries',
+        component: EntriesComponent,
         canActivate: [RoleGuard],
         data: { allowedRoles: ['admin'] },
       },

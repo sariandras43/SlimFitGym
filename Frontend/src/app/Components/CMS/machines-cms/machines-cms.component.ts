@@ -109,7 +109,7 @@ export class MachinesCMSComponent {
         this.deletingMachineId = null;
       },
       error: (err) => {
-        console.log(err);
+        console.error(err);
         this.deletingMachineId = null;
       },
     });
