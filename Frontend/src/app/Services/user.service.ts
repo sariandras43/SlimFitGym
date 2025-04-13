@@ -141,12 +141,7 @@ export class UserService {
             path: '/',
           });
         },
-        error: (error) => {
-          console.error(
-            'Failed to fetch pass:',
-            error.error?.message || error.message
-          );
-        },
+        error: (error) => {},
       });
   }
 
@@ -192,15 +187,11 @@ export class UserService {
 
   private handleAuthResponse(response: UserModel, rememberMe: boolean) {
     let expiration: Date | undefined = undefined;
-    if(rememberMe)
-    {
-      if(response.validTo)
-      {
-
-        expiration = new Date(response.validTo)
-      }
-      else{
-        new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+    if (rememberMe) {
+      if (response.validTo) {
+        expiration = new Date(response.validTo);
+      } else {
+        new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
       }
     }
     const cookieOptions = {

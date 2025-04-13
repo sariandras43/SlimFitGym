@@ -40,7 +40,6 @@ export class BasicUserDataComponent {
       if (res) {
         this.user = res;
         this.originalUser = {...res};
-        console.log(res)
       }
     });
     userService.loggedInUserPass$.subscribe((res) => {

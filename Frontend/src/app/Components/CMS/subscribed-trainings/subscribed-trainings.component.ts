@@ -6,16 +6,18 @@ import { UserService } from '../../../Services/user.service';
 import Utils from '../../../utils/util';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { ButtonLoaderComponent } from '../../button-loader/button-loader.component';
 
 @Component({
   selector: 'app-subscribed-trainings',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, ButtonLoaderComponent],
   templateUrl: './subscribed-trainings.component.html',
   styleUrl: './subscribed-trainings.component.scss',
 })
 export class SubscribedTrainingsComponent {
   searchValue = '';
   isLoading = false;
+  loading = false;
 
   search() {
     this.updateDisplayTrainings();
@@ -55,19 +57,15 @@ export class SubscribedTrainingsComponent {
     );
   }
 
-  subscribe(training: TrainingModel) {
-    this.trainingService.subscribeToTraining(training.id).subscribe({
-      next: () => {},
-      error: (err) => {
-        console.log(err);
-      },
-    });
-  }
   unsubscribe(training: TrainingModel) {
+    this.loading = true;
     this.trainingService.unsubscribeFromTraining(training.id).subscribe({
-      next: () => {},
+      next: () => {
+        this.loading = false;
+      },
       error: (err) => {
         console.log(err);
+        this.loading = false;
       },
     });
   }

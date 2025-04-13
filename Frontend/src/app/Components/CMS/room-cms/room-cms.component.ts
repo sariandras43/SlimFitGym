@@ -177,7 +177,6 @@ export class RoomCMSComponent {
     if (a.length !== b.length) return false;
 
     for (let i = 0; i < a.length; ++i) {
-      console.log(a[i].machineCount, b[i].machineCount);
       if (a[i].id !== b[i].id) return false;
       if (a[i].machineCount !== b[i].machineCount) return false;
     }

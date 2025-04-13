@@ -64,7 +64,6 @@ subscribe(training: TrainingModel) {
           this.allMachineCount += m.machineCount || 0;
           this.machineTypeCount++;
         });
-        console.log(this.machineTypeCount)
       },
       error: (error) => {
         console.log(error.error.message ?? error.message);
