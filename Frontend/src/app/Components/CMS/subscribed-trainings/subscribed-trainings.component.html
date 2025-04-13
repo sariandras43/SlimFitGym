@@ -1,4 +1,9 @@
 <div class="container mt5">
+  @if (loading) {
+    <div class="overlay">
+      <app-button-loader  [size]="2"></app-button-loader>
+    </div>
+  }
   @if ((!displayTrainings || displayTrainings.length == 0) && !isLoading) {
     <div class="no-training">
       <div class="no-training-content">
@@ -29,18 +34,18 @@
         </div>
       </div>
     </div>
-  
+
     <div class="trainings">
       @for (training of displayTrainings; track $index) {
       <div class="trainingSection">
         <div class="trainerImage">
-          <img [src]="training.trainerImageUrl || 'norbi.jpg'" alt="" />
+          <img [src]="training.trainerImageUrl || 'muscleManOrange.svg'" alt="" />
         </div>
         <div class="trainingContent">
           <img [src]="training.roomImageUrl || ' templateSzoba.jpg'" alt="" />
           <div class="contentWrap">
             <h3 class="trainingName">{{ training.name }}</h3>
-  
+
             <p class="trainerName">Edző: {{ training.trainer }}</p>
             <p class="trainingPeople">
               Helyek száma: {{ training.maxPeople - training.freePlaces }}/{{
@@ -49,8 +54,8 @@
             </p>
             <p class="date">{{ displayDate(training) }}</p>
             @if (training.isActive) {
-  
-    
+
+
               <button class="applied" (click)="unsubscribe(training)">
                 Lemondás
               </button>
