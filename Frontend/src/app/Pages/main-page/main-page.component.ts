@@ -43,7 +43,6 @@ export class MainPageComponent {
       })
     });
     this.userService.getTrainers().subscribe(t=>{
-      console.log(t)
       this.trainers = t;
     })
   }
