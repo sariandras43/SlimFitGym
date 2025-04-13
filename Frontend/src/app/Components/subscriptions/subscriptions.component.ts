@@ -43,7 +43,6 @@ export class SubscriptionsComponent {
   }
 
   handleCardSubmit() {
-    console.log("MI A FASZ")
     if (this.selectedPass) {
       this.handlePassPurchase(this.selectedPass);
       this.closeCardModal();
@@ -82,7 +81,6 @@ export class SubscriptionsComponent {
     this.passes?.forEach((p) => (p.passOfUser = false));
     if (pass) this.userPass = pass;
     if (!this.userPass) return;
-    console.log(pass)
     let passOfUser = this.passes?.find((p) => p.id == this.userPass?.id);
     if (passOfUser) {
       passOfUser.passOfUser = true;

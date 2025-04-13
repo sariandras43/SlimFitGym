@@ -24,13 +24,7 @@ export class NewPasswordComponent {
         newPassword: this.password,
       };
       this.userService.updateUser(userModel).subscribe({
-        next: (response) => {
-          if (response) {
-            console.log(response);
-          } else {
-            console.log('Helytelen email cím vagy jelszó!');
-          }
-        },
+        next: () => {},
         error: (error) => {
           console.log(error.error.message ?? error.message);
         },
