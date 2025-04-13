@@ -50,7 +50,7 @@ namespace SlimFitGymBackend.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin,employee")]
         public IActionResult GetAll( [FromQuery] string limit = "10", [FromQuery] string offset = "0", [FromQuery] string orderField = "date",[FromQuery] string orderDirection = "desc")
         {
             string token = Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
