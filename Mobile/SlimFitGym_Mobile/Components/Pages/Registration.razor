@@ -1,6 +1,7 @@
 ﻿@page "/registration"
 @using SlimFitGym_Mobile.Models
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JS
 @using SlimFitGym_Mobile.Services
 
 <div class="rounded-3 d-inline-block mt-3 lighter-dark">
@@ -9,8 +10,8 @@
     </NavLink>
 </div>
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
+<div id="container" class="container mt-5">
+    <div class="row justify-content-center overflow-auto pb-5">
         <div class="col-md-6 col-lg-4">
             <div class="card shadow">
                 <div class="card-body lighter-dark">
@@ -21,29 +22,39 @@
                         </div>
                     }
                     <h2 class="card-title text-center mb-4 lighter-dark">Regisztráció</h2>
-                    <form @onsubmit="register">
+                    <form @onsubmit="register" novalidate>
                         <div class="mb-3 lighter-dark">
                             <label for="name" class="form-label lighter-dark">Név</label>
-                            <input type="text" class="form-control lighter-dark" id="name" placeholder="Név" @bind="newUser.Name">
+                            <input type="text" class="form-control lighter-dark" id="name" placeholder="Név" @bind="newUser.Name" 
+                                @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "name")'
+                                @onblur='async () => await JS.InvokeVoidAsync("resetPosition")'>
                         </div>
                         <div class="mb-3 lighter-dark">
                             <label for="email" class="form-label lighter-dark">Email</label>
-                            <input type="text" class="form-control lighter-dark" id="email" placeholder="Email" @bind="newUser.Email">
+                            <input type="email" class="form-control lighter-dark" id="email" placeholder="Email" @bind="newUser.Email" 
+                                @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "email")'
+                                @onblur='async () => await JS.InvokeVoidAsync("resetPosition")'>
                         </div>
                         <div class="mb-3 lighter-dark">
                             <label for="phone" class="form-label lighter-dark">Telefonszám</label>
                             <div class="input-group">
                                 <input type="text" class="form-control lighter-dark w-25 text-center" id="countryCode" placeholder="+36" @bind="countryCode" maxlength="5">
-                                <input type="text" class="form-control lighter-dark w-75" id="phone" placeholder="Telefonszám" @bind="newUser.Phone">
+                                <input type="text" class="form-control lighter-dark w-75" id="phone" placeholder="Telefonszám" @bind="rawPhoneNumber"
+                                    @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "countryCode")'
+                                    @onblur='async () => await JS.InvokeVoidAsync("resetPosition")'>
                             </div>
                         </div>
                         <div class="mb-3 lighter-dark">
                             <label for="password" class="form-label lighter-dark">Jelszó</label>
-                            <input type="password" class="form-control lighter-dark" id="password" placeholder="Jelszó" @bind="newUser.Password">
+                            <input type="password" class="form-control lighter-dark" id="password" placeholder="Jelszó" @bind="newUser.Password" 
+                                @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "password")'
+                                @onblur='async () => await JS.InvokeVoidAsync("resetPosition")'>
                         </div>
                         <div class="mb-3 lighter-dark">
                             <label for="passwordAgain" class="form-label lighter-dark">Jelszó újra</label>
-                            <input type="password" class="form-control lighter-dark" id="passwordAgain" placeholder="Jelszó újra" @bind="passwordAgain">
+                            <input type="password" class="form-control lighter-dark" id="passwordAgain" placeholder="Jelszó újra" @bind="passwordAgain"
+                                @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "passwordAgain")'
+                                @onblur='async () => await JS.InvokeVoidAsync("resetPosition")'>
                         </div>
                         <div class="d-grid mb-3 lighter-dark">
                             <button type="submit" class="btn btn-primary">Regisztráció</button>
@@ -60,6 +71,7 @@
 
 @code {
     private AccountModel newUser = new();
+    private string rawPhoneNumber;
     private string passwordAgain;
     private string errorMessage;
     private string countryCode = "+36";
@@ -71,7 +83,7 @@
         if (string.IsNullOrEmpty(newUser.Name) ||
             string.IsNullOrEmpty(newUser.Email) ||
             string.IsNullOrEmpty(countryCode) ||
-            string.IsNullOrEmpty(newUser.Phone) ||
+            string.IsNullOrEmpty(rawPhoneNumber) ||
             string.IsNullOrEmpty(newUser.Password) ||
             string.IsNullOrEmpty(passwordAgain))
         {
@@ -97,7 +109,7 @@
             return;
         }
 
-        var fullPhoneNumber = countryCode.Trim() + newUser.Phone.Trim();
+        var fullPhoneNumber = countryCode.Trim() + rawPhoneNumber.Trim();
         if (!AuthService.IsValidPhoneNumber(fullPhoneNumber))
         {
             errorMessage = "A telefonszám formátuma nem megfelelő!";

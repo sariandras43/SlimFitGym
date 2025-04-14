@@ -1,21 +1,24 @@
 ﻿@inject NavigationManager NavigationManager
 @using SlimFitGym_Mobile.Models
 
-<div class="container position-relative d-flex align-items-center py-2 mb-3">
-    <div class="w-100 text-center">
-        <h1 class="fw-bolder display-4 m-0">Slim Fit Gym</h1>
-    </div>
+    <div class="container position-relative d-flex align-items-center py-2 mb-3">
+        <div class="w-100 text-center">
+            <h1 class="fw-bolder display-4 m-0">Slim Fit Gym</h1>
+        </div>
 
-    @if (AccountModel.LoggedInUser != null)
+        @if (AccountModel.LoggedInUser != null)
     {
         <div class="dropdown position-absolute end-0 me-1">
             <button class="btn p-0 border-0 bg-transparent" type="button" id="logoutDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 <img class="invert" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAABfElEQVR4nO2WzStEURjGf4mwRWx8/QGTv4AsfCwm0Sx8lJ00/gahpLCwUbK0I0l2spStjxW7kVCSTGbnLnz31jM1TZfOvXNmZZ5663Tf532ec+45570XKqggHO1An8LGZccgcAZ8F8Up0F8u0zngS0aXwJbiSs8sN+vbdFLiOWA4JD+inHHGfZnWAY/AJ9D9B69HnAeg1ofxkFay78A9EDfpw3hBYtMO3LS48z6MVyLs3YS4yz6MZyS26MBdEtdWXjI6dWjudNB+Qz1wL663prKnlWwD1SH5GmBHnF08ogm4lfA5MAq0KsaAC+VugAY8ow3IhrTLfGQ1Ea/oBTIFJgFwrQgKnmfUSLwgDXxI+FAfA9vTPGw8AByJY9ypUk1Tav6v2kuXexyoJqynOx+onFaQjNhi7Uq9AI3EwJpe3XqM2g3VrkYtrAKegTegOYZxC/AOPEnLGV2a8THxcSKNRJSilIrslcXFpjTsJ8EZHepOkWZbhIQ0TKuCf4gfUuZpsrFDpn0AAAAASUVORK5CYII=" alt="login icon">
             </button>
             <ul class="dropdown-menu lighter-dark" aria-labelledby="logoutDropdown">
-                <li class="dropdown-item lighter-dark text-muted">@AccountModel.LoggedInUser.Name</li>
-                <li><a class="dropdown-item lighter-dark" @onclick="Logout">Kijelentkezés</a></li>
+                <NavLink href="/modifydata" class="dropdown-item lighter-dark fw-bold">@AccountModel.LoggedInUser.Name</NavLink>
+                <li class="@(DataService.isLoading ? "disabled" : "")">
+                    <a class="dropdown-item lighter-dark" href="#" @onclick="Logout">Kijelentkezés</a>
+                </li>
             </ul>
+
         </div>
     }
     else

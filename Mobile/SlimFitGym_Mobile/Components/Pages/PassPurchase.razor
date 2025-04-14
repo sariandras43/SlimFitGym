@@ -1,0 +1,108 @@
+﻿@page "/passpurchase/{Id:int}"
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+@using SlimFitGym_Mobile.Services
+
+<div class="rounded-3 d-inline-block mt-3 lighter-dark">
+    <NavLink href="/passes" class="d-block p-1 lighter-dark">
+        <img class="invert" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAeUlEQVR4nO3XQQrCMBCF4e8MWkrvErLw/oeRWlxXChHEVRd1hHT+C/zJ42WY0BEjrtHSigfukfKKBStmXCKkpd10kz5xS+mRZLw/pWR7u4t3+JAubSzqWvy3qN+kfM3YBVKy7c72zuvXejtEy+d2gO1HEcqIKVq6mxcYKlU4XwQ2VAAAAABJRU5ErkJggg==" alt="back">
+    </NavLink>
+</div>
+
+<div id="container" class="container mt-5">
+    <div class="row justify-content-center overflow-auto pb-5">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow">
+                <div class="card-body lighter-dark">
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger mt-3">
+                            @((MarkupString)errorMessage.Replace("\n", "<br>"))
+                        </div>
+                    }
+                    <h2 class="card-title text-center mb-4 lighter-dark">Vásárlás</h2>
+                    <p class="card-subtitle text-center mb-2 lighter-dark">Kiválasztott bérlet: @pass.Name</p>
+                    <form @onsubmit="Purchase" novalidate>
+                        <div class="mb-3 lighter-dark">
+                            <label for="number" class="form-label lighter-dark">Kártyaszám</label>
+                            <input type="text" class="form-control lighter-dark" id="number" placeholder="Kártyaszám" @bind="cardNumber"
+                                @onfocus='async () => { FillWithMockData(); await JS.InvokeVoidAsync("adjustForKeyboard", "number"); }'
+                                @onblur='async () => await JS.InvokeVoidAsync("resetPosition")'>
+
+                        </div>
+                        <div class="mb-3 lighter-dark">
+                            <label for="name" class="form-label lighter-dark">Név</label>
+                            <input type="text" class="form-control lighter-dark" id="name" placeholder="Kártyabirtokos neve" @bind="name"
+                            @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "name")'
+                            @onblur='async () => await JS.InvokeVoidAsync("resetPosition")'>
+                        </div>
+                        <div class="d-flex justify-content-between lighter-dark">
+                            <div class="mb-3 lighter-dark w-50">
+                                <label for="date" class="form-label lighter-dark">Lejárati dátum</label>
+                                <input type="text" class="form-control lighter-dark w-50" id="date" placeholder="01/01" @bind="date"
+                                @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "date")'
+                                @onblur='async () => await JS.InvokeVoidAsync("resetPosition")'>
+                            </div>
+                            <div class="mb-3 lighter-dark w-50 justify-content-end">
+                                <label for="cvv" class="form-label lighter-dark">CVV</label>
+                                <input type="text" maxlength="3" class="form-control lighter-dark w-50" id="cvv" placeholder="000" @bind="cvv"
+                                @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "cvv")'
+                                @onblur='async () => await JS.InvokeVoidAsync("resetPosition")'>
+                            </div>
+                        </div>
+                        <p class="card-subtitle text-center mb-2 lighter-dark">Összeg: @Math.Floor(pass.Price) Ft</p>
+                        <div class="d-grid mb-3 lighter-dark">
+                            <button type="submit" class="btn btn-primary">Fizetés</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private PassModel pass = new();
+    private string cardNumber;
+    private string name;
+    private string date;
+    private string cvv;
+    private string errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        pass = await DataService.GetPass(Id);
+    }
+
+    private async Task Purchase()
+    {
+        errorMessage = "";
+        if (
+            string.IsNullOrEmpty(cardNumber) ||
+            string.IsNullOrEmpty(name) ||
+            string.IsNullOrEmpty(date) ||
+            string.IsNullOrEmpty(cvv)
+        )
+        {
+            errorMessage = "Minden mező kitöltése kötelező!";
+            return;
+        }
+        if (int.Parse(cvv) < 100 || int.Parse(cvv) > 999)
+        {
+            errorMessage = "Érvénytelen CVV!";
+            return;
+        }
+        await DataService.PurchasePass(AccountModel.LoggedInUser.Id, pass.Id);
+        NavigationManager.NavigateTo("/");
+    }
+
+    private void FillWithMockData()
+    {
+        cardNumber = "1234 5678 9012 3456";
+        name = AccountModel.LoggedInUser.Name;
+        date = "06/25";
+        cvv = "300";
+    }
+}

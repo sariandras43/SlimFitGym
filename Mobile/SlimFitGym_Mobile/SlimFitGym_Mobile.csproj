@@ -39,6 +39,16 @@
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|AnyCPU'">
+      <AndroidPackageFormat>apk</AndroidPackageFormat>
+		<AndroidKeyStore>True</AndroidKeyStore>
+		<AndroidSigningKeyStore>..\mykey.keystore</AndroidSigningKeyStore>
+		<AndroidSigningStorePass>slimfitgym</AndroidSigningStorePass>
+		<AndroidSigningKeyAlias>myalias</AndroidSigningKeyAlias>
+		<AndroidSigningKeyPass>slimfitgym</AndroidSigningKeyPass>
+		<RunAOTCompilation>false</RunAOTCompilation>
+    </PropertyGroup>
+
     <ItemGroup>
         <!-- App Icon -->
 
@@ -71,6 +81,7 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
         <PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.100" />
+        <PackageReference Include="ReactorBlazorQRCodeScanner" Version="1.0.7" />
         <PackageReference Include="SkiaSharp" Version="3.116.1" />
         <PackageReference Include="System.Drawing.Common" Version="9.0.2" />
         <PackageReference Include="ZXing.Net.Maui" Version="0.4.0" />

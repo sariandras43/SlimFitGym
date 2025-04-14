@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using SlimFitGym_Mobile.Models;
 using SlimFitGym_Mobile.Services;
+using System.Text.Json;
 
 namespace SlimFitGym_Mobile
 {
@@ -29,7 +30,7 @@ namespace SlimFitGym_Mobile
 
         private async void OnStartAsync()
         {
-            AccountModel.LoggedInUser = await AuthService.LoadUser();
+            await AuthService.LoadUser();
         }
     }
 }

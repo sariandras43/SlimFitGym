@@ -1,0 +1,124 @@
+﻿@page "/modifydata"
+@using SlimFitGym_Mobile.Models
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JS
+@using SlimFitGym_Mobile.Services
+
+<div class="rounded-3 d-inline-block mt-3 lighter-dark">
+    <NavLink href="/" class="d-block p-1 lighter-dark">
+        <img class="invert" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAeUlEQVR4nO3XQQrCMBCF4e8MWkrvErLw/oeRWlxXChHEVRd1hHT+C/zJ42WY0BEjrtHSigfukfKKBStmXCKkpd10kz5xS+mRZLw/pWR7u4t3+JAubSzqWvy3qN+kfM3YBVKy7c72zuvXejtEy+d2gO1HEcqIKVq6mxcYKlU4XwQ2VAAAAABJRU5ErkJggg==" alt="back">
+    </NavLink>
+</div>
+
+<div id="container" class="container mt-5">
+    <div class="row justify-content-center overflow-auto pb-5">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow">
+                <div class="card-body lighter-dark">
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger mt-3">
+                            @((MarkupString)errorMessage.Replace("\n", "<br>"))
+                        </div>
+                    }
+                    <h2 class="card-title text-center mb-4 lighter-dark">Adatok módosítása</h2>
+                    <form @onsubmit="Modify" novalidate>
+                        <div class="mb-3 lighter-dark">
+                            <label for="name" class="form-label lighter-dark">Név</label>
+                            <input type="text" class="form-control lighter-dark" id="name" @bind="user.Name" 
+                            @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "name")'
+                            @onblur='async () => await JS.InvokeVoidAsync("resetPosition")'>
+                        </div>
+                        <div class="mb-3 lighter-dark">
+                            <label for="email" class="form-label lighter-dark">Email</label>
+                            <input type="email" class="form-control lighter-dark" id="email" @bind="user.Email" 
+                            @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "email")'
+                            @onblur='async () => await JS.InvokeVoidAsync("resetPosition")'>
+                        </div>
+                        <div class="mb-3 lighter-dark">
+                            <label for="phone" class="form-label lighter-dark">Telefonszám</label>
+                            <input type="text" class="form-control lighter-dark" id="phone" placeholder="Telefonszám" @bind="user.Phone"
+                            @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "phone")'
+                            @onblur='async () => await JS.InvokeVoidAsync("resetPosition")'>
+                        </div>
+                        <div class="mb-3 lighter-dark">
+                            <label for="password" class="form-label lighter-dark">Új jelszó</label>
+                            <input type="password" class="form-control lighter-dark" id="password" placeholder="Jelszó" @bind="newPassword" 
+                            @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "password")'
+                            @onblur='async () => await JS.InvokeVoidAsync("resetPosition")'>
+                        </div>
+                        <div class="mb-3 lighter-dark">
+                            <label for="passwordAgain" class="form-label lighter-dark">Új jelszó újra</label>
+                            <input type="password" class="form-control lighter-dark" id="passwordAgain" placeholder="Jelszó újra" @bind="newPasswordAgain"
+                            @onfocus='async () => await JS.InvokeVoidAsync("adjustForKeyboard", "passwordAgain")'
+                            @onblur='async () => await JS.InvokeVoidAsync("resetPosition")'>
+                        </div>
+                        <div class="d-grid mb-3 lighter-dark">
+                            <button type="submit" class="btn btn-primary">Mentés</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private AccountModel user = new AccountModel
+    {
+        Id = AccountModel.LoggedInUser.Id,
+        Name = AccountModel.LoggedInUser.Name,
+        Email = AccountModel.LoggedInUser.Email,
+        Phone = AccountModel.LoggedInUser.Phone,
+        Password = AccountModel.LoggedInUser.Password
+    };
+    private string errorMessage;
+    private string newPassword;
+    private string newPasswordAgain;
+
+    private async Task Modify()
+    {
+        errorMessage = string.Empty;
+        if (string.IsNullOrEmpty(user.Name) || string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Phone))
+        {
+            errorMessage = "Név, email cím és telefonszám kitöltése kötelező!";
+            return;
+        }
+        if (!AuthService.IsValidEmail(user.Email))
+        {
+            errorMessage = "Az email cím formátuma nem megfelelő!";
+            return;
+        }
+        if (!string.IsNullOrEmpty(newPassword) && !string.IsNullOrEmpty(newPasswordAgain))
+        {
+            if (!AuthService.IsValidPassword(newPassword))
+            {
+                errorMessage = "A jelszó formátuma nem megfelelő!\n- Minimum 8 karakter\n- Nagy betű\n- Szám\n- Speciális karakter";
+                return;
+            }
+            if (user.Password != newPasswordAgain)
+            {
+                errorMessage = "A két jelszó nem egyezik!";
+                return;
+            }
+            user.Password = newPassword;
+        }
+        if (!AuthService.IsValidPhoneNumber(user.Phone))
+        {
+            errorMessage = "A telefonszám formátuma nem megfelelő!";
+            return;
+        }
+        var registerResult = await AuthService.Modify(user);
+        if (registerResult.Success)
+        {
+            await AuthService.LoadUser();
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            errorMessage = string.IsNullOrEmpty(registerResult.ErrorMessage)
+                ? "Hiba történt a mentés során!"
+                : registerResult.ErrorMessage;
+        }
+    }
+}
