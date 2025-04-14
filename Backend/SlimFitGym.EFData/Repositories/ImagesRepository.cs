@@ -22,6 +22,7 @@ namespace SlimFitGym.EFData.Repositories
     {
         private readonly SlimFitGymContext context;
         private readonly Cloudinary cloudinary;
+        private readonly long maxFileSize = 10 * 1024 * 1024;
 
         public ImagesRepository(SlimFitGymContext slimFitGymContext, IConfiguration configuration)
         {
@@ -42,9 +43,9 @@ namespace SlimFitGym.EFData.Repositories
 
             if (!Base64.IsValid(splitUri[1]))
                 throw new Exception("Érvénytelen Base64.");
-            //TODO filesize
-            IFormFile file = ConvertBase64ToIFormFile(splitUri[1],"Asd", splitUri[0].Split(':')[1]);
-
+            IFormFile file = ConvertBase64ToIFormFile(splitUri[1],DateTime.UtcNow.ToString(), splitUri[0].Split(':')[1]);
+            if (file.Length > maxFileSize)
+                throw new Exception("Túl nagy méretű kép.");
             UploadResult? cloudinaryResult = UploadToCloudinary(file);
 
             if (cloudinaryResult == null)
@@ -79,15 +80,23 @@ namespace SlimFitGym.EFData.Repositories
             for (int i = 0; i < images.Count; i++)
             {
                 string image = images[i];
+                string[] splitUri = image.Split(',');
+                if (splitUri.Length != 2)
+                    throw new Exception("Érvénytelen Base64.");
+                if (!Base64.IsValid(splitUri[1]))
+                    throw new Exception("Érvénytelen Base64.");
+                IFormFile file = ConvertBase64ToIFormFile(splitUri[1], DateTime.UtcNow.ToString(), splitUri[0].Split(':')[1]);
+                if (file.Length > maxFileSize)
+                    throw new Exception("Túl nagy méretű valamelyik kép.");
+            }
+
+            for (int i = 0; i < images.Count; i++)
+            {
+                string image = images[i];
                 if (!image.StartsWith("https://res.cloudinary.com"))
                 {
                     string[] splitUri = image.Split(',');
-                    if (splitUri.Length!=2)
-                        throw new Exception("Érvénytelen Base64.");
-                    if (!Base64.IsValid(splitUri[1]))
-                        throw new Exception("Érvénytelen Base64.");
-                    IFormFile file = ConvertBase64ToIFormFile(splitUri[1], "Asd", splitUri[0].Split(':')[1]);
-
+                    IFormFile file = ConvertBase64ToIFormFile(splitUri[1], DateTime.UtcNow.ToString(), splitUri[0].Split(':')[1]);
                     UploadResult? cloudinaryResult = UploadToCloudinary(file);
                     
                     if (cloudinaryResult == null)
@@ -114,7 +123,6 @@ namespace SlimFitGym.EFData.Repositories
                     result.Add(img);
                 }
             }
-            //TODO id alapjan, mert full ugyanolyan nem lesz a highlight maitt
             List<Image> allImageUrlsToAMachine = this.context.Set<Image>().Where(i=>i.MachineId==machineId).ToList();
             foreach (Image img in allImageUrlsToAMachine)
             {
@@ -140,9 +148,9 @@ namespace SlimFitGym.EFData.Repositories
 
             if (!Base64.IsValid(splitUri[1]))
                 throw new Exception("Érvénytelen Base64.");
-            //TODO filesize
-            IFormFile file = ConvertBase64ToIFormFile(splitUri[1], "Asd", splitUri[0].Split(':')[1]);
-
+            IFormFile file = ConvertBase64ToIFormFile(splitUri[1], DateTime.UtcNow.ToString(), splitUri[0].Split(':')[1]);
+            if (file.Length > maxFileSize)
+                throw new Exception("Túl nagy méretű kép.");
             UploadResult? cloudinaryResult = UploadToCloudinary(file);
 
             if (cloudinaryResult == null)
@@ -260,7 +268,6 @@ namespace SlimFitGym.EFData.Repositories
         }
         private UploadResult? UploadToCloudinary(IFormFile file)
         {
-            //TODO
             using (var stream = file.OpenReadStream())
             {
                 var uploadParams = new ImageUploadParams
