@@ -58,11 +58,8 @@
         DataService.isLoading = true;
         machine = await DataService.GetMachine(Id);
         DataService.isLoading = false;
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
+        StateHasChanged();
+        if (machine.ImageUrls.Any())
         {
             await JS.InvokeVoidAsync("initializeCarousels");
         }

@@ -38,18 +38,19 @@
                     @foreach (var machine in filteredMachines)
                     {
                         <div class="col d-flex justify-content-center">
-                            <NavLink href="@($"/machineDetails/{machine.Id}")" class="card rounded shadow-sm text-decoration-none w-100">
-                                <div class="card-body text-center p-1 lighter-dark">
+                            <NavLink href="@($"/machineDetails/{machine.Id}")" class="card rounded shadow-sm text-decoration-none w-100 h-100">
+                                <div class="card-body d-flex flex-column justify-content-between text-center p-1 lighter-dark">
                                     @if (machine.ImageUrls != null && machine.ImageUrls.Any())
                                     {
-                                        <img class="card-img-top p-1" src="@machine.ImageUrls[0]" alt="Alternate Text" />
+                                        <img class="card-img-top p-1" src="@machine.ImageUrls[0]" alt="Alternate Text" style="object-fit: cover; max-height: 200px;" />
                                     }
-                                    <p class="fw-bold mb-0 lighter-dark">@machine.Name</p>
+                                    <p class="fw-bold mb-0 lighter-dark mt-auto">@machine.Name</p>
                                 </div>
                             </NavLink>
                         </div>
                     }
                 </div>
+
             </div>
         }
     </div>
