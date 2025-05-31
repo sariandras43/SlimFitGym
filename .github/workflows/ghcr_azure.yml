@@ -42,7 +42,8 @@ jobs:
             -e CloudinarySettings__ApiSecret="${{ secrets.CLOUDINARY_APISECRET }}" \
             -v $(pwd)/Backend:/app \
             mcr.microsoft.com/dotnet/sdk:8.0 \
-            dotnet test /app/SlimFitGym.Tests/SlimFitGym.Tests.csproj --logger "trx" --verbosity detailed
+            /bin/bash -c "dotnet build /app/SlimFitGym.Tests/SlimFitGym.Tests.csproj --configuration Debug && \
+                          dotnet test /app/SlimFitGym.Tests/SlimFitGym.Tests.csproj --configuration Debug --logger 'trx' --verbosity detailed"
                 
         - name: Deploy to Azure Web App
           id: deploy-to-webapp

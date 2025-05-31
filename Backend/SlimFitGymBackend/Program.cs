@@ -54,7 +54,9 @@ namespace SlimFitGymBackend
 
                 var context = services.GetRequiredService<SlimFitGym.EFData.SlimFitGymContext>();
                 //Added for frontend tests
-                //context.Database.EnsureDeleted();
+#if DEBUG
+                context.Database.EnsureDeleted();
+#endif
                 context.Database.EnsureCreated();
                 
             }
